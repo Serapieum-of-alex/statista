@@ -27,11 +27,6 @@ setup(
     test_suite="tests",
     tests_require=test_requirements,
     # install_requires=requirements,
-    entry_points={
-        'console_scripts': [
-            'statista=statista.cli:main',
-        ],
-    },
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: Console",
@@ -41,7 +36,6 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
-        "Topic :: Scientific/Engineering :: GIS",
         "Intended Audience :: Science/Research",
         "Intended Audience :: Developers",
     ],

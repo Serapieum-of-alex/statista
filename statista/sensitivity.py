@@ -9,15 +9,14 @@ import numpy as np
 
 # Vis = V.Visualize(1)
 
-class SensitivityAnalysis:
-    """SensitivityAnalysis.
+class Sensitivity:
+    """Sensitivity.
 
-    SensitivityAnalysis class
+    Sensitivity class
 
     Methods
         1- OAT
         2- Sobol
-
     """
     MarkerStyleList = [
         "--o",
@@ -33,84 +32,83 @@ class SensitivityAnalysis:
         "-.h",
     ]
 
-    def __init__(self, Parameter, LB, UB, Function, Positions=[], NoValues=5, Type=1):
-        """SensitivityAnalysis.
+    def __init__(self, parameter, LB, UB, function, positions=[], n_values=5, return_values=1):
+        """Sensitivity.
 
-        To instantiate the SensitivityAnalysis class you have to provide the
+        plotting_to instantiate the Sensitivity class you have to provide the
         following parameters
 
         Parameters
         ----------
-        Parameter : [dataframe]
+        parameter : [dataframe]
             dataframe with the index as the name of the parameters and one column
             with the name "value" contains the values of the parameters.
         LB : [list]
             lower bound of the parameter.
         UB : [list]
             upper bound of the parameter.
-        Function : TYPE
+        function : TYPE
             DESCRIPTION.
-        Positions : [list], optional
+        positions : [list], optional
             position of the parameter in the list (the beginning of the list starts
             with 0), if the Position argument is empty list the sensitivity will
             be done for all parameters. The default is [].
-        NoValues : [integer], optional
+        n_values : [integer], optional
             number of parameter values between the bounds you want to calculate the
             metric for, if the values does not include the value if the given parameter
             it will be appended to the values. The default is 5.
-        Type : [integer], optional
-            type equals 1 if the function resurns one value (the measured metric)
-            Type equals 2 if the function resurns two values (the measured metric,
+        return_values : [integer], optional
+            return_values equals 1 if the function resurns one value (the measured metric)
+            return_values equals 2 if the function resurns two values (the measured metric,
             and any calculated values you want to check how they change by changing
             the value of the parameter). The default is 1.
 
         Returns
         -------
         None.
-
         """
-        self.Parameter = Parameter
+        self.parameter = parameter
         self.LB = LB
         self.UB = UB
 
         assert (
-            len(self.Parameter) == len(self.LB) == len(self.UB)
+                len(self.parameter) == len(self.LB) == len(self.UB)
         ), "Length of the boundary shoulf be of the same length as the length of the parameters"
         assert callable(
-            Function
+            function
         ), "function should be of type callable (function that takes arguments)"
-        self.Function = Function
+        self.function = function
 
-        self.NoValues = NoValues
-        self.Type = Type
+        self.NoValues = n_values
+        self.return_values = return_values
         # if the Position argument is empty list the sensitivity will be done for all parameters
-        if Positions == []:
-            self.NoPar = len(Parameter)
-            self.Positions = list(range(len(Parameter)))
+        if positions == []:
+            self.NoPar = len(parameter)
+            self.Positions = list(range(len(parameter)))
         else:
-            self.NoPar = len(Positions)
-            self.Positions = Positions
+            self.NoPar = len(positions)
+            self.Positions = positions
 
     @staticmethod
-    def MarkerStyle(Style):
+    def markerStyle(style):
         """MarkerStyle.
 
         Marker styles for plotting
 
         Parameters
         ----------
-        Style : TYPE
+        style : TYPE
             DESCRIPTION.
 
         Returns
         -------
         TYPE
             DESCRIPTION.
-
         """
-        if Style > len(SensitivityAnalysis.MarkerStyleList) - 1:
-            Style = Style % len(SensitivityAnalysis.MarkerStyleList)
-        return SensitivityAnalysis.MarkerStyleList[Style]
+        if style > len(Sensitivity.MarkerStyleList) - 1:
+            style = style % len(Sensitivity.MarkerStyleList)
+        return Sensitivity.MarkerStyleList[style]
+
 
     def OAT(self, *args, **kwargs):
         """OAT.
@@ -119,14 +117,14 @@ class SensitivityAnalysis:
 
         Parameters
         ----------
-        Parameter : [dataframe]
+        parameter : [dataframe]
             parameters dataframe including the parameters values in a column with
             name 'value' and the parameters name as index.
         LB : [List]
             parameters upper bounds.
         UB : [List]
             parameters lower bounds.
-        Function : [function]
+        function : [function]
             the function you want to run it several times.
         *args : [positional argument]
             arguments of the function with the same exact names inside the function.
@@ -135,81 +133,79 @@ class SensitivityAnalysis:
 
         Returns
         -------
-        sen : [Dictionary]
+        sen : [Dict]
             for each parameter as a key, there is a list containing 4 lists,
             1-relative parameter values, 2-metric values, 3-Real parameter values
-            4- adition calculated values from the function if you choose Type=2.
-
+            4- adition calculated values from the function if you choose return_values=2.
         """
-
         self.sen = {}
 
         for i in range(self.NoPar):
             k = self.Positions[i]
-            if self.Type == 1:
-                self.sen[self.Parameter.index[k]] = [[], [], []]
+            if self.return_values == 1:
+                self.sen[self.parameter.index[k]] = [[], [], []]
             else:
-                self.sen[self.Parameter.index[k]] = [[], [], [], []]
+                self.sen[self.parameter.index[k]] = [[], [], [], []]
             # generate 5 random values between the high and low parameter bounds
             rand_value = np.linspace(self.LB[k], self.UB[k], self.NoValues)
             # add the value of the calibrated parameter and sort the values
-            rand_value = np.sort(np.append(rand_value, self.Parameter["value"][k]))
+            rand_value = np.sort(np.append(rand_value, self.parameter["value"][k]))
             # store the relative values of the parameters in the first list in the dict
-            self.sen[self.Parameter.index[k]][0] = [
-                ((h) / self.Parameter["value"][k]) for h in rand_value
+            self.sen[self.parameter.index[k]][0] = [
+                ((h) / self.parameter["value"][k]) for h in rand_value
             ]
 
-            Randpar = self.Parameter["value"].tolist()
+            Randpar = self.parameter["value"].tolist()
             for j in range(len(rand_value)):
                 Randpar[k] = rand_value[j]
                 # args = list(args)
                 # args.insert(Position,Randpar)
-                if self.Type == 1:
-                    metric = self.Function(Randpar, *args, **kwargs)
+                if self.return_values == 1:
+                    metric = self.function(Randpar, *args, **kwargs)
                 else:
-                    metric, CalculatedValues = self.Function(Randpar, *args, **kwargs)
-                    self.sen[self.Parameter.index[k]][3].append(CalculatedValues)
+                    metric, CalculatedValues = self.function(Randpar, *args, **kwargs)
+                    self.sen[self.parameter.index[k]][3].append(CalculatedValues)
                 try:
                     # store the metric value in the second list in the dict
-                    self.sen[self.Parameter.index[k]][1].append(round(metric, 3))
+                    self.sen[self.parameter.index[k]][1].append(round(metric, 3))
                 except TypeError:
-                    message = """the Given Function returns more than one value,
-                    the function should return only one value for Type=1, or
-                    two values for Type=2.
+                    message = """the Given function returns more than one value,
+                    the function should return only one value for return_values=1, or
+                    two values for return_values=2.
                     """
                     assert False, message
                 # store the real values of the parameter in the third list in the dict
-                self.sen[self.Parameter.index[k]][2].append(round(rand_value[j], 4))
-                print(str(k) + "-" + self.Parameter.index[k] + " -" + str(j))
+                self.sen[self.parameter.index[k]][2].append(round(rand_value[j], 4))
+                print(str(k) + "-" + self.parameter.index[k] + " -" + str(j))
                 print(round(metric, 3))
 
 
     def Sobol(
         self,
-        RealValues=False,
-        Title="",  # CalculatedValues=False,
-        xlabel="xlabel",
-        ylabel="Metric values",
+        real_values: bool=False,
+        title: str="",  # CalculatedValues=False,
+        xlabel: str="xlabel",
+        ylabel: str="Metric values",
         labelfontsize=12,
-        From="",
-        To="",
-        Title2="",
-        xlabel2="xlabel2",
-        ylabel2="ylabel2",
+        plotting_from="",
+        plotting_to="",
+        title2: str="",
+        xlabel2: str="xlabel2",
+        ylabel2: str="ylabel2",
         spaces=[None, None, None, None, None, None],
     ):
         """Sobol.
 
         Parameters
         ----------
-        RealValues : [bool], optional
+        real_values : [bool], optional
             if you want to plot the real values in the x-axis not the relative
             values, works properly only if you are checking the sensitivity of
             one parameter as the range of parameters differes. The default is False.
         CalculatedValues : [bool], optional
-            if you choose Type=2 in the OAT method, then the function returns
+            if you choose return_values=2 in the OAT method, then the function returns
             calculated values, and here you can True to plot it . The default is False.
-        Title : [string], optional
+        title : [string], optional
             DESCRIPTION. The default is ''.
         xlabel : [string], optional
             DESCRIPTION. The default is 'xlabel'.
@@ -217,13 +213,13 @@ class SensitivityAnalysis:
             DESCRIPTION. The default is 'Metric values'.
         labelfontsize : [integer], optional
             DESCRIPTION. The default is 12.
-        From : TYPE, optional
+        plotting_from : TYPE, optional
             the calculated values are in array type and From attribute is from
             where the plotting will start. The default is ''.
-        To : TYPE, optional
-            the calculated values are in array type and To attribute is from
+        plotting_to : TYPE, optional
+            the calculated values are in array type and plotting_to attribute is from
             where the plotting will end. The default is ''.
-        Title2 : TYPE, optional
+        title2 : TYPE, optional
             DESCRIPTION. The default is ''.
         xlabel2 : TYPE, optional
             DESCRIPTION. The default is 'xlabel2'.
@@ -234,38 +230,32 @@ class SensitivityAnalysis:
 
         Returns
         -------
-        TYPE
-            DESCRIPTION.
-        TYPE
-            DESCRIPTION.
-
         """
-
-        if self.Type == 1:
+        if self.return_values == 1:
             fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(8, 6))
 
             for i in range(self.NoPar):
                 k = self.Positions[i]
-                if RealValues:
+                if real_values:
                     ax.plot(
-                        self.sen[self.Parameter.index[k]][2],
-                        self.sen[self.Parameter.index[k]][1],
-                        SensitivityAnalysis.MarkerStyle(k),
+                        self.sen[self.parameter.index[k]][2],
+                        self.sen[self.parameter.index[k]][1],
+                        Sensitivity.markerStyle(k),
                         linewidth=3,
                         markersize=10,
-                        label=self.Parameter.index[k],
+                        label=self.parameter.index[k],
                     )
                 else:
                     ax.plot(
-                        self.sen[self.Parameter.index[k]][0],
-                        self.sen[self.Parameter.index[k]][1],
-                        SensitivityAnalysis.MarkerStyle(k),
+                        self.sen[self.parameter.index[k]][0],
+                        self.sen[self.parameter.index[k]][1],
+                        Sensitivity.markerStyle(k),
                         linewidth=3,
                         markersize=10,
-                        label=self.Parameter.index[k],
+                        label=self.parameter.index[k],
                     )
 
-            ax.set_title(Title, fontsize=12)
+            ax.set_title(title, fontsize=12)
             ax.set_xlabel(xlabel, fontsize=12)
             ax.set_ylabel(ylabel, fontsize=12)
 
@@ -274,33 +264,33 @@ class SensitivityAnalysis:
             ax.legend(fontsize=12)
             plt.tight_layout()
             return fig, ax
-        else:  # self.Type == 2 and CalculatedValues
+        else:  # self.return_values == 2 and CalculatedValues
             try:
                 fig, (ax1, ax2) = plt.subplots(ncols=1, nrows=2, figsize=(8, 6))
 
                 for i in range(self.NoPar):
-                    # for i in range(len(self.sen[self.Parameter.index[0]][0])):
+                    # for i in range(len(self.sen[self.parameter.index[0]][0])):
                     k = self.Positions[i]
-                    if RealValues:
+                    if real_values:
                         ax1.plot(
-                            self.sen[self.Parameter.index[k]][2],
-                            self.sen[self.Parameter.index[k]][1],
-                            SensitivityAnalysis.MarkerStyle(k),
+                            self.sen[self.parameter.index[k]][2],
+                            self.sen[self.parameter.index[k]][1],
+                            Sensitivity.markerStyle(k),
                             linewidth=3,
                             markersize=10,
-                            label=self.Parameter.index[k],
+                            label=self.parameter.index[k],
                         )
                     else:
                         ax1.plot(
-                            self.sen[self.Parameter.index[k]][0],
-                            self.sen[self.Parameter.index[k]][1],
-                            SensitivityAnalysis.MarkerStyle(k),
+                            self.sen[self.parameter.index[k]][0],
+                            self.sen[self.parameter.index[k]][1],
+                            Sensitivity.markerStyle(k),
                             linewidth=3,
                             markersize=10,
-                            label=self.Parameter.index[k],
+                            label=self.parameter.index[k],
                         )
 
-                ax1.set_title(Title, fontsize=12)
+                ax1.set_title(title, fontsize=12)
                 ax1.set_xlabel(xlabel, fontsize=12)
                 ax1.set_ylabel(ylabel, fontsize=12)
                 ax1.tick_params(axis="both", which="major", labelsize=labelfontsize)
@@ -309,16 +299,16 @@ class SensitivityAnalysis:
 
                 for i in range(self.NoPar):
                     k = self.Positions[i]
-                    # for j in range(self.NoValues):
-                    for j in range(len(self.sen[self.Parameter.index[k]][0])):
-                        if From == "":
-                            From = 0
-                        if To == "":
-                            To = len(self.sen[self.Parameter.index[k]][3][j].values)
+                    # for j in range(self.n_values):
+                    for j in range(len(self.sen[self.parameter.index[k]][0])):
+                        if plotting_from == "":
+                            plotting_from = 0
+                        if plotting_to == "":
+                            plotting_to = len(self.sen[self.parameter.index[k]][3][j].values)
 
                         ax2.plot(
-                            self.sen[self.Parameter.index[k]][3][j].values[From:To],
-                            label=self.sen[self.Parameter.index[k]][2][j],
+                            self.sen[self.parameter.index[k]][3][j].values[plotting_from:plotting_to],
+                            label=self.sen[self.parameter.index[k]][2][j],
                         )
 
                 # ax2.legend(fontsize=12)
@@ -326,7 +316,7 @@ class SensitivityAnalysis:
                 ax2.set_position([box.x0, box.y0, box.width * 0.8, box.height])
                 ax2.legend(loc=6, fancybox=True, bbox_to_anchor=(1.015, 0.5))
 
-                ax2.set_title(Title2, fontsize=12)
+                ax2.set_title(title2, fontsize=12)
                 ax2.set_xlabel(xlabel2, fontsize=12)
                 ax2.set_ylabel(ylabel2, fontsize=12)
 
@@ -342,7 +332,7 @@ class SensitivityAnalysis:
             except ValueError:
                 assert (
                     False
-                ), "to plot Calculated Values you should choose Type==2 in the sentivivity object"
+                ), "to plot Calculated Values you should choose return_values==2 in the sentivivity object"
 
             plt.tight_layout()
             return fig, (ax1, ax2)
@@ -355,11 +345,7 @@ class SensitivityAnalysis:
 
         print("\n")
         print(
-            "Attributes List of: "
-            + repr(self.__dict__["name"])
-            + " - "
-            + self.__class__.__name__
-            + " Instance\n"
+            f"Attributes List of: {repr(self.__dict__['name'])} - {self.__class__.__name__} Instance\n"
         )
         self_keys = list(self.__dict__.keys())
         self_keys.sort()

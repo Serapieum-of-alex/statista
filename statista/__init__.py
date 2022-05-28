@@ -29,9 +29,11 @@ for dependency in hard_dependencies:
 if missing_dependencies:
     raise ImportError("Missing required dependencies {0}".format(missing_dependencies))
 
-import statista.performancecriteria
-import statista.sensitivityanalysis
-import statista.statisticaltools
+import statista.metrics
+import statista.sensitivity
+import statista.tools
+import statista.distributions
+import statista.parameters
 
 __doc__ = """
 statista - statistics package

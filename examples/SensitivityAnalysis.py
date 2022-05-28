@@ -83,7 +83,7 @@ print("KGE= " + str(round(Metrics["KGE"], 2)))
 print("WB= " + str(round(Metrics["WB"], 2)))
 #%%
 """
-first the SensitivityAnalysis method takes 4 arguments :
+first the Sensitivity method takes 4 arguments :
     1-parameters:previous obtained parameters
     2-LB: upper bound
     3-UB: lower bound
@@ -99,7 +99,7 @@ first the SensitivityAnalysis method takes 4 arguments :
     for lumped HBV model and calculates the RMSE of the calculated discharge.
 
     the first function "RUN.RunLumped" takes some arguments we need to pass it through
-    the SensitivityAnalysis method [ConceptualModel,data,p2,init_st,snow,Routing, RoutingFn]
+    the Sensitivity method [ConceptualModel,data,p2,init_st,snow,Routing, RoutingFn]
     with the same order in the defined function "wrapper"
 
     the second function is RMSE takes the calculated discharge from the first function
@@ -113,7 +113,7 @@ first the SensitivityAnalysis method takes 4 arguments :
     3- list the argument of the second function with the same order that the second
     function takes them
 
-SensitivityAnalysis method returns a dictionary with the name of the parameters
+Sensitivity method returns a dictionary with the name of the parameters
 as keys,
 Each parameter has a disctionary with two keys 0: list of parameters woth relative values
 1: list of parameter values
@@ -152,24 +152,24 @@ From = ""
 To = ""
 if Type == 1:
     fig, ax1 = Sen.Sobol(
-        RealValues=False,
-        Title="Sensitivity Analysis of the RMSE to models parameters",
+        real_values=False,
+        title="Sensitivity Analysis of the RMSE to models parameters",
         xlabel="Maxbas Values",
         ylabel="RMSE",
-        From=From,
-        To=To,
+        plotting_from=From,
+        plotting_to=To,
         xlabel2="Time",
         ylabel2="Discharge m3/s",
         spaces=[None, None, None, None, None, None],
     )
 elif Type == 2:
     fig, (ax1, ax2) = Sen.Sobol(
-        RealValues=False,
-        Title="Sensitivity Analysis of the RMSE to models parameters",
+        real_values=False,
+        title="Sensitivity Analysis of the RMSE to models parameters",
         xlabel="Maxbas Values",
         ylabel="RMSE",
-        From=From,
-        To=To,
+        plotting_from=From,
+        plotting_to=To,
         xlabel2="Time",
         ylabel2="Discharge m3/s",
         spaces=[None, None, None, None, None, None],

@@ -7,13 +7,11 @@ Created on Thu May 17 04:26:42 2018
 import numpy as np
 
 
-class StatisticalTools:
-    """StatisticalTools.
+class Tools:
+    """Tools.
 
-    StatisticalTools different statistical and interpolation tools
-
+    Tools different statistical and interpolation tools
     """
-
     def __init__(self):
         pass
 
@@ -24,23 +22,24 @@ class StatisticalTools:
         this function generates distributred values from reading at stations
         using inverse distance weighting method
 
-        inputs:
-            1-raster:
-                GDAL calss represent the GIS raster
-            2-coordinates:
-                dict {'x':[],'y':[]} with two columns contains x coordinates and y
-                coordinates of the stations
-            3-data:
-                numpy array contains values of the timeseries at each gauge in the
-                same order as the coordinates in the coordinates lists (x,y)
-            4- No_data_cells:
-                boolen value (True or False) if the user want to calculate the
-                values in the cells that has no data value (cropped) No_data_cells
-                equal True if not No_data_cells equals False (default is false )
-        outputs:
-            1-sp_dist:
-                numpy array with the same dimension of the raster
+        Parameters
+        raster:
+            GDAL calss represent the GIS raster
+        coordinates:
+            dict {'x':[],'y':[]} with two columns contains x coordinates and y
+            coordinates of the stations
+        data:
+            numpy array contains values of the timeseries at each gauge in the
+            same order as the coordinates in the coordinates lists (x,y)
+        No_data_cells:
+            boolen value (True or False) if the user want to calculate the
+            values in the cells that has no data value (cropped) No_data_cells
+            equal True if not No_data_cells equals False (default is false )
 
+        Returns
+        -------
+        array:
+             array with the same dimension of the raster
         """
         # get the shaoe of the raster
         shape_base_dem = raster.ReadAsArray().shape
@@ -119,6 +118,7 @@ class StatisticalTools:
         sp_dist = sp_dist.astype(np.float32)
 
         return sp_dist
+
 
     @staticmethod
     def ISDW(raster, coordinates, data, No_data_cells=False):
@@ -335,7 +335,7 @@ class StatisticalTools:
 
         y = int(
             np.round(
-                StatisticalTools.Rescale(
+                Tools.Rescale(
                     x_log, min_old_log, max_old_log, min_new, max_new
                 )
             )
@@ -374,7 +374,7 @@ class StatisticalTools:
 
         y = int(
             np.round(
-                StatisticalTools.Rescale(
+                Tools.Rescale(
                     x_power, min_old_power, max_old_power, min_new, max_new
                 )
             )

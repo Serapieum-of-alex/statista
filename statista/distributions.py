@@ -13,8 +13,8 @@ from numpy import ndarray
 from numpy.random import randint
 from scipy.stats import chisquare, genextreme, gumbel_r, ks_2samp, norm
 
-from statista.parameterestimation import Lmoments
-from statista.statisticaltools import StatisticalTools as st
+from statista.parameters import Lmoments
+from statista.tools import Tools as st
 
 
 ninf = 1e-5
@@ -28,7 +28,7 @@ class PlottingPosition:
         pass
 
     @staticmethod
-    def Weibul(data: Union[list, np.ndarray], option: int = 1) -> np.ndarray:
+    def weibul(data: Union[list, np.ndarray], option: int = 1) -> np.ndarray:
         """Weibul.
 
         Weibul method to calculate the cumulative distribution function CDF or
@@ -58,27 +58,49 @@ class PlottingPosition:
             return T
 
     @staticmethod
-    def Returnperiod(F: Union[list, np.ndarray]) -> np.ndarray:
+    def returnPeriod(F: Union[list, np.ndarray]) -> np.ndarray:
+        """returnPeriod.
+
+        Parameters
+        ----------
+        F: [list/array]
+            non exceedence probability.
+
+        Returns
+        -------
+        array:
+           return period.
+        """
         F = np.array(F)
         T = 1 / (1 - F)
         return T
 
 
 class Gumbel:
+    """
+    Gumbel distribution.
+    """
     def __init__(
             self,
             data: Union[list, np.ndarray]=None,
             loc: Union[int, float]=None,
             scale: Union[int, float]=None
     ):
-        """
+        """Gumbel.
+
+        Parameters
+        ----------
         data : [list]
             data time series.
+        loc: [numeric]
+            location parameter
+        scale: [numeric]
+            scale parameter
         """
         if isinstance(data, list) or isinstance(data, np.ndarray):
             self.data = np.array(data)
             self.data_sorted = np.sort(data)
-            self.cdf_Weibul = PlottingPosition.Weibul(data)
+            self.cdf_Weibul = PlottingPosition.weibul(data)
             self.KStable = 1.22 / np.sqrt(len(self.data))
 
         self.loc = loc
@@ -118,7 +140,7 @@ class Gumbel:
             probability density function pdf.
         """
         if scale <= 0:
-            raise ValueError("Scale Parameter is negative")
+            raise ValueError("Scale parameter is negative")
 
         if isinstance(actualdata, bool):
             ts = self.data
@@ -170,7 +192,7 @@ class Gumbel:
                 scale parameter of the gumbel distribution.
         """
         if scale <= 0:
-            raise ValueError("Scale Parameter is negative")
+            raise ValueError("Scale parameter is negative")
 
         if isinstance(actualdata, bool):
             ts = self.data
@@ -186,7 +208,7 @@ class Gumbel:
             )
             cdf_fitted = self.cdf(loc, scale, actualdata=Qx)
 
-            cdf_Weibul = PlottingPosition.Weibul(self.data_sorted)
+            cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
 
             fig, ax = plot.cdf(
                 Qx,
@@ -227,9 +249,10 @@ class Gumbel:
         # print x1, nx2, L1, L2
         return L1 + L2
 
-    def EstimateParameter(self, method: str="mle", ObjFunc=None,
-                          threshold:Union[None, float, int]=None, Test: bool=True) -> tuple:
-        """EstimateParameter.
+
+    def estimateParameter(self, method: str="mle", ObjFunc=None,
+                          threshold:Union[None, float, int]=None, test: bool=True) -> tuple:
+        """estimateParameter.
 
         EstimateParameter estimate the distribution parameter based on MLM
         (Maximum liklihood method), if an objective function is entered as an input
@@ -250,7 +273,7 @@ class Gumbel:
             Value you want to consider only the greater values.
         method : [string]
             'mle', 'mm', 'lmoments', optimization
-        Test: [bool]
+        test: [bool]
             Default is True.
 
         Returns
@@ -290,7 +313,7 @@ class Gumbel:
         self.loc = Param[0]
         self.scale = Param[1]
 
-        if Test:
+        if test:
             self.ks()
             self.chisquare()
 
@@ -298,28 +321,28 @@ class Gumbel:
 
 
     @staticmethod
-    def TheporeticalEstimate(
+    def theporeticalEstimate(
             loc: Union[float, int],
             scale: Union[float, int],
             cdf: np.ndarray
 ) -> np.ndarray:
-        """TheporeticalEstimate.
+        """theporeticalEstimate.
 
         TheporeticalEstimate method calculates the theoretical values based on the Gumbel distribution
 
         Parameters:
         -----------
-            1- param : [list]
-                location ans scale parameters of the gumbel distribution.
-            2- cdf: [list]
-                cummulative distribution function/ Non Exceedence probability.
+        param : [list]
+            location ans scale parameters of the gumbel distribution.
+        cdf: [list]
+            cummulative distribution function/ Non Exceedence probability.
         Return:
         -------
-            1- theoreticalvalue : [numeric]
-                Value based on the theoretical distribution
+        theoreticalvalue : [numeric]
+            Value based on the theoretical distribution
         """
         if scale <= 0:
-            raise ValueError("Scale Parameter is negative")
+            raise ValueError("Scale parameter is negative")
 
         if any(cdf) <= 0 or any(cdf) > 1:
             raise ValueError("cdf Value Invalid")
@@ -340,17 +363,17 @@ class Gumbel:
 
         returns:
         --------
-            Dstatic: [numeric]
-                The smaller the D static the more likely that the two samples are drawn from the same distribution
-            Pvalue : [numeric]
-                IF Pvalue < signeficance level ------ reject the null hypotethis
+        Dstatic: [numeric]
+            The smaller the D static the more likely that the two samples are drawn from the same distribution
+        Pvalue : [numeric]
+            IF Pvalue < signeficance level ------ reject the null hypotethis
         """
         if self.loc is None or self.scale is None:
             raise ValueError(
                 "Value of loc/scale parameter is unknown please use "
                 "'EstimateParameter' to obtain them"
             )
-        Qth = self.TheporeticalEstimate(self.loc, self.scale, self.cdf_Weibul)
+        Qth = self.theporeticalEstimate(self.loc, self.scale, self.cdf_Weibul)
 
         test = ks_2samp(self.data, Qth)
         self.Dstatic = test.statistic
@@ -367,13 +390,19 @@ class Gumbel:
 
 
     def chisquare(self) -> tuple:
+        """
+
+        Returns
+        -------
+
+        """
         if self.loc is None or self.scale is None:
             raise ValueError(
                 "Value of loc/scale parameter is unknown please use "
                 "'EstimateParameter' to obtain them"
             )
 
-        Qth = self.TheporeticalEstimate(self.loc, self.scale, self.cdf_Weibul)
+        Qth = self.theporeticalEstimate(self.loc, self.scale, self.cdf_Weibul)
         try:
             test = chisquare(st.Standardize(Qth), st.Standardize(self.data))
             self.chistatic = test.statistic
@@ -387,37 +416,37 @@ class Gumbel:
             # raise
 
 
-    def ConfidenceInterval(
+    def confidenceInterval(
             self,
             loc: Union[float, int],
             scale: Union[float, int],
             F: np.ndarray,
             alpha: float=0.1
     ) -> Tuple[np.ndarray, np.ndarray]:
-        """ConfidenceInterval.
+        """confidenceInterval.
 
         Parameters:
         -----------
-            1- loc : [numeric]
-                location parameter of the gumbel distribution.
-            2- scale : [numeric]
-                scale parameter of the gumbel distribution.
-            1-F : [list]
-                Non Exceedence probability
-            3-alpha : [numeric]
-                alpha or SignificanceLevel is a value of the confidence interval.
+        loc : [numeric]
+            location parameter of the gumbel distribution.
+        scale : [numeric]
+            scale parameter of the gumbel distribution.
+        F : [list]
+            Non Exceedence probability
+        alpha : [numeric]
+            alpha or SignificanceLevel is a value of the confidence interval.
 
         Return:
         -------
-            Qupper : [list]
-                upper bound coresponding to the confidence interval.
-            Qlower : [list]
-                lower bound coresponding to the confidence interval.
+        Qupper : [list]
+            upper bound coresponding to the confidence interval.
+        Qlower : [list]
+            lower bound coresponding to the confidence interval.
         """
         if scale <= 0:
-            raise ValueError("Scale Parameter is negative")
+            raise ValueError("Scale parameter is negative")
 
-        Qth = self.TheporeticalEstimate(loc, scale, F)
+        Qth = self.theporeticalEstimate(loc, scale, F)
         Y = [-np.log(-np.log(j)) for j in F]
         StdError = [
             (scale / np.sqrt(len(self.data)))
@@ -429,7 +458,7 @@ class Gumbel:
         Qlower = np.array([Qth[j] - v * StdError[j] for j in range(len(self.data))])
         return Qupper, Qlower
 
-    def ProbapilityPlot(
+    def probapilityPlot(
         self,
         loc: float,
         scale: float,
@@ -441,31 +470,31 @@ class Gumbel:
         ylabel: str="cdf",
         fontsize: int=15,
     ) -> Tuple[List[Figure], list]:
-        """ProbapilityPlot.
+        """probapilityPlot.
 
         ProbapilityPlot method calculates the theoretical values based on the Gumbel distribution
         parameters, theoretical cdf (or weibul), and calculate the confidence interval.
 
         Parameters
         ----------
-            loc : [numeric]
-                location parameter of the gumbel distribution.
-            scale : [numeric]
-                scale parameter of the gumbel distribution.
-            F : [np.ndarray]
-                theoretical cdf calculated using weibul or using the distribution cdf function.
-            alpha : [float]
-                value between 0 and 1.
-            fig1size: [tuple]
-                Default is (10, 5)
-            fig2size: [tuple]
-                Default is (6, 6)
-            xlabel: [str]
-                Default is "Actual data"
-            ylabel: [str]
-                Default is "cdf"
-            fontsize: [float]
-                Default is 15.
+        loc : [numeric]
+            location parameter of the gumbel distribution.
+        scale : [numeric]
+            scale parameter of the gumbel distribution.
+        F : [np.ndarray]
+            theoretical cdf calculated using weibul or using the distribution cdf function.
+        alpha : [float]
+            value between 0 and 1.
+        fig1size: [tuple]
+            Default is (10, 5)
+        fig2size: [tuple]
+            Default is (6, 6)
+        xlabel: [str]
+            Default is "Actual data"
+        ylabel: [str]
+            Default is "cdf"
+        fontsize: [float]
+            Default is 15.
 
         Returns
         -------
@@ -478,10 +507,10 @@ class Gumbel:
             lower bound coresponding to the confidence interval.
         """
         if scale <= 0:
-            raise ValueError("Scale Parameter is negative")
+            raise ValueError("Scale parameter is negative")
 
-        Qth = self.TheporeticalEstimate(loc, scale, F)
-        Qupper, Qlower = self.ConfidenceInterval(loc, scale, F, alpha)
+        Qth = self.theporeticalEstimate(loc, scale, F)
+        Qupper, Qlower = self.confidenceInterval(loc, scale, F, alpha)
 
         Qx = np.linspace(
             float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
@@ -510,19 +539,27 @@ class Gumbel:
 
 
 class GEV:
-
+    """
+    GEV (Genalized Extreme value statistics)
+    """
     data: ndarray
 
     def __init__(self, data: Union[list, np.ndarray]=None, shape: Union[int, float]=None,
                  loc: Union[int, float]=None, scale: Union[int, float]=None):
-        """
+        """GEV
+
+        Parameters
+        ----------
         data : [list]
             data time series.
+        shape
+        loc
+        scale
         """
         if isinstance(data, list) or isinstance(data, np.ndarray):
             self.data = np.array(data)
             self.data_sorted = np.sort(data)
-            self.cdf_Weibul = PlottingPosition.Weibul(data)
+            self.cdf_Weibul = PlottingPosition.weibul(data)
             self.KStable = 1.22 / np.sqrt(len(self.data))
 
         self.shape = shape
@@ -656,7 +693,7 @@ class GEV:
         Returns the value of Gumbel's cdf with parameters loc and scale at x.
         """
         if scale <= 0:
-            raise ValueError("Scale Parameter is negative")
+            raise ValueError("Scale parameter is negative")
 
         if isinstance(actualdata, bool):
             ts = self.data
@@ -687,7 +724,7 @@ class GEV:
             )
             cdf_fitted = self.cdf(shape, loc, scale, actualdata=Qx)
 
-            cdf_Weibul = PlottingPosition.Weibul(self.data_sorted)
+            cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
 
             fig, ax = plot.cdf(
                 Qx,
@@ -705,10 +742,10 @@ class GEV:
             return cdf
         # genextreme.cdf()
 
-    def EstimateParameter(self, method: str="mle", ObjFunc=None,
+    def estimateParameter(self, method: str="mle", ObjFunc=None,
                           threshold: Union[int, float, None]=None,
-                          Test: bool=True) -> tuple:
-        """EstimateParameter.
+                          test: bool=True) -> tuple:
+        """estimateParameter.
 
         EstimateParameter estimate the distribution parameter based on MLM
         (Maximum liklihood method), if an objective function is entered as an input
@@ -772,7 +809,7 @@ class GEV:
         self.loc = Param[1]
         self.scale = Param[2]
 
-        if Test:
+        if test:
             self.ks()
             try:
                 self.chisquare()
@@ -782,7 +819,7 @@ class GEV:
         return Param
 
     @staticmethod
-    def TheporeticalEstimate(
+    def theporeticalEstimate(
             shape: Union[float, int],
             loc: Union[float, int],
             scale: Union[float, int],
@@ -848,7 +885,7 @@ class GEV:
                 "Value of loc/scale parameter is unknown please use "
                 "'EstimateParameter' to obtain them"
             )
-        Qth = self.TheporeticalEstimate(
+        Qth = self.theporeticalEstimate(
             self.shape, self.loc, self.scale, self.cdf_Weibul
         )
 
@@ -872,7 +909,7 @@ class GEV:
                 "'EstimateParameter' to obtain them"
             )
 
-        Qth = self.TheporeticalEstimate(
+        Qth = self.theporeticalEstimate(
             self.shape, self.loc, self.scale, self.cdf_Weibul
         )
 
@@ -885,7 +922,7 @@ class GEV:
 
         return test.statistic, test.pvalue
 
-    def ConfidenceInterval(
+    def confidenceInterval(
         self,
         shape: Union[float, int],
         loc: Union[float, int],
@@ -896,7 +933,7 @@ class GEV:
         n_samples: int=100,
         **kargs
     ):
-        """ConfidenceInterval.
+        """confidenceInterval.
 
         Parameters:
         -----------
@@ -917,7 +954,7 @@ class GEV:
                 lower bound coresponding to the confidence interval.
         """
         if scale <= 0:
-            raise ValueError("Scale Parameter is negative")
+            raise ValueError("Scale parameter is negative")
 
         Param = [shape, loc, scale]
         CI = ConfidenceInterval.BootStrap(
@@ -935,7 +972,7 @@ class GEV:
         return Qupper, Qlower
 
 
-    def ProbapilityPlot(
+    def probapilityPlot(
         self,
         shape: Union[float, int],
         loc: Union[float, int],
@@ -950,7 +987,7 @@ class GEV:
         ylabel="cdf",
         fontsize=15,
     ):
-        """ProbapilityPlot.
+        """probapilityPlot.
 
         ProbapilityPlot method calculates the theoretical values based on the Gumbel distribution
         parameters, theoretical cdf (or weibul), and calculate the confidence interval.
@@ -986,9 +1023,9 @@ class GEV:
 
         """
         if scale <= 0:
-            raise ValueError("Scale Parameter is negative")
+            raise ValueError("Scale parameter is negative")
 
-        Qth = self.TheporeticalEstimate(shape, loc, scale, F)
+        Qth = self.theporeticalEstimate(shape, loc, scale, F)
         if func is None:
             func = ConfidenceInterval.GEVfunc
 
@@ -1062,7 +1099,7 @@ class ConfidenceInterval:
 
         parameters:
         -----------
-        3-alpha : [numeric]
+        alpha : [numeric]
                 alpha or SignificanceLevel is a value of the confidence interval.
         kwargs :
             gevfit : [list]
@@ -1130,7 +1167,7 @@ class ConfidenceInterval:
         loc = gevfit[1]
         scale = gevfit[2]
         # generate theoretical estimates based on a random cdf, and the dist parameters
-        sample = GEV.TheporeticalEstimate(shape, loc, scale, np.random.rand(len(data)))
+        sample = GEV.theporeticalEstimate(shape, loc, scale, np.random.rand(len(data)))
         # get parameters based on the new generated sample
         LM = Lmoments(sample)
         mum = LM.Lmom()
@@ -1144,7 +1181,7 @@ class ConfidenceInterval:
         # T = np.linspace(0.1, 999, len(data)) + 1
         # coresponding theoretical estimate to T
         # F = 1 - 1 / T
-        Qth = GEV.TheporeticalEstimate(shape, loc, scale, F)
+        Qth = GEV.theporeticalEstimate(shape, loc, scale, F)
 
         res = newfit
         res.extend(Qth)
@@ -1152,6 +1189,9 @@ class ConfidenceInterval:
 
 
 class plot:
+    """
+    plot.
+    """
     def __init__(self):
         pass
 
@@ -1164,7 +1204,21 @@ class plot:
         ylabel: str="pdf",
         fontsize: int=15,
     ):
+        """pdf.
 
+        Parameters
+        ----------
+        pdf_fitted
+        data_sorted
+        figsize
+        xlabel
+        ylabel
+        fontsize
+
+        Returns
+        -------
+
+        """
         fig = plt.figure(figsize=figsize)
         # gs = gridspec.GridSpec(nrows=1, ncols=2, figure=fig)
         # Plot the histogram and the fitted distribution, save it for each gauge.
@@ -1186,7 +1240,23 @@ class plot:
         ylabel="cdf",
         fontsize=15,
     ):
+        """cdf.
 
+        Parameters
+        ----------
+        Qx
+        cdf_fitted
+        data_sorted
+        cdf_Weibul
+        figsize
+        xlabel
+        ylabel
+        fontsize
+
+        Returns
+        -------
+
+        """
         fig = plt.figure(figsize=figsize)
         ax = fig.add_subplot()
         ax.plot(Qx, cdf_fitted, "r-", label="Fitted distribution")
@@ -1213,7 +1283,29 @@ class plot:
         ylabel: str="cdf",
         fontsize: int=15,
     ) -> Tuple[List[Figure], List[Any]]:
+        """details.
 
+        Parameters
+        ----------
+        Qx
+        Qth
+        Qact
+        pdf
+        cdf_fitted
+        F
+        Qlower
+        Qupper
+        alpha
+        fig1size
+        fig2size
+        xlabel
+        ylabel
+        fontsize
+
+        Returns
+        -------
+
+        """
         fig1 = plt.figure(figsize=fig1size)
         gs = gridspec.GridSpec(nrows=1, ncols=2, figure=fig1)
         # Plot the histogram and the fitted distribution, save it for each gauge.

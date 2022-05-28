@@ -21,7 +21,7 @@ import pandas as pd
 matplotlib.use('TkAgg')
 from Hapi.sm.distributions import GEV, ConfidenceInterval, Gumbel, PlottingPosition
 
-# from Hapi.statistics.statisticaltools import StatisticalTools as st
+# from Hapi.statistics.statisticaltools import Tools as st
 
 time_series1 = pd.read_csv("examples/statistics/data/time_series1.txt", header=None)[0].tolist()
 time_series2 = pd.read_csv("examples/statistics/data/time_series2.txt", header=None)[0].tolist()

@@ -6,37 +6,37 @@ from sklearn.metrics import r2_score
 
 
 def RMSE(
-        Qobs: Union[list, np.ndarray],
-        Qsim: Union[list, np.ndarray]
+        obs: Union[list, np.ndarray],
+        sim: Union[list, np.ndarray]
 ) -> float:
     """
     Root Mean Squared Error. Metric for the estimation of performance of the
     hydrological model.
 
-    Inputs:
+    Parameters
     ----------
-        1-Qobs :
-            [numpy ndarray] Measured discharge [m3/s]
-        2-Qsim :
-            [numpy ndarray] Simulated discharge [m3/s]
+    obs: [ndarray]
+        Measured values
+    sim: [ndarray]
+        Simulated values
 
-    Outputs:
+    Returns
     -------
-        1-error :
-            [float] RMSE value
+    error: [float]
+        RMSE value
     """
-    # convert Qobs & Qsim into arrays
-    Qobs = np.array(Qobs)
-    Qsim = np.array(Qsim)
+    # convert Qobs & sim into arrays
+    obs = np.array(obs)
+    sim = np.array(sim)
 
-    rmse = np.sqrt(np.average((np.array(Qobs) - np.array(Qsim)) ** 2), dtype=np.float64)
+    rmse = np.sqrt(np.average((np.array(obs) - np.array(sim)) ** 2), dtype=np.float64)
 
     return rmse
 
 
 def RMSEHF(
-        Qobs: Union[list, np.ndarray],
-        Qsim: Union[list, np.ndarray],
+        obs: Union[list, np.ndarray],
+        sim: Union[list, np.ndarray],
         WStype: int,
         N: int,
         alpha: Union[int, float]
@@ -44,21 +44,22 @@ def RMSEHF(
     """
     Weighted Root mean square Error for High flow
 
-    inputs:
+    Parameters
     ----------
-        1- Qobs:
-            observed flow
-        2- Qsim:
-            simulated flow
-        3- WStype:
-            Weighting scheme (1,2,3,4)
-        4- N:
-            power
-        5- alpha:
-            Upper limit for low flow weight
-    Output:
-    ----------
-        1- error values
+    obs: [list/array]
+        observed flow
+    sim: [list/array]
+        simulated flow
+    WStype:
+        Weighting scheme (1,2,3,4)
+    N:
+        power
+    alpha:
+        Upper limit for low flow weight
+
+    Returns
+    -------
+    error values
     """
     # input data validation
     # data type
@@ -79,12 +80,12 @@ def RMSEHF(
             0 < alpha < 1
     ), f"alpha should be float number and between 0 & 1 you have entered {alpha}"
 
-    # convert Qobs & Qsim into arrays
-    Qobs = np.array(Qobs)
-    Qsim = np.array(Qsim)
+    # convert obs & sim into arrays
+    obs = np.array(obs)
+    sim = np.array(sim)
 
-    Qmax = max(Qobs)
-    h = Qobs / Qmax  # rational Discharge
+    Qmax = max(obs)
+    h = obs / Qmax  # rational Discharge
 
     if WStype == 1:
         w = h ** N  # rational Discharge power N
@@ -102,16 +103,16 @@ def RMSEHF(
     else:  # sigmoid function
         w = 1 / (1 + np.exp(-10 * h + 5))
 
-    a = (Qobs - Qsim) ** 2
+    a = (obs - sim) ** 2
     b = a * w
     c = sum(b)
-    error = np.sqrt(c / len(Qobs))
+    error = np.sqrt(c / len(obs))
 
     return error
 
 
 def RMSELF(
-        Qobs: Union[list, np.ndarray],
+        obs: Union[list, np.ndarray],
         Qsim: Union[list, np.ndarray],
         WStype: int,
         N: int,
@@ -122,15 +123,20 @@ def RMSELF(
 
     inputs:
     ----------
-        1- Qobs : observed flow
-        2- Qsim : simulated flow
-        3- WStype : Weighting scheme (1,2,3,4)
-        4- N: power
-        5- alpha : Upper limit for low flow weight
+    obs: [list/array]
+        observed flow
+    sim: [list/array]
+        simulated flow
+    WStype:
+        Weighting scheme (1,2,3,4)
+    N:
+        power
+    alpha:
+        Upper limit for low flow weight
 
-    Output:
-    ----------
-        1- error values
+    Returns
+    -------
+    error values
     """
     # input data validation
     # data type
@@ -152,12 +158,12 @@ def RMSELF(
             0 < alpha < 1
     ), f"alpha should be float number and between 0 & 1 you have entered {alpha}"
 
-    # convert Qobs & Qsim into arrays
-    Qobs = np.array(Qobs)
+    # convert obs & sim into arrays
+    obs = np.array(obs)
     Qsim = np.array(Qsim)
 
-    Qmax = max(Qobs)  # rational Discharge power N
-    l = (Qmax - Qobs) / Qmax
+    Qmax = max(obs)  # rational Discharge power N
+    l = (Qmax - obs) / Qmax
 
     if WStype == 1:
         w = l ** N
@@ -177,44 +183,46 @@ def RMSELF(
         #        w=1/(1+np.exp(10*h-5))
         w = 1 / (1 + np.exp(-10 * l + 5))
 
-    a = (Qobs - Qsim) ** 2
+    a = (obs - Qsim) ** 2
     b = a * w
     c = sum(b)
-    error = np.sqrt(c / len(Qobs))
+    error = np.sqrt(c / len(obs))
 
     return error
 
 
-def KGE(Qobs: Union[list, np.ndarray], Qsim: Union[list, np.ndarray]):
+def KGE(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     """
     (Gupta et al. 2009) have showed the limitation of using a single error
     function to measure the efficiency of calculated flow and showed that
     Nash-Sutcliff efficiency (NSE) or RMSE can be decomposed into three component
     correlation, variability and bias.
 
-    inputs:
+    Parameters
     ----------
-        1- Qobs : observed flow
-        2- Qsim : simulated flow
+    obs: [list/array]
+        observed flow
+    sim: [list/array]
+        simulated flow
 
-    Output:
-    ----------
-        1- error values
+    Returns
+    -------
+    error values
     """
-    # convert Qobs & Qsim into arrays
-    Qobs = np.array(Qobs)
-    Qsim = np.array(Qsim)
+    # convert obs & sim into arrays
+    obs = np.array(obs)
+    sim = np.array(sim)
 
-    c = np.corrcoef(Qobs, Qsim)[0][1]
-    alpha = np.std(Qsim) / np.std(Qobs)
-    beta = np.mean(Qsim) / np.mean(Qobs)
+    c = np.corrcoef(obs, sim)[0][1]
+    alpha = np.std(sim) / np.std(obs)
+    beta = np.mean(sim) / np.mean(obs)
 
     kge = 1 - np.sqrt(((c - 1) ** 2) + ((alpha - 1) ** 2) + ((beta - 1) ** 2))
 
     return kge
 
 
-def WB(Qobs, Qsim):
+def WB(obs, Qsim):
     """
     The mean cumulative error measures how much the model succeed to reproduce
     the stream flow volume correctly. This error allows error compensation from
@@ -225,55 +233,51 @@ def WB(Qobs, Qsim):
 
     inputs:
     ----------
-        1- Qobs : observed flow
-        2- Qsim : simulated flow
+   obs: [list/array]
+        observed flow
+    sim: [list/array]
+        simulated flow
 
-    Output:
-    ----------
-        1- error values
+    Returns
+    -------
+    error values
     """
-    Qobssum = np.sum(Qobs)
+    Qobssum = np.sum(obs)
     Qsimsum = np.sum(Qsim)
     wb = 100 * (1 - np.abs(1 - (Qsimsum / Qobssum)))
 
     return wb
 
 
-def NSE(Qobs: np.ndarray, Qsim: np.ndarray):
+def NSE(obs: np.ndarray, sim: np.ndarray):
     """
     Nash-Sutcliffe efficiency. Metric for the estimation of performance of the
     hydrological model
 
-    Inputs:
+    Parameters
     ----------
-        1-Qobs: [numpy ndarray]
-            Measured discharge [m3/s]
-        2-Qsim: [numpy ndarray]
-            Simulated discharge [m3/s]
+    obs: [list/array]
+        observed flow
+    sim: [list/array]
+        simulated flow
 
-    Outputs
+    Returns
     -------
-        1-f: [float]
-            NSE value
-
-    examples:
-    -------
-        Qobs = np.loadtxt("Qobs.txt")
-        Qout = Model(prec,evap,temp)
-        error = NSE(Qobs,Qout)
+    float:
+        NSE value
     """
-    # convert Qobs & Qsim into arrays
-    Qobs = np.array(Qobs)
-    Qsim = np.array(Qsim)
+    # convert obs & sim into arrays
+    obs = np.array(obs)
+    sim = np.array(sim)
 
-    a = sum((Qobs - Qsim) ** 2)
-    b = sum((Qobs - np.average(Qobs)) ** 2)
+    a = sum((obs - sim) ** 2)
+    b = sum((obs - np.average(obs)) ** 2)
     e = 1 - (a / b)
 
     return e
 
 
-def NSEHF(Qobs: Union[list, np.ndarray], Qsim: Union[list, np.ndarray]):
+def NSEHF(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     """NSEHF.
 
     Modified Nash-Sutcliffe efficiency. Metric for the estimation of performance of the
@@ -285,36 +289,30 @@ def NSEHF(Qobs: Union[list, np.ndarray], Qsim: Union[list, np.ndarray]):
     parameter regionalization of a watershed model. J Hydrol
     2004, 292, (1–4), 281–295
 
-    Inputs:
+    Parameters
     ----------
-    1-Qobs :
-        [numpy ndarray] Measured discharge [m3/s]
-    2-Qsim :
-        [numpy ndarray] Simulated discharge [m3/s]
+    obs: [list/array]
+        observed flow
+    sim: [list/array]
+        simulated flow
 
-    Outputs
+    Returns
     -------
-    1-f :
-        [float] NSE value
-
-    examples:
-    -------
-        Qobs=np.loadtxt("Qobs.txt")
-        Qout=Model(prec,evap,temp)
-        error=NSE(Qobs,Qout)
+    float:
+        NSE value
     """
-    # convert Qobs & Qsim into arrays
-    Qobs = np.array(Qobs)
-    Qsim = np.array(Qsim)
+    # convert obs & sim into arrays
+    obs = np.array(obs)
+    sim = np.array(sim)
 
-    a = sum(Qobs * (Qobs - Qsim) ** 2)
-    b = sum(Qobs * (Qobs - np.average(Qobs)) ** 2)
+    a = sum(obs * (obs - sim) ** 2)
+    b = sum(obs * (obs - np.average(obs)) ** 2)
     e = 1 - (a / b)
 
     return e
 
 
-def NSELF(Qobs: Union[list, np.ndarray], Qsim: Union[list, np.ndarray]):
+def NSELF(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     """NSELF.
 
     Modified Nash-Sutcliffe efficiency. Metric for the estimation of performance of the
@@ -326,88 +324,81 @@ def NSELF(Qobs: Union[list, np.ndarray], Qsim: Union[list, np.ndarray]):
     parameter regionalization of a watershed model. J Hydrol
     2004, 292, (1–4), 281–295
 
-    Inputs:
+    Parameters
     ----------
-    1-Qobs :
-        [numpy ndarray] Measured discharge [m3/s]
-    2-Qsim :
-        [numpy ndarray] Simulated discharge [m3/s]
+    obs: [list/array]
+        observed flow
+    sim: [list/array]
+        simulated flow
 
-    Outputs
+    Returns
     -------
-    1-f :
-        [float] NSE value
-
-    examples:
-    -------
-        Qobs=np.loadtxt("Qobs.txt")
-        Qout=Model(prec,evap,temp)
-        error=NSE(Qobs,Qout)
+    float:
+        NSELF value
     """
-    # convert Qobs & Qsim into arrays
-    Qobs = np.array(np.log(Qobs))
-    Qsim = np.array(np.log(Qsim))
+    # convert obs & sim into arrays
+    obs = np.array(np.log(obs))
+    sim = np.array(np.log(sim))
 
-    a = sum(Qobs * (Qobs - Qsim) ** 2)
-    b = sum(Qobs * (Qobs - np.average(Qobs)) ** 2)
+    a = sum(obs * (obs - sim) ** 2)
+    b = sum(obs * (obs - np.average(obs)) ** 2)
     e = 1 - (a / b)
 
     return e
 
 
-def MBE(Qobs: Union[list, np.ndarray], Qsim: Union[list, np.ndarray]):
+def MBE(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     """
     MBE (mean bias error)
-    MBE = (Qsim - Qobs)/n
+    MBE = (sim - obs)/n
 
     Parameters
     ----------
-        1-Qobs : [list]
-            list of the first time series.
-        2-Qsim : [list]
-            list of the first time series.
+    obs: [list/array]
+        observed flow
+    sim: [list/array]
+        simulated flow
 
     Returns
     -------
-        [float]
-            mean bias error.
+    float:
+        mean bias error.
 
     """
 
-    return (np.array(Qsim) - np.array(Qobs)).mean()
+    return (np.array(sim) - np.array(obs)).mean()
 
 
-def MAE(Qobs: Union[list, np.ndarray], Qsim: Union[list, np.ndarray]):
+def MAE(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     """
     MAE (mean absolute error)
-    MAE = |(Qobs - Qsim)|/n
+    MAE = |(obs - sim)|/n
 
     Parameters
     ----------
-        1-Qobs : [list]
-            list of the first time series.
-        2-Qsim : [list]
-            list of the first time series.
+    obs: [list/array]
+        observed flow
+    sim: [list/array]
+        simulated flow
 
     Returns
     -------
-        [float]
-            mean absolute error.
-
+    float:
+        mean absolute error.
     """
 
-    return np.abs(np.array(Qobs) - np.array(Qsim)).mean()
+    return np.abs(np.array(obs) - np.array(sim)).mean()
 
 
-def PearsonCorre(Qobs: Union[list, np.ndarray], Qsim: Union[list, np.ndarray]):
+def PearsonCorre(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     """
     Pearson correlation coefficient r2 is independent of the magnitude of the numbers;
     it is sensitive to relative changes only.
     """
-    return (np.corrcoef(np.array(Qobs), np.array(Qsim))[0][1]) ** 2
+    return (np.corrcoef(np.array(obs), np.array(sim))[0][1]) ** 2
 
 
-def R2(Qobs: Union[list, np.ndarray], Qsim: Union[list, np.ndarray]):
+def R2(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     """R2.
 
         the coefficient of determination measures how well the predicted
@@ -424,6 +415,12 @@ def R2(Qobs: Union[list, np.ndarray], Qsim: Union[list, np.ndarray]):
 
     Since R² indicates the distance of points from the 1:1 line, it does depend
     on the magnitude of the numbers (unlike r² peason correlation coefficient).
-    """
 
-    return r2_score(np.array(Qobs), np.array(Qsim))
+    Parameters
+    ----------
+    obs: [list/array]
+        observed flow
+    sim: [list/array]
+        simulated flow
+    """
+    return r2_score(np.array(obs), np.array(sim))
