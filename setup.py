@@ -23,7 +23,7 @@ setup(
     long_description_content_type="text/markdown",
     license="GNU General Public License v3",
     zip_safe=False,
-    packages=find_packages(include=['pyramids', 'pyramids.*']),
+    packages=find_packages(include=['statista', 'statista.*']),
     test_suite="tests",
     tests_require=test_requirements,
     # install_requires=requirements,
