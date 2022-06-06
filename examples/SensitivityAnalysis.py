@@ -158,7 +158,7 @@ if Type == 1:
         ylabel="RMSE",
         plotting_from=From,
         plotting_to=To,
-        xlabel2="Time",
+        xlabel2="time",
         ylabel2="Discharge m3/s",
         spaces=[None, None, None, None, None, None],
     )
@@ -170,7 +170,7 @@ elif Type == 2:
         ylabel="RMSE",
         plotting_from=From,
         plotting_to=To,
-        xlabel2="Time",
+        xlabel2="time",
         ylabel2="Discharge m3/s",
         spaces=[None, None, None, None, None, None],
     )
