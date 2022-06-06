@@ -404,7 +404,7 @@ class Gumbel:
 
         Qth = self.theporeticalEstimate(self.loc, self.scale, self.cdf_Weibul)
         try:
-            test = chisquare(st.Standardize(Qth), st.Standardize(self.data))
+            test = chisquare(st.standardize(Qth), st.standardize(self.data))
             self.chistatic = test.statistic
             self.chi_Pvalue = test.pvalue
             print("-----chisquare Test-----")
@@ -766,7 +766,7 @@ class GEV:
             Value you want to consider only the greater values.
         method : [string]
             'mle', 'mm', 'lmoments', optimization
-        Test: bool
+        test: bool
             Default is True
 
         Returns
@@ -913,7 +913,7 @@ class GEV:
             self.shape, self.loc, self.scale, self.cdf_Weibul
         )
 
-        test = chisquare(st.Standardize(Qth), st.Standardize(self.data))
+        test = chisquare(st.standardize(Qth), st.standardize(self.data))
         self.chistatic = test.statistic
         self.chi_Pvalue = test.pvalue
         print("-----chisquare Test-----")
