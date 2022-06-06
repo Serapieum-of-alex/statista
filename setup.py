@@ -6,14 +6,14 @@ with open("README.md", "r") as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-# requirements = [line.strip() for line in open("requirements.txt").readlines()]
-# requirements = requirements[1:]
+requirements = [line.strip() for line in open("requirements.txt").readlines()]
+requirements = requirements[1:]
 
 test_requirements = ['pytest>=3', ]
 
 setup(
     name="statista",
-    version="0.1.0",
+    version="0.1.1",
     description="statistics package",
     author="Mostafa Farrag",
     author_email="moah.farag@gmail.come",
@@ -26,7 +26,7 @@ setup(
     packages=find_packages(include=['statista', 'statista.*']),
     test_suite="tests",
     tests_require=test_requirements,
-    # install_requires=requirements,
+    install_requires=requirements,
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: Console",
