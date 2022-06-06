@@ -10,5 +10,4 @@ theme:
 
 nav:
     - Home: index.md
-    - GIS: GIS.md
     - License: license.md
