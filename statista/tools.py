@@ -127,23 +127,26 @@ class Tools:
         this function generates distributred values from reading at stations using
         inverse squared distance weighting method
 
-        inputs:
-            1-raster:
-                GDAL calss represent the GIS raster
-            2-coordinates:
-                dict {'x':[],'y':[]} with two columns contains x coordinates and y
-                coordinates of the stations
-            3-data:
-                numpy array contains values of the timeseries at each gauge in the
-                same order as the coordinates in the coordinates lists (x,y)
-            4- No_data_cells:
-                boolen value (True or False) if the user want to calculate the
-                values in the cells that has no data value (cropped) No_data_cells
-                equal True if not No_data_cells equals False
-                (default is false )
-        outputs:
-            1-sp_dist:
-                numpy array with the same dimension of the raster
+        Parameters
+        ----------
+        raster: [dataset]
+            GDAL calss represent the GIS raster
+        coordinates: [dict]
+            dict {'x':[],'y':[]} with two columns contains x coordinates and y
+            coordinates of the stations
+        data: [array]
+            numpy array contains values of the timeseries at each gauge in the
+            same order as the coordinates in the coordinates lists (x,y)
+        No_data_cells: []
+            boolen value (True or False) if the user want to calculate the
+            values in the cells that has no data value (cropped) No_data_cells
+            equal True if not No_data_cells equals False
+            (default is false )
+
+        Returns
+        -------
+        sp_dist: [array]
+            array with the same dimension of the raster
         """
         shape_base_dem = raster.ReadAsArray().shape
         # get the coordinates of the top left corner and cell size [x,dx,y,dy]
@@ -226,19 +229,20 @@ class Tools:
         return sp_dist
 
     @staticmethod
-    def Normalize(x):
+    def normalize(x):
         """Normalizer
 
         to normalize values between 0 and 1
 
-        Inputs:
+        Parameters
+        ----------
+        x : [List]
+            list of values
+
+        Returns
         -------
-            1-x : [List]
-                list of values
-        Outputs:
-        -------
-            1- normalized numbers : [List]
-                list of normalized values
+        normalized numbers : [List]
+            list of normalized values
         """
         x = np.array(x)
         DataMax = max(x)
@@ -248,18 +252,21 @@ class Tools:
         return N
 
     @staticmethod
-    def Standardize(x):
+    def standardize(x):
         """Standardize.
 
         to standardize (make the average equals 1 and the standard deviation
         equals 0)
 
-        Inputs :
-            1-x:
-                [List] list of values
-        Outputs:
-            1-
-            [List] list of normalized values
+        Parameters
+        ----------
+        x: [List]
+            list of values
+
+        Returns
+        -------
+        Standardized values: [List]
+            list of normalized values
         """
         x = np.array(x)
 
@@ -270,25 +277,29 @@ class Tools:
         return s
 
     @staticmethod
-    def Rescale(OldValue, OldMin, OldMax, NewMin, NewMax):
+    def rescale(OldValue, OldMin, OldMax, NewMin, NewMax):
         """Rescale.
 
         Rescale nethod rescales a value between two boundaries to a new value
         bewteen two other boundaries
-        inputs:
-            1-OldValue:
-                [float] value need to transformed
-            2-OldMin:
-                [float] min old value
-            3-OldMax:
-                [float] max old value
-            4-NewMin:
-                [float] min new value
-            5-NewMax:
-                [float] max new value
-        output:
-            1-NewValue:
-                [float] transformed new value
+
+        Parameters
+        ----------
+        OldValue: [float]
+            value need to transformed
+        OldMin: [float]
+            min old value
+        OldMax: [float]
+            max old value
+        NewMin: [float]
+            min new value
+        NewMax: [float]
+            max new value
+
+        Returns
+        -------
+        NewValue: [float]
+            transformed new value
 
         """
         OldRange = OldMax - OldMin
@@ -298,27 +309,31 @@ class Tools:
         return NewValue
 
     @staticmethod
-    def LogarithmicRescale(x, min_old, max_old, min_new, max_new):
+    def logarithmicRescale(x, min_old, max_old, min_new, max_new):
         """LogarithmicRescale.
 
         this function transform the value between two normal values to a logarithmic scale
         between logarithmic value of both boundaries
             np.log(base)(number) = power
             the inverse of logarithmic is base**power = number
-        inputs:
-            1-x:
-                [float] new value needed to be transformed to a logarithmic scale
-            2-min_old:
-                [float] min old value in normal scale
-            3-max_old:
-                [float] max old value in normal scale
-            4-min_new:
-                [float] min new value in normal scale
-            5-max_new:
-                [float] max_new max new value
-        output:
-            1-Y:
-                [int] integer number between new max_new and min_new boundaries
+
+        Parameters
+        ----------
+        x: [float]
+            new value needed to be transformed to a logarithmic scale
+        min_old: [float]
+            min old value in normal scale
+        max_old: [float]
+            max old value in normal scale
+        min_new: [float]
+            min new value in normal scale
+        max_new: [float]
+            max_new max new value
+
+        Returns
+        -------
+        Y: [int]
+            integer number between new max_new and min_new boundaries
         """
         # get the boundaries of the logarithmic scale
         if min_old == 0.0:
@@ -335,7 +350,7 @@ class Tools:
 
         y = int(
             np.round(
-                Tools.Rescale(
+                Tools.rescale(
                     x_log, min_old_log, max_old_log, min_new, max_new
                 )
             )
@@ -344,27 +359,31 @@ class Tools:
         return y
 
     @staticmethod
-    def InvLogarithmicRescale(x, min_old, max_old, min_new, max_new, base=np.e):
+    def invLogarithmicRescale(x, min_old, max_old, min_new, max_new, base=np.e):
         """LogarithmicRescale.
 
         this function transform the value between two normal values to a logarithmic scale
         between logarithmic value of both boundaries
             np.log(base)(number) = power
             the inverse of logarithmic is base**power = number
-        inputs:
-            1-x:
-                [float] new value needed to be transformed to a logarithmic scale
-            2-min_old:
-                [float] min old value in normal scale
-            3-max_old:
-                [float] max old value in normal scale
-            4-min_new:
-                [float] min new value in normal scale
-            5-max_new:
-                [float] max_new max new value
-        output:
-            1-Y:
-                [int] integer number between new max_new and min_new boundaries
+
+        Parameters
+        ----------
+        x: [float]
+            new value needed to be transformed to a logarithmic scale
+        min_old: [float]
+            min old value in normal scale
+        max_old: [float]
+            max old value in normal scale
+        min_new: [float]
+            min new value in normal scale
+        max_new: [float]
+            max_new max new value
+
+        Returns
+        -------
+        Y: [int]
+            integer number between new max_new and min_new boundaries
         """
         # get the boundaries of the logarithmic scale
 
@@ -374,7 +393,7 @@ class Tools:
 
         y = int(
             np.round(
-                Tools.Rescale(
+                Tools.rescale(
                     x_power, min_old_power, max_old_power, min_new, max_new
                 )
             )
@@ -382,5 +401,5 @@ class Tools:
         return y
 
     @staticmethod
-    def Round(number, roundto):
+    def round(number, roundto):
         return round(number / roundto) * roundto
