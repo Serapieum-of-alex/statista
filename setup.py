@@ -13,7 +13,7 @@ test_requirements = ['pytest>=3', ]
 
 setup(
     name="statista",
-    version="0.1.1",
+    version="0.1.2",
     description="statistics package",
     author="Mostafa Farrag",
     author_email="moah.farag@gmail.come",
