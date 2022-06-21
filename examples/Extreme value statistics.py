@@ -8,6 +8,7 @@ import os
 os.chdir(r"C:\MyComputer\01Algorithms\Statistics\statista")
 import matplotlib
 
+matplotlib.use('TkAgg')
 # import scipy.optimize as so
 # import matplotlib.pyplot as plt
 # import numpy as np
@@ -15,8 +16,10 @@ import matplotlib
 # from scipy import stats as stats
 # from scipy.stats import genextreme, gumbel_r, norm
 import pandas as pd
-matplotlib.use('TkAgg')
-from statista.distributions import GEV, ConfidenceInterval, Gumbel, PlottingPosition
+
+from statista.distributions import (GEV, ConfidenceInterval, Gumbel,
+                                    PlottingPosition)
+
 # from statista.tools import Tools as st
 
 time_series1 = pd.read_csv("examples/data/time_series1.txt", header=None)[0].tolist()
@@ -123,4 +126,3 @@ LB = CI["LB"]
 UB = CI["UB"]
 #%%
 fig, ax = Gevdist.probapilityPlot(shape, loc, scale, cdf_Weibul, func=func, n_samples=len(time_series1))
-
