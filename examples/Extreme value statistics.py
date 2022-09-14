@@ -17,8 +17,7 @@ matplotlib.use('TkAgg')
 # from scipy.stats import genextreme, gumbel_r, norm
 import pandas as pd
 
-from statista.distributions import (GEV, ConfidenceInterval, Gumbel,
-                                    PlottingPosition)
+from statista.distributions import GEV, ConfidenceInterval, Gumbel, PlottingPosition
 
 # from statista.tools import Tools as st
 

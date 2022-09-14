@@ -16,7 +16,6 @@ from scipy.stats import chisquare, genextreme, gumbel_r, ks_2samp, norm
 from statista.parameters import Lmoments
 from statista.tools import Tools as st
 
-
 ninf = 1e-5
 
 
@@ -226,6 +225,35 @@ class Gumbel:
             return cdf
         # gumbel_r.cdf(Q, loc, scale)
 
+    def getRP(self, loc, scale, data):
+        """getRP.
+
+            getRP calculates the return period for a list/array of values or a single value.
+
+        Parameters
+        ----------
+        data:[list/array/float]
+            value you want the coresponding return value for
+        loc: [float]
+            location parameter
+        scale: [float]
+            scale parameter
+
+        Returns
+        -------
+        float:
+            return period
+        """
+        if isinstance(data, list) or isinstance(data, np.ndarray):
+            cdf = self.cdf(loc, scale, actualdata=data)
+        else:
+            cdf = gumbel_r.cdf(data, loc, scale)
+
+        rp = 1 / (1 - cdf)
+
+        return rp
+
+
     @staticmethod
     def ObjectiveFn(p, x):
         """ObjectiveFn.
@@ -336,6 +364,7 @@ class Gumbel:
             location ans scale parameters of the gumbel distribution.
         cdf: [list]
             cummulative distribution function/ Non Exceedence probability.
+
         Return:
         -------
         theoreticalvalue : [numeric]
@@ -740,7 +769,38 @@ class GEV:
             return cdf, fig, ax
         else:
             return cdf
+
         # genextreme.cdf()
+
+    def getRP(self, shape, loc, scale, data):
+        """getRP.
+
+            getRP calculates the return period for a list/array of values or a single value.
+
+        Parameters
+        ----------
+        data:[list/array/float]
+            value you want the coresponding return value for
+        shape: [float]
+            shape parameter
+        loc: [float]
+            location parameter
+        scale: [float]
+            scale parameter
+
+        Returns
+        -------
+        float:
+            return period
+        """
+        if isinstance(data, list) or isinstance(data, np.ndarray):
+            cdf = self.cdf(shape, loc, scale, actualdata=data)
+        else:
+            cdf = genextreme.cdf(data, shape, loc, scale)
+
+        rp = 1 / (1 - cdf)
+
+        return rp
 
     def estimateParameter(self, method: str="mle", ObjFunc=None,
                           threshold: Union[int, float, None]=None,
@@ -827,18 +887,19 @@ class GEV:
     ) -> np.ndarray:
         """TheporeticalEstimate.
 
-        TheporeticalEstimate method calculates the theoretical values based on the Gumbel distribution
+        TheporeticalEstimate method calculates the theoretical values based on a given  non exceedence probability
 
         Parameters:
         -----------
-            1- param : [list]
-                location ans scale parameters of the gumbel distribution.
-            2- F : [list]
-                cummulative distribution function/ Non Exceedence probability.
+        param : [list]
+            location ans scale parameters of the gumbel distribution.
+        F : [list]
+            cummulative distribution function/ Non Exceedence probability.
+
         Return:
         -------
-            1- theoreticalvalue : [numeric]
-                Value based on the theoretical distribution
+        theoreticalvalue : [numeric]
+            Value based on the theoretical distribution
         """
         if scale <= 0:
             raise ValueError("Parameters Invalid")
