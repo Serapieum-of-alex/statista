@@ -2,6 +2,6 @@ loguru >=0.6.0
 matplotlib >=3.5.3
 pandas >=1.4.4
 pip >=22.2.2
-python >=3.9,<3.12
+# python >=3.9,<3.12
 scikit-learn >=1.1.2
 scipy >=1.9.1
