@@ -1,5 +1,4 @@
-"""
-Created on Wed Sep  9 23:31:11 2020
+"""Created on Wed Sep  9 23:31:11 2020.
 
 @author: mofarrag
 """
@@ -8,7 +7,7 @@ import os
 os.chdir(r"C:\MyComputer\01Algorithms\Statistics\statista")
 import matplotlib
 
-matplotlib.use('TkAgg')
+matplotlib.use("TkAgg")
 # import scipy.optimize as so
 # import matplotlib.pyplot as plt
 # import numpy as np
@@ -112,16 +111,28 @@ Qth = Gevdist.theporeticalEstimate(shape, loc, scale, cdf_Weibul)
 
 func = ConfidenceInterval.GEVfunc
 upper, lower = Gevdist.confidenceInterval(
-    shape, loc, scale, F=cdf_Weibul, alpha=0.1, statfunction=func, n_samples=len(time_series1)
+    shape,
+    loc,
+    scale,
+    F=cdf_Weibul,
+    alpha=0.1,
+    statfunction=func,
+    n_samples=len(time_series1),
 )
 #%%
 """
 calculate the confidence interval using the boot strap method directly
 """
 CI = ConfidenceInterval.BootStrap(
-    time_series1, statfunction=func, gevfit=Param_dist, n_samples=len(time_series1), F=cdf_Weibul
+    time_series1,
+    statfunction=func,
+    gevfit=Param_dist,
+    n_samples=len(time_series1),
+    F=cdf_Weibul,
 )
 LB = CI["LB"]
 UB = CI["UB"]
 #%%
-fig, ax = Gevdist.probapilityPlot(shape, loc, scale, cdf_Weibul, func=func, n_samples=len(time_series1))
+fig, ax = Gevdist.probapilityPlot(
+    shape, loc, scale, cdf_Weibul, func=func, n_samples=len(time_series1)
+)

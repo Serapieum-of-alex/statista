@@ -1,5 +1,4 @@
-"""
-Created on Mon Mar 29 21:32:29 2021
+"""Created on Mon Mar 29 21:32:29 2021.
 
 @author: mofarrag
 """
@@ -8,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Vis = V.Visualize(1)
+
 
 class Sensitivity:
     """Sensitivity.
@@ -18,6 +18,7 @@ class Sensitivity:
         1- OAT
         2- Sobol
     """
+
     MarkerStyleList = [
         "--o",
         ":D",
@@ -32,7 +33,9 @@ class Sensitivity:
         "-.h",
     ]
 
-    def __init__(self, parameter, LB, UB, function, positions=[], n_values=5, return_values=1):
+    def __init__(
+        self, parameter, LB, UB, function, positions=[], n_values=5, return_values=1
+    ):
         """Sensitivity.
 
         plotting_to instantiate the Sensitivity class you have to provide the
@@ -72,7 +75,7 @@ class Sensitivity:
         self.UB = UB
 
         assert (
-                len(self.parameter) == len(self.LB) == len(self.UB)
+            len(self.parameter) == len(self.LB) == len(self.UB)
         ), "Length of the boundary shoulf be of the same length as the length of the parameters"
         assert callable(
             function
@@ -108,7 +111,6 @@ class Sensitivity:
         if style > len(Sensitivity.MarkerStyleList) - 1:
             style = style % len(Sensitivity.MarkerStyleList)
         return Sensitivity.MarkerStyleList[style]
-
 
     def OAT(self, *args, **kwargs):
         """OAT.
@@ -179,19 +181,18 @@ class Sensitivity:
                 print(str(k) + "-" + self.parameter.index[k] + " -" + str(j))
                 print(round(metric, 3))
 
-
     def Sobol(
         self,
-        real_values: bool=False,
-        title: str="",  # CalculatedValues=False,
-        xlabel: str="xlabel",
-        ylabel: str="Metric values",
+        real_values: bool = False,
+        title: str = "",  # CalculatedValues=False,
+        xlabel: str = "xlabel",
+        ylabel: str = "Metric values",
         labelfontsize=12,
         plotting_from="",
         plotting_to="",
-        title2: str="",
-        xlabel2: str="xlabel2",
-        ylabel2: str="ylabel2",
+        title2: str = "",
+        xlabel2: str = "xlabel2",
+        ylabel2: str = "ylabel2",
         spaces=[None, None, None, None, None, None],
     ):
         """Sobol.
@@ -304,10 +305,14 @@ class Sensitivity:
                         if plotting_from == "":
                             plotting_from = 0
                         if plotting_to == "":
-                            plotting_to = len(self.sen[self.parameter.index[k]][3][j].values)
+                            plotting_to = len(
+                                self.sen[self.parameter.index[k]][3][j].values
+                            )
 
                         ax2.plot(
-                            self.sen[self.parameter.index[k]][3][j].values[plotting_from:plotting_to],
+                            self.sen[self.parameter.index[k]][3][j].values[
+                                plotting_from:plotting_to
+                            ],
                             label=self.sen[self.parameter.index[k]][2][j],
                         )
 
@@ -337,11 +342,8 @@ class Sensitivity:
             plt.tight_layout()
             return fig, (ax1, ax2)
 
-
     def ListAttributes(self):
-        """
-        Print Attributes List
-        """
+        """Print Attributes List."""
 
         print("\n")
         print(

@@ -20,9 +20,8 @@ ninf = 1e-5
 
 
 class PlottingPosition:
-    """
-    PlottingPosition
-    """
+    """PlottingPosition."""
+
     def __init__(self):
         pass
 
@@ -76,14 +75,13 @@ class PlottingPosition:
 
 
 class Gumbel:
-    """
-    Gumbel distribution.
-    """
+    """Gumbel distribution."""
+
     def __init__(
-            self,
-            data: Union[list, np.ndarray]=None,
-            loc: Union[int, float]=None,
-            scale: Union[int, float]=None
+        self,
+        data: Union[list, np.ndarray] = None,
+        loc: Union[int, float] = None,
+        scale: Union[int, float] = None,
     ):
         """Gumbel.
 
@@ -115,12 +113,12 @@ class Gumbel:
         self,
         loc: Union[float, int],
         scale: Union[float, int],
-        plot_figure: bool=False,
-        figsize: tuple=(6, 5),
-        xlabel: str="Actual data",
-        ylabel: str="pdf",
-        fontsize: Union[float, int]=15,
-        actualdata: Union[bool, np.ndarray]=True,
+        plot_figure: bool = False,
+        figsize: tuple = (6, 5),
+        xlabel: str = "Actual data",
+        ylabel: str = "pdf",
+        fontsize: Union[float, int] = 15,
+        actualdata: Union[bool, np.ndarray] = True,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
@@ -172,12 +170,12 @@ class Gumbel:
         self,
         loc: Union[float, int],
         scale: Union[float, int],
-        plot_figure: bool=False,
-        figsize: tuple=(6, 5),
-        xlabel: str="data",
-        ylabel: str="cdf",
-        fontsize: int=15,
-        actualdata: Union[bool, np.ndarray]=True,
+        plot_figure: bool = False,
+        figsize: tuple = (6, 5),
+        xlabel: str = "data",
+        ylabel: str = "cdf",
+        fontsize: int = 15,
+        actualdata: Union[bool, np.ndarray] = True,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """cdf.
 
@@ -253,7 +251,6 @@ class Gumbel:
 
         return rp
 
-
     @staticmethod
     def ObjectiveFn(p, x):
         """ObjectiveFn.
@@ -277,9 +274,13 @@ class Gumbel:
         # print x1, nx2, L1, L2
         return L1 + L2
 
-
-    def estimateParameter(self, method: str="mle", ObjFunc=None,
-                          threshold:Union[None, float, int]=None, test: bool=True) -> tuple:
+    def estimateParameter(
+        self,
+        method: str = "mle",
+        ObjFunc=None,
+        threshold: Union[None, float, int] = None,
+        test: bool = True,
+    ) -> tuple:
         """estimateParameter.
 
         EstimateParameter estimate the distribution parameter based on MLM
@@ -314,7 +315,7 @@ class Gumbel:
         # #first we make a simple Gumbel fit
         # Par1 = so.fmin(obj_func, [0.5,0.5], args=(np.array(data),))
         method = method.lower()
-        if not method in ["mle", "mm", "lmoments", "optimization"]:
+        if method not in ["mle", "mm", "lmoments", "optimization"]:
             raise ValueError(
                 method + "value should be 'mle', 'mm', 'lmoments' or 'optimization'"
             )
@@ -347,13 +348,10 @@ class Gumbel:
 
         return Param
 
-
     @staticmethod
     def theporeticalEstimate(
-            loc: Union[float, int],
-            scale: Union[float, int],
-            cdf: np.ndarray
-) -> np.ndarray:
+        loc: Union[float, int], scale: Union[float, int], cdf: np.ndarray
+    ) -> np.ndarray:
         """theporeticalEstimate.
 
         TheporeticalEstimate method calculates the theoretical values based on the Gumbel distribution
@@ -382,7 +380,6 @@ class Gumbel:
         # the main equation form scipy
         # Qth = gumbel_r.ppf(F, loc=param_dist[0], scale=param_dist[1])
         return Qth
-
 
     def ks(self) -> tuple:
         """Kolmogorov-Smirnov (KS) test.
@@ -417,7 +414,6 @@ class Gumbel:
         print(f"P value = {test.pvalue}")
         return test.statistic, test.pvalue
 
-
     def chisquare(self) -> tuple:
         """
 
@@ -444,13 +440,12 @@ class Gumbel:
             print(e)
             # raise
 
-
     def confidenceInterval(
-            self,
-            loc: Union[float, int],
-            scale: Union[float, int],
-            F: np.ndarray,
-            alpha: float=0.1
+        self,
+        loc: Union[float, int],
+        scale: Union[float, int],
+        F: np.ndarray,
+        alpha: float = 0.1,
     ) -> Tuple[np.ndarray, np.ndarray]:
         """confidenceInterval.
 
@@ -479,7 +474,7 @@ class Gumbel:
         Y = [-np.log(-np.log(j)) for j in F]
         StdError = [
             (scale / np.sqrt(len(self.data)))
-            * np.sqrt(1.1087 + 0.5140 * j + 0.6079 * j ** 2)
+            * np.sqrt(1.1087 + 0.5140 * j + 0.6079 * j**2)
             for j in Y
         ]
         v = norm.ppf(1 - alpha / 2)
@@ -492,12 +487,12 @@ class Gumbel:
         loc: float,
         scale: float,
         F: np.ndarray,
-        alpha: float=0.1,
-        fig1size: tuple=(10, 5),
-        fig2size: tuple=(6, 6),
-        xlabel: str="Actual data",
-        ylabel: str="cdf",
-        fontsize: int=15,
+        alpha: float = 0.1,
+        fig1size: tuple = (10, 5),
+        fig2size: tuple = (6, 6),
+        xlabel: str = "Actual data",
+        ylabel: str = "cdf",
+        fontsize: int = 15,
     ) -> Tuple[List[Figure], list]:
         """probapilityPlot.
 
@@ -568,14 +563,18 @@ class Gumbel:
 
 
 class GEV:
-    """
-    GEV (Genalized Extreme value statistics)
-    """
+    """GEV (Genalized Extreme value statistics)"""
+
     data: ndarray
 
-    def __init__(self, data: Union[list, np.ndarray]=None, shape: Union[int, float]=None,
-                 loc: Union[int, float]=None, scale: Union[int, float]=None):
-        """GEV
+    def __init__(
+        self,
+        data: Union[list, np.ndarray] = None,
+        shape: Union[int, float] = None,
+        loc: Union[int, float] = None,
+        scale: Union[int, float] = None,
+    ):
+        """GEV.
 
         Parameters
         ----------
@@ -606,12 +605,12 @@ class GEV:
         shape: Union[float, int],
         loc: Union[float, int],
         scale: Union[float, int],
-        plot_figure: bool=False,
-        figsize: tuple=(6, 5),
-        xlabel: str="Actual data",
-        ylabel: str="pdf",
-        fontsize: int=15,
-        actualdata:Union[bool, np.ndarray]=True,
+        plot_figure: bool = False,
+        figsize: tuple = (6, 5),
+        xlabel: str = "Actual data",
+        ylabel: str = "pdf",
+        fontsize: int = 15,
+        actualdata: Union[bool, np.ndarray] = True,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
@@ -710,16 +709,17 @@ class GEV:
         shape: Union[float, int],
         loc: Union[float, int],
         scale: Union[float, int],
-        plot_figure: bool=False,
-        figsize: tuple=(6, 5),
-        xlabel: str="Actual data",
-        ylabel: str="cdf",
-        fontsize: int=15,
-        actualdata: Union[bool, np.ndarray]=True,
+        plot_figure: bool = False,
+        figsize: tuple = (6, 5),
+        xlabel: str = "Actual data",
+        ylabel: str = "cdf",
+        fontsize: int = 15,
+        actualdata: Union[bool, np.ndarray] = True,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """cdf.
 
-        Returns the value of Gumbel's cdf with parameters loc and scale at x.
+        Returns the value of Gumbel's cdf with parameters loc and scale
+        at x.
         """
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
@@ -802,9 +802,13 @@ class GEV:
 
         return rp
 
-    def estimateParameter(self, method: str="mle", ObjFunc=None,
-                          threshold: Union[int, float, None]=None,
-                          test: bool=True) -> tuple:
+    def estimateParameter(
+        self,
+        method: str = "mle",
+        ObjFunc=None,
+        threshold: Union[int, float, None] = None,
+        test: bool = True,
+    ) -> tuple:
         """estimateParameter.
 
         EstimateParameter estimate the distribution parameter based on MLM
@@ -833,13 +837,12 @@ class GEV:
         -------
         Param : [list]
             shape, loc, scale parameter of the gumbel distribution in that order.
-
         """
         # obj_func = lambda p, x: (-np.log(Gumbel.pdf(x, p[0], p[1]))).sum()
         # #first we make a simple Gumbel fit
         # Par1 = so.fmin(obj_func, [0.5,0.5], args=(np.array(data),))
         method = method.lower()
-        if not method in ["mle", "mm", "lmoments", "optimization"]:
+        if method not in ["mle", "mm", "lmoments", "optimization"]:
             raise ValueError(
                 method + "value should be 'mle', 'mm', 'lmoments' or 'optimization'"
             )
@@ -880,10 +883,10 @@ class GEV:
 
     @staticmethod
     def theporeticalEstimate(
-            shape: Union[float, int],
-            loc: Union[float, int],
-            scale: Union[float, int],
-            F: np.ndarray
+        shape: Union[float, int],
+        loc: Union[float, int],
+        scale: Union[float, int],
+        F: np.ndarray,
     ) -> np.ndarray:
         """TheporeticalEstimate.
 
@@ -926,7 +929,6 @@ class GEV:
         # the main equation from scipy
         # Qth = genextreme.ppf(F, shape, loc=loc, scale=scale)
         return Qth
-
 
     def ks(self):
         """Kolmogorov-Smirnov (KS) test.
@@ -989,10 +991,10 @@ class GEV:
         loc: Union[float, int],
         scale: Union[float, int],
         F: np.ndarray,
-        alpha: float=0.1,
+        alpha: float = 0.1,
         statfunction=np.average,
-        n_samples: int=100,
-        **kargs
+        n_samples: int = 100,
+        **kargs,
     ):
         """confidenceInterval.
 
@@ -1025,13 +1027,12 @@ class GEV:
             F=F,
             alpha=alpha,
             n_samples=n_samples,
-            **kargs
+            **kargs,
         )
         Qlower = CI["LB"]
         Qupper = CI["UB"]
 
         return Qupper, Qlower
-
 
     def probapilityPlot(
         self,
@@ -1081,7 +1082,6 @@ class GEV:
             alpha or SignificanceLevel is a value of the confidence interval.
         func : [function]
             function to be used in the confidence interval calculation.
-
         """
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
@@ -1124,35 +1124,29 @@ class GEV:
 
 
 class ConfidenceInterval:
-    """
-    ConfidenceInterval
-    """
+    """ConfidenceInterval."""
+
     def __init__(self):
         pass
 
     @staticmethod
     def BSIndexes(data, n_samples=10000):
-        """
-        Given data points data, where axis 0 is considered to delineate points, return
-        an generator for sets of bootstrap indexes. This can be used as a list
-        of bootstrap indexes (with list(bootstrap_indexes(data))) as well.
+        """Given data points data, where axis 0 is considered to delineate points, return an generator for sets of bootstrap indexes.
+
+        This can be used as a list of bootstrap indexes (with
+        list(bootstrap_indexes(data))) as well.
         """
         for _ in range(n_samples):
             yield randint(data.shape[0], size=(data.shape[0],))
 
-
     def BootStrap(
-            data: Union[list, np.ndarray],
-            statfunction,
-            alpha: float=0.05,
-            n_samples: int=100,
-            **kargs
-    ): # ->  Dict[str, OrderedDict[str, Tuple[Any, Any]]]
-        """
-        Calculate confidence intervals using parametric bootstrap and the
-        percentil interval method
-        This is used to obtain confidence intervals for the estimators and
-        the return values for several return values.
+        data: Union[list, np.ndarray],
+        statfunction,
+        alpha: float = 0.05,
+        n_samples: int = 100,
+        **kargs,
+    ):  # ->  Dict[str, OrderedDict[str, Tuple[Any, Any]]]
+        """Calculate confidence intervals using parametric bootstrap and the percentil interval method This is used to obtain confidence intervals for the estimators and the return values for several return values.
 
         More info about bootstrapping can be found on:
             - Efron: "An Introduction to the Bootstrap", Chapman & Hall (1993)
@@ -1188,13 +1182,17 @@ class ConfidenceInterval:
         nvals = np.round((n_samples - 1) * avals).astype("int")
 
         if np.any(nvals == 0) or np.any(nvals == n_samples - 1):
-            logger.debug("Some values used extremal samples; results are probably unstable.")
+            logger.debug(
+                "Some values used extremal samples; results are probably unstable."
+            )
             # warnings.warn(
             #     "Some values used extremal samples; results are probably unstable.",
             #     InstabilityWarning,
             # )
         elif np.any(nvals < 10) or np.any(nvals >= n_samples - 10):
-            logger.debug("Some values used top 10 low/high samples; results may be unstable.")
+            logger.debug(
+                "Some values used top 10 low/high samples; results may be unstable."
+            )
             # warnings.warn(
             #     "Some values used top 10 low/high samples; results may be unstable.",
             #     InstabilityWarning,
@@ -1250,9 +1248,8 @@ class ConfidenceInterval:
 
 
 class plot:
-    """
-    plot.
-    """
+    """plot."""
+
     def __init__(self):
         pass
 
@@ -1260,10 +1257,10 @@ class plot:
         Qx: np.ndarray,
         pdf_fitted,
         data_sorted: np.ndarray,
-        figsize: tuple=(6, 5),
-        xlabel: str="Actual data",
-        ylabel: str="pdf",
-        fontsize: int=15,
+        figsize: tuple = (6, 5),
+        xlabel: str = "Actual data",
+        ylabel: str = "pdf",
+        fontsize: int = 15,
     ):
         """pdf.
 
@@ -1278,7 +1275,6 @@ class plot:
 
         Returns
         -------
-
         """
         fig = plt.figure(figsize=figsize)
         # gs = gridspec.GridSpec(nrows=1, ncols=2, figure=fig)
@@ -1316,7 +1312,6 @@ class plot:
 
         Returns
         -------
-
         """
         fig = plt.figure(figsize=figsize)
         ax = fig.add_subplot()
@@ -1338,11 +1333,11 @@ class plot:
         Qlower: Union[np.ndarray, list],
         Qupper: Union[np.ndarray, list],
         alpha: float,
-        fig1size: tuple=(10, 5),
-        fig2size: tuple=(6, 6),
-        xlabel: str="Actual data",
-        ylabel: str="cdf",
-        fontsize: int=15,
+        fig1size: tuple = (10, 5),
+        fig2size: tuple = (6, 6),
+        xlabel: str = "Actual data",
+        ylabel: str = "cdf",
+        fontsize: int = 15,
     ) -> Tuple[List[Figure], List[Any]]:
         """details.
 
@@ -1365,7 +1360,6 @@ class plot:
 
         Returns
         -------
-
         """
         fig1 = plt.figure(figsize=fig1size)
         gs = gridspec.GridSpec(nrows=1, ncols=2, figure=fig1)

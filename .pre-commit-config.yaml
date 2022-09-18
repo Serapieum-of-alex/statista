@@ -57,9 +57,10 @@ repos:
     - id: flake8
       name: "[py   - check] flake8"
       language_version: python3.9
+      exclude: ^(examples/|tests/)
 
 - repo: https://github.com/psf/black
-  rev: 19.3b0
+  rev: 22.8.0
   hooks:
     - id: black
 - repo: https://github.com/pre-commit/mirrors-isort
@@ -68,7 +69,7 @@ repos:
     - id: isort
       name: "[py   - format] isort"
 - repo: https://github.com/ambv/black
-  rev: 20.8b1
+  rev: 22.8.0
   hooks:
     - id: black
       name: "[py   - format] black"

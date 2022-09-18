@@ -1,5 +1,4 @@
-"""
-Created on Sun Jun 21 01:55:25 2020
+"""Created on Sun Jun 21 01:55:25 2020.
 
 @author: mofarrag
 """
@@ -10,7 +9,7 @@ import matplotlib
 # os.chdir(Path)
 import pandas as pd
 
-matplotlib.use('TkAgg')
+matplotlib.use("TkAgg")
 
 # functions
 import Hapi.rrm.hbv_bergestrom92 as HBVLumped

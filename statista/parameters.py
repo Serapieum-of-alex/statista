@@ -1,6 +1,4 @@
-"""
-L moments
-"""
+"""L moments."""
 import numpy as np
 import scipy as sp
 
@@ -8,16 +6,12 @@ ninf = 1e-5
 
 
 class Lmoments:
-    """
-    Hosking (1990) introduced the concept of L-moments, which are quantities that can
-    be directly interpreted as scale and shape descriptors of probability distributions
-    The L-moments of order r, denoted by λr
+    """Hosking (1990) introduced the concept of L-moments, which are quantities that can be directly interpreted as scale and shape descriptors of probability distributions The L-moments of order r, denoted by λr.
 
     λ1 = α0 = β0
     λ2 = α0 - 2α1 = 2β1 - β0
     λ3 = α0 - 6α1 + 6α2 = 6β2 - 6β1 + β0
     λ4 = α0 - 12α1 + 30α2 - 20α3 = 20β3 - 30β2 + 12β1 - β0
-
     """
 
     def __init__(self, data):
@@ -53,8 +47,8 @@ class Lmoments:
         if n < nmom:
             raise ValueError("Insufficient length of data for specified nmoments")
 
-        ##Calculate first order
-        ##Pretty efficient, no loops
+        ## Calculate first order
+        ## Pretty efficient, no loops
         coefl1 = 1.0 / self.comb(n, 1)
         suml1 = sum(x)
         l = [coefl1 * suml1]
@@ -110,7 +104,7 @@ class Lmoments:
         if n < nmom:
             raise ValueError("Insufficient length of data for specified nmoments")
 
-        ##Pretty efficient, no loops
+        ## Pretty efficient, no loops
         coefl1 = 1.0 / self.comb(n, 1)
 
         suml1 = sum(x)
@@ -143,7 +137,7 @@ class Lmoments:
             ret = [l1, l2]
             return ret
 
-        ##Calculate Third order
+        ## Calculate Third order
         # comb terms appear elsewhere, this will decrease calc time
         # for nmom > 2, and shouldn't decrease time for nmom == 2
         # comb3 = comb(i-1,2)
@@ -167,7 +161,7 @@ class Lmoments:
             ret = [l1, l2, l3]
             return ret
 
-        ##Calculate Fourth order
+        ## Calculate Fourth order
         # comb5 = comb(i-1,3)
         # comb6 = comb(n-i,3)
         comb5 = []
@@ -191,7 +185,7 @@ class Lmoments:
             ret = [l1, l2, l3, l4]
             return ret
 
-        ##Calculate Fifth order
+        ## Calculate Fifth order
         comb7 = []
         comb8 = []
         for i in range(0, n):
@@ -219,9 +213,7 @@ class Lmoments:
 
     @staticmethod
     def GEV(xmom):
-        """
-        Estimate the generalized extreme value distribution parameters using Lmoments method
-        """
+        """Estimate the generalized extreme value distribution parameters using Lmoments method."""
         eps = 1e-6
         maxit = 20
         # euler constant
@@ -269,7 +261,7 @@ class Lmoments:
                 XX2 = 1 - X2
                 XX3 = 1 - X3
                 T = XX3 / XX2
-                DERIV = (XX2 * X3 * DL3 - XX3 * X2 * DL2) / (XX2 ** 2)
+                DERIV = (XX2 * X3 * DL3 - XX3 * X2 * DL2) / (XX2**2)
                 GOLD = G
                 G = G - (T - T0) / DERIV
                 if abs(G - GOLD) <= eps * G:

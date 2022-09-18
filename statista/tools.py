@@ -1,5 +1,4 @@
-"""
-Created on Thu May 17 04:26:42 2018
+"""Created on Thu May 17 04:26:42 2018.
 
 @author: Mostafa
 """
@@ -12,12 +11,13 @@ class Tools:
 
     Tools different statistical and interpolation tools
     """
+
     def __init__(self):
         pass
 
     @staticmethod
     def normalize(x):
-        """Normalizer
+        """Normalizer.
 
         to normalize values between 0 and 1
 
@@ -87,7 +87,6 @@ class Tools:
         -------
         NewValue: [float]
             transformed new value
-
         """
         OldRange = OldMax - OldMin
         NewRange = NewMax - NewMin
@@ -136,11 +135,7 @@ class Tools:
             x_log = np.log(x)
 
         y = int(
-            np.round(
-                Tools.rescale(
-                    x_log, min_old_log, max_old_log, min_new, max_new
-                )
-            )
+            np.round(Tools.rescale(x_log, min_old_log, max_old_log, min_new, max_new))
         )
 
         return y
@@ -180,9 +175,7 @@ class Tools:
 
         y = int(
             np.round(
-                Tools.rescale(
-                    x_power, min_old_power, max_old_power, min_new, max_new
-                )
+                Tools.rescale(x_power, min_old_power, max_old_power, min_new, max_new)
             )
         )
         return y
