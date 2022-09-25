@@ -146,5 +146,3 @@ build_artifacts
 .idea
 mo_*
 conda/
-pyproject.toml
-poetry.lock
