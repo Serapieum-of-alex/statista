@@ -2,11 +2,8 @@
 
 @author: mofarrag
 """
-# import Hapi.visualizer as V
 import matplotlib.pyplot as plt
 import numpy as np
-
-# Vis = V.Visualize(1)
 
 
 class Sensitivity:
