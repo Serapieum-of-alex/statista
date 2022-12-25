@@ -26,13 +26,15 @@ statista
 
 Main Features
 -------------
-  -
-
+  - Statistical Distributions (GEV/GUMBL)
+  - Parameter estimation Lmoments/ML/MOM
+  - One-at-time (O-A-T) Sensitivity analysis.
+  - Sobol visualization
+  - Statistical Metrics
 
 Future work
 -------------
-  -
-
+  - More distributions
 
 
 Installing statista
