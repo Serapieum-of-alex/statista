@@ -59,7 +59,7 @@ pip install git+https://github.com/MAfarrag/statista
 ## pip
 to install the last release you can easly use pip
 ```
-pip install statista==0.1.6
+pip install statista==0.1.7
 ```
 
 Quick start
