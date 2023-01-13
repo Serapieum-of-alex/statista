@@ -5,7 +5,7 @@
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/MAfarrag/earth2observe.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/MAfarrag/earth2observe/alerts/)
 
 
-
+[![codecov](https://codecov.io/gh/Serapieum-of-alex/statista/branch/main/graph/badge.svg?token=GQKhcj2pFK)](https://codecov.io/gh/Serapieum-of-alex/statista)
 ![GitHub last commit](https://img.shields.io/github/last-commit/MAfarrag/statista)
 ![GitHub forks](https://img.shields.io/github/forks/MAfarrag/statista?style=social)
 ![GitHub Repo stars](https://img.shields.io/github/stars/MAfarrag/statista?style=social)
