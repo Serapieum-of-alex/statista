@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "statista"
-version = "0.1.9"
+version = "0.1.8"
 description = "statistics package"
 authors = ["Mostafa Farrag <moah.farag@gmail.com>"]
 readme = "README.md"

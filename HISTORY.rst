@@ -13,7 +13,7 @@ History
 * lock numpy to version 1.23.5
 
 
-0.1.9 (2023-01-31)
+0.1.8 (2023-01-31)
 ------------------
 
 * bump up versions
