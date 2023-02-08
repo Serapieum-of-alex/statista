@@ -699,14 +699,13 @@ class Gumbel:
 class GEV:
     """GEV (Genalized Extreme value statistics)"""
 
+    parameters: dict[str, Union[float, Any]]
     data: ndarray
 
     def __init__(
-        self,
-        data: Union[list, np.ndarray] = None,
-        shape: Union[int, float] = None,
-        loc: Union[int, float] = None,
-        scale: Union[int, float] = None,
+            self,
+            data: Union[list, np.ndarray] = None,
+            parameters: Dict[str, str] = None,
     ):
         """GEV.
 
@@ -714,9 +713,13 @@ class GEV:
         ----------
         data : [list]
             data time series.
-        shape
-        loc
-        scale
+
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val, "shape": value}
+            - loc: [numeric]
+                location parameter of the gumbel distribution.
+            - scale: [numeric]
+                scale parameter of the gumbel distribution.
         """
         if isinstance(data, list) or isinstance(data, np.ndarray):
             self.data = np.array(data)
@@ -724,28 +727,24 @@ class GEV:
             self.cdf_Weibul = PlottingPosition.weibul(data)
             self.KStable = 1.22 / np.sqrt(len(self.data))
 
-        self.loc = loc
-        self.scale = scale
+        self.parameters = parameters
         self.Dstatic = None
         self.KS_Pvalue = None
 
         self.chistatic = None
         self.chi_Pvalue = None
 
-        self.shape = shape
         pass
 
     def pdf(
-        self,
-        shape: Union[float, int],
-        loc: Union[float, int],
-        scale: Union[float, int],
-        plot_figure: bool = False,
-        figsize: tuple = (6, 5),
-        xlabel: str = "Actual data",
-        ylabel: str = "pdf",
-        fontsize: int = 15,
-        actualdata: Union[bool, np.ndarray] = True,
+            self,
+            parameters: Dict[str, Union[float, Any]],
+            plot_figure: bool = False,
+            figsize: tuple = (6, 5),
+            xlabel: str = "Actual data",
+            ylabel: str = "pdf",
+            fontsize: int = 15,
+            actualdata: Union[bool, np.ndarray] = True,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
@@ -778,6 +777,10 @@ class GEV:
         TYPE
             DESCRIPTION.
         """
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+        shape = parameters.get("shape")
+
         if isinstance(actualdata, bool):
             ts = self.data_sorted
         else:
@@ -824,7 +827,7 @@ class GEV:
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
             )
-            pdf_fitted = self.pdf(shape, loc, scale, actualdata=Qx)
+            pdf_fitted = self.pdf(parameters, actualdata=Qx)
 
             fig, ax = plot.pdf(
                 Qx,
@@ -841,9 +844,7 @@ class GEV:
 
     def cdf(
         self,
-        shape: Union[float, int],
-        loc: Union[float, int],
-        scale: Union[float, int],
+        parameters: Dict[str, Union[float, Any]],
         plot_figure: bool = False,
         figsize: tuple = (6, 5),
         xlabel: str = "Actual data",
@@ -856,6 +857,10 @@ class GEV:
         Returns the value of Gumbel's cdf with parameters loc and scale
         at x.
         """
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+        shape = parameters.get("shape")
+
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
@@ -886,7 +891,7 @@ class GEV:
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
             )
-            cdf_fitted = self.cdf(shape, loc, scale, actualdata=Qx)
+            cdf_fitted = self.cdf(parameters, actualdata=Qx)
 
             cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
 
@@ -943,7 +948,7 @@ class GEV:
         ObjFunc=None,
         threshold: Union[int, float, None] = None,
         test: bool = True,
-    ) -> tuple:
+    ) -> Dict[str, Any]:
         """estimateParameter.
 
         EstimateParameter estimate the distribution parameter based on MLM
@@ -1003,9 +1008,8 @@ class GEV:
             )
             Param = [Param[1], Param[2], Param[3]]
 
-        self.shape = Param[0]
-        self.loc = Param[1]
-        self.scale = Param[2]
+        Param = {"loc": Param[1], "scale": Param[2], "shape": Param[0]}
+        self.parameters = Param
 
         if test:
             self.ks()
@@ -1018,10 +1022,8 @@ class GEV:
 
     @staticmethod
     def theporeticalEstimate(
-        shape: Union[float, int],
-        loc: Union[float, int],
-        scale: Union[float, int],
-        F: np.ndarray,
+            parameters: Dict[str, Union[float, Any]],
+            F: np.ndarray,
     ) -> np.ndarray:
         """TheporeticalEstimate.
 
@@ -1039,6 +1041,10 @@ class GEV:
         theoreticalvalue : [numeric]
             Value based on the theoretical distribution
         """
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+        shape = parameters.get("shape")
+
         if scale <= 0:
             raise ValueError("Parameters Invalid")
 
@@ -1078,14 +1084,12 @@ class GEV:
             Pvalue : [numeric]
                 IF Pvalue < signeficance level ------ reject the null hypotethis
         """
-        if not hasattr(self, "loc") or not hasattr(self, "scale"):
+        if self.parameters is None:
             raise ValueError(
                 "Value of loc/scale parameter is unknown please use "
                 "'EstimateParameter' to obtain them"
             )
-        Qth = self.theporeticalEstimate(
-            self.shape, self.loc, self.scale, self.cdf_Weibul
-        )
+        Qth = self.theporeticalEstimate(self.parameters, self.cdf_Weibul)
 
         test = ks_2samp(self.data, Qth)
         self.Dstatic = test.statistic
@@ -1101,15 +1105,13 @@ class GEV:
         return test.statistic, test.pvalue
 
     def chisquare(self):
-        if not hasattr(self, "loc") or not hasattr(self, "scale"):
+        if self.parameters is None:
             raise ValueError(
                 "Value of loc/scale parameter is unknown please use "
                 "'EstimateParameter' to obtain them"
             )
 
-        Qth = self.theporeticalEstimate(
-            self.shape, self.loc, self.scale, self.cdf_Weibul
-        )
+        Qth = self.theporeticalEstimate(self.parameters, self.cdf_Weibul)
 
         test = chisquare(st.standardize(Qth), st.standardize(self.data))
         self.chistatic = test.statistic
@@ -1121,15 +1123,13 @@ class GEV:
         return test.statistic, test.pvalue
 
     def confidenceInterval(
-        self,
-        shape: Union[float, int],
-        loc: Union[float, int],
-        scale: Union[float, int],
-        F: np.ndarray,
-        alpha: float = 0.1,
-        statfunction=np.average,
-        n_samples: int = 100,
-        **kargs,
+            self,
+            parameters: Dict[str, Union[float, Any]],
+            F: np.ndarray,
+            alpha: float = 0.1,
+            statfunction=np.average,
+            n_samples: int = 100,
+            **kargs,
     ):
         """confidenceInterval.
 
@@ -1151,14 +1151,18 @@ class GEV:
             Qlower : [list]
                 lower bound coresponding to the confidence interval.
         """
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+        shape = parameters.get("shape")
+
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        Param = [shape, loc, scale]
+        # Param = [shape, loc, scale]
         CI = ConfidenceInterval.BootStrap(
             self.data,
             statfunction=statfunction,
-            gevfit=Param,
+            gevfit=parameters,
             F=F,
             alpha=alpha,
             n_samples=n_samples,
@@ -1171,9 +1175,7 @@ class GEV:
 
     def probapilityPlot(
         self,
-        shape: Union[float, int],
-        loc: Union[float, int],
-        scale: Union[float, int],
+        parameters: Dict[str, Union[float, Any]],
         F,
         alpha=0.1,
         func=None,
@@ -1218,10 +1220,14 @@ class GEV:
         func : [function]
             function to be used in the confidence interval calculation.
         """
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+        shape = parameters.get("shape")
+
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        Qth = self.theporeticalEstimate(shape, loc, scale, F)
+        Qth = self.theporeticalEstimate(parameters, F)
         if func is None:
             func = ConfidenceInterval.GEVfunc
 
@@ -1358,11 +1364,12 @@ class ConfidenceInterval:
 
         gevfit = kwargs["gevfit"]
         F = kwargs["F"]
-        shape = gevfit[0]
-        loc = gevfit[1]
-        scale = gevfit[2]
+        # shape = gevfit[0]
+        # loc = gevfit[1]
+        # scale = gevfit[2]
+        # parameters = {"loc": loc, "scale": scale, "shape": shape}
         # generate theoretical estimates based on a random cdf, and the dist parameters
-        sample = GEV.theporeticalEstimate(shape, loc, scale, np.random.rand(len(data)))
+        sample = GEV.theporeticalEstimate(gevfit, np.random.rand(len(data)))
         # get parameters based on the new generated sample
         LM = Lmoments(sample)
         mum = LM.Lmom()
@@ -1376,7 +1383,8 @@ class ConfidenceInterval:
         # T = np.linspace(0.1, 999, len(data)) + 1
         # coresponding theoretical estimate to T
         # F = 1 - 1 / T
-        Qth = GEV.theporeticalEstimate(shape, loc, scale, F)
+        parameters = {"loc": loc, "scale": scale, "shape": shape}
+        Qth = GEV.theporeticalEstimate(parameters, F)
 
         res = newfit
         res.extend(Qth)

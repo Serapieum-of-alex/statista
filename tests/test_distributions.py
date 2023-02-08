@@ -182,10 +182,12 @@ class TestGEV:
             param = Gdist.estimateParameter(
                 method=dist_estimation_parameters[i], test=False
             )
-            assert isinstance(param, list)
-            assert Gdist.loc
-            assert Gdist.scale
-            assert Gdist.shape
+
+            assert isinstance(param, dict)
+            assert all(i in param.keys() for i in ["loc", "scale", "shape"])
+            assert Gdist.parameters.get("loc") is not None
+            assert Gdist.parameters.get("scale") is not None
+            assert Gdist.parameters.get("shape") is not None
 
     def test_gev_ks(
         self,
@@ -218,7 +220,7 @@ class TestGEV:
         Param = Gdist.estimateParameter(
             method=dist_estimation_parameters_ks, test=False
         )
-        pdf, fig, ax = Gdist.pdf(Param[0], Param[1], Param[2], plot_figure=True)
+        pdf, fig, ax = Gdist.pdf(Param, plot_figure=True)
         assert isinstance(pdf, np.ndarray)
         assert isinstance(fig, Figure)
 
@@ -231,7 +233,7 @@ class TestGEV:
         Param = Gdist.estimateParameter(
             method=dist_estimation_parameters_ks, test=False
         )
-        cdf, fig, ax = Gdist.cdf(Param[0], Param[1], Param[2], plot_figure=True)
+        cdf, fig, ax = Gdist.cdf(Param, plot_figure=True)
         assert isinstance(cdf, np.ndarray)
         assert isinstance(fig, Figure)
 
@@ -245,7 +247,7 @@ class TestGEV:
         Param = Gdist.estimateParameter(
             method=dist_estimation_parameters_ks, test=False
         )
-        Qth = Gdist.theporeticalEstimate(Param[0], Param[1], Param[2], cdf_Weibul)
+        Qth = Gdist.theporeticalEstimate(Param, cdf_Weibul)
         assert isinstance(Qth, np.ndarray)
 
     def test_gev_confidence_interval(
@@ -261,9 +263,7 @@ class TestGEV:
         )
         func = ConfidenceInterval.GEVfunc
         upper, lower = Gdist.confidenceInterval(
-            Param[0],
-            Param[1],
-            Param[2],
+            Param,
             F=cdf_Weibul,
             alpha=confidence_interval_alpha,
             statfunction=func,
