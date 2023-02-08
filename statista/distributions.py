@@ -433,7 +433,7 @@ class Gumbel:
         method = method.lower()
         if method not in ["mle", "mm", "lmoments", "optimization"]:
             raise ValueError(
-                method + "value should be 'mle', 'mm', 'lmoments' or 'optimization'"
+                f"{method} value should be 'mle', 'mm', 'lmoments' or 'optimization'"
             )
         if method == "mle" or method == "mm":
             Param = list(gumbel_r.fit(self.data, method=method))
@@ -1364,26 +1364,19 @@ class ConfidenceInterval:
 
         gevfit = kwargs["gevfit"]
         F = kwargs["F"]
-        # shape = gevfit[0]
-        # loc = gevfit[1]
-        # scale = gevfit[2]
-        # parameters = {"loc": loc, "scale": scale, "shape": shape}
         # generate theoretical estimates based on a random cdf, and the dist parameters
         sample = GEV.theporeticalEstimate(gevfit, np.random.rand(len(data)))
         # get parameters based on the new generated sample
         LM = Lmoments(sample)
         mum = LM.Lmom()
         newfit = LM.GEV(mum)
-        shape = newfit[0]
-        loc = newfit[1]
-        scale = newfit[2]
         # return period
         # T = np.arange(0.1, 999.1, 0.1) + 1
         # +1 in order not to make 1- 1/0.1 = -9
         # T = np.linspace(0.1, 999, len(data)) + 1
         # coresponding theoretical estimate to T
         # F = 1 - 1 / T
-        parameters = {"loc": loc, "scale": scale, "shape": shape}
+        parameters = {"loc": newfit[1], "scale": newfit[2], "shape": newfit[0]}
         Qth = GEV.theporeticalEstimate(parameters, F)
 
         res = newfit
@@ -1397,6 +1390,7 @@ class plot:
     def __init__(self):
         pass
 
+    @staticmethod
     def pdf(
         Qx: np.ndarray,
         pdf_fitted,
