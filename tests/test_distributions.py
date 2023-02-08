@@ -300,3 +300,6 @@ class TestGEV:
 
         assert isinstance(LB, np.ndarray)
         assert isinstance(UB, np.ndarray)
+
+
+# class TestAbstractDistrition:

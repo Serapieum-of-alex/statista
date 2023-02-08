@@ -113,16 +113,15 @@ class AbstractDistribution:
 
         pass
 
-
     def pdf(
-            self,
-            parameters: Dict[str, Union[float, Any]],
-            plot_figure: bool = False,
-            figsize: tuple = (6, 5),
-            xlabel: str = "Actual data",
-            ylabel: str = "pdf",
-            fontsize: Union[float, int] = 15,
-            actualdata: Union[bool, np.ndarray] = True,
+        self,
+        parameters: Dict[str, Union[float, Any]],
+        plot_figure: bool = False,
+        figsize: tuple = (6, 5),
+        xlabel: str = "Actual data",
+        ylabel: str = "pdf",
+        fontsize: Union[float, int] = 15,
+        actualdata: Union[bool, np.ndarray] = True,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
@@ -211,7 +210,6 @@ class AbstractDistribution:
         """
         pass
 
-
     @staticmethod
     def theporeticalEstimate(
         parameters: Dict[str, Union[float, Any]], cdf: np.ndarray
@@ -238,7 +236,6 @@ class AbstractDistribution:
         """
         pass
 
-
     def ks(self) -> tuple:
         """Kolmogorov-Smirnov (KS) test.
 
@@ -252,7 +249,25 @@ class AbstractDistribution:
         Pvalue : [numeric]
             IF Pvalue < signeficance level ------ reject the null hypotethis
         """
-        pass
+        if self.parameters is None:
+            raise ValueError(
+                "Value of parameters is unknown please use "
+                "'EstimateParameter' to obtain estimate the distribution parameters"
+            )
+        Qth = self.theporeticalEstimate(self.parameters, self.cdf_Weibul)
+
+        test = ks_2samp(self.data, Qth)
+        self.Dstatic = test.statistic
+        self.KS_Pvalue = test.pvalue
+
+        print("-----KS Test--------")
+        print(f"Statistic = {test.statistic}")
+        if self.Dstatic < self.KStable:
+            print("Accept Hypothesis")
+        else:
+            print("reject Hypothesis")
+        print(f"P value = {test.pvalue}")
+        return test.statistic, test.pvalue
 
     def chisquare(self) -> tuple:
         """
@@ -261,7 +276,24 @@ class AbstractDistribution:
         -------
 
         """
-        pass
+        if self.parameters is None:
+            raise ValueError(
+                "Value of loc/scale parameter is unknown please use "
+                "'EstimateParameter' to obtain them"
+            )
+
+        Qth = self.theporeticalEstimate(self.parameters, self.cdf_Weibul)
+        try:
+            test = chisquare(st.standardize(Qth), st.standardize(self.data))
+            self.chistatic = test.statistic
+            self.chi_Pvalue = test.pvalue
+            print("-----chisquare Test-----")
+            print("Statistic = " + str(test.statistic))
+            print("P value = " + str(test.pvalue))
+            return test.statistic, test.pvalue
+        except Exception as e:
+            print(e)
+            return
 
     def confidenceInterval(
         self,
@@ -349,6 +381,7 @@ class AbstractDistribution:
             lower bound coresponding to the confidence interval.
         """
         pass
+
 
 class Gumbel(AbstractDistribution):
     """Gumbel distribution."""
@@ -680,25 +713,7 @@ class Gumbel(AbstractDistribution):
         Pvalue : [numeric]
             IF Pvalue < signeficance level ------ reject the null hypotethis
         """
-        if self.parameters is None:
-            raise ValueError(
-                "Value of parameters is unknown please use "
-                "'EstimateParameter' to obtain estimate the distribution parameters"
-            )
-        Qth = self.theporeticalEstimate(self.parameters, self.cdf_Weibul)
-
-        test = ks_2samp(self.data, Qth)
-        self.Dstatic = test.statistic
-        self.KS_Pvalue = test.pvalue
-
-        print("-----KS Test--------")
-        print(f"Statistic = {test.statistic}")
-        if self.Dstatic < self.KStable:
-            print("Accept Hypothesis")
-        else:
-            print("reject Hypothesis")
-        print(f"P value = {test.pvalue}")
-        return test.statistic, test.pvalue
+        return super().ks()
 
     def chisquare(self) -> tuple:
         """
@@ -707,24 +722,7 @@ class Gumbel(AbstractDistribution):
         -------
 
         """
-        if self.parameters is None:
-            raise ValueError(
-                "Value of loc/scale parameter is unknown please use "
-                "'EstimateParameter' to obtain them"
-            )
-
-        Qth = self.theporeticalEstimate(self.parameters, self.cdf_Weibul)
-        try:
-            test = chisquare(st.standardize(Qth), st.standardize(self.data))
-            self.chistatic = test.statistic
-            self.chi_Pvalue = test.pvalue
-            print("-----chisquare Test-----")
-            print("Statistic = " + str(test.statistic))
-            print("P value = " + str(test.pvalue))
-            return test.statistic, test.pvalue
-        except Exception as e:
-            print(e)
-            # raise
+        return super().chisquare()
 
     def confidenceInterval(
         self,
@@ -867,9 +865,9 @@ class GEV(AbstractDistribution):
     data: ndarray
 
     def __init__(
-            self,
-            data: Union[list, np.ndarray] = None,
-            parameters: Dict[str, str] = None,
+        self,
+        data: Union[list, np.ndarray] = None,
+        parameters: Dict[str, str] = None,
     ):
         """GEV.
 
@@ -889,14 +887,14 @@ class GEV(AbstractDistribution):
         pass
 
     def pdf(
-            self,
-            parameters: Dict[str, Union[float, Any]],
-            plot_figure: bool = False,
-            figsize: tuple = (6, 5),
-            xlabel: str = "Actual data",
-            ylabel: str = "pdf",
-            fontsize: int = 15,
-            actualdata: Union[bool, np.ndarray] = True,
+        self,
+        parameters: Dict[str, Union[float, Any]],
+        plot_figure: bool = False,
+        figsize: tuple = (6, 5),
+        xlabel: str = "Actual data",
+        ylabel: str = "pdf",
+        fontsize: int = 15,
+        actualdata: Union[bool, np.ndarray] = True,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
@@ -934,13 +932,12 @@ class GEV(AbstractDistribution):
         else:
             ts = actualdata
 
-
         loc = parameters.get("loc")
         scale = parameters.get("scale")
         shape = parameters.get("shape")
         pdf = []
-        for i in range(len(ts)):
-            z = (ts[i] - loc) / scale
+        for i, ts_val in enumerate(ts):
+            z = (ts_val - loc) / scale
             if shape == 0:
                 val = np.exp(-(z + np.exp(-z)))
                 pdf.append((1 / scale) * val)
@@ -1138,7 +1135,6 @@ class GEV(AbstractDistribution):
             raise ValueError(
                 method + "value should be 'mle', 'mm', 'lmoments' or 'optimization'"
             )
-
         if method == "mle" or method == "mm":
             Param = list(genextreme.fit(self.data, method=method))
         elif method == "lmoments":
@@ -1149,7 +1145,7 @@ class GEV(AbstractDistribution):
             if ObjFunc is None or threshold is None:
                 raise TypeError("ObjFunc and threshold should be numeric value")
 
-            Param = genextreme.fit(self.data, method=method)
+            Param = genextreme.fit(self.data, method="mle")
             # then we use the result as starting value for your truncated Gumbel fit
             Param = so.fmin(
                 ObjFunc,
@@ -1174,8 +1170,8 @@ class GEV(AbstractDistribution):
 
     @staticmethod
     def theporeticalEstimate(
-            parameters: Dict[str, Union[float, Any]],
-            F: np.ndarray,
+        parameters: Dict[str, Union[float, Any]],
+        F: np.ndarray,
     ) -> np.ndarray:
         """TheporeticalEstimate.
 
@@ -1236,52 +1232,19 @@ class GEV(AbstractDistribution):
             Pvalue : [numeric]
                 IF Pvalue < signeficance level ------ reject the null hypotethis
         """
-        if self.parameters is None:
-            raise ValueError(
-                "Value of loc/scale parameter is unknown please use "
-                "'EstimateParameter' to obtain them"
-            )
-        Qth = self.theporeticalEstimate(self.parameters, self.cdf_Weibul)
-
-        test = ks_2samp(self.data, Qth)
-        self.Dstatic = test.statistic
-        self.KS_Pvalue = test.pvalue
-        print("-----KS Test--------")
-        print("Statistic = " + str(test.statistic))
-        if self.Dstatic < self.KStable:
-            print("Accept Hypothesis")
-        else:
-            print("reject Hypothesis")
-        print("P value = " + str(test.pvalue))
-
-        return test.statistic, test.pvalue
+        return super().ks()
 
     def chisquare(self):
-        if self.parameters is None:
-            raise ValueError(
-                "Value of loc/scale parameter is unknown please use "
-                "'EstimateParameter' to obtain them"
-            )
-
-        Qth = self.theporeticalEstimate(self.parameters, self.cdf_Weibul)
-
-        test = chisquare(st.standardize(Qth), st.standardize(self.data))
-        self.chistatic = test.statistic
-        self.chi_Pvalue = test.pvalue
-        print("-----chisquare Test-----")
-        print("Statistic = " + str(test.statistic))
-        print("P value = " + str(test.pvalue))
-
-        return test.statistic, test.pvalue
+        return super().chisquare()
 
     def confidenceInterval(
-            self,
-            parameters: Dict[str, Union[float, Any]],
-            F: np.ndarray,
-            alpha: float = 0.1,
-            statfunction=np.average,
-            n_samples: int = 100,
-            **kargs,
+        self,
+        parameters: Dict[str, Union[float, Any]],
+        F: np.ndarray,
+        alpha: float = 0.1,
+        statfunction=np.average,
+        n_samples: int = 100,
+        **kargs,
     ):
         """confidenceInterval.
 
@@ -1303,14 +1266,10 @@ class GEV(AbstractDistribution):
             Qlower : [list]
                 lower bound coresponding to the confidence interval.
         """
-        loc = parameters.get("loc")
         scale = parameters.get("scale")
-        shape = parameters.get("shape")
-
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        # Param = [shape, loc, scale]
         CI = ConfidenceInterval.BootStrap(
             self.data,
             statfunction=statfunction,
