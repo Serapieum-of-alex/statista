@@ -23,3 +23,4 @@ History
 ------------------
 
 * add eva (Extreme value analysis) module
+* fix bug in obtaining distribution parameters using optimization method
