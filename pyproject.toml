@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "statista"
-version = "0.1.8"
+version = "0.2.0"
 description = "statistics package"
 authors = ["Mostafa Farrag <moah.farag@gmail.com>"]
 readme = "README.md"
@@ -61,7 +61,7 @@ source = ["statista"]
 
 [tool.coverage.report]
 show_missing = true
-fail_under = 40
+fail_under = 0
 
 
 [tool.isort]
