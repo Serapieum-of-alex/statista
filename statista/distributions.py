@@ -328,7 +328,7 @@ class Gumbel:
         elif method == "optimization":
             if ObjFunc is None or threshold is None:
                 raise TypeError("threshold should be numeric value")
-            Param = gumbel_r.fit(self.data, method=method)
+            Param = gumbel_r.fit(self.data, method="mle")
             # then we use the result as starting value for your truncated Gumbel fit
             Param = so.fmin(
                 ObjFunc,
@@ -857,7 +857,7 @@ class GEV:
             if ObjFunc is None or threshold is None:
                 raise TypeError("ObjFunc and threshold should be numeric value")
 
-            Param = genextreme.fit(self.data, method=method)
+            Param = genextreme.fit(self.data, method="mle")
             # then we use the result as starting value for your truncated Gumbel fit
             Param = so.fmin(
                 ObjFunc,
