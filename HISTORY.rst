@@ -17,3 +17,9 @@ History
 ------------------
 
 * bump up versions
+
+
+0.2.0 (2023-02-08)
+------------------
+
+* add eva (Extreme value analysis) module
