@@ -6,7 +6,7 @@ Current release info
   :target: https://pypi.org/project/statista/0.1.2/
 
 
-.. image:: https://img.shields.io/conda/v/conda-forge/hapi?label=conda-forge
+.. image:: https://img.shields.io/conda/v/conda-forge/statista?label=conda-forge
   :target: https://pypi.org/project/statista/0.1.2/
 
 
@@ -14,14 +14,14 @@ Current release info
   :target: https://pypi.org/project/statista/0.1.2/
 
 
-.. image:: https://img.shields.io/github/forks/mafarrag/hapi?style=social   :alt: GitHub forks
+.. image:: https://img.shields.io/github/forks/mafarrag/statista?style=social   :alt: GitHub forks
 
 
-.. image:: https://anaconda.org/conda-forge/hapi/badges/downloads.svg
-  :target: https://anaconda.org/conda-forge/hapi
+.. image:: https://anaconda.org/conda-forge/statista/badges/downloads.svg
+  :target: https://anaconda.org/conda-forge/statista
 
 
-.. image:: https://img.shields.io/conda/vn/conda-forge/hapi   :alt: Conda (channel only)
+.. image:: https://img.shields.io/conda/vn/conda-forge/statista   :alt: Conda (channel only)
   :target: https://pypi.org/project/statista/0.1.2/
 
 
@@ -37,8 +37,8 @@ Current release info
   :alt: PyPI
 
 
-.. image:: https://anaconda.org/conda-forge/hapi/badges/platforms.svg
-  :target: https://anaconda.org/conda-forge/hapi
+.. image:: https://anaconda.org/conda-forge/statista/badges/platforms.svg
+  :target: https://anaconda.org/conda-forge/statista
 
 
 .. image:: https://static.pepy.tech/personalized-badge/statista?period=total&units=international_system&left_color=grey&right_color=blue&left_text=Downloads
@@ -83,4 +83,3 @@ Main Features
 
    Installation <00Installation.rst>
    Tutorial <03tutorial.rst>
-   GIS <05GIS.rst>
