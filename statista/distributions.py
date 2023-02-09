@@ -649,11 +649,11 @@ class GEV:
             ts = actualdata
 
         pdf = []
-        for i in range(len(ts)):
-            z = (ts[i] - loc) / scale
+        for ts_i in ts:
+            z = (ts_i - loc) / scale
             if shape == 0:
-                val = np.exp(-(z + np.exp(-z)))
-                pdf.append((1 / scale) * val)
+                val = (1 / scale) * (np.exp(-(z + np.exp(-z))))
+                pdf.append(val)
                 continue
 
             y = 1 - shape * z
@@ -661,8 +661,8 @@ class GEV:
                 # np.log(y) = ln(y)
                 # ln is the inverse of e
                 lnY = (-1 / shape) * np.log(y)
-                val = np.exp(-(1 - shape) * lnY - np.exp(-lnY))
-                pdf.append((1 / scale) * val)
+                val = (1 / scale) * (np.exp(-(1 - shape) * lnY - np.exp(-lnY)))
+                pdf.append(val)
                 continue
 
             # y = 1 + shape * z
@@ -736,9 +736,9 @@ class GEV:
         else:
             y = 1 - shape * z
             cdf = list()
-            for i in range(0, len(y)):
-                if y[i] > ninf:
-                    logY = -np.log(y[i]) / shape
+            for y_i in y:
+                if y_i > ninf:
+                    logY = -np.log(y_i) / shape
                     cdf.append(np.exp(-np.exp(-logY)))
                 elif shape < 0:
                     cdf.append(0)
