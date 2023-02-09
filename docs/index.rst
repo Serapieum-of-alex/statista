@@ -82,4 +82,5 @@ Main Features
    :maxdepth: 1
 
    Installation <installation.rst>
+   Distributions <distributions.rst>
    Sensitivity analysis <sensitivity_analysis.rst>
