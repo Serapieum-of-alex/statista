@@ -55,7 +55,7 @@ extensions = [
     "easydev.copybutton",
     # "matplotlib.sphinxext.plot_directive",
     # "sphinx.ext.todo",
-    # "sphinx.ext.mathjax",
+    "sphinx.ext.mathjax",
     # "sphinx.ext.graphviz",
     # "sphinx.ext.doctest",
     # "sphinx.ext.autosectionlabel",

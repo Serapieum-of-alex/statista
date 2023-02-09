@@ -81,5 +81,6 @@ Main Features
    :hidden:
    :maxdepth: 1
 
-   Installation <00Installation.rst>
-   Tutorial <03tutorial.rst>
+   Installation <installation.rst>
+   Distributions <distributions.rst>
+   Sensitivity Analysis <sensitivity_analysis.rst>
