@@ -81,4 +81,4 @@ Main Features
    :hidden:
    :maxdepth: 1
 
-   Distributions <distributions.rst>
+   Installation <installation.rst>
