@@ -51,7 +51,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
-    "sphinx.ext.pngmath",
+    "sphinx.ext.imgmath",
     "easydev.copybutton",
     # "matplotlib.sphinxext.plot_directive",
     # "sphinx.ext.todo",
