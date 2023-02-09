@@ -184,11 +184,11 @@ Display the result with the SOBOL plot
 
 - Type 1 with one parameter
 
-.. image:: /img/sensitivityAnalysis1.png
+.. image:: images/sensitivityAnalysis1.png
     :width: 400pt
 
 - Type 1 with all parameters
-.. image:: /img/sensitivityAnalysis3.png
+.. image:: images/sensitivityAnalysis3.png
     :width: 400pt
     :align: center
 
@@ -218,5 +218,5 @@ The second type
 
 - Type 2
 
-.. image:: /img/sensitivityAnalysis2.png
+.. image:: images/sensitivityAnalysis2.png
     :width: 400pt
