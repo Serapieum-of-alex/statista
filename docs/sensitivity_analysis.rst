@@ -25,6 +25,7 @@ Steps:
     * Run the OAT method :ref:`4`
     * Display the result with the SOBOL plot :ref:`5`
 
+
 .. _1:
 
 Run the model
@@ -186,6 +187,7 @@ Display the result with the SOBOL plot
 
 .. image:: images/sensitivityAnalysis1.png
     :width: 400pt
+    :align: center
 
 - Type 1 with all parameters
 .. image:: images/sensitivityAnalysis3.png
@@ -220,3 +222,4 @@ The second type
 
 .. image:: images/sensitivityAnalysis2.png
     :width: 400pt
+    :align: center
