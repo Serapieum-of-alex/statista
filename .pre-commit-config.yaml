@@ -108,7 +108,7 @@ repos:
     hooks:
       - id: pytest-check
         name: pytest-check
-        entry: pytest -vvv --cov=Hapi
+        entry: pytest -vvv --cov=statista
         language: system
         pass_filenames: false
         always_run: true
