@@ -1,17 +1,16 @@
-from collections import OrderedDict
+"""Statistical distributions."""
 from typing import Any, List, Tuple, Union
 from matplotlib.figure import Figure
 
 import numpy as np
 import scipy.optimize as so
-from loguru import logger
 from numpy import ndarray
-from numpy.random import randint
 from scipy.stats import chisquare, genextreme, gumbel_r, ks_2samp, norm, expon
 
 from statista.parameters import Lmoments
 from statista.tools import Tools as st
 from statista.plot import Plot
+from statista.confidence_interval import ConfidenceInterval
 
 ninf = 1e-5
 
@@ -1085,7 +1084,7 @@ class GEV:
 
         Qth = self.theporeticalEstimate(shape, loc, scale, F)
         if func is None:
-            func = ConfidenceInterval.GEVfunc
+            func = GEV.GEVfunc
 
         Param_dist = [shape, loc, scale]
         CI = ConfidenceInterval.BootStrap(
@@ -1118,6 +1117,48 @@ class GEV:
         )
 
         return fig, ax
+
+        # The function to bootstrap
+
+    @staticmethod
+    def GEVfunc(data: Union[list, np.ndarray], **kwargs):
+        """GEV distribution function.
+
+        Parameters
+        ----------
+        data: [list, np.ndarray]
+            time series
+        kwargs:
+            - gevfit: [list]
+                GEV parameter [shape, location, scale]
+            - F: [list]
+                Non Exceedence probability
+        """
+        gevfit = kwargs["gevfit"]
+        F = kwargs["F"]
+        shape = gevfit[0]
+        loc = gevfit[1]
+        scale = gevfit[2]
+        # generate theoretical estimates based on a random cdf, and the dist parameters
+        sample = GEV.theporeticalEstimate(shape, loc, scale, np.random.rand(len(data)))
+        # get parameters based on the new generated sample
+        LM = Lmoments(sample)
+        mum = LM.Lmom()
+        newfit = LM.GEV(mum)
+        shape = newfit[0]
+        loc = newfit[1]
+        scale = newfit[2]
+        # return period
+        # T = np.arange(0.1, 999.1, 0.1) + 1
+        # +1 in order not to make 1- 1/0.1 = -9
+        # T = np.linspace(0.1, 999, len(data)) + 1
+        # coresponding theoretical estimate to T
+        # F = 1 - 1 / T
+        Qth = GEV.theporeticalEstimate(shape, loc, scale, F)
+
+        res = newfit
+        res.extend(Qth)
+        return tuple(res)
 
 
 class Exponential:
@@ -1365,127 +1406,3 @@ class Exponential:
                 print("chisquare test failed")
 
         return Param
-
-
-class ConfidenceInterval:
-    """ConfidenceInterval."""
-
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def BSIndexes(data, n_samples=10000):
-        """Given data points data, where axis 0 is considered to delineate points, return an generator for sets of bootstrap indexes.
-
-        This can be used as a list of bootstrap indexes (with
-        list(bootstrap_indexes(data))) as well.
-        """
-        for _ in range(n_samples):
-            yield randint(data.shape[0], size=(data.shape[0],))
-
-    def BootStrap(
-        data: Union[list, np.ndarray],
-        statfunction,
-        alpha: float = 0.05,
-        n_samples: int = 100,
-        **kargs,
-    ):  # ->  Dict[str, OrderedDict[str, Tuple[Any, Any]]]
-        """Calculate confidence intervals using parametric bootstrap and the percentil interval method This is used to obtain confidence intervals for the estimators and the return values for several return values.
-
-        More info about bootstrapping can be found on:
-            - Efron: "An Introduction to the Bootstrap", Chapman & Hall (1993)
-            - https://en.wikipedia.org/wiki/Bootstrapping_%28statistics%29
-
-        parameters:
-        -----------
-        alpha : [numeric]
-                alpha or SignificanceLevel is a value of the confidence interval.
-        kwargs :
-            gevfit : [list]
-                list of the three parameters of the GEV distribution [shape, loc, scale]
-            F : [list]
-                non exceedence probability/ cdf
-        """
-        alphas = np.array([alpha / 2, 1 - alpha / 2])
-        tdata = (np.array(data),)
-
-        # We don't need to generate actual samples; that would take more memory.
-        # Instead, we can generate just the indexes, and then apply the statfun
-        # to those indexes.
-        bootindexes = ConfidenceInterval.BSIndexes(tdata[0], n_samples)
-        stat = np.array(
-            [
-                statfunction(*(x[indexes] for x in tdata), **kargs)
-                for indexes in bootindexes
-            ]
-        )
-        stat.sort(axis=0)
-
-        # Percentile Interval Method
-        avals = alphas
-        nvals = np.round((n_samples - 1) * avals).astype("int")
-
-        if np.any(nvals == 0) or np.any(nvals == n_samples - 1):
-            logger.debug(
-                "Some values used extremal samples; results are probably unstable."
-            )
-            # warnings.warn(
-            #     "Some values used extremal samples; results are probably unstable.",
-            #     InstabilityWarning,
-            # )
-        elif np.any(nvals < 10) or np.any(nvals >= n_samples - 10):
-            logger.debug(
-                "Some values used top 10 low/high samples; results may be unstable."
-            )
-            # warnings.warn(
-            #     "Some values used top 10 low/high samples; results may be unstable.",
-            #     InstabilityWarning,
-            # )
-
-        if nvals.ndim == 1:
-            # All nvals are the same. Simple broadcasting
-            out = stat[nvals]
-        else:
-            # Nvals are different for each data point. Not simple broadcasting.
-            # Each set of nvals along axis 0 corresponds to the data at the same
-            # point in other axes.
-            out = stat[(nvals, np.indices(nvals.shape)[1:].squeeze())]
-
-        UB = out[0, 3:]
-        LB = out[1, 3:]
-        params = OrderedDict()
-        params["shape"] = (out[0, 0], out[1, 0])
-        params["location"] = (out[0, 1], out[1, 1])
-        params["scale"] = (out[0, 2], out[1, 3])
-
-        return {"LB": LB, "UB": UB, "params": params}
-
-    # The function to bootstrap
-    @staticmethod
-    def GEVfunc(data, **kwargs):
-
-        gevfit = kwargs["gevfit"]
-        F = kwargs["F"]
-        shape = gevfit[0]
-        loc = gevfit[1]
-        scale = gevfit[2]
-        # generate theoretical estimates based on a random cdf, and the dist parameters
-        sample = GEV.theporeticalEstimate(shape, loc, scale, np.random.rand(len(data)))
-        # get parameters based on the new generated sample
-        LM = Lmoments(sample)
-        mum = LM.Lmom()
-        newfit = LM.GEV(mum)
-        shape = newfit[0]
-        loc = newfit[1]
-        scale = newfit[2]
-        # return period
-        # T = np.arange(0.1, 999.1, 0.1) + 1
-        # +1 in order not to make 1- 1/0.1 = -9
-        # T = np.linspace(0.1, 999, len(data)) + 1
-        # coresponding theoretical estimate to T
-        # F = 1 - 1 / T
-        Qth = GEV.theporeticalEstimate(shape, loc, scale, F)
-
-        res = newfit
-        res.extend(Qth)
-        return tuple(res)

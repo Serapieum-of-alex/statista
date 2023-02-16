@@ -232,7 +232,7 @@ def test_gev_confidence_interval(
     Gdist = GEV(time_series1)
     cdf_Weibul = PlottingPosition.weibul(time_series1)
     Param = Gdist.estimateParameter(method=dist_estimation_parameters_ks, test=False)
-    func = ConfidenceInterval.GEVfunc
+    func = GEV.GEVfunc
     upper, lower = Gdist.confidenceInterval(
         Param[0],
         Param[1],
@@ -254,7 +254,7 @@ def test_confidence_interval_directly(
     Gdist = GEV(time_series1)
     cdf_Weibul = PlottingPosition.weibul(time_series1)
     Param = Gdist.estimateParameter(method=dist_estimation_parameters_ks, test=False)
-    func = ConfidenceInterval.GEVfunc
+    func = GEV.GEVfunc
     # upper, lower = Gdist.ConfidenceInterval(
     #     Param[0], Param[1], Param[2], F=cdf_Weibul, alpha=confidence_interval_alpha,
     #     statfunction=func, n_samples=len(time_series1)
