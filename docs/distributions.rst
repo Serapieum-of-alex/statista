@@ -39,6 +39,8 @@ Gumbel Distribution
 probability density function (pdf)
 ==================================
 
+.. math::
+     f(x) = \frac{1}{\sigma} \ast { {e}^{-(\frac{x-\mu}{\delta}) - {e}^{- (\frac{x-\mu}{\delta})} }}
 
 Cumulative distribution function (cdf)
 ======================================
