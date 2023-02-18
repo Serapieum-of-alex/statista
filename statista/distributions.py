@@ -1387,16 +1387,15 @@ class Exponential:
             # then we use the result as starting value for your truncated Gumbel fit
             Param = so.fmin(
                 ObjFunc,
-                [threshold, Param[0], Param[1], Param[2]],
+                [threshold, Param[0], Param[1]],
                 args=(self.data,),
                 maxiter=500,
                 maxfun=500,
             )
-            Param = [Param[1], Param[2], Param[3]]
+            Param = [Param[1], Param[2]]
 
-        self.shape = Param[0]
-        self.loc = Param[1]
-        self.scale = Param[2]
+        self.loc = Param[0]
+        self.scale = Param[1]
 
         if test:
             self.ks()
@@ -1406,3 +1405,36 @@ class Exponential:
                 print("chisquare test failed")
 
         return Param
+
+
+    @staticmethod
+    def theporeticalEstimate(
+            loc: Union[float, int],
+            scale: Union[float, int],
+            F: np.ndarray,
+    ) -> np.ndarray:
+        """TheporeticalEstimate.
+
+        TheporeticalEstimate method calculates the theoretical values based on a given  non exceedence probability
+
+        Parameters:
+        -----------
+        param : [list]
+            location ans scale parameters of the gumbel distribution.
+        F : [list]
+            cummulative distribution function/ Non Exceedence probability.
+
+        Return:
+        -------
+        theoreticalvalue : [numeric]
+            Value based on the theoretical distribution
+        """
+        if scale <= 0:
+            raise ValueError("Parameters Invalid")
+
+        if any(F) < 0 or any(F) > 1:
+            raise ValueError("cdf Value Invalid")
+
+        # the main equation from scipy
+        Qth = expon.ppf(F, loc=loc, scale=scale)
+        return Qth

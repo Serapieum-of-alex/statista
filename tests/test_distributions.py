@@ -3,7 +3,7 @@ from typing import List
 import numpy as np
 from matplotlib.figure import Figure
 
-from statista.distributions import GEV, ConfidenceInterval, Gumbel, PlottingPosition
+from statista.distributions import GEV, ConfidenceInterval, Gumbel, PlottingPosition, Exponential
 
 
 def test_plotting_position_weibul(
@@ -271,3 +271,61 @@ def test_confidence_interval_directly(
 
     assert isinstance(LB, np.ndarray)
     assert isinstance(UB, np.ndarray)
+
+class TestExponential:
+
+    def test_create_instance(
+            self,
+            time_series1: list,
+    ):
+        Edist = Exponential(time_series1)
+        assert isinstance(Edist.data, np.ndarray)
+        assert isinstance(Edist.data_sorted, np.ndarray)
+
+    def test_estimate_parameter(
+            self,
+            time_series2: list,
+            dist_estimation_parameters: List[str],
+    ):
+        Edist = Exponential(time_series2)
+        for i in range(len(dist_estimation_parameters)):
+            param = Edist.estimateParameter(
+                method=dist_estimation_parameters[i], test=False
+            )
+            assert isinstance(param, list)
+            assert Edist.loc
+            assert Edist.scale
+
+    def test_pdf(
+            self,
+            time_series2: list,
+            dist_estimation_parameters_ks: str,
+    ):
+        Edist = Exponential(time_series2)
+        Param = Edist.estimateParameter(method=dist_estimation_parameters_ks, test=False)
+        pdf, fig, ax = Edist.pdf(Param[0], Param[1], plot_figure=True)
+        assert isinstance(pdf, np.ndarray)
+        assert isinstance(fig, Figure)
+
+    def test_cdf(
+            self,
+            time_series2: list,
+            dist_estimation_parameters_ks: str,
+    ):
+        Edist = Exponential(time_series2)
+        Param = Edist.estimateParameter(method=dist_estimation_parameters_ks, test=False)
+        cdf, fig, ax = Edist.cdf(Param[0], Param[1], plot_figure=True)
+        assert isinstance(cdf, np.ndarray)
+        assert isinstance(fig, Figure)
+
+
+    def test_TheporeticalEstimate(
+            self,
+            time_series2: list,
+            dist_estimation_parameters_ks: str,
+    ):
+        Edist = Exponential(time_series2)
+        cdf_Weibul = PlottingPosition.weibul(time_series2)
+        Param = Edist.estimateParameter(method=dist_estimation_parameters_ks, test=False)
+        Qth = Edist.theporeticalEstimate(Param[0], Param[1], cdf_Weibul)
+        assert isinstance(Qth, np.ndarray)
