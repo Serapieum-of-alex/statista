@@ -17,14 +17,14 @@ probability density function (pdf)
 
 
 .. math::
-     Q(x) =
+     \[ Q(x) =
         \begin{cases}
         {(1+\xi(\frac{x-\mu}{\delta}))}^\frac{-1}{\xi}  & \quad \text{if } \xi \text{ \neq 0}\\
         e^{-(\frac{x-\mu}{\delta})}                     & \quad \text{if } \xi \text{ = 0}
         \end{cases}
+     \]
 
 
-- where
 :math: `\sigma` is the scale parameter
 :math: `\mu` is the location parameter
 :math: `\delta` is the scale parameter
