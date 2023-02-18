@@ -1406,12 +1406,11 @@ class Exponential:
 
         return Param
 
-
     @staticmethod
     def theporeticalEstimate(
-            loc: Union[float, int],
-            scale: Union[float, int],
-            F: np.ndarray,
+        loc: Union[float, int],
+        scale: Union[float, int],
+        F: np.ndarray,
     ) -> np.ndarray:
         """TheporeticalEstimate.
 
