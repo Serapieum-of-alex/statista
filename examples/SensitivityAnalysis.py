@@ -6,10 +6,8 @@
 Path = "F:/01Algorithms/Hydrology/HAPI/examples"
 import matplotlib
 
-# os.chdir(Path)
-import pandas as pd
-
 matplotlib.use("TkAgg")
+import pandas as pd
 
 # functions
 import Hapi.rrm.hbv_bergestrom92 as HBVLumped

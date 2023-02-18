@@ -170,7 +170,9 @@ def ams_analysis(
                     # defult parameter estimation method is maximum liklihood method
                     param_dist = dist.estimateParameter(method=method)
             except Exception as e:
-                logger.warning(f"The gauge {i} parameters could not be estimated because of {e}")
+                logger.warning(
+                    f"The gauge {i} parameters could not be estimated because of {e}"
+                )
                 continue
 
         (
