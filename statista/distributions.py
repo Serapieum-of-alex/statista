@@ -647,18 +647,21 @@ class GEV:
         pdf = []
         for ts_i in ts:
             z = (ts_i - loc) / scale
+
+            # Gumbel
             if shape == 0:
-                val = (1 / scale) * (np.exp(-(z + np.exp(-z))))
-                pdf.append(val)
+                val = np.exp(-(z + np.exp(-z)))
+                pdf.append((1 / scale) * val)
                 continue
 
+            # GEV
             y = 1 - shape * z
             if y > ninf:
                 # np.log(y) = ln(y)
                 # ln is the inverse of e
                 lnY = (-1 / shape) * np.log(y)
-                val = (1 / scale) * (np.exp(-(1 - shape) * lnY - np.exp(-lnY)))
-                pdf.append(val)
+                val = np.exp(-(1 - shape) * lnY - np.exp(-lnY))
+                pdf.append((1 / scale) * val)
                 continue
 
             # y = 1 + shape * z
@@ -680,7 +683,7 @@ class GEV:
             pdf = pdf[0]
 
         pdf = np.array(pdf)
-        # genextreme.pdf(data, loc=loc, scale=scale, c=shape)
+        # f = genextreme.pdf(self.data_sorted, loc=loc, scale=scale, c=shape)
         if plot_figure:
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
