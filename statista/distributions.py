@@ -320,7 +320,7 @@ class Gumbel:
         elif method == "lmoments":
             LM = Lmoments(self.data)
             LMU = LM.Lmom()
-            Param = Lmoments.Gumbel(LMU)
+            Param = Lmoments.gumbel(LMU)
         elif method == "optimization":
             if ObjFunc is None or threshold is None:
                 raise TypeError("threshold should be numeric value")
@@ -848,7 +848,7 @@ class GEV:
         elif method == "lmoments":
             LM = Lmoments(self.data)
             LMU = LM.Lmom()
-            Param = Lmoments.GEV(LMU)
+            Param = Lmoments.gev(LMU)
         elif method == "optimization":
             if ObjFunc is None or threshold is None:
                 raise TypeError("ObjFunc and threshold should be numeric value")
@@ -1084,7 +1084,7 @@ class GEV:
 
         Qth = self.theporeticalEstimate(shape, loc, scale, F)
         if func is None:
-            func = GEV.GEVfunc
+            func = GEV.ci_func
 
         Param_dist = [shape, loc, scale]
         CI = ConfidenceInterval.BootStrap(
@@ -1121,7 +1121,7 @@ class GEV:
         # The function to bootstrap
 
     @staticmethod
-    def GEVfunc(data: Union[list, np.ndarray], **kwargs):
+    def ci_func(data: Union[list, np.ndarray], **kwargs):
         """GEV distribution function.
 
         Parameters
@@ -1144,7 +1144,7 @@ class GEV:
         # get parameters based on the new generated sample
         LM = Lmoments(sample)
         mum = LM.Lmom()
-        newfit = LM.GEV(mum)
+        newfit = LM.gev(mum)
         shape = newfit[0]
         loc = newfit[1]
         scale = newfit[2]
@@ -1378,7 +1378,7 @@ class Exponential:
         elif method == "lmoments":
             LM = Lmoments(self.data)
             LMU = LM.Lmom()
-            Param = Lmoments.GEV(LMU)
+            Param = Lmoments.gev(LMU)
         elif method == "optimization":
             if ObjFunc is None or threshold is None:
                 raise TypeError("ObjFunc and threshold should be numeric value")
@@ -1436,4 +1436,263 @@ class Exponential:
 
         # the main equation from scipy
         Qth = expon.ppf(F, loc=loc, scale=scale)
+        return Qth
+
+class Normal:
+
+    """
+    f(x: threshold, scale) = (1/scale) e **(- (x-threshold)/scale)
+
+    """
+
+    def __init__(
+        self,
+        data: Union[list, np.ndarray] = None,
+        loc: Union[int, float] = None,
+        scale: Union[int, float] = None,
+    ):
+        """Gumbel.
+
+        Parameters
+        ----------
+        data : [list]
+            data time series.
+        loc: [numeric]
+            location parameter
+        scale: [numeric]
+            scale parameter
+        """
+        if isinstance(data, list) or isinstance(data, np.ndarray):
+            self.data = np.array(data)
+            self.data_sorted = np.sort(data)
+            self.cdf_Weibul = PlottingPosition.weibul(data)
+            self.KStable = 1.22 / np.sqrt(len(self.data))
+
+        self.loc = loc
+        self.scale = scale
+        self.Dstatic = None
+        self.KS_Pvalue = None
+        self.chistatic = None
+        self.chi_Pvalue = None
+
+    def pdf(
+        self,
+        loc: Union[float, int],
+        scale: Union[float, int],
+        plot_figure: bool = False,
+        figsize: tuple = (6, 5),
+        xlabel: str = "Actual data",
+        ylabel: str = "pdf",
+        fontsize: Union[float, int] = 15,
+        actualdata: Union[bool, np.ndarray] = True,
+    ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
+        """pdf.
+
+        Returns the value of Gumbel's pdf with parameters loc and scale at x .
+
+        Parameters:
+        -----------
+        loc : [numeric]
+            location parameter of the gumbel distribution.
+        scale : [numeric]
+            scale parameter of the gumbel distribution.
+
+        Returns
+        -------
+        pdf : [array]
+            probability density function pdf.
+        """
+        if scale <= 0:
+            raise ValueError("Scale parameter is negative")
+
+        if isinstance(actualdata, bool):
+            ts = self.data
+        else:
+            ts = actualdata
+
+        pdf = norm.pdf(ts, loc=loc, scale=scale)
+        if plot_figure:
+            Qx = np.linspace(
+                float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
+            )
+            pdf_fitted = self.pdf(loc, scale, actualdata=Qx)
+
+            fig, ax = Plot.pdf(
+                Qx,
+                pdf_fitted,
+                self.data_sorted,
+                figsize=figsize,
+                xlabel=xlabel,
+                ylabel=ylabel,
+                fontsize=fontsize,
+            )
+            return pdf, fig, ax
+        else:
+            return pdf
+
+    def cdf(
+        self,
+        loc: Union[float, int],
+        scale: Union[float, int],
+        plot_figure: bool = False,
+        figsize: tuple = (6, 5),
+        xlabel: str = "data",
+        ylabel: str = "cdf",
+        fontsize: int = 15,
+        actualdata: Union[bool, np.ndarray] = True,
+    ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
+        """cdf.
+
+        cdf calculates the value of Gumbel's cdf with parameters loc and scale at x.
+
+        parameter:
+        ----------
+            1- loc : [numeric]
+                location parameter of the gumbel distribution.
+            2- scale : [numeric]
+                scale parameter of the gumbel distribution.
+        """
+        if scale <= 0:
+            raise ValueError("Scale parameter is negative")
+        if loc <= 0:
+            raise ValueError("Threshold parameter should be greater than zero")
+
+        if isinstance(actualdata, bool):
+            ts = self.data
+        else:
+            ts = actualdata
+
+        cdf = norm.cdf(ts, loc=loc, scale=scale)
+
+        if plot_figure:
+            Qx = np.linspace(
+                float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
+            )
+            cdf_fitted = self.cdf(loc, scale, actualdata=Qx)
+
+            cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
+
+            fig, ax = Plot.cdf(
+                Qx,
+                cdf_fitted,
+                self.data_sorted,
+                cdf_Weibul,
+                figsize=figsize,
+                xlabel=xlabel,
+                ylabel=ylabel,
+                fontsize=fontsize,
+            )
+
+            return cdf, fig, ax
+        else:
+            return cdf
+
+    def estimateParameter(
+        self,
+        method: str = "mle",
+        ObjFunc=None,
+        threshold: Union[int, float, None] = None,
+        test: bool = True,
+    ) -> tuple:
+        """estimateParameter.
+
+        EstimateParameter estimate the distribution parameter based on MLM
+        (Maximum liklihood method), if an objective function is entered as an input
+
+        There are two likelihood functions (L1 and L2), one for values above some
+        threshold (x>=C) and one for values below (x < C), now the likeliest parameters
+        are those at the max value of mutiplication between two functions max(L1*L2).
+
+        In this case the L1 is still the product of multiplication of probability
+        density function's values at xi, but the L2 is the probability that threshold
+        value C will be exceeded (1-F(C)).
+
+        Parameters
+        ----------
+        ObjFunc : [function]
+            function to be used to get the distribution parameters.
+        threshold : [numeric]
+            Value you want to consider only the greater values.
+        method : [string]
+            'mle', 'mm', 'lmoments', optimization
+        test: bool
+            Default is True
+
+        Returns
+        -------
+        Param : [list]
+            shape, loc, scale parameter of the gumbel distribution in that order.
+        """
+        # obj_func = lambda p, x: (-np.log(Gumbel.pdf(x, p[0], p[1]))).sum()
+        # #first we make a simple Gumbel fit
+        # Par1 = so.fmin(obj_func, [0.5,0.5], args=(np.array(data),))
+        method = method.lower()
+        if method not in ["mle", "mm", "lmoments", "optimization"]:
+            raise ValueError(
+                method + "value should be 'mle', 'mm', 'lmoments' or 'optimization'"
+            )
+
+        if method == "mle" or method == "mm":
+            Param = list(norm.fit(self.data, method=method))
+        elif method == "lmoments":
+            LM = Lmoments(self.data)
+            LMU = LM.Lmom()
+            Param = Lmoments.normal(LMU)
+        elif method == "optimization":
+            if ObjFunc is None or threshold is None:
+                raise TypeError("ObjFunc and threshold should be numeric value")
+
+            Param = norm.fit(self.data, method="mle")
+            # then we use the result as starting value for your truncated Gumbel fit
+            Param = so.fmin(
+                ObjFunc,
+                [threshold, Param[0], Param[1]],
+                args=(self.data,),
+                maxiter=500,
+                maxfun=500,
+            )
+            Param = [Param[1], Param[2]]
+
+        self.loc = Param[0]
+        self.scale = Param[1]
+
+        if test:
+            self.ks()
+            try:
+                self.chisquare()
+            except ValueError:
+                print("chisquare test failed")
+
+        return Param
+
+    @staticmethod
+    def theporeticalEstimate(
+        loc: Union[float, int],
+        scale: Union[float, int],
+        F: np.ndarray,
+    ) -> np.ndarray:
+        """TheporeticalEstimate.
+
+        TheporeticalEstimate method calculates the theoretical values based on a given  non exceedence probability
+
+        Parameters:
+        -----------
+        param : [list]
+            location ans scale parameters of the gumbel distribution.
+        F : [list]
+            cummulative distribution function/ Non Exceedence probability.
+
+        Return:
+        -------
+        theoreticalvalue : [numeric]
+            Value based on the theoretical distribution
+        """
+        if scale <= 0:
+            raise ValueError("Parameters Invalid")
+
+        if any(F) < 0 or any(F) > 1:
+            raise ValueError("cdf Value Invalid")
+
+        # the main equation from scipy
+        Qth = norm.ppf(F, loc=loc, scale=scale)
         return Qth
