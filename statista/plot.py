@@ -115,7 +115,7 @@ class Plot:
         fig2size: tuple = (6, 6),
         xlabel: str = "Actual data",
         ylabel: str = "cdf",
-        fontsize: int = 15,
+        fontsize: int = 11,
     ) -> Tuple[List[Figure], List[Any]]:
         """details.
 
@@ -143,38 +143,41 @@ class Plot:
         gs = gridspec.GridSpec(nrows=1, ncols=2, figure=fig1)
         # Plot the histogram and the fitted distribution, save it for each gauge.
         ax1 = fig1.add_subplot(gs[0, 0])
-        ax1.plot(Qx, pdf, "r-")
-        ax1.hist(Qact, density=True)
+        ax1.plot(Qx, pdf, "-", color="#27408B", linewidth=2)
+        ax1.hist(Qact, density=True, histtype="stepfilled", color="#DC143C")
         ax1.set_xlabel(xlabel, fontsize=fontsize)
         ax1.set_ylabel("pdf", fontsize=fontsize)
 
         ax2 = fig1.add_subplot(gs[0, 1])
-        ax2.plot(Qx, cdf_fitted, "r-")
+        ax2.plot(Qx, cdf_fitted, "-", color="#27408B", linewidth=2)
+
         Qact.sort()
-        ax2.plot(Qact, F, ".-")
+        ax2.scatter(Qact, F, color="#DC143C", facecolors="none")
         ax2.set_xlabel(xlabel, fontsize=fontsize)
         ax2.set_ylabel(ylabel, fontsize=15)
 
         fig2 = plt.figure(figsize=fig2size)
-        plt.plot(Qth, Qact, "d", color="#606060", markersize=12, label="Actual Data")
-        plt.plot(Qth, Qth, "^-.", color="#3D59AB", label="Theoretical Data")
-
+        plt.plot(Qth, Qth, "-.", color="#3D59AB", linewidth=2, label="Theoretical Data")
+        # confidence interval
         plt.plot(
             Qth,
             Qlower,
             "*--",
-            color="#DC143C",
-            markersize=12,
+            color="grey",
+            markersize=10,
             label=f"Lower limit ({int((1 - alpha) * 100)} % CI)",
         )
         plt.plot(
             Qth,
             Qupper,
             "*--",
-            color="#DC143C",
-            markersize=12,
+            color="grey",
+            markersize=10,
             label=f"Upper limit ({int((1 - alpha) * 100)} % CI)",
         )
+        plt.scatter(
+            Qth, Qact, color="#DC143C", facecolors="none", label="Actual Data"
+        )  # "d", markersize=12,
         plt.legend(fontsize=fontsize, framealpha=1)
         plt.xlabel("Theoretical Values", fontsize=fontsize)
         plt.ylabel("Actual Values", fontsize=fontsize)
