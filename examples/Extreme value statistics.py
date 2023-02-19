@@ -5,39 +5,30 @@
 import matplotlib
 
 matplotlib.use("TkAgg")
-# import scipy.optimize as so
-# import matplotlib.pyplot as plt
-# import numpy as np
-# from matplotlib import gridspec
-# from scipy import stats as stats
-# from scipy.stats import genextreme, gumbel_r, norm
 import pandas as pd
-
 from statista.distributions import GEV, ConfidenceInterval, Gumbel, PlottingPosition
-
-# from statista.tools import Tools as st
 
 time_series1 = pd.read_csv("examples/data/time_series1.txt", header=None)[0].tolist()
 time_series2 = pd.read_csv("examples/data/time_series2.txt", header=None)[0].tolist()
 #%%
 Gdist = Gumbel(time_series1)
 # defult parameter estimation method is maximum liklihood method
-Param_dist = Gdist.estimateParameter()
+Param_mle = Gdist.estimateParameter(method="mle")
 Gdist.ks()
 Gdist.chisquare()
-print(Param_dist)
-loc = Param_dist[0]
-scale = Param_dist[1]
+print(Param_mle)
+loc = Param_mle[0]
+scale = Param_mle[1]
 # calculate and plot the pdf
 pdf = Gdist.pdf(loc, scale, plot_figure=True)
 cdf, _, _ = Gdist.cdf(loc, scale, plot_figure=True)
 #%% lmoments
-Param_dist = Gdist.estimateParameter(method="lmoments")
+Param_lmoments = Gdist.estimateParameter(method="lmoments")
 Gdist.ks()
 Gdist.chisquare()
-print(Param_dist)
-loc = Param_dist[0]
-scale = Param_dist[1]
+print(Param_lmoments)
+loc = Param_lmoments[0]
+scale = Param_lmoments[1]
 # calculate and plot the pdf
 pdf = Gdist.pdf(loc, scale, plot_figure=True)
 cdf, _, _ = Gdist.cdf(loc, scale, plot_figure=True)
