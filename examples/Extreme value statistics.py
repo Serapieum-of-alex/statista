@@ -97,7 +97,7 @@ T = PlottingPosition.weibul(time_series1, option=2)
 # TheporeticalEstimate method calculates the theoretical values based on the Gumbel distribution
 Qth = Gevdist.theporeticalEstimate(shape, loc, scale, cdf_Weibul)
 
-func = ConfidenceInterval.GEVfunc
+func = GEV.ci_func
 upper, lower = Gevdist.confidenceInterval(
     shape,
     loc,
