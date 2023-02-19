@@ -224,7 +224,7 @@ class Lmoments:
 
     @staticmethod
     def gev(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
-        """Generalized Extreme Value distribution
+        """Generalized Extreme Value distribution.
 
             Estimate the generalized extreme value distribution parameters using Lmoments method.
 
@@ -310,7 +310,7 @@ class Lmoments:
 
     @staticmethod
     def gumbel(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
-        """"Gumbel" distribution
+        """ "Gumbel" distribution.
 
         Parameters
         ----------
@@ -331,7 +331,7 @@ class Lmoments:
 
     @staticmethod
     def exponential(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
-        """Exponential distribution
+        """Exponential distribution.
 
         Parameters
         ----------
@@ -349,10 +349,9 @@ class Lmoments:
             para = [lmoments[0] - 2 * lmoments[1], 2 * lmoments[1]]
             return para
 
-
     @staticmethod
     def gamma(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
-        """Gamma distribution
+        """Gamma distribution.
 
         Parameters
         ----------
@@ -385,10 +384,11 @@ class Lmoments:
         para = [ALPHA, lmoments[0] / ALPHA]
         return para
 
-
     @staticmethod
-    def generalized_logistic(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
-        """Generalized logistic distribution
+    def generalized_logistic(
+        lmoments: List[Union[float, int]]
+    ) -> List[Union[float, int]]:
+        """Generalized logistic distribution.
 
         Parameters
         ----------
@@ -416,10 +416,11 @@ class Lmoments:
         para = [para1, A, G]
         return para
 
-
     @staticmethod
-    def generalized_normal(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
-        """Generalized Normal distribution
+    def generalized_normal(
+        lmoments: List[Union[float, int]]
+    ) -> List[Union[float, int]]:
+        """Generalized Normal distribution.
 
         Parameters
         ----------
@@ -462,10 +463,11 @@ class Lmoments:
         para = [U, A, G]
         return para
 
-
     @staticmethod
-    def generalized_pareto(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
-        """Generalized Pareto distribution
+    def generalized_pareto(
+        lmoments: List[Union[float, int]]
+    ) -> List[Union[float, int]]:
+        """Generalized Pareto distribution.
 
         Parameters
         ----------
@@ -653,7 +655,7 @@ class Lmoments:
 
     @staticmethod
     def normal(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
-        """Normal distribution
+        """Normal distribution.
 
         Parameters
         ----------
@@ -671,10 +673,9 @@ class Lmoments:
             para = [lmoments[0], lmoments[1] * np.sqrt(np.pi)]
             return para
 
-
     @staticmethod
     def pearson_3(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
-        """Pearson III (PE3) distribution
+        """Pearson III (PE3) distribution.
 
         Parameters
         ----------
@@ -733,10 +734,9 @@ class Lmoments:
 
         return para
 
-
     @staticmethod
     def wakeby(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
-        """wakeby distribution
+        """wakeby distribution.
 
         Parameters
         ----------

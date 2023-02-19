@@ -43,12 +43,12 @@ repos:
 #    hooks:
 #      - id: isort
 #        name: "[py   - format] isort"
-  - repo: https://github.com/PyCQA/docformatter
-    rev: v1.4
-    hooks:
-      - id: docformatter
-        name: "[py   - format] docformatter"
-        args: [ -i, --wrap-summaries, "0" ]
+#  - repo: https://github.com/PyCQA/docformatter
+#    rev: v1.4
+#    hooks:
+#      - id: docformatter
+#        name: "[py   - format] docformatter"
+#        args: [ -i, --wrap-summaries, "0" ]
 
   - repo: https://github.com/PyCQA/pydocstyle
     rev: 6.1.1
