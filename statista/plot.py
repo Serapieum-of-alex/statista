@@ -19,8 +19,8 @@ class Plot:
         figsize: tuple = (6, 5),
         xlabel: str = "Actual data",
         ylabel: str = "pdf",
-        fontsize: int = 15,
-    ):
+        fontsize: int = 11,
+    ) -> Tuple[Figure, Any]:
         """pdf.
 
         Parameters
@@ -35,13 +35,19 @@ class Plot:
 
         Returns
         -------
+        Figure:
+            matplotlib figure object
+        Axis:
+            matplotlib plot axis
         """
         fig = plt.figure(figsize=figsize)
         # gs = gridspec.GridSpec(nrows=1, ncols=2, figure=fig)
         # Plot the histogram and the fitted distribution, save it for each gauge.
         ax = fig.add_subplot()
-        ax.plot(Qx, pdf_fitted, "r-")
-        ax.hist(data_sorted, density=True, histtype="stepfilled")  # , alpha=0.2
+        ax.plot(Qx, pdf_fitted, "-", color="#27408B", linewidth=2)
+        ax.hist(
+            data_sorted, density=True, histtype="stepfilled", color="#DC143C"
+        )  # , alpha=0.2
         ax.set_xlabel(xlabel, fontsize=fontsize)
         ax.set_ylabel(ylabel, fontsize=fontsize)
         return fig, ax
@@ -55,8 +61,8 @@ class Plot:
         figsize=(6, 5),
         xlabel="Actual data",
         ylabel="cdf",
-        fontsize=15,
-    ):
+        fontsize=11,
+    ) -> Tuple[Figure, Any]:
         """cdf.
 
         Parameters
@@ -72,11 +78,23 @@ class Plot:
 
         Returns
         -------
+        Figure:
+            matplotlib figure object
+        Axis:
+            matplotlib plot axis
         """
         fig = plt.figure(figsize=figsize)
         ax = fig.add_subplot()
-        ax.plot(Qx, cdf_fitted, "r-", label="Fitted distribution")
-        ax.plot(data_sorted, cdf_Weibul, ".-", label="Weibul plotting position")
+        ax.plot(
+            Qx, cdf_fitted, "-", label="Estimated CDF", color="#27408B", linewidth=2
+        )
+        ax.scatter(
+            data_sorted,
+            cdf_Weibul,
+            label="Empirical CDF",
+            color="orangered",
+            facecolors="none",
+        )
         ax.set_xlabel(xlabel, fontsize=fontsize)
         ax.set_ylabel(ylabel, fontsize=fontsize)
         plt.legend(fontsize=fontsize, framealpha=1)
