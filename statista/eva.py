@@ -1,6 +1,6 @@
 """Extreme value analysis."""
 import os
-from typing import Union
+from typing import Union, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,7 +22,7 @@ def ams_analysis(
     estimate_parameters: bool = False,
     quartile: float = 0,
     significance_level: float = 0.1,
-):
+) -> Tuple[DataFrame, DataFrame]:
     """StatisticalProperties.
 
     ams analysis method reads resamples all the the time series in the given dataframe to annual maximum, then fits
@@ -51,7 +51,8 @@ def ams_analysis(
     estimate_parameters: [bool]
         Default is False.
     quartile: [float]
-        Default is 0.
+        the quartile is only used when estinating the distribution parameters based on optimization and a threshould
+        value, the threshould value will be calculated as a the quartile coresponding to the value of this parameter.
     significance_level:
         Default is [0.1].
 
@@ -157,16 +158,22 @@ def ams_analysis(
                     threshold=threshold,
                 )
         else:
-            # estimate the parameters through an maximum liklehood method
-            if distribution == "GEV":
-                dist = GEV(ams)
-                # defult parameter estimation method is maximum liklihood method
-                param_dist = dist.estimateParameter(method=method)
-            else:
-                # A gumbel distribution is fitted to the annual maxima
-                dist = Gumbel(ams)
-                # defult parameter estimation method is maximum liklihood method
-                param_dist = dist.estimateParameter(method=method)
+            # estimate the parameters through maximum liklehood method
+            try:
+                if distribution == "GEV":
+                    dist = GEV(ams)
+                    # defult parameter estimation method is maximum liklihood method
+                    param_dist = dist.estimateParameter(method=method)
+                else:
+                    # A gumbel distribution is fitted to the annual maxima
+                    dist = Gumbel(ams)
+                    # defult parameter estimation method is maximum liklihood method
+                    param_dist = dist.estimateParameter(method=method)
+            except Exception as e:
+                logger.warning(
+                    f"The gauge {i} parameters could not be estimated because of {e}"
+                )
+                continue
 
         (
             distribution_properties.loc[i, "D-static"],
