@@ -41,7 +41,7 @@ class Plot:
         # Plot the histogram and the fitted distribution, save it for each gauge.
         ax = fig.add_subplot()
         ax.plot(Qx, pdf_fitted, "r-")
-        ax.hist(data_sorted, density=True)
+        ax.hist(data_sorted, density=True, histtype="stepfilled")  # , alpha=0.2
         ax.set_xlabel(xlabel, fontsize=fontsize)
         ax.set_ylabel(ylabel, fontsize=fontsize)
         return fig, ax
@@ -147,7 +147,7 @@ class Plot:
             "*--",
             color="#DC143C",
             markersize=12,
-            label="Lower limit (" + str(int((1 - alpha) * 100)) + " % CI)",
+            label=f"Lower limit ({int((1 - alpha) * 100)} % CI)",
         )
         plt.plot(
             Qth,
@@ -155,7 +155,7 @@ class Plot:
             "*--",
             color="#DC143C",
             markersize=12,
-            label="Upper limit (" + str(int((1 - alpha) * 100)) + " % CI)",
+            label=f"Upper limit ({int((1 - alpha) * 100)} % CI)",
         )
         plt.legend(fontsize=fontsize, framealpha=1)
         plt.xlabel("Theoretical Values", fontsize=fontsize)
