@@ -2,9 +2,6 @@
 
 @author: mofarrag
 """
-import os
-
-os.chdir(r"C:\MyComputer\01Algorithms\Statistics\statista")
 import matplotlib
 
 matplotlib.use("TkAgg")
