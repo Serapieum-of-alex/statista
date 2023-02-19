@@ -1,5 +1,7 @@
 """L moments."""
-from typing import Any, List
+from __future__ import annotations
+
+from typing import Any, List, Union
 import numpy as np
 import scipy as sp
 import scipy.special as _spsp
@@ -221,8 +223,20 @@ class Lmoments:
             return [l_moment_1, l_moment_2, l_moment_3, l_moment_4, l_moment_5]
 
     @staticmethod
-    def gev(lmoments):
-        """Estimate the generalized extreme value distribution parameters using Lmoments method."""
+    def gev(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
+        """Generalized Extreme Value distribution
+
+            Estimate the generalized extreme value distribution parameters using Lmoments method.
+
+        Parameters
+        ----------
+        lmoments: List
+            list of l moments
+
+        Returns
+        -------
+        List of distribution parameters
+        """
         DL2 = np.log(2)
         DL3 = np.log(3)
         # COEFFICIENTS OF RATIONAL-FUNCTION APPROXIMATIONS FOR XI
@@ -295,25 +309,60 @@ class Lmoments:
             return para
 
     @staticmethod
-    def gumbel(mom):
-        if mom[1] <= 0:
+    def gumbel(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
+        """"Gumbel" distribution
+
+        Parameters
+        ----------
+        lmoments: List
+            list of l moments
+
+        Returns
+        -------
+        List of distribution parameters
+        """
+        if lmoments[1] <= 0:
             raise ValueError("L-Moments Invalid")
         else:
-            para2 = mom[1] / np.log(2)
-            para1 = mom[0] - EU * para2
+            para2 = lmoments[1] / np.log(2)
+            para1 = lmoments[0] - EU * para2
             para = [para1, para2]
             return para
 
     @staticmethod
-    def exponential(mom):
-        if mom[1] <= 0:
+    def exponential(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
+        """Exponential distribution
+
+        Parameters
+        ----------
+        lmoments: List
+            list of l moments
+
+        Returns
+        -------
+        List of distribution parameters
+        """
+        if lmoments[1] <= 0:
             print("L-Moments Invalid")
             return
         else:
-            para = [mom[0] - 2 * mom[1], 2 * mom[1]]
+            para = [lmoments[0] - 2 * lmoments[1], 2 * lmoments[1]]
             return para
 
-    def gamma(lmoments):
+
+    @staticmethod
+    def gamma(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
+        """Gamma distribution
+
+        Parameters
+        ----------
+        lmoments: List
+            list of l moments
+
+        Returns
+        -------
+        List of distribution parameters
+        """
         A1 = -0.3080
         A2 = -0.05812
         A3 = 0.01765
@@ -336,7 +385,20 @@ class Lmoments:
         para = [ALPHA, lmoments[0] / ALPHA]
         return para
 
-    def generalized_logistic(lmoments):
+
+    @staticmethod
+    def generalized_logistic(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
+        """Generalized logistic distribution
+
+        Parameters
+        ----------
+        lmoments: List
+            list of l moments
+
+        Returns
+        -------
+        List of distribution parameters
+        """
         SMALL = 1e-6
 
         G = -lmoments[2]
@@ -354,7 +416,20 @@ class Lmoments:
         para = [para1, A, G]
         return para
 
-    def generalized_normal(lmoments):
+
+    @staticmethod
+    def generalized_normal(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
+        """Generalized Normal distribution
+
+        Parameters
+        ----------
+        lmoments: List
+            list of l moments
+
+        Returns
+        -------
+        List of distribution parameters
+        """
         A0 = 0.20466534e01
         A1 = -0.36544371e01
         A2 = 0.18396733e01
@@ -387,7 +462,20 @@ class Lmoments:
         para = [U, A, G]
         return para
 
-    def generalized_pareto(lmoments):
+
+    @staticmethod
+    def generalized_pareto(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
+        """Generalized Pareto distribution
+
+        Parameters
+        ----------
+        lmoments: List
+            list of l moments
+
+        Returns
+        -------
+        List of distribution parameters
+        """
         T3 = lmoments[2]
         if lmoments[1] <= 0:
             print("L-Moments Invalid")
@@ -563,7 +651,19 @@ class Lmoments:
     #                 H = XH - DEL2
     #                 Z = G + H * 0.725
 
-    def normal(lmoments):
+    @staticmethod
+    def normal(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
+        """Normal distribution
+
+        Parameters
+        ----------
+        lmoments: List
+            list of l moments
+
+        Returns
+        -------
+        List of distribution parameters
+        """
         if lmoments[1] <= 0:
             print("L-Moments Invalid")
             return
@@ -571,7 +671,20 @@ class Lmoments:
             para = [lmoments[0], lmoments[1] * np.sqrt(np.pi)]
             return para
 
-    def pearson_3(lmoments):
+
+    @staticmethod
+    def pearson_3(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
+        """Pearson III (PE3) distribution
+
+        Parameters
+        ----------
+        lmoments: List
+            list of l moments
+
+        Returns
+        -------
+        List of distribution parameters
+        """
         Small = 1e-6
         # Constants used in Minimax Approx:
 
@@ -620,7 +733,20 @@ class Lmoments:
 
         return para
 
-    def wakeby(lmoments: List):
+
+    @staticmethod
+    def wakeby(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
+        """wakeby distribution
+
+        Parameters
+        ----------
+        lmoments: List
+            list of l moments
+
+        Returns
+        -------
+        List of distribution parameters
+        """
         if lmoments[1] <= 0:
             print("Invalid L-Moments")
             return ()
