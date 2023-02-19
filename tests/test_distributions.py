@@ -9,7 +9,7 @@ from statista.distributions import (
     Gumbel,
     PlottingPosition,
     Exponential,
-    Normal
+    Normal,
 )
 
 
@@ -359,9 +359,7 @@ class TestNormal:
     ):
         Edist = Normal(time_series2)
         for method in dist_estimation_parameters:
-            param = Edist.estimateParameter(
-                method=method, test=False
-            )
+            param = Edist.estimateParameter(method=method, test=False)
             assert isinstance(param, list)
             assert Edist.loc
             assert Edist.scale

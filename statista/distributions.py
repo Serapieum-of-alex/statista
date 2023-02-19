@@ -1438,6 +1438,7 @@ class Exponential:
         Qth = expon.ppf(F, loc=loc, scale=scale)
         return Qth
 
+
 class Normal:
 
     """
