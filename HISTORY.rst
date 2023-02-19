@@ -24,3 +24,12 @@ History
 
 * add eva (Extreme value analysis) module
 * fix bug in obtaining distribution parameters using optimization method
+
+
+0.3.0 (2023-02-19)
+------------------
+
+* add documentations for both GEV and gumbel distributions.
+* add lmoment parameter estimation method for all distributions.
+* add exponential and normal distributions
+* modify the pdf, cdf, and probability plot plots
