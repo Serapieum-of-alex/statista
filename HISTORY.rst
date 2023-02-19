@@ -33,3 +33,4 @@ History
 * add lmoment parameter estimation method for all distributions.
 * add exponential and normal distributions
 * modify the pdf, cdf, and probability plot plots
+* create separate plot and confidence_interval modules.
