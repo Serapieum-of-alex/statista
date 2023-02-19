@@ -13,14 +13,31 @@ class ConfidenceInterval:
         pass
 
     @staticmethod
-    def BSIndexes(data, n_samples=10000):
+    def BSIndexes(data, n_samples=10000) -> np.ndarray:
         """BSIndexes.
 
-            Given data points data, where axis 0 is considered to delineate points, return an generator for
+            - generate random indeces to shuffle the data of the given array.
+            - using the indeces, you can access the given data array and obtain randomly generated data from the
+            original given data.
+            - Given data points data, where axis 0 is considered to delineate points, return a generator for
             sets of bootstrap indexes.
 
         This can be used as a list of bootstrap indexes (with
         list(bootstrap_indexes(data))) as well.
+
+        Returns
+        -------
+        np.ndarray
+            array with the same length as the input data, containing integer indeces.
+
+        Examples
+        --------
+        >>> data = [3.1, 2.4, 5.6, 8.4]
+        >>> indeces = ConfidenceInterval.BSIndexes(data, n_samples=2)
+        >>> print(indeces)
+        >>> [1, 4, 4, 3]
+        >>> print(indeces)
+        >>> [2, 3, 1, 2]
         """
         for _ in range(n_samples):
             yield randint(data.shape[0], size=(data.shape[0],))
