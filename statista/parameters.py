@@ -1,12 +1,16 @@
 """L moments."""
+from typing import Any, List
 import numpy as np
 import scipy as sp
 import scipy.special as _spsp
+from numpy import ndarray
+
 
 ninf = 1e-5
-
 MAXIT = 20
 EPS = 1e-6
+# Euler's constant
+EU = 0.577215664901532861
 
 
 class Lmoments:
@@ -37,14 +41,16 @@ class Lmoments:
 
     @staticmethod
     def _comb(N, k):
+        """sum [(N-j)/(j+1)]"""
         if (k > N) or (N < 0) or (k < 0):
-            return 0
-        val = 1
-        for j in range(min(k, N - k)):
-            val = (val * (N - j)) // (j + 1)
+            val = 0
+        else:
+            val = 1
+            for j in range(min(k, N - k)):
+                val = (val * (N - j)) // (j + 1)  # // is floor division
         return val
 
-    def _samlmularge(self, nmom=5):
+    def _samlmularge(self, nmom: int = 5) -> list[ndarray | float | int | Any]:
         """Large sample L moment."""
 
         x = self.data
@@ -58,7 +64,6 @@ class Lmoments:
             raise ValueError("Insufficient length of data for specified nmoments")
 
         ## Calculate first order
-        ## Pretty efficient, no loops
         coefl1 = 1.0 / self._comb(n, 1)
         suml1 = sum(x)
         l = [coefl1 * suml1]
@@ -102,32 +107,29 @@ class Lmoments:
                 l.append(coefl * sum(xtrans))
         return l
 
-    def _samlmusmall(self, nmom=5):
+    def _samlmusmall(self, nmom: int = 5) -> list[ndarray | float | int | Any]:
         """Small sample L-Moments."""
-        x = self.data
+        sample = self.data
 
         if nmom <= 0:
             raise ValueError("Invalid number of Sample L-Moments")
 
-        x = sorted(x)
-        n = len(x)
+        sample = sorted(sample)
+        n = len(sample)
 
         if n < nmom:
             raise ValueError("Insufficient length of data for specified nmoments")
 
-        ## Pretty efficient, no loops
-        coefl1 = 1.0 / self._comb(n, 1)
-
-        suml1 = sum(x)
-        l1 = coefl1 * suml1
-
+        # coefl1 = 1.0 / self._comb(n, 1)  # coefl1 = 1/n
+        # suml1 = sum(sample)
+        # l_moment_1 = coefl1 * suml1  # l_moment_1 = mean(sample)
+        l_moment_1 = np.mean(sample)
         if nmom == 1:
-            ret = l1
-            return ret
+            return [l_moment_1]
 
         # comb terms appear elsewhere, this will decrease calc time
         # for nmom > 2, and shouldn't decrease time for nmom == 2
-        # comb(x,1) = x
+        # comb(sample,1) = sample
         # for i in range(1,n+1):
         ##        comb1.append(comb(i-1,1))
         ##        comb2.append(comb(n-i,1))
@@ -140,13 +142,12 @@ class Lmoments:
         xtrans = []
         for i in range(0, n):
             coeftemp = comb1[i] - comb2[i]
-            xtrans.append(coeftemp * x[i])
+            xtrans.append(coeftemp * sample[i])
 
-        l2 = coefl2 * sum(xtrans)
+        l_moment_2 = coefl2 * sum(xtrans)
 
         if nmom == 2:
-            ret = [l1, l2]
-            return ret
+            return [l_moment_1, l_moment_2]
 
         ## Calculate Third order
         # comb terms appear elsewhere, this will decrease calc time
@@ -164,13 +165,12 @@ class Lmoments:
         xtrans = []
         for i in range(0, n):
             coeftemp = comb3[i] - 2 * comb1[i] * comb2[i] + comb4[i]
-            xtrans.append(coeftemp * x[i])
+            xtrans.append(coeftemp * sample[i])
 
-        l3 = coefl3 * sum(xtrans) / l2
+        l_moment_3 = coefl3 * sum(xtrans) / l_moment_2
 
         if nmom == 3:
-            ret = [l1, l2, l3]
-            return ret
+            return [l_moment_1, l_moment_2, l_moment_3]
 
         ## Calculate Fourth order
         # comb5 = comb(i-1,3)
@@ -188,13 +188,12 @@ class Lmoments:
             coeftemp = (
                 comb5[i] - 3 * comb3[i] * comb2[i] + 3 * comb1[i] * comb4[i] - comb6[i]
             )
-            xtrans.append(coeftemp * x[i])
+            xtrans.append(coeftemp * sample[i])
 
-        l4 = coefl4 * sum(xtrans) / l2
+        l_moment_4 = coefl4 * sum(xtrans) / l_moment_2
 
         if nmom == 4:
-            ret = [l1, l2, l3, l4]
-            return ret
+            return [l_moment_1, l_moment_2, l_moment_3, l_moment_4]
 
         ## Calculate Fifth order
         comb7 = []
@@ -214,21 +213,19 @@ class Lmoments:
                 - 4 * comb1[i] * comb6[i]
                 + comb8[i]
             )
-            xtrans.append(coeftemp * x[i])
+            xtrans.append(coeftemp * sample[i])
 
-        l5 = coefl5 * sum(xtrans) / l2
+        l_moment_5 = coefl5 * sum(xtrans) / l_moment_2
 
         if nmom == 5:
-            ret = [l1, l2, l3, l4, l5]
-            return ret
+            return [l_moment_1, l_moment_2, l_moment_3, l_moment_4, l_moment_5]
 
     @staticmethod
-    def GEV(xmom):
+    def gev(lmoments):
         """Estimate the generalized extreme value distribution parameters using Lmoments method."""
-        # euler constant
-        EU = 0.57721566
         DL2 = np.log(2)
         DL3 = np.log(3)
+        # COEFFICIENTS OF RATIONAL-FUNCTION APPROXIMATIONS FOR XI
         A0 = 0.28377530
         A1 = -1.21096399
         A2 = -2.50728214
@@ -243,9 +240,9 @@ class Lmoments:
         D1 = -0.64363929
         D2 = 0.08985247
 
-        T3 = xmom[2]
+        T3 = lmoments[2]
         # if std <= 0 or third moment > 1
-        if xmom[1] <= 0 or abs(T3) >= 1:
+        if lmoments[1] <= 0 or abs(T3) >= 1:
             raise ValueError("L-Moments Invalid")
 
         if T3 <= 0:
@@ -255,8 +252,8 @@ class Lmoments:
             if T3 >= -0.8:
                 shape = G
                 GAM = np.exp(sp.special.gammaln(1 + G))
-                scale = xmom[1] * G / (GAM * (1 - 2 ** (-G)))
-                loc = xmom[0] - scale * (1 - GAM) / G
+                scale = lmoments[1] * G / (GAM * (1 - 2 ** (-G)))
+                loc = lmoments[0] - scale * (1 - GAM) / G
                 para = [shape, loc, scale]
                 return para
 
@@ -276,31 +273,29 @@ class Lmoments:
                 if abs(G - GOLD) <= EPS * G:
                     shape = G
                     GAM = np.exp(sp.special.gammaln(1 + G))
-                    scale = xmom[1] * G / (GAM * (1 - 2 ** (-G)))
-                    loc = xmom[0] - scale * (1 - GAM) / G
+                    scale = lmoments[1] * G / (GAM * (1 - 2 ** (-G)))
+                    loc = lmoments[0] - scale * (1 - GAM) / G
                     para = [shape, loc, scale]
                     return para
-
-            print("Iteration has not converged")
-
-        Z = 1 - T3
-        G = (-1 + Z * (C1 + Z * (C2 + Z * C3))) / (1 + Z * (D1 + Z * D2))
-        if abs(G) < ninf:
-            scale = xmom[1] / DL2
-            loc = xmom[0] - EU * scale
-            para = [0, loc, scale]
-            return para
+            raise Exception("Iteration has not converged")
         else:
-            shape = G
-            GAM = np.exp(sp.special.gammaln(1 + G))
-            scale = xmom[1] * G / (GAM * (1 - 2 ** (-G)))
-            loc = xmom[0] - scale * (1 - GAM) / G
-            para = [shape, loc, scale]
+            Z = 1 - T3
+            G = (-1 + Z * (C1 + Z * (C2 + Z * C3))) / (1 + Z * (D1 + Z * D2))
+            if abs(G) < ninf:
+                scale = lmoments[1] / DL2
+                loc = lmoments[0] - EU * scale
+                para = [0, loc, scale]
+            else:
+                shape = G
+                GAM = np.exp(sp.special.gammaln(1 + G))
+                scale = lmoments[1] * G / (GAM * (1 - 2 ** (-G)))
+                loc = lmoments[0] - scale * (1 - GAM) / G
+                para = [shape, loc, scale]
+
             return para
 
     @staticmethod
-    def Gumbel(mom):
-        EU = 0.577215664901532861
+    def gumbel(mom):
         if mom[1] <= 0:
             raise ValueError("L-Moments Invalid")
         else:
@@ -318,7 +313,7 @@ class Lmoments:
             para = [mom[0] - 2 * mom[1], 2 * mom[1]]
             return para
 
-    def gamma(xmom):
+    def gamma(lmoments):
         A1 = -0.3080
         A2 = -0.05812
         A3 = 0.01765
@@ -327,10 +322,10 @@ class Lmoments:
         B3 = -2.1817
         B4 = 1.2113
 
-        if xmom[0] <= xmom[1] or xmom[1] <= 0:
+        if lmoments[0] <= lmoments[1] or lmoments[1] <= 0:
             print("L-Moments Invalid")
             return
-        CV = xmom[1] / xmom[0]
+        CV = lmoments[1] / lmoments[0]
         if CV >= 0.5:
             T = 1 - CV
             ALPHA = T * (B1 + T * B2) / (1 + T * (B3 + T * B4))
@@ -338,28 +333,28 @@ class Lmoments:
             T = np.pi * CV**2
             ALPHA = (1 + A1 * T) / (T * (1 + T * (A2 + T * A3)))
 
-        para = [ALPHA, xmom[0] / ALPHA]
+        para = [ALPHA, lmoments[0] / ALPHA]
         return para
 
-    def generalized_logistic(xmom):
+    def generalized_logistic(lmoments):
         SMALL = 1e-6
 
-        G = -xmom[2]
-        if xmom[1] <= 0 or abs(G) >= 1:
+        G = -lmoments[2]
+        if lmoments[1] <= 0 or abs(G) >= 1:
             print("L-Moments Invalid")
             return
 
         if abs(G) <= SMALL:
-            para = [xmom[0], xmom[1], 0]
+            para = [lmoments[0], lmoments[1], 0]
             return para
 
         GG = G * np.pi / sp.sin(G * np.pi)
-        A = xmom[1] / GG
-        para1 = xmom[0] - A * (1 - GG) / G
+        A = lmoments[1] / GG
+        para1 = lmoments[0] - A * (1 - GG) / G
         para = [para1, A, G]
         return para
 
-    def generalized_normal(xmom):
+    def generalized_normal(lmoments):
         A0 = 0.20466534e01
         A1 = -0.36544371e01
         A2 = 0.18396733e01
@@ -369,8 +364,8 @@ class Lmoments:
         B3 = -0.21741801e00
         SMALL = 1e-8
 
-        T3 = xmom[2]
-        if xmom[1] <= 0 or abs(T3) >= 1:
+        T3 = lmoments[2]
+        if lmoments[1] <= 0 or abs(T3) >= 1:
             print("L-Moments Invalid")
             return
         if abs(T3) >= 0.95:
@@ -378,7 +373,7 @@ class Lmoments:
             return para
 
         if abs(T3) <= SMALL:
-            para = [xmom[0], xmom[1] * np.sqrt(np.pi), 0]
+            para = [lmoments[0], lmoments[1] * np.sqrt(np.pi), 0]
 
         TT = T3**2
         G = (
@@ -387,14 +382,14 @@ class Lmoments:
             / (1 + TT * (B1 + TT * (B2 + TT * B3)))
         )
         E = sp.exp(0.5 * G**2)
-        A = xmom[1] * G / (E * sp.special.erf(0.5 * G))
-        U = xmom[0] + A * (E - 1) / G
+        A = lmoments[1] * G / (E * sp.special.erf(0.5 * G))
+        U = lmoments[0] + A * (E - 1) / G
         para = [U, A, G]
         return para
 
-    def generalized_pareto(xmom):
-        T3 = xmom[2]
-        if xmom[1] <= 0:
+    def generalized_pareto(lmoments):
+        T3 = lmoments[2]
+        if lmoments[1] <= 0:
             print("L-Moments Invalid")
             return
         if abs(T3) >= 1:
@@ -404,12 +399,12 @@ class Lmoments:
         G = (1 - 3 * T3) / (1 + T3)
 
         PARA3 = G
-        PARA2 = (1 + G) * (2 + G) * xmom[1]
-        PARA1 = xmom[0] - PARA2 / (1 + G)
+        PARA2 = (1 + G) * (2 + G) * lmoments[1]
+        PARA1 = lmoments[0] - PARA2 / (1 + G)
         para = [PARA1, PARA2, PARA3]
         return para
 
-    # def kappa(xmom):
+    # def kappa(lmoments):
     #
     #     MAXSR = 10
     #     HSTART = 1.001
@@ -417,10 +412,10 @@ class Lmoments:
     #     OFLEXP = 170
     #     OFLGAM = 53
     #
-    #     T3 = xmom[2]
-    #     T4 = xmom[3]
+    #     T3 = lmoments[2]
+    #     T4 = lmoments[3]
     #     para = [0] * 4
-    #     if xmom[1] <= 0:
+    #     if lmoments[1] <= 0:
     #         print("L-Moments Invalid")
     #         return
     #     if abs(T3) >= 1 or abs(T4) >= 1:
@@ -497,8 +492,8 @@ class Lmoments:
     #                 return
     #
     #             HH = sp.exp(TEMP)
-    #             para[1] = xmom[1] * G * HH / (ALAM2 * GAM)
-    #             para[0] = xmom[0] - para[1] / G * (1 - GAM * U1 / HH)
+    #             para[1] = lmoments[1] * G * HH / (ALAM2 * GAM)
+    #             para[0] = lmoments[0] - para[1] / G * (1 - GAM * U1 / HH)
     #             return (para)
     #         else:
     #             XG = G
@@ -568,15 +563,15 @@ class Lmoments:
     #                 H = XH - DEL2
     #                 Z = G + H * 0.725
 
-    def normal(xmom):
-        if xmom[1] <= 0:
+    def normal(lmoments):
+        if lmoments[1] <= 0:
             print("L-Moments Invalid")
             return
         else:
-            para = [xmom[0], xmom[1] * np.sqrt(np.pi)]
+            para = [lmoments[0], lmoments[1] * np.sqrt(np.pi)]
             return para
 
-    def pearson_3(xmom):
+    def pearson_3(lmoments):
         Small = 1e-6
         # Constants used in Minimax Approx:
 
@@ -590,16 +585,16 @@ class Lmoments:
         D5 = 2.56096
         D6 = -0.77045
 
-        T3 = abs(xmom[2])
-        if xmom[1] <= 0 or T3 >= 1:
+        T3 = abs(lmoments[2])
+        if lmoments[1] <= 0 or T3 >= 1:
             para = [0] * 3
             print("L-Moments Invalid")
             return para
 
         if T3 <= Small:
             para = []
-            para.append(xmom[0])
-            para.append(xmom[1] * np.sqrt(np.pi))
+            para.append(lmoments[0])
+            para.append(lmoments[1] * np.sqrt(np.pi))
             para.append(0)
             return para
 
@@ -613,31 +608,31 @@ class Lmoments:
         RTALPH = np.sqrt(Alpha)
         BETA = (
             np.sqrt(np.pi)
-            * xmom[1]
+            * lmoments[1]
             * sp.exp(_spsp.gammaln(Alpha) - _spsp.gammaln(Alpha + 0.5))
         )
         para = []
-        para.append(xmom[0])
+        para.append(lmoments[0])
         para.append(BETA * RTALPH)
         para.append(2 / RTALPH)
-        if xmom[2] < 0:
+        if lmoments[2] < 0:
             para[2] = -para[2]
 
         return para
 
-    def wakeby(xmom):
-        if xmom[1] <= 0:
+    def wakeby(lmoments: List):
+        if lmoments[1] <= 0:
             print("Invalid L-Moments")
             return ()
-        if abs(xmom[2]) >= 1 or abs(xmom[3]) >= 1 or abs(xmom[4]) >= 1:
+        if abs(lmoments[2]) >= 1 or abs(lmoments[3]) >= 1 or abs(lmoments[4]) >= 1:
             print("Invalid L-Moments")
             return ()
 
-        ALAM1 = xmom[0]
-        ALAM2 = xmom[1]
-        ALAM3 = xmom[2] * ALAM2
-        ALAM4 = xmom[3] * ALAM2
-        ALAM5 = xmom[4] * ALAM2
+        ALAM1 = lmoments[0]
+        ALAM2 = lmoments[1]
+        ALAM3 = lmoments[2] * ALAM2
+        ALAM4 = lmoments[3] * ALAM2
+        ALAM5 = lmoments[4] * ALAM2
 
         XN1 = 3 * ALAM2 - 25 * ALAM3 + 32 * ALAM4
         XN2 = -3 * ALAM2 + 5 * ALAM3 + 8 * ALAM4
@@ -682,11 +677,11 @@ class Lmoments:
 
         if skip20 == 0:
             # IFAIL = 1
-            D = -(1 - 3 * xmom[2]) / (1 + xmom[2])
-            C = (1 - D) * (2 - D) * xmom[1]
+            D = -(1 - 3 * lmoments[2]) / (1 + lmoments[2])
+            C = (1 - D) * (2 - D) * lmoments[1]
             B = 0
             A = 0
-            XI = xmom[0] - C / (1 - D)
+            XI = lmoments[0] - C / (1 - D)
             if D <= 0:
                 A = C
                 B = -D
@@ -697,14 +692,14 @@ class Lmoments:
         return para
 
     # TODO: add the function lmrgum
-    # def weibull(xmom):
-    #     if len(xmom) < 3:
+    # def weibull(lmoments):
+    #     if len(lmoments) < 3:
     #         print("Insufficient L-Moments: Need 3")
     #         return
-    #     if xmom[1] <= 0 or xmom[2] >= 1 or xmom[2] <= -lmoments.lmrgum([0, 1], 3)[2]:
+    #     if lmoments[1] <= 0 or lmoments[2] >= 1 or lmoments[2] <= -lmoments.lmrgum([0, 1], 3)[2]:
     #         print("L-Moments Invalid")
     #         return
-    #     pg = Lmoments.GEV([-xmom[0], xmom[1], -xmom[2]])
+    #     pg = Lmoments.GEV([-lmoments[0], lmoments[1], -lmoments[2]])
     #     delta = 1 / pg[2]
     #     beta = pg[1] / pg[2]
     #     out = [-pg[0] - beta, beta, delta]
