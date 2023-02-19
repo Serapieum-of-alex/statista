@@ -58,7 +58,7 @@ repos:
         files: ^Hapi/
 
   - repo: https://github.com/pycqa/flake8
-    rev: 5.0.1
+    rev: 6.0.0
     hooks:
       - id: flake8
         name: "[py   - check] flake8"
