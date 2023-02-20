@@ -65,13 +65,13 @@ class Lmoments:
         if n < nmom:
             raise ValueError("Insufficient length of data for specified nmoments")
 
-        ## Calculate first order
+        # Calculate first order
         coefl1 = 1.0 / self._comb(n, 1)
         suml1 = sum(x)
-        l = [coefl1 * suml1]
+        lmoments = [coefl1 * suml1]
 
         if nmom == 1:
-            return l[0]
+            return lmoments[0]
 
         # Setup comb table, where comb[i][x] refers to comb(x,i)
         comb = []
@@ -81,12 +81,11 @@ class Lmoments:
                 comb[-1].append(self._comb(j, i))
 
         for mom in range(2, nmom + 1):
-            ##        print(mom)
             coefl = 1.0 / mom * 1.0 / self._comb(n, mom)
             xtrans = []
             for i in range(0, n):
                 coeftemp = []
-                for j in range(0, mom):
+                for _ in range(0, mom):
                     coeftemp.append(1)
 
                 for j in range(0, mom - 1):
@@ -104,10 +103,10 @@ class Lmoments:
                 xtrans.append(x[i] * coeftemp)
 
             if mom > 2:
-                l.append(coefl * sum(xtrans) / l[1])
+                lmoments.append(coefl * sum(xtrans) / lmoments[1])
             else:
-                l.append(coefl * sum(xtrans))
-        return l
+                lmoments.append(coefl * sum(xtrans))
+        return lmoments
 
     def _samlmusmall(self, nmom: int = 5) -> list[ndarray | float | int | Any]:
         """Small sample L-Moments."""
@@ -133,8 +132,8 @@ class Lmoments:
         # for nmom > 2, and shouldn't decrease time for nmom == 2
         # comb(sample,1) = sample
         # for i in range(1,n+1):
-        ##        comb1.append(comb(i-1,1))
-        ##        comb2.append(comb(n-i,1))
+        # #        comb1.append(comb(i-1,1))
+        # #        comb2.append(comb(n-i,1))
         # Can be simplifed to comb1 = range(0,n)
 
         comb1 = range(0, n)
@@ -151,7 +150,7 @@ class Lmoments:
         if nmom == 2:
             return [l_moment_1, l_moment_2]
 
-        ## Calculate Third order
+        # Calculate Third order
         # comb terms appear elsewhere, this will decrease calc time
         # for nmom > 2, and shouldn't decrease time for nmom == 2
         # comb3 = comb(i-1,2)
@@ -174,7 +173,7 @@ class Lmoments:
         if nmom == 3:
             return [l_moment_1, l_moment_2, l_moment_3]
 
-        ## Calculate Fourth order
+        # Calculate Fourth order
         # comb5 = comb(i-1,3)
         # comb6 = comb(n-i,3)
         comb5 = []
@@ -197,7 +196,7 @@ class Lmoments:
         if nmom == 4:
             return [l_moment_1, l_moment_2, l_moment_3, l_moment_4]
 
-        ## Calculate Fifth order
+        # Calculate Fifth order
         comb7 = []
         comb8 = []
         for i in range(0, n):
@@ -275,7 +274,8 @@ class Lmoments:
                 G = 1 - np.log(1 + T3) / DL2
 
             T0 = (T3 + 3) * 0.5
-            for IT in range(1, MAXIT):
+
+            for _ in range(1, MAXIT):
                 X2 = 2 ** (-G)
                 X3 = 3 ** (-G)
                 XX2 = 1 - X2
