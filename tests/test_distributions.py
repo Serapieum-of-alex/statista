@@ -286,10 +286,7 @@ class TestGEV:
             method=dist_estimation_parameters_ks, test=False
         )
         func = GEV.ci_func
-        # upper, lower = Gdist.ConfidenceInterval(
-        #     Param[0], Param[1], Param[2], F=cdf_Weibul, alpha=confidence_interval_alpha,
-        #     statfunction=func, n_samples=len(time_series1)
-        # )
+
         CI = ConfidenceInterval.BootStrap(
             time_series1,
             statfunction=func,
