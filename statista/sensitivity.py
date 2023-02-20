@@ -2,6 +2,7 @@
 
 @author: mofarrag
 """
+from typing import List
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -31,7 +32,7 @@ class Sensitivity:
     ]
 
     def __init__(
-        self, parameter, LB, UB, function, positions=[], n_values=5, return_values=1
+        self, parameter, LB, UB, function, positions=None, n_values=5, return_values=1
     ):
         """Sensitivity.
 
@@ -52,7 +53,7 @@ class Sensitivity:
         positions : [list], optional
             position of the parameter in the list (the beginning of the list starts
             with 0), if the Position argument is empty list the sensitivity will
-            be done for all parameters. The default is [].
+            be done for all parameters. The default is None.
         n_values : [integer], optional
             number of parameter values between the bounds you want to calculate the
             metric for, if the values does not include the value if the given parameter
@@ -82,7 +83,7 @@ class Sensitivity:
         self.NoValues = n_values
         self.return_values = return_values
         # if the Position argument is empty list the sensitivity will be done for all parameters
-        if positions == []:
+        if positions is None:
             self.NoPar = len(parameter)
             self.Positions = list(range(len(parameter)))
         else:
@@ -116,19 +117,19 @@ class Sensitivity:
 
         Parameters
         ----------
-        parameter : [dataframe]
-            parameters dataframe including the parameters values in a column with
-            name 'value' and the parameters name as index.
-        LB : [List]
-            parameters upper bounds.
-        UB : [List]
-            parameters lower bounds.
-        function : [function]
-            the function you want to run it several times.
         *args : [positional argument]
             arguments of the function with the same exact names inside the function.
         **kwargs : [keyword argument]
             keyword arguments of the function with the same exact names inside the function.
+            - parameter : [dataframe]
+                parameters dataframe including the parameters values in a column with
+                name 'value' and the parameters name as index.
+            - LB : [List]
+                parameters upper bounds.
+            - UB : [List]
+                parameters lower bounds.
+            - function : [function]
+                the function you want to run it several times.
 
         Returns
         -------
@@ -190,7 +191,7 @@ class Sensitivity:
         title2: str = "",
         xlabel2: str = "xlabel2",
         ylabel2: str = "ylabel2",
-        spaces=[None, None, None, None, None, None],
+        spaces=List[float],
     ):
         """Sobol.
 
