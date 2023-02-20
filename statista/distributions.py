@@ -5,7 +5,7 @@ from matplotlib.figure import Figure
 import numpy as np
 import scipy.optimize as so
 from numpy import ndarray
-from scipy.stats import chisquare, genextreme, gumbel_r, ks_2samp, norm, expon
+from scipy.stats import chisquare, genextreme, gumbel_r, ks_2samp, norm, expon, pearson3
 
 from statista.parameters import Lmoments
 from statista.tools import Tools as st
@@ -1700,3 +1700,171 @@ class Normal:
         # the main equation from scipy
         Qth = norm.ppf(F, loc=loc, scale=scale)
         return Qth
+
+class Pearson3:
+
+    data: ndarray
+
+    def __init__(
+            self,
+            data: Union[list, np.ndarray] = None,
+            shape: Union[int, float] = None,
+            loc: Union[int, float] = None,
+            scale: Union[int, float] = None,
+    ):
+        """GEV.
+
+        Parameters
+        ----------
+        data : [list]
+            data time series.
+        shape
+        loc
+        scale
+        """
+        if isinstance(data, list) or isinstance(data, np.ndarray):
+            self.data = np.array(data)
+            self.data_sorted = np.sort(data)
+            self.cdf_Weibul = PlottingPosition.weibul(data)
+            self.KStable = 1.22 / np.sqrt(len(self.data))
+
+        self.loc = loc
+        self.scale = scale
+        self.Dstatic = None
+        self.KS_Pvalue = None
+
+        self.chistatic = None
+        self.chi_Pvalue = None
+        pass
+
+    def pdf(
+        self,
+        loc: Union[float, int],
+        scale: Union[float, int],
+        plot_figure: bool = False,
+        figsize: tuple = (6, 5),
+        xlabel: str = "Actual data",
+        ylabel: str = "pdf",
+        fontsize: int = 15,
+        actualdata: Union[bool, np.ndarray] = True,
+    ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
+        """pdf.
+
+        Returns the value of GEV's pdf with parameters loc and scale at x .
+
+        Parameters
+        ----------
+        loc : [numeric]
+            location parameter.
+        scale : [numeric]
+            scale parameter.
+        plot_figure: [bool]
+            Default is False.
+        figsize: [tuple]
+            Default is (6, 5).
+        xlabel: [str]
+            Default is "Actual data".
+        ylabel: [str]
+            Default is "pdf".
+        fontsize: [int]
+            Default is 15.
+        actualdata : [bool/array]
+            true if you want to calculate the pdf for the actual time series, array
+            if you want to calculate the pdf for a theoretical time series
+
+        Returns
+        -------
+        TYPE
+            DESCRIPTION.
+        """
+        if isinstance(actualdata, bool):
+            ts = self.data_sorted
+        else:
+            ts = actualdata
+
+        pdf = pearson3.pdf(ts, loc=loc, scale=scale)
+
+        if plot_figure:
+            Qx = np.linspace(
+                float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
+            )
+            pdf_fitted = self.pdf(loc, scale, actualdata=Qx)
+
+            fig, ax = Plot.pdf(
+                Qx,
+                pdf_fitted,
+                self.data_sorted,
+                figsize=figsize,
+                xlabel=xlabel,
+                ylabel=ylabel,
+                fontsize=fontsize,
+            )
+            return pdf, fig, ax
+        else:
+            return pdf
+
+    def cdf(
+        self,
+        shape: Union[float, int],
+        loc: Union[float, int],
+        scale: Union[float, int],
+        plot_figure: bool = False,
+        figsize: tuple = (6, 5),
+        xlabel: str = "Actual data",
+        ylabel: str = "cdf",
+        fontsize: int = 15,
+        actualdata: Union[bool, np.ndarray] = True,
+    ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
+        """cdf.
+
+        Returns the value of Gumbel's cdf with parameters loc and scale
+        at x.
+        """
+        if scale <= 0:
+            raise ValueError("Scale parameter is negative")
+
+        if isinstance(actualdata, bool):
+            ts = self.data
+        else:
+            ts = actualdata
+
+        z = (ts - loc) / scale
+        if shape == 0:
+            # GEV is Gumbel distribution
+            cdf = np.exp(-np.exp(-z))
+        else:
+            y = 1 - shape * z
+            cdf = list()
+            for y_i in y:
+                if y_i > ninf:
+                    logY = -np.log(y_i) / shape
+                    cdf.append(np.exp(-np.exp(-logY)))
+                elif shape < 0:
+                    cdf.append(0)
+                else:
+                    cdf.append(1)
+
+        cdf = np.array(cdf)
+
+        if plot_figure:
+            Qx = np.linspace(
+                float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
+            )
+            cdf_fitted = self.cdf(shape, loc, scale, actualdata=Qx)
+
+            cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
+
+            fig, ax = Plot.cdf(
+                Qx,
+                cdf_fitted,
+                self.data_sorted,
+                cdf_Weibul,
+                figsize=figsize,
+                xlabel=xlabel,
+                ylabel=ylabel,
+                fontsize=fontsize,
+            )
+
+            return cdf, fig, ax
+        else:
+            return cdf
