@@ -172,7 +172,7 @@ class Sensitivity:
                     the function should return only one value for return_values=1, or
                     two values for return_values=2.
                     """
-                    assert False, message
+                    raise ValueError(message)
                 # store the real values of the parameter in the third list in the dict
                 self.sen[self.parameter.index[k]][2].append(round(rand_value[j], 4))
                 print(str(k) + "-" + self.parameter.index[k] + " -" + str(j))
@@ -332,9 +332,9 @@ class Sensitivity:
                 )
 
             except ValueError:
-                assert (
-                    False
-                ), "to plot Calculated Values you should choose return_values==2 in the sentivivity object"
+                assert ValueError(
+                    "to plot Calculated Values you should choose return_values==2 in the sentivivity object"
+                )
 
             plt.tight_layout()
             return fig, (ax1, ax2)
