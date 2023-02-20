@@ -296,6 +296,7 @@ class TestGEV:
             gevfit=Param,
             n_samples=len(time_series1),
             F=cdf_Weibul,
+            method="lmoments",
         )
         LB = CI["LB"]
         UB = CI["UB"]

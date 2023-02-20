@@ -985,16 +985,16 @@ class GEV:
         return test.statistic, test.pvalue
 
     def confidenceInterval(
-            self,
-            shape: Union[float, int],
-            loc: Union[float, int],
-            scale: Union[float, int],
-            F: np.ndarray,
-            alpha: float = 0.1,
-            statfunction=np.average,
-            n_samples: int = 100,
-            method: str = "lmoments",
-            **kargs,
+        self,
+        shape: Union[float, int],
+        loc: Union[float, int],
+        scale: Union[float, int],
+        F: np.ndarray,
+        alpha: float = 0.1,
+        statfunction=np.average,
+        n_samples: int = 100,
+        method: str = "lmoments",
+        **kargs,
     ):
         """confidenceInterval.
 
@@ -1050,6 +1050,7 @@ class GEV:
         F,
         alpha=0.1,
         func=None,
+        method: str = "lmoments",
         n_samples=100,
         fig1size=(10, 5),
         fig2size=(6, 6),
@@ -1065,21 +1066,24 @@ class GEV:
         Parameters
         ----------
         loc : [numeric]
-            location parameter of the GEV distribution.
+            Location parameter of the GEV distribution.
         scale : [numeric]
-            scale parameter of the GEV distribution.
+            Scale parameter of the GEV distribution.
         shape: [float, int]
-            shape parameter for the GEV distribution
+            Shape parameter for the GEV distribution.
         F : [list]
-            theoretical cdf calculated using weibul or using the distribution cdf function.
+            Theoretical cdf calculated using weibul or using the distribution cdf function.
+        method: [str]
+            Method used to fit the generated samples from the bootstrap method ["lmoments", "mle", "mm"]. Default is
+            "lmoments".
         alpha : [float]
-            value between 0 and 1.
+            Value between 0 and 1.
         fontsize : [numeric]
-            font size of the axis labels and legend
+            Font size of the axis labels and legend
         ylabel : [string]
             y label string
         xlabel : [string]
-            x label string
+            X label string
         fig1size : [tuple]
             size of the pdf and cdf figure
         fig2size : [tuple]
@@ -1100,7 +1104,12 @@ class GEV:
 
         Param_dist = [shape, loc, scale]
         CI = ConfidenceInterval.BootStrap(
-            self.data, statfunction=func, gevfit=Param_dist, n_samples=n_samples, F=F
+            self.data,
+            statfunction=func,
+            gevfit=Param_dist,
+            n_samples=n_samples,
+            F=F,
+            method=method,
         )
         Qlower = CI["LB"]
         Qupper = CI["UB"]
@@ -1145,6 +1154,9 @@ class GEV:
                 GEV parameter [shape, location, scale]
             - F: [list]
                 Non Exceedence probability
+            - method: [str]
+                method used to fit the generated samples from the bootstrap method ["lmoments", "mle", "mm"]. Default is
+                "lmoments".
         """
         gevfit = kwargs["gevfit"]
         F = kwargs["F"]
@@ -1157,9 +1169,7 @@ class GEV:
 
         # get parameters based on the new generated sample
         Gdist = GEV(sample)
-        new_param = Gdist.estimateParameter(
-            method=method, test=False
-        )
+        new_param = Gdist.estimateParameter(method=method, test=False)
 
         shape = new_param[0]
         loc = new_param[1]
@@ -1715,16 +1725,17 @@ class Normal:
         Qth = norm.ppf(F, loc=loc, scale=scale)
         return Qth
 
+
 class Pearson3:
 
     data: ndarray
 
     def __init__(
-            self,
-            data: Union[list, np.ndarray] = None,
-            shape: Union[int, float] = None,
-            loc: Union[int, float] = None,
-            scale: Union[int, float] = None,
+        self,
+        data: Union[list, np.ndarray] = None,
+        shape: Union[int, float] = None,
+        loc: Union[int, float] = None,
+        scale: Union[int, float] = None,
     ):
         """GEV.
 

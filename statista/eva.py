@@ -1,7 +1,6 @@
 """Extreme value analysis."""
-import os
 from typing import Union, Tuple
-
+from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -120,11 +119,13 @@ def ams_analysis(
     # Non Exceedance propabilities
     # F = [1/3, 0.5, 0.8, 0.9, 0.96, 0.98, 0.99, 0.995, 0.998]
     F = 1 - (1 / T)
+    save_to = Path(save_to)
     # Iteration over all the gauge numbers.
     if save_plots:
-        rpath = os.path.join(save_to, "figures")
-        if not os.path.exists(rpath):
-            os.mkdir(rpath)
+        rpath = save_to.joinpath("figures")
+        if not rpath.exists():
+            # os.mkdir(rpath)
+            rpath.mkdir(parents=True, exist_ok=True)
 
     for i in gauges:
         QTS = time_series_df.loc[:, i]
@@ -212,6 +213,7 @@ def ams_analysis(
                     param_dist[2],
                     cdf_Weibul,
                     alpha=significance_level,
+                    method=method,
                 )
             else:
                 fig, ax = dist.probapilityPlot(
