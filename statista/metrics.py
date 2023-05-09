@@ -378,9 +378,31 @@ def MAE(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     return np.abs(np.array(obs) - np.array(sim)).mean()
 
 
-def PearsonCorre(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
-    """Pearson correlation coefficient r2 is independent of the magnitude of the numbers; it is sensitive to relative changes only."""
-    return (np.corrcoef(np.array(obs), np.array(sim))[0][1]) ** 2
+def PearsonCorre(x: Union[list, np.ndarray], y: Union[list, np.ndarray]) -> Number:
+    """Pearson correlation coefficient.
+
+        - Pearson correlation coefficient is independent of the magnitude of the numbers.
+        - it is sensitive to relative changes only.
+
+    .. math:: R_{ij} = \\frac{ C_{ij} } { \\sqrt{ C_{ii} C_{jj} } }
+
+        - covariance / std1 * std2
+
+    The values of `R` are between -1 and 1, inclusive.
+
+    Parameters
+    ----------
+    x : array_like
+        A 1-D array containing a variable.
+    y : array_like,
+        A 1-D array containing a variable.
+
+    Returns
+    -------
+    R : ndarray
+        The correlation coefficient of the variables.
+    """
+    return np.corrcoef(np.array(x), np.array(y))[0][1]
 
 
 def R2(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
