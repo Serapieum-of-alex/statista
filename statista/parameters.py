@@ -296,14 +296,18 @@ class Lmoments:
             Z = 1 - T3
             G = (-1 + Z * (C1 + Z * (C2 + Z * C3))) / (1 + Z * (D1 + Z * D2))
             if abs(G) < ninf:
+                # Gumbel
                 scale = lmoments[1] / DL2
                 loc = lmoments[0] - EU * scale
                 para = [0, loc, scale]
             else:
+                # GEV
                 shape = G
                 GAM = np.exp(sp.special.gammaln(1 + G))
                 scale = lmoments[1] * G / (GAM * (1 - 2 ** (-G)))
                 loc = lmoments[0] - scale * (1 - GAM) / G
+                # multiply the shape by -1 to follow the + ve shape parameter equation (+ve value means heavy tail)
+                # para = [-1 * shape, loc, scale]
                 para = [shape, loc, scale]
 
             return para
@@ -344,10 +348,11 @@ class Lmoments:
         """
         if lmoments[1] <= 0:
             print("L-Moments Invalid")
-            return
+            para = None
         else:
             para = [lmoments[0] - 2 * lmoments[1], 2 * lmoments[1]]
-            return para
+
+        return para
 
     @staticmethod
     def gamma(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
@@ -372,16 +377,17 @@ class Lmoments:
 
         if lmoments[0] <= lmoments[1] or lmoments[1] <= 0:
             print("L-Moments Invalid")
-            return
-        CV = lmoments[1] / lmoments[0]
-        if CV >= 0.5:
-            T = 1 - CV
-            ALPHA = T * (B1 + T * B2) / (1 + T * (B3 + T * B4))
+            para = None
         else:
-            T = np.pi * CV**2
-            ALPHA = (1 + A1 * T) / (T * (1 + T * (A2 + T * A3)))
+            CV = lmoments[1] / lmoments[0]
+            if CV >= 0.5:
+                T = 1 - CV
+                ALPHA = T * (B1 + T * B2) / (1 + T * (B3 + T * B4))
+            else:
+                T = np.pi * CV**2
+                ALPHA = (1 + A1 * T) / (T * (1 + T * (A2 + T * A3)))
 
-        para = [ALPHA, lmoments[0] / ALPHA]
+            para = [ALPHA, lmoments[0] / ALPHA]
         return para
 
     @staticmethod
@@ -404,16 +410,16 @@ class Lmoments:
         G = -lmoments[2]
         if lmoments[1] <= 0 or abs(G) >= 1:
             print("L-Moments Invalid")
-            return
+            para = None
+        else:
+            if abs(G) <= SMALL:
+                para = [lmoments[0], lmoments[1], 0]
+                return para
 
-        if abs(G) <= SMALL:
-            para = [lmoments[0], lmoments[1], 0]
-            return para
-
-        GG = G * np.pi / sp.sin(G * np.pi)
-        A = lmoments[1] / GG
-        para1 = lmoments[0] - A * (1 - GG) / G
-        para = [para1, A, G]
+            GG = G * np.pi / sp.sin(G * np.pi)
+            A = lmoments[1] / GG
+            para1 = lmoments[0] - A * (1 - GG) / G
+            para = [para1, A, G]
         return para
 
     @staticmethod
