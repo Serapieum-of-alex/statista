@@ -588,6 +588,10 @@ class GEV:
             self.data_sorted = np.sort(data)
             self.cdf_Weibul = PlottingPosition.weibul(data)
             self.KStable = 1.22 / np.sqrt(len(self.data))
+        else:
+            raise TypeError(
+                f"The input data should be of type list/array, given {type(data)}"
+            )
 
         self.shape = shape
         self.loc = loc
@@ -647,46 +651,36 @@ class GEV:
         else:
             ts = actualdata
 
-        pdf = []
-        for ts_i in ts:
-            z = (ts_i - loc) / scale
+        # pdf = []
+        # for ts_i in ts:
+        #     z = (ts_i - loc) / scale
+        #
+        #     # Gumbel
+        #     if shape == 0:
+        #         val = np.exp(-(z + np.exp(-z)))
+        #         pdf.append((1 / scale) * val)
+        #         continue
+        #
+        #     # GEV
+        #     y = 1 - shape * z
+        #     if y > ninf:
+        #         # np.log(y) = ln(y)
+        #         # ln is the inverse of e
+        #         lnY = (-1 / shape) * np.log(y)
+        #         val = np.exp(-(1 - shape) * lnY - np.exp(-lnY))
+        #         pdf.append((1 / scale) * val)
+        #         continue
+        #
+        #     if shape < 0:
+        #         pdf.append(0)
+        #         continue
+        #     pdf.append(0)
+        #
+        # if len(pdf) == 1:
+        #     pdf = pdf[0]
 
-            # Gumbel
-            if shape == 0:
-                val = np.exp(-(z + np.exp(-z)))
-                pdf.append((1 / scale) * val)
-                continue
-
-            # GEV
-            y = 1 - shape * z
-            if y > ninf:
-                # np.log(y) = ln(y)
-                # ln is the inverse of e
-                lnY = (-1 / shape) * np.log(y)
-                val = np.exp(-(1 - shape) * lnY - np.exp(-lnY))
-                pdf.append((1 / scale) * val)
-                continue
-
-            # y = 1 + shape * z
-            # if y > ninf:
-            #     # np.log(y) = ln(y)
-            #     # ln is the inverse of e
-            #     Q = y ** (-1 / shape)
-            #     val = np.power(Q,1 + shape) * np.exp(-Q)
-            #     pdf.append((1 / scale) * val)
-            #     continue
-
-            if shape < 0:
-                pdf.append(0)
-                continue
-            pdf.append(0)
-            # pdf.append(1)
-
-        if len(pdf) == 1:
-            pdf = pdf[0]
-
-        pdf = np.array(pdf)
-        # f = genextreme.pdf(self.data_sorted, loc=loc, scale=scale, c=shape)
+        # pdf = np.array(pdf)
+        pdf = genextreme.pdf(ts, loc=loc, scale=scale, c=shape)
         if plot_figure:
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
@@ -715,7 +709,7 @@ class GEV:
         figsize: tuple = (6, 5),
         xlabel: str = "Actual data",
         ylabel: str = "cdf",
-        fontsize: int = 15,
+        fontsize: int = 11,
         actualdata: Union[bool, np.ndarray] = True,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """cdf.
@@ -730,25 +724,25 @@ class GEV:
             ts = self.data
         else:
             ts = actualdata
-
-        z = (ts - loc) / scale
-        if shape == 0:
-            # GEV is Gumbel distribution
-            cdf = np.exp(-np.exp(-z))
-        else:
-            y = 1 - shape * z
-            cdf = list()
-            for y_i in y:
-                if y_i > ninf:
-                    logY = -np.log(y_i) / shape
-                    cdf.append(np.exp(-np.exp(-logY)))
-                elif shape < 0:
-                    cdf.append(0)
-                else:
-                    cdf.append(1)
-
-        cdf = np.array(cdf)
-
+        # equation https://www.rdocumentation.org/packages/evd/versions/2.3-6/topics/fextreme
+        # z = (ts - loc) / scale
+        # if shape == 0:
+        #     # GEV is Gumbel distribution
+        #     cdf = np.exp(-np.exp(-z))
+        # else:
+        #     y = 1 - shape * z
+        #     cdf = list()
+        #     for y_i in y:
+        #         if y_i > ninf:
+        #             logY = -np.log(y_i) / shape
+        #             cdf.append(np.exp(-np.exp(-logY)))
+        #         elif shape < 0:
+        #             cdf.append(0)
+        #         else:
+        #             cdf.append(1)
+        #
+        # cdf = np.array(cdf)
+        cdf = genextreme.cdf(ts, c=shape, loc=loc, scale=scale)
         if plot_figure:
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
@@ -767,14 +761,11 @@ class GEV:
                 ylabel=ylabel,
                 fontsize=fontsize,
             )
-
             return cdf, fig, ax
         else:
             return cdf
 
-        # genextreme.cdf()
-
-    def getRP(self, shape, loc, scale, data):
+    def getRP(self, shape: float, loc: float, scale: float, data: np.ndarray):
         """getRP.
 
             getRP calculates the return period for a list/array of values or a single value.
@@ -795,10 +786,10 @@ class GEV:
         float:
             return period
         """
-        if isinstance(data, list) or isinstance(data, np.ndarray):
-            cdf = self.cdf(shape, loc, scale, actualdata=data)
-        else:
-            cdf = genextreme.cdf(data, shape, loc, scale)
+        # if isinstance(data, list) or isinstance(data, np.ndarray):
+        cdf = self.cdf(shape, loc, scale, actualdata=data)
+        # else:
+        #     cdf = genextreme.cdf(data, shape, loc, scale)
 
         rp = 1 / (1 - cdf)
 
