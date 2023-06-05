@@ -141,9 +141,11 @@ class Gumbel:
         else:
             ts = actualdata
 
-        z = (ts - loc) / scale
-        pdf = (1.0 / scale) * (np.exp(-(z + (np.exp(-z)))))
-        # gumbel_r.pdf(data, loc=loc, scale=scale)
+        # z = (ts - loc) / scale
+        # pdf = (1.0 / scale) * (np.exp(-(z + (np.exp(-z)))))
+
+        pdf = gumbel_r.pdf(ts, loc=loc, scale=scale)
+
         if plot_figure:
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
@@ -193,8 +195,9 @@ class Gumbel:
         else:
             ts = actualdata
 
-        z = (ts - loc) / scale
-        cdf = np.exp(-np.exp(-z))
+        # z = (ts - loc) / scale
+        # cdf = np.exp(-np.exp(-z))
+        cdf = gumbel_r.cdf(ts, loc=loc, scale=scale)
 
         if plot_figure:
             Qx = np.linspace(
@@ -218,7 +221,6 @@ class Gumbel:
             return cdf, fig, ax
         else:
             return cdf
-        # gumbel_r.cdf(Q, loc, scale)
 
     def getRP(self, loc, scale, data):
         """getRP.
@@ -239,10 +241,10 @@ class Gumbel:
         float:
             return period
         """
-        if isinstance(data, list) or isinstance(data, np.ndarray):
-            cdf = self.cdf(loc, scale, actualdata=data)
-        else:
-            cdf = gumbel_r.cdf(data, loc, scale)
+        # if isinstance(data, list) or isinstance(data, np.ndarray):
+        cdf = self.cdf(loc, scale, actualdata=data)
+        # else:
+        #     cdf = gumbel_r.cdf(data, loc, scale)
 
         rp = 1 / (1 - cdf)
 
