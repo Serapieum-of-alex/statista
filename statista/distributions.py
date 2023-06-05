@@ -1408,7 +1408,7 @@ class Exponential:
         elif method == "lmoments":
             LM = Lmoments(self.data)
             LMU = LM.Lmom()
-            Param = Lmoments.gev(LMU)
+            Param = Lmoments.exponential(LMU)
         elif method == "optimization":
             if ObjFunc is None or threshold is None:
                 raise TypeError("ObjFunc and threshold should be numeric value")
@@ -1467,6 +1467,57 @@ class Exponential:
         # the main equation from scipy
         Qth = expon.ppf(F, loc=loc, scale=scale)
         return Qth
+
+    def ks(self):
+        """Kolmogorov-Smirnov (KS) test.
+
+        The smaller the D static the more likely that the two samples are drawn from the same distribution
+        IF Pvalue < signeficance level ------ reject
+
+        returns:
+        --------
+            Dstatic: [numeric]
+                The smaller the D static the more likely that the two samples are drawn from the same distribution
+            Pvalue : [numeric]
+                IF Pvalue < signeficance level ------ reject the null hypotethis
+        """
+        if not hasattr(self, "loc") or not hasattr(self, "scale"):
+            raise ValueError(
+                "Value of loc/scale parameter is unknown please use "
+                "'EstimateParameter' to obtain them"
+            )
+        Qth = self.theporeticalEstimate(self.loc, self.scale, self.cdf_Weibul)
+
+        test = ks_2samp(self.data, Qth)
+        self.Dstatic = test.statistic
+        self.KS_Pvalue = test.pvalue
+        print("-----KS Test--------")
+        print("Statistic = " + str(test.statistic))
+        if self.Dstatic < self.KStable:
+            print("Accept Hypothesis")
+        else:
+            print("reject Hypothesis")
+        print("P value = " + str(test.pvalue))
+
+        return test.statistic, test.pvalue
+
+    def chisquare(self):
+        if not hasattr(self, "loc") or not hasattr(self, "scale"):
+            raise ValueError(
+                "Value of loc/scale parameter is unknown please use "
+                "'EstimateParameter' to obtain them"
+            )
+
+        Qth = self.theporeticalEstimate(self.loc, self.scale, self.cdf_Weibul)
+
+        test = chisquare(st.standardize(Qth), st.standardize(self.data))
+        self.chistatic = test.statistic
+        self.chi_Pvalue = test.pvalue
+        print("-----chisquare Test-----")
+        print("Statistic = " + str(test.statistic))
+        print("P value = " + str(test.pvalue))
+
+        return test.statistic, test.pvalue
 
 
 class Normal:
