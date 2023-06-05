@@ -41,14 +41,15 @@ class PlottingPosition:
         CDF/T: [list]
             list of cumulative distribution function or return period.
         """
+        data = np.array(data)
         data.sort()
-
+        n = len(data)
+        CDF = np.array(range(1, len(data) + 1)) / (n + 1)
+        # CDF = np.array([j / ( n + 1) for j in range(1, len(data) + 1)])
         if option == 1:
-            CDF = np.array([j / (len(data) + 1) for j in range(1, len(data) + 1)])
             return CDF
         else:
-            CDF = [j / (len(data) + 1) for j in range(1, len(data) + 1)]
-            T = np.array([1 / (1 - j) for j in CDF])
+            T = PlottingPosition.returnPeriod(CDF)
             return T
 
     @staticmethod
