@@ -590,10 +590,10 @@ class GEV:
             self.data_sorted = np.sort(data)
             self.cdf_Weibul = PlottingPosition.weibul(data)
             self.KStable = 1.22 / np.sqrt(len(self.data))
-        else:
-            raise TypeError(
-                f"The input data should be of type list/array, given {type(data)}"
-            )
+        # else:
+        #     raise TypeError(
+        #         f"The input data should be of type list/array, given {type(data)}"
+        #     )
 
         self.shape = shape
         self.loc = loc
@@ -615,7 +615,7 @@ class GEV:
         xlabel: str = "Actual data",
         ylabel: str = "pdf",
         fontsize: int = 15,
-        actualdata: Union[bool, np.ndarray] = True,
+        actualdata: np.ndarray = None,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
@@ -648,7 +648,7 @@ class GEV:
         TYPE
             DESCRIPTION.
         """
-        if isinstance(actualdata, bool):
+        if actualdata is None:
             ts = self.data_sorted
         else:
             ts = actualdata
@@ -905,24 +905,24 @@ class GEV:
         if any(F) < 0 or any(F) > 1:
             raise ValueError("cdf Value Invalid")
 
-        Qth = list()
-        for i in range(len(F)):
-            if F[i] <= 0 or F[i] >= 1:
-                if F[i] == 0 and shape < 0:
-                    Qth.append(loc + scale / shape)
-                elif F[i] == 1 and shape > 0:
-                    Qth.append(loc + scale / shape)
-                else:
-                    raise ValueError(str(F[i]) + " value of cdf is Invalid")
-            # F = np.array(F)
-            Y = -np.log(-np.log(F[i]))
-            if shape != 0:
-                Y = (1 - np.exp(-1 * shape * Y)) / shape
-
-            Qth.append(loc + scale * Y)
-        Qth = np.array(Qth)
+        # Qth = list()
+        # for i in range(len(F)):
+        #     if F[i] <= 0 or F[i] >= 1:
+        #         if F[i] == 0 and shape < 0:
+        #             Qth.append(loc + scale / shape)
+        #         elif F[i] == 1 and shape > 0:
+        #             Qth.append(loc + scale / shape)
+        #         else:
+        #             raise ValueError(str(F[i]) + " value of cdf is Invalid")
+        #     # F = np.array(F)
+        #     Y = -np.log(-np.log(F[i]))
+        #     if shape != 0:
+        #         Y = (1 - np.exp(-1 * shape * Y)) / shape
+        #
+        #     Qth.append(loc + scale * Y)
+        # Qth = np.array(Qth)
         # the main equation from scipy
-        # Qth = genextreme.ppf(F, shape, loc=loc, scale=scale)
+        Qth = genextreme.ppf(F, shape, loc=loc, scale=scale)
         return Qth
 
     def ks(self):
