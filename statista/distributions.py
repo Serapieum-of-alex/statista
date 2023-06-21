@@ -590,10 +590,6 @@ class GEV:
             self.data_sorted = np.sort(data)
             self.cdf_Weibul = PlottingPosition.weibul(data)
             self.KStable = 1.22 / np.sqrt(len(self.data))
-        # else:
-        #     raise TypeError(
-        #         f"The input data should be of type list/array, given {type(data)}"
-        #     )
 
         self.shape = shape
         self.loc = loc
