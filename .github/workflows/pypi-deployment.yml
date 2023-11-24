@@ -1,4 +1,4 @@
-name: Pypi deployment
+name: pypi-deployment
 
 on:
     push:

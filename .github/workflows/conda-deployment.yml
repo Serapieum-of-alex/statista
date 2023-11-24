@@ -1,4 +1,4 @@
-name: Conda deployment
+name: conda-deployment
 
 on: [push]
 
