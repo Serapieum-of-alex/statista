@@ -65,6 +65,9 @@ class ConfidenceInterval:
                 list of the three parameters of the GEV distribution [shape, loc, scale]
             F : [list]
                 non exceedence probability/ cdf
+            method: [str]
+                method used to fit the generated samples from the bootstrap method ["lmoments", "mle", "mm"]. Default is
+                "lmoments".
         """
         alphas = np.array([alpha / 2, 1 - alpha / 2])
         tdata = (np.array(data),)

@@ -34,3 +34,11 @@ History
 * add exponential and normal distributions
 * modify the pdf, cdf, and probability plot plots
 * create separate plot and confidence_interval modules.
+
+0.4.0 (2023-011-23)
+------------------
+
+* add Pearson 3 distribution
+* Use setup.py instead of pyproject.toml.
+* Correct pearson correlation coefficient and add documentation .
+* replace the pdf and cdf by the methods from scipy package.

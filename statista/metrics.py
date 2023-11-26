@@ -132,51 +132,57 @@ def RMSELF(
     -------
     error values
     """
-    # input data validation
-    # data type
-    assert type(WStype) == int, (
-        "Weighting scheme should be an integer number between 1 and 4 and you entered "
-        + str(WStype)
-    )
-    assert isinstance(alpha, int) or isinstance(
-        alpha, float
-    ), "alpha should be a number and between 0 & 1"
-    assert isinstance(N, Number), "N should be a number and between 0 & 1"
+    if not isinstance(WStype, int):
+        raise TypeError(
+            f"Weighting scheme should be an integer number between 1 and 4 and you entered {WStype}"
+        )
+
+    if not (isinstance(alpha, int) or isinstance(alpha, float)):
+        raise TypeError("alpha should be a number and between 0 & 1")
+
+    if not isinstance(N, Number):
+        raise TypeError("N should be a number and between 0 & 1")
+
     # Input values
-    assert (
-        1 <= WStype <= 4
-    ), f"Weighting scheme should be an integer number between 1 and 4 you have enters {WStype}"
-    assert (
-        N >= 0
-    ), f"Weighting scheme Power should be positive number you have entered {N}"
-    assert (
-        0 < alpha < 1
-    ), f"alpha should be float number and between 0 & 1 you have entered {alpha}"
+    if not 1 <= WStype <= 4:
+        raise ValueError(
+            f"Weighting scheme should be an integer number between 1 and 4 you have enters {WStype}"
+        )
+
+    if not N >= 0:
+        raise ValueError(
+            f"Weighting scheme Power should be positive number you have entered {N}"
+        )
+
+    if not 0 < alpha < 1:
+        raise ValueError(
+            f"alpha should be float number and between 0 & 1 you have entered {alpha}"
+        )
 
     # convert obs & sim into arrays
     obs = np.array(obs)
     Qsim = np.array(Qsim)
 
     Qmax = max(obs)  # rational Discharge power N
-    l = (Qmax - obs) / Qmax
+    qr = (Qmax - obs) / Qmax
 
     if WStype == 1:
-        w = l**N
+        w = qr**N
     elif WStype == 2:  # ------------------------------- N is not in the equation
-        #        w=1-l*((0.50 - alpha)**N)
-        w = ((1 / (alpha**2)) * (1 - l) ** 2) - ((2 / alpha) * (1 - l)) + 1
-        w[1 - l > alpha] = 0
+        #        w=1-qr*((0.50 - alpha)**N)
+        w = ((1 / (alpha**2)) * (1 - qr) ** 2) - ((2 / alpha) * (1 - qr)) + 1
+        w[1 - qr > alpha] = 0
     elif WStype == 3:  # the same like WStype 2
-        #        w=1-l*((0.50 - alpha)**N)
-        w = ((1 / (alpha**2)) * (1 - l) ** 2) - ((2 / alpha) * (1 - l)) + 1
-        w[1 - l > alpha] = 0
+        #        w=1-qr*((0.50 - alpha)**N)
+        w = ((1 / (alpha**2)) * (1 - qr) ** 2) - ((2 / alpha) * (1 - qr)) + 1
+        w[1 - qr > alpha] = 0
     elif WStype == 4:
-        #        w = 1-l*(0.50 - alpha)
-        w = 1 - ((1 - l) / alpha)
-        w[1 - l > alpha] = 0
+        #        w = 1-qr*(0.50 - alpha)
+        w = 1 - ((1 - qr) / alpha)
+        w[1 - qr > alpha] = 0
     else:  # sigmoid function
         #        w=1/(1+np.exp(10*h-5))
-        w = 1 / (1 + np.exp(-10 * l + 5))
+        w = 1 / (1 + np.exp(-10 * qr + 5))
 
     a = (obs - Qsim) ** 2
     b = a * w
@@ -372,9 +378,31 @@ def MAE(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     return np.abs(np.array(obs) - np.array(sim)).mean()
 
 
-def PearsonCorre(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
-    """Pearson correlation coefficient r2 is independent of the magnitude of the numbers; it is sensitive to relative changes only."""
-    return (np.corrcoef(np.array(obs), np.array(sim))[0][1]) ** 2
+def PearsonCorre(x: Union[list, np.ndarray], y: Union[list, np.ndarray]) -> Number:
+    """Pearson correlation coefficient.
+
+        - Pearson correlation coefficient is independent of the magnitude of the numbers.
+        - it is sensitive to relative changes only.
+
+    .. math:: R_{ij} = \\frac{ C_{ij} } { \\sqrt{ C_{ii} C_{jj} } }
+
+        - covariance / std1 * std2
+
+    The values of `R` are between -1 and 1, inclusive.
+
+    Parameters
+    ----------
+    x : array_like
+        A 1-D array containing a variable.
+    y : array_like,
+        A 1-D array containing a variable.
+
+    Returns
+    -------
+    R : ndarray
+        The correlation coefficient of the variables.
+    """
+    return np.corrcoef(np.array(x), np.array(y))[0][1]
 
 
 def R2(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
