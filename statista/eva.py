@@ -1,7 +1,6 @@
 """Extreme value analysis."""
-import os
-from typing import Union
-
+from typing import Union, Tuple
+from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -13,16 +12,17 @@ from statista.distributions import GEV, Gumbel, PlottingPosition
 
 def ams_analysis(
     time_series_df: DataFrame,
+    ams: bool = False,
     ams_start: str = "A-OCT",
     save_plots: bool = False,
     save_to: str = None,
-    filter_out: Union[bool, float, int] = False,
+    filter_out: Union[float, int] = None,
     distribution: str = "GEV",
     method: str = "lmoments",
     estimate_parameters: bool = False,
     quartile: float = 0,
     significance_level: float = 0.1,
-):
+) -> Tuple[DataFrame, DataFrame]:
     """StatisticalProperties.
 
     ams analysis method reads resamples all the the time series in the given dataframe to annual maximum, then fits
@@ -32,6 +32,8 @@ def ams_analysis(
     ----------
     time_series_df : [DataFrame]
         DataFrame containing multiple time series to do the statistical analysis on.
+    ams: [bool]
+        True if the the given time series is annual mean series. Default is False.
     ams_start: [str]
         The beginning of the year which is used to resample the time series to get the annual maximum series.
         Default is"A-OCT".
@@ -51,7 +53,8 @@ def ams_analysis(
     estimate_parameters: [bool]
         Default is False.
     quartile: [float]
-        Default is 0.
+        the quartile is only used when estinating the distribution parameters based on optimization and a threshould
+        value, the threshould value will be calculated as a the quartile coresponding to the value of this parameter.
     significance_level:
         Default is [0.1].
 
@@ -119,54 +122,64 @@ def ams_analysis(
     # Non Exceedance propabilities
     # F = [1/3, 0.5, 0.8, 0.9, 0.96, 0.98, 0.99, 0.995, 0.998]
     F = 1 - (1 / T)
+    save_to = Path(save_to)
     # Iteration over all the gauge numbers.
     if save_plots:
-        rpath = os.path.join(save_to, "figures")
-        if not os.path.exists(rpath):
-            os.mkdir(rpath)
+        rpath = save_to.joinpath("figures")
+        if not rpath.exists():
+            # os.mkdir(rpath)
+            rpath.mkdir(parents=True, exist_ok=True)
 
     for i in gauges:
         QTS = time_series_df.loc[:, i]
-        # The time series is resampled to the annual maxima, and turned into a
-        # numpy array.
+        # The time series is resampled to the annual maxima, and turned into a numpy array.
         # The hydrological year is 1-Nov/31-Oct (from Petrow and Merz, 2009, JoH).
-        ams = QTS.resample(ams_start).max().values
+        if not ams:
+            ams_df = QTS.resample(ams_start).max().values
+        else:
+            ams_df = QTS.values
 
-        if not isinstance(filter_out, bool):
-            ams = ams[ams != filter_out]
+        if filter_out is not None:
+            ams_df = ams_df[ams_df != filter_out]
 
         if estimate_parameters:
             # TODO: still to be tested and prepared for GEV
             # estimate the parameters through an optimization
-            # alpha = (np.sqrt(6) / np.pi) * ams.std()
-            # beta = ams.mean() - 0.5772 * alpha
+            # alpha = (np.sqrt(6) / np.pi) * ams_df.std()
+            # beta = ams_df.mean() - 0.5772 * alpha
             # param_dist = [beta, alpha]
-            threshold = np.quantile(ams, quartile)
+            threshold = np.quantile(ams_df, quartile)
             if distribution == "GEV":
-                dist = GEV(ams)
+                dist = GEV(ams_df)
                 param_dist = dist.estimateParameter(
                     method="optimization",
                     ObjFunc=Gumbel.ObjectiveFn,
                     threshold=threshold,
                 )
             else:
-                dist = Gumbel(ams)
+                dist = Gumbel(ams_df)
                 param_dist = dist.estimateParameter(
                     method="optimization",
                     ObjFunc=Gumbel.ObjectiveFn,
                     threshold=threshold,
                 )
         else:
-            # estimate the parameters through an maximum liklehood method
-            if distribution == "GEV":
-                dist = GEV(ams)
-                # defult parameter estimation method is maximum liklihood method
-                param_dist = dist.estimateParameter(method=method)
-            else:
-                # A gumbel distribution is fitted to the annual maxima
-                dist = Gumbel(ams)
-                # defult parameter estimation method is maximum liklihood method
-                param_dist = dist.estimateParameter(method=method)
+            # estimate the parameters through maximum liklehood method
+            try:
+                if distribution == "GEV":
+                    dist = GEV(ams_df)
+                    # defult parameter estimation method is maximum liklihood method
+                    param_dist = dist.estimateParameter(method=method)
+                else:
+                    # A gumbel distribution is fitted to the annual maxima
+                    dist = Gumbel(ams_df)
+                    # defult parameter estimation method is maximum liklihood method
+                    param_dist = dist.estimateParameter(method=method)
+            except Exception as e:
+                logger.warning(
+                    f"The gauge {i} parameters could not be estimated because of {e}"
+                )
+                continue
 
         (
             distribution_properties.loc[i, "D-static"],
@@ -190,10 +203,10 @@ def ams_analysis(
             Qrp = dist.theporeticalEstimate(param_dist[0], param_dist[1], F)
 
         # to get the Non Exceedance probability for a specific Value
-        # sort the ams
-        ams.sort()
+        # sort the ams_df
+        ams_df.sort()
         # calculate the F (Exceedence probability based on weibul)
-        cdf_Weibul = PlottingPosition.weibul(ams)
+        cdf_Weibul = PlottingPosition.weibul(ams_df)
         # Gumbel.probapilityPlot method calculates the theoretical values
         # based on the Gumbel distribution
         # parameters, theoretical cdf (or weibul), and calculate the confidence interval
@@ -205,6 +218,7 @@ def ams_analysis(
                     param_dist[2],
                     cdf_Weibul,
                     alpha=significance_level,
+                    method=method,
                 )
             else:
                 fig, ax = dist.probapilityPlot(
@@ -231,10 +245,12 @@ def ams_analysis(
         statistical_properties.loc[i, "max"] = QTS.max()
         statistical_properties.loc[i, "t_beg"] = QTS.index.min()
         statistical_properties.loc[i, "t_end"] = QTS.index.max()
-        statistical_properties.loc[i, "nyr"] = (
-            statistical_properties.loc[i, "t_end"]
-            - statistical_properties.loc[i, "t_beg"]
-        ).days / 365.25
+        if not ams:
+            statistical_properties.loc[i, "nyr"] = (
+                statistical_properties.loc[i, "t_end"]
+                - statistical_properties.loc[i, "t_beg"]
+            ).days / 365.25
+
         for irp, irp_name in zip(Qrp, rp_name):
             statistical_properties.loc[i, irp_name] = irp
 

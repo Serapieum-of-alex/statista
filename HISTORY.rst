@@ -24,3 +24,21 @@ History
 
 * add eva (Extreme value analysis) module
 * fix bug in obtaining distribution parameters using optimization method
+
+
+0.3.0 (2023-02-19)
+------------------
+
+* add documentations for both GEV and gumbel distributions.
+* add lmoment parameter estimation method for all distributions.
+* add exponential and normal distributions
+* modify the pdf, cdf, and probability plot plots
+* create separate plot and confidence_interval modules.
+
+0.4.0 (2023-011-23)
+------------------
+
+* add Pearson 3 distribution
+* Use setup.py instead of pyproject.toml.
+* Correct pearson correlation coefficient and add documentation .
+* replace the pdf and cdf by the methods from scipy package.

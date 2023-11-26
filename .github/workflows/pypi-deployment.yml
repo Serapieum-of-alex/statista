@@ -1,4 +1,5 @@
-name: Linux
+name: pypi-deployment
+
 on:
     push:
         branches:
@@ -11,33 +12,25 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ["3.9", "3.10", "3.11"]
-    env:
-      OS: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python ${{ matrix.python-version }} ${{ matrix.os }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
+
       - name: Install dependencies
         run: |
             pip install -r requirements.txt -r requirements-dev.txt
             python setup.py install
 
-      - name: Install & Lint with flake8
-        run: |
-            pip install flake8
-            flake8 --max-line-length=120 statista/*.py tests/*.py
-
       - name: Generate coverage report
         run: |
-            pip install pytest
-            pip install pytest-cov
-            python -m pytest -vvv --cov=statista --cov-report=xml
+          python -m pytest -vvv --cov=statista --cov-report=xml
 
       - name: Upload coverage reports to Codecov with GitHub Action
         uses: codecov/codecov-action@v3

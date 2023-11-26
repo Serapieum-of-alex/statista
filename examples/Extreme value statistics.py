@@ -2,45 +2,33 @@
 
 @author: mofarrag
 """
-import os
-
-os.chdir(r"C:\MyComputer\01Algorithms\Statistics\statista")
 import matplotlib
 
 matplotlib.use("TkAgg")
-# import scipy.optimize as so
-# import matplotlib.pyplot as plt
-# import numpy as np
-# from matplotlib import gridspec
-# from scipy import stats as stats
-# from scipy.stats import genextreme, gumbel_r, norm
 import pandas as pd
-
 from statista.distributions import GEV, ConfidenceInterval, Gumbel, PlottingPosition
-
-# from statista.tools import Tools as st
 
 time_series1 = pd.read_csv("examples/data/time_series1.txt", header=None)[0].tolist()
 time_series2 = pd.read_csv("examples/data/time_series2.txt", header=None)[0].tolist()
 #%%
 Gdist = Gumbel(time_series1)
 # defult parameter estimation method is maximum liklihood method
-Param_dist = Gdist.estimateParameter()
+Param_mle = Gdist.estimateParameter(method="mle")
 Gdist.ks()
 Gdist.chisquare()
-print(Param_dist)
-loc = Param_dist[0]
-scale = Param_dist[1]
+print(Param_mle)
+loc = Param_mle[0]
+scale = Param_mle[1]
 # calculate and plot the pdf
 pdf = Gdist.pdf(loc, scale, plot_figure=True)
 cdf, _, _ = Gdist.cdf(loc, scale, plot_figure=True)
 #%% lmoments
-Param_dist = Gdist.estimateParameter(method="lmoments")
+Param_lmoments = Gdist.estimateParameter(method="lmoments")
 Gdist.ks()
 Gdist.chisquare()
-print(Param_dist)
-loc = Param_dist[0]
-scale = Param_dist[1]
+print(Param_lmoments)
+loc = Param_lmoments[0]
+scale = Param_lmoments[1]
 # calculate and plot the pdf
 pdf = Gdist.pdf(loc, scale, plot_figure=True)
 cdf, _, _ = Gdist.cdf(loc, scale, plot_figure=True)
@@ -81,23 +69,23 @@ Gdist.probapilityPlot(loc, scale, cdf_Weibul, alpha=0.1)
 #%% Generalized Extreme Value (GEV)
 Gevdist = GEV(time_series2)
 # default parameter estimation method is maximum liklihood method
-Param_dist = Gevdist.estimateParameter()
+mle_param = Gevdist.estimateParameter(method="mle")
 Gevdist.ks()
 Gevdist.chisquare()
 
-print(Param_dist)
-shape = Param_dist[0]
-loc = Param_dist[1]
-scale = Param_dist[2]
+print(mle_param)
+shape = mle_param[0]
+loc = mle_param[1]
+scale = mle_param[2]
 # calculate and plot the pdf
 pdf, fig, ax = Gevdist.pdf(shape, loc, scale, plot_figure=True)
 cdf, _, _ = Gevdist.cdf(shape, loc, scale, plot_figure=True)
 #%% lmoment method
-Param_dist = Gevdist.estimateParameter(method="lmoments")
-print(Param_dist)
-shape = Param_dist[0]
-loc = Param_dist[1]
-scale = Param_dist[2]
+lmom_param = Gevdist.estimateParameter(method="lmoments")
+print(lmom_param)
+shape = lmom_param[0]
+loc = lmom_param[1]
+scale = lmom_param[2]
 # calculate and plot the pdf
 pdf, fig, ax = Gevdist.pdf(shape, loc, scale, plot_figure=True)
 cdf, _, _ = Gevdist.cdf(shape, loc, scale, plot_figure=True)
@@ -109,7 +97,7 @@ T = PlottingPosition.weibul(time_series1, option=2)
 # TheporeticalEstimate method calculates the theoretical values based on the Gumbel distribution
 Qth = Gevdist.theporeticalEstimate(shape, loc, scale, cdf_Weibul)
 
-func = ConfidenceInterval.GEVfunc
+func = GEV.ci_func
 upper, lower = Gevdist.confidenceInterval(
     shape,
     loc,

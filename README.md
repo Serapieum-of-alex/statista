@@ -26,15 +26,19 @@ statista
 
 Main Features
 -------------
-  - Statistical Distributions (GEV/GUMBL)
-  - Parameter estimation Lmoments/ML/MOM
+  - Statistical Distributions
+    - GEV
+    - GUMBL
+    - Normal
+    - Exponential
+  - Parameter estimation methods
+    - Lmoments
+    - ML
+    - MOM
   - One-at-time (O-A-T) Sensitivity analysis.
   - Sobol visualization
-  - Statistical Metrics
-
-Future work
--------------
-  - More distributions
+  - Statistical descriptors
+  - Extreme value analysis
 
 
 Installing statista
@@ -61,7 +65,7 @@ pip install git+https://github.com/MAfarrag/statista
 ## pip
 to install the last release you can easly use pip
 ```
-pip install statista==0.2.0
+pip install statista==0.4.0
 ```
 
 Quick start
