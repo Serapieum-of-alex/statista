@@ -13,13 +13,15 @@ n = len(sample)
 # sort descinding
 sample = np.sort(sample.reshape(n))[::-1]
 b0 = np.mean(sample)
-b1 = np.array([(n - j - 1) * sample[j] / n / (n - 1) for j in range(n - 1)]).sum()
+lmom1 = b0
+b1 = np.array([(n - j - 1) * sample[j] / n / (n - 1) for j in range(n)]).sum()
+lmom2 = 2 * b1 - b0
+
 b2 = np.array(
-    [
-        (n - j - 1) * (n - j - 2) * sample[j] / n / (n - 1) / (n - 2)
-        for j in range(n - 1)
-    ]
+    [(n - j - 1) * (n - j - 2) * sample[j] / n / (n - 1) / (n - 2) for j in range(n)]
 ).sum()
+
+lmom3 = 6 * (b2 - b1) + b0
 
 b3 = np.array(
     [
@@ -34,8 +36,6 @@ b3 = np.array(
         for j in range(n - 1)
     ]
 ).sum()
-lmom1 = b0
-lmom2 = 2 * b1 - b0
-lmom3 = 6 * (b2 - b1) + b0
+
 lmom4 = 20 * b3 - 30 * b2 + 12 * b1 - b0
 lmom1, lmom2, lmom3, lmom4

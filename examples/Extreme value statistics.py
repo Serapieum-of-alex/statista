@@ -69,23 +69,23 @@ Gdist.probapilityPlot(loc, scale, cdf_Weibul, alpha=0.1)
 #%% Generalized Extreme Value (GEV)
 Gevdist = GEV(time_series2)
 # default parameter estimation method is maximum liklihood method
-Param_dist = Gevdist.estimateParameter()
+mle_param = Gevdist.estimateParameter(method="mle")
 Gevdist.ks()
 Gevdist.chisquare()
 
-print(Param_dist)
-shape = Param_dist[0]
-loc = Param_dist[1]
-scale = Param_dist[2]
+print(mle_param)
+shape = mle_param[0]
+loc = mle_param[1]
+scale = mle_param[2]
 # calculate and plot the pdf
 pdf, fig, ax = Gevdist.pdf(shape, loc, scale, plot_figure=True)
 cdf, _, _ = Gevdist.cdf(shape, loc, scale, plot_figure=True)
 #%% lmoment method
-Param_dist = Gevdist.estimateParameter(method="lmoments")
-print(Param_dist)
-shape = Param_dist[0]
-loc = Param_dist[1]
-scale = Param_dist[2]
+lmom_param = Gevdist.estimateParameter(method="lmoments")
+print(lmom_param)
+shape = lmom_param[0]
+loc = lmom_param[1]
+scale = lmom_param[2]
 # calculate and plot the pdf
 pdf, fig, ax = Gevdist.pdf(shape, loc, scale, plot_figure=True)
 cdf, _, _ = Gevdist.cdf(shape, loc, scale, plot_figure=True)
