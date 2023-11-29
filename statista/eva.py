@@ -151,14 +151,14 @@ def ams_analysis(
             threshold = np.quantile(ams_df, quartile)
             if distribution == "GEV":
                 dist = GEV(ams_df)
-                param_dist = dist.estimateParameter(
+                param_dist = dist.estimate_parameter(
                     method="optimization",
                     ObjFunc=Gumbel.ObjectiveFn,
                     threshold=threshold,
                 )
             else:
                 dist = Gumbel(ams_df)
-                param_dist = dist.estimateParameter(
+                param_dist = dist.estimate_parameter(
                     method="optimization",
                     ObjFunc=Gumbel.ObjectiveFn,
                     threshold=threshold,
@@ -169,12 +169,12 @@ def ams_analysis(
                 if distribution == "GEV":
                     dist = GEV(ams_df)
                     # defult parameter estimation method is maximum liklihood method
-                    param_dist = dist.estimateParameter(method=method)
+                    param_dist = dist.estimate_parameter(method=method)
                 else:
                     # A gumbel distribution is fitted to the annual maxima
                     dist = Gumbel(ams_df)
                     # defult parameter estimation method is maximum liklihood method
-                    param_dist = dist.estimateParameter(method=method)
+                    param_dist = dist.estimate_parameter(method=method)
             except Exception as e:
                 logger.warning(
                     f"The gauge {i} parameters could not be estimated because of {e}"
@@ -196,11 +196,11 @@ def ams_analysis(
         # Return periods from the fitted distribution are stored.
         # get the Discharge coresponding to the return periods
         if distribution == "GEV":
-            Qrp = dist.theporeticalEstimate(
+            Qrp = dist.theoretical_estimate(
                 param_dist[0], param_dist[1], param_dist[2], F
             )
         else:
-            Qrp = dist.theporeticalEstimate(param_dist[0], param_dist[1], F)
+            Qrp = dist.theoretical_estimate(param_dist[0], param_dist[1], F)
 
         # to get the Non Exceedance probability for a specific Value
         # sort the ams_df
@@ -212,7 +212,7 @@ def ams_analysis(
         # parameters, theoretical cdf (or weibul), and calculate the confidence interval
         if save_plots:
             if distribution == "GEV":
-                fig, ax = dist.probapilityPlot(
+                fig, ax = dist.probapility_plot(
                     param_dist[0],
                     param_dist[1],
                     param_dist[2],
@@ -221,7 +221,7 @@ def ams_analysis(
                     method=method,
                 )
             else:
-                fig, ax = dist.probapilityPlot(
+                fig, ax = dist.probapility_plot(
                     param_dist[0],
                     param_dist[1],
                     cdf_Weibul,

@@ -28,7 +28,7 @@ class TestPlottingPosition:
         time_series1: list,
     ):
         cdf = PlottingPosition.weibul(time_series1, return_period=False)
-        rp = PlottingPosition.returnPeriod(cdf)
+        rp = PlottingPosition.return_period(cdf)
         assert isinstance(rp, np.ndarray)
 
 
@@ -48,7 +48,7 @@ class TestGumbel:
     ):
         Gdist = Gumbel(time_series2)
         for i in range(len(dist_estimation_parameters)):
-            param = Gdist.estimateParameter(
+            param = Gdist.estimate_parameter(
                 method=dist_estimation_parameters[i], test=False
             )
             assert isinstance(param, dict)
@@ -63,7 +63,7 @@ class TestGumbel:
         parameter_estimation_optimization_threshold: int,
     ):
         Gdist = Gumbel(time_series2)
-        param = Gdist.estimateParameter(
+        param = Gdist.estimate_parameter(
             method="optimization",
             ObjFunc=Gumbel.ObjectiveFn,
             threshold=parameter_estimation_optimization_threshold,
@@ -79,7 +79,7 @@ class TestGumbel:
         dist_estimation_parameters_ks: str,
     ):
         Gdist = Gumbel(time_series2)
-        Gdist.estimateParameter(method=dist_estimation_parameters_ks, test=False)
+        Gdist.estimate_parameter(method=dist_estimation_parameters_ks, test=False)
         Gdist.ks()
         assert Gdist.Dstatic
         assert Gdist.KS_Pvalue
@@ -90,7 +90,7 @@ class TestGumbel:
         dist_estimation_parameters_ks: str,
     ):
         Gdist = Gumbel(time_series2)
-        Gdist.estimateParameter(method=dist_estimation_parameters_ks, test=False)
+        Gdist.estimate_parameter(method=dist_estimation_parameters_ks, test=False)
         Gdist.chisquare()
         assert Gdist.chistatic
         assert Gdist.chi_Pvalue
@@ -101,7 +101,7 @@ class TestGumbel:
         dist_estimation_parameters_ks: str,
     ):
         Gdist = Gumbel(time_series2)
-        Param = Gdist.estimateParameter(
+        Param = Gdist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
 
@@ -115,7 +115,7 @@ class TestGumbel:
         dist_estimation_parameters_ks: str,
     ):
         Gdist = Gumbel(time_series2)
-        Param = Gdist.estimateParameter(
+        Param = Gdist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
         cdf, fig, ax = Gdist.cdf(Param, plot_figure=True)
@@ -130,10 +130,10 @@ class TestGumbel:
     ):
         Gdist = Gumbel(time_series2)
         cdf_Weibul = PlottingPosition.weibul(time_series2)
-        Param = Gdist.estimateParameter(
+        Param = Gdist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
-        Qth = Gdist.theporeticalEstimate(Param, cdf_Weibul)
+        Qth = Gdist.theoretical_estimate(Param, cdf_Weibul)
         assert isinstance(Qth, np.ndarray)
 
     def test_gumbel_confidence_interval(
@@ -144,10 +144,10 @@ class TestGumbel:
     ):
         Gdist = Gumbel(time_series2)
         cdf_Weibul = PlottingPosition.weibul(time_series2)
-        Param = Gdist.estimateParameter(
+        Param = Gdist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
-        upper, lower = Gdist.confidenceInterval(
+        upper, lower = Gdist.confidence_interval(
             Param, cdf_Weibul, alpha=confidence_interval_alpha
         )
         assert isinstance(upper, np.ndarray)
@@ -161,10 +161,10 @@ class TestGumbel:
     ):
         Gdist = Gumbel(time_series2)
         cdf_Weibul = PlottingPosition.weibul(time_series2)
-        Param = Gdist.estimateParameter(
+        Param = Gdist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
-        [fig1, fig2], [ax1, ax2] = Gdist.probapilityPlot(
+        [fig1, fig2], [ax1, ax2] = Gdist.probapility_plot(
             Param, cdf_Weibul, alpha=confidence_interval_alpha
         )
         assert isinstance(fig1, Figure)
@@ -187,7 +187,7 @@ class TestGEV:
     ):
         Gdist = GEV(time_series1)
         for i in range(len(dist_estimation_parameters)):
-            param = Gdist.estimateParameter(
+            param = Gdist.estimate_parameter(
                 method=dist_estimation_parameters[i], test=False
             )
 
@@ -203,7 +203,7 @@ class TestGEV:
         dist_estimation_parameters_ks: str,
     ):
         Gdist = GEV(time_series1)
-        Gdist.estimateParameter(method=dist_estimation_parameters_ks, test=False)
+        Gdist.estimate_parameter(method=dist_estimation_parameters_ks, test=False)
         Gdist.ks()
         assert Gdist.Dstatic
         assert Gdist.KS_Pvalue
@@ -214,7 +214,7 @@ class TestGEV:
         dist_estimation_parameters_ks: str,
     ):
         Gdist = GEV(time_series1)
-        Gdist.estimateParameter(method=dist_estimation_parameters_ks, test=False)
+        Gdist.estimate_parameter(method=dist_estimation_parameters_ks, test=False)
         Gdist.chisquare()
         assert Gdist.chistatic
         assert Gdist.chi_Pvalue
@@ -225,7 +225,7 @@ class TestGEV:
         dist_estimation_parameters_ks: str,
     ):
         Gdist = GEV(time_series1)
-        Param = Gdist.estimateParameter(
+        Param = Gdist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
 
@@ -239,7 +239,7 @@ class TestGEV:
         dist_estimation_parameters_ks: str,
     ):
         Gdist = GEV(time_series1)
-        Param = Gdist.estimateParameter(
+        Param = Gdist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
         cdf, fig, ax = Gdist.cdf(Param, plot_figure=True)
@@ -253,10 +253,10 @@ class TestGEV:
     ):
         Gdist = GEV(time_series1)
         cdf_Weibul = PlottingPosition.weibul(time_series1)
-        Param = Gdist.estimateParameter(
+        Param = Gdist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
-        Qth = Gdist.theporeticalEstimate(Param, cdf_Weibul)
+        Qth = Gdist.theoretical_estimate(Param, cdf_Weibul)
         assert isinstance(Qth, np.ndarray)
 
     def test_gev_confidence_interval(
@@ -267,12 +267,12 @@ class TestGEV:
     ):
         Gdist = GEV(time_series1)
         cdf_Weibul = PlottingPosition.weibul(time_series1)
-        Param = Gdist.estimateParameter(
+        Param = Gdist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
 
         func = GEV.ci_func
-        upper, lower = Gdist.confidenceInterval(
+        upper, lower = Gdist.confidence_interval(
             Param,
             F=cdf_Weibul,
             alpha=confidence_interval_alpha,
@@ -290,7 +290,7 @@ class TestGEV:
     ):
         Gdist = GEV(time_series1)
         cdf_Weibul = PlottingPosition.weibul(time_series1)
-        Param = Gdist.estimateParameter(
+        Param = Gdist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
 
@@ -330,7 +330,7 @@ class TestExponential:
     ):
         Edist = Exponential(time_series2)
         for i in range(len(dist_estimation_parameters)):
-            param = Edist.estimateParameter(
+            param = Edist.estimate_parameter(
                 method=dist_estimation_parameters[i], test=False
             )
             assert isinstance(param, list)
@@ -343,7 +343,7 @@ class TestExponential:
         dist_estimation_parameters_ks: str,
     ):
         Edist = Exponential(time_series2)
-        Param = Edist.estimateParameter(
+        Param = Edist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
         pdf, fig, ax = Edist.pdf(Param[0], Param[1], plot_figure=True)
@@ -356,7 +356,7 @@ class TestExponential:
         dist_estimation_parameters_ks: str,
     ):
         Edist = Exponential(time_series2)
-        Param = Edist.estimateParameter(
+        Param = Edist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
         cdf, fig, ax = Edist.cdf(Param[0], Param[1], plot_figure=True)
@@ -370,10 +370,10 @@ class TestExponential:
     ):
         Edist = Exponential(time_series2)
         cdf_Weibul = PlottingPosition.weibul(time_series2)
-        Param = Edist.estimateParameter(
+        Param = Edist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
-        Qth = Edist.theporeticalEstimate(Param[0], Param[1], cdf_Weibul)
+        Qth = Edist.theoretical_estimate(Param[0], Param[1], cdf_Weibul)
         assert isinstance(Qth, np.ndarray)
 
 
@@ -393,7 +393,7 @@ class TestNormal:
     ):
         Edist = Normal(time_series2)
         for method in dist_estimation_parameters:
-            param = Edist.estimateParameter(method=method, test=False)
+            param = Edist.estimate_parameter(method=method, test=False)
             assert isinstance(param, list)
             assert Edist.loc
             assert Edist.scale
@@ -404,7 +404,7 @@ class TestNormal:
         dist_estimation_parameters_ks: str,
     ):
         Edist = Normal(time_series2)
-        Param = Edist.estimateParameter(
+        Param = Edist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
         pdf, fig, ax = Edist.pdf(Param[0], Param[1], plot_figure=True)
@@ -417,7 +417,7 @@ class TestNormal:
         dist_estimation_parameters_ks: str,
     ):
         Edist = Normal(time_series2)
-        Param = Edist.estimateParameter(
+        Param = Edist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
         cdf, fig, ax = Edist.cdf(Param[0], Param[1], plot_figure=True)
@@ -431,8 +431,8 @@ class TestNormal:
     ):
         Edist = Normal(time_series2)
         cdf_Weibul = PlottingPosition.weibul(time_series2)
-        Param = Edist.estimateParameter(
+        Param = Edist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
-        Qth = Edist.theporeticalEstimate(Param[0], Param[1], cdf_Weibul)
+        Qth = Edist.theoretical_estimate(Param[0], Param[1], cdf_Weibul)
         assert isinstance(Qth, np.ndarray)

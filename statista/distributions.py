@@ -24,7 +24,7 @@ class PlottingPosition:
         pass
 
     @staticmethod
-    def returnPeriod(F: Union[list, np.ndarray]) -> np.ndarray:
+    def return_period(F: Union[list, np.ndarray]) -> np.ndarray:
         """returnPeriod.
 
         Parameters
@@ -68,11 +68,15 @@ class PlottingPosition:
         if not return_period:
             return cdf
         else:
-            T = PlottingPosition.returnPeriod(cdf)
+            T = PlottingPosition.return_period(cdf)
             return T
 
 
 class AbstractDistribution:
+    """
+    AbstractDistribution.
+    """
+
     parameters: Dict[str, Union[float, Any]]
     cdf_Weibul: ndarray
 
@@ -164,7 +168,7 @@ class AbstractDistribution:
         """
         pass
 
-    def estimateParameter(
+    def estimate_parameter(
         self,
         method: str = "mle",
         ObjFunc: Callable = None,
@@ -207,7 +211,7 @@ class AbstractDistribution:
         pass
 
     @staticmethod
-    def theporeticalEstimate(
+    def theoretical_estimate(
         parameters: Dict[str, Union[float, Any]], cdf: np.ndarray
     ) -> np.ndarray:
         """theporeticalEstimate.
@@ -250,7 +254,7 @@ class AbstractDistribution:
                 "Value of parameters is unknown please use "
                 "'EstimateParameter' to obtain estimate the distribution parameters"
             )
-        Qth = self.theporeticalEstimate(self.parameters, self.cdf_Weibul)
+        Qth = self.theoretical_estimate(self.parameters, self.cdf_Weibul)
 
         test = ks_2samp(self.data, Qth)
         self.Dstatic = test.statistic
@@ -278,7 +282,7 @@ class AbstractDistribution:
                 "'EstimateParameter' to obtain them"
             )
 
-        Qth = self.theporeticalEstimate(self.parameters, self.cdf_Weibul)
+        Qth = self.theoretical_estimate(self.parameters, self.cdf_Weibul)
         try:
             test = chisquare(st.standardize(Qth), st.standardize(self.data))
             self.chistatic = test.statistic
@@ -291,7 +295,7 @@ class AbstractDistribution:
             print(e)
             return
 
-    def confidenceInterval(
+    def confidence_interval(
         self,
         parameters: Dict[str, Union[float, Any]],
         F: np.ndarray,
@@ -327,7 +331,7 @@ class AbstractDistribution:
         """
         pass
 
-    def probapilityPlot(
+    def probapility_plot(
         self,
         parameters: Dict[str, Union[float, Any]],
         F: np.ndarray,
@@ -529,7 +533,7 @@ class Gumbel(AbstractDistribution):
         else:
             return cdf
 
-    def getRP(self, loc, scale, data):
+    def get_rp(self, loc, scale, data):
         """getRP.
 
             getRP calculates the return period for a list/array of values or a single value.
@@ -582,7 +586,7 @@ class Gumbel(AbstractDistribution):
         # print x1, nx2, L1, L2
         return L1 + L2
 
-    def estimateParameter(
+    def estimate_parameter(
         self,
         method: str = "mle",
         ObjFunc: Callable = None,
@@ -659,7 +663,7 @@ class Gumbel(AbstractDistribution):
         return Param
 
     @staticmethod
-    def theporeticalEstimate(
+    def theoretical_estimate(
         parameters: Dict[str, Union[float, Any]], cdf: np.ndarray
     ) -> np.ndarray:
         """theporeticalEstimate.
@@ -722,7 +726,7 @@ class Gumbel(AbstractDistribution):
         """
         return super().chisquare()
 
-    def confidenceInterval(
+    def confidence_interval(
         self,
         parameters: Dict[str, Union[float, Any]],
         F: np.ndarray,
@@ -761,7 +765,7 @@ class Gumbel(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        Qth = self.theporeticalEstimate(parameters, F)
+        Qth = self.theoretical_estimate(parameters, F)
         Y = [-np.log(-np.log(j)) for j in F]
         StdError = [
             (scale / np.sqrt(len(self.data)))
@@ -773,7 +777,7 @@ class Gumbel(AbstractDistribution):
         Qlower = np.array([Qth[j] - v * StdError[j] for j in range(len(self.data))])
         return Qupper, Qlower
 
-    def probapilityPlot(
+    def probapility_plot(
         self,
         parameters: Dict[str, Union[float, Any]],
         F: np.ndarray,
@@ -827,8 +831,8 @@ class Gumbel(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        Qth = self.theporeticalEstimate(parameters, F)
-        Qupper, Qlower = self.confidenceInterval(parameters, F, alpha)
+        Qth = self.theoretical_estimate(parameters, F)
+        Qupper, Qlower = self.confidence_interval(parameters, F, alpha)
 
         Qx = np.linspace(
             float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
@@ -1053,7 +1057,7 @@ class GEV(AbstractDistribution):
         else:
             return cdf
 
-    def getRP(self, shape: float, loc: float, scale: float, data: np.ndarray):
+    def get_rp(self, shape: float, loc: float, scale: float, data: np.ndarray):
         """getRP.
 
             getRP calculates the return period for a list/array of values or a single value.
@@ -1083,7 +1087,7 @@ class GEV(AbstractDistribution):
 
         return rp
 
-    def estimateParameter(
+    def estimate_parameter(
         self,
         method: str = "mle",
         ObjFunc=None,
@@ -1161,7 +1165,7 @@ class GEV(AbstractDistribution):
         return Param
 
     @staticmethod
-    def theporeticalEstimate(
+    def theoretical_estimate(
         parameters: Dict[str, Union[float, Any]],
         F: np.ndarray,
     ) -> np.ndarray:
@@ -1229,7 +1233,7 @@ class GEV(AbstractDistribution):
     def chisquare(self):
         return super().chisquare()
 
-    def confidenceInterval(
+    def confidence_interval(
         self,
         parameters: Dict[str, Union[float, Any]],
         F: np.ndarray,
@@ -1285,7 +1289,7 @@ class GEV(AbstractDistribution):
 
         return Qupper, Qlower
 
-    def probapilityPlot(
+    def probapility_plot(
         self,
         parameters: Dict[str, Union[float, Any]],
         F,
@@ -1343,7 +1347,7 @@ class GEV(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        Qth = self.theporeticalEstimate(parameters, F)
+        Qth = self.theoretical_estimate(parameters, F)
         if func is None:
             func = GEV.ci_func
 
@@ -1407,11 +1411,11 @@ class GEV(AbstractDistribution):
         F = kwargs["F"]
         method = kwargs["method"]
         # generate theoretical estimates based on a random cdf, and the dist parameters
-        sample = GEV.theporeticalEstimate(gevfit, np.random.rand(len(data)))
+        sample = GEV.theoretical_estimate(gevfit, np.random.rand(len(data)))
 
         # get parameters based on the new generated sample
         Gdist = GEV(sample)
-        new_param = Gdist.estimateParameter(method=method, test=False)
+        new_param = Gdist.estimate_parameter(method=method, test=False)
 
         # return period
         # T = np.arange(0.1, 999.1, 0.1) + 1
@@ -1419,7 +1423,7 @@ class GEV(AbstractDistribution):
         # T = np.linspace(0.1, 999, len(data)) + 1
         # coresponding theoretical estimate to T
         # F = 1 - 1 / T
-        Qth = GEV.theporeticalEstimate(new_param, F)
+        Qth = GEV.theoretical_estimate(new_param, F)
 
         res = list(new_param.values())
         res.extend(Qth)
@@ -1871,7 +1875,7 @@ class Exponential:
         else:
             return cdf
 
-    def estimateParameter(
+    def estimate_parameter(
         self,
         method: str = "mle",
         ObjFunc=None,
@@ -1950,7 +1954,7 @@ class Exponential:
         return Param
 
     @staticmethod
-    def theporeticalEstimate(
+    def theoretical_estimate(
         loc: Union[float, int],
         scale: Union[float, int],
         F: np.ndarray,
@@ -1999,7 +2003,7 @@ class Exponential:
                 "Value of loc/scale parameter is unknown please use "
                 "'EstimateParameter' to obtain them"
             )
-        Qth = self.theporeticalEstimate(self.loc, self.scale, self.cdf_Weibul)
+        Qth = self.theoretical_estimate(self.loc, self.scale, self.cdf_Weibul)
 
         test = ks_2samp(self.data, Qth)
         self.Dstatic = test.statistic
@@ -2021,7 +2025,7 @@ class Exponential:
                 "'EstimateParameter' to obtain them"
             )
 
-        Qth = self.theporeticalEstimate(self.loc, self.scale, self.cdf_Weibul)
+        Qth = self.theoretical_estimate(self.loc, self.scale, self.cdf_Weibul)
 
         test = chisquare(st.standardize(Qth), st.standardize(self.data))
         self.chistatic = test.statistic
@@ -2182,7 +2186,7 @@ class Normal:
         else:
             return cdf
 
-    def estimateParameter(
+    def estimate_parameter(
         self,
         method: str = "mle",
         ObjFunc=None,
@@ -2261,7 +2265,7 @@ class Normal:
         return Param
 
     @staticmethod
-    def theporeticalEstimate(
+    def theoretical_estimate(
         loc: Union[float, int],
         scale: Union[float, int],
         F: np.ndarray,
