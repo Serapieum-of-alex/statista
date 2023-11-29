@@ -877,7 +877,6 @@ class GEV(AbstractDistribution):
         ----------
         data : [list]
             data time series.
-
         parameters: Dict[str, str]
             {"loc": val, "scale": val, "shape": value}
             - loc: [numeric]
@@ -2297,16 +2296,15 @@ class Normal:
         return Qth
 
 
-class Pearson3:
+class Pearson3(AbstractDistribution):
+    """Pearson3"""
 
     data: ndarray
 
     def __init__(
         self,
         data: Union[list, np.ndarray] = None,
-        shape: Union[int, float] = None,
-        loc: Union[int, float] = None,
-        scale: Union[int, float] = None,
+        parameters: Dict[str, str] = None,
     ):
         """GEV.
 
@@ -2314,26 +2312,18 @@ class Pearson3:
         ----------
         data : [list]
             data time series.
-        shape
-        loc
-        scale
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val, "shape": value}
+            - loc: [numeric]
+                location parameter of the GEV distribution.
+            - scale: [numeric]
+                scale parameter of the GEV distribution.
+            - shape: [numeric]
+                shape parameter of the GEV distribution.
         """
-        if isinstance(data, list) or isinstance(data, np.ndarray):
-            self.data = np.array(data)
-            self.data_sorted = np.sort(data)
-            self.cdf_Weibul = PlottingPosition.weibul(data)
-            self.KStable = 1.22 / np.sqrt(len(self.data))
-
-        self.loc = loc
-        self.scale = scale
-        self.Dstatic = None
-        self.KS_Pvalue = None
-
-        self.chistatic = None
-        self.chi_Pvalue = None
+        super().__init__(data, parameters)
         pass
 
-    @staticmethod
     def pdf(
         self,
         loc: Union[float, int],
