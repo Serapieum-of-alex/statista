@@ -22,6 +22,6 @@ pdf = dist_negative.pdf(shape, loc, scale, plot_figure=False)
 dung["scipy -ve"] = pdf
 #%%
 method = "lmoments"  # "mle"
-parameters_lm = dist_negative.estimateParameter(method=method)
-parameters_mle = dist_negative.estimateParameter(method="mle")
+parameters_lm = dist_negative.estimate_parameter(method=method)
+parameters_mle = dist_negative.estimate_parameter(method="mle")
 #%%

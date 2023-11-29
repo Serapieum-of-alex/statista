@@ -31,4 +31,4 @@ def confidence_interval_alpha() -> float:
 
 @pytest.fixture(scope="module")
 def parameter_estimation_optimization_threshold() -> int:
-    return 17
+    return 800  # 17

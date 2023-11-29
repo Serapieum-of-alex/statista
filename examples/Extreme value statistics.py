@@ -13,7 +13,7 @@ time_series2 = pd.read_csv("examples/data/time_series2.txt", header=None)[0].tol
 #%%
 Gdist = Gumbel(time_series1)
 # defult parameter estimation method is maximum liklihood method
-Param_mle = Gdist.estimateParameter(method="mle")
+Param_mle = Gdist.estimate_parameter(method="mle")
 Gdist.ks()
 Gdist.chisquare()
 print(Param_mle)
@@ -23,7 +23,7 @@ scale = Param_mle[1]
 pdf = Gdist.pdf(loc, scale, plot_figure=True)
 cdf, _, _ = Gdist.cdf(loc, scale, plot_figure=True)
 #%% lmoments
-Param_lmoments = Gdist.estimateParameter(method="lmoments")
+Param_lmoments = Gdist.estimate_parameter(method="lmoments")
 Gdist.ks()
 Gdist.chisquare()
 print(Param_lmoments)
@@ -38,38 +38,38 @@ time_series1.sort()
 # calculate the F (Non Exceedence probability based on weibul)
 cdf_Weibul = PlottingPosition.weibul(time_series1)
 # TheporeticalEstimate method calculates the theoretical values based on the Gumbel distribution
-Qth = Gdist.theporeticalEstimate(loc, scale, cdf_Weibul)
+Qth = Gdist.theoretical_estimate(loc, scale, cdf_Weibul)
 # test = stats.chisquare(st.Standardize(Qth), st.Standardize(time_series1),ddof=5)
 # calculate the confidence interval
-upper, lower = Gdist.confidenceInterval(loc, scale, cdf_Weibul, alpha=0.1)
+upper, lower = Gdist.confidence_interval(loc, scale, cdf_Weibul, alpha=0.1)
 # ProbapilityPlot can estimate the Qth and the lower and upper confidence interval in the process of plotting
-fig, ax = Gdist.probapilityPlot(loc, scale, cdf_Weibul, alpha=0.1)
+fig, ax = Gdist.probapility_plot(loc, scale, cdf_Weibul, alpha=0.1)
 #%%
 """
 if you want to focus only on high values, you can use a threshold to make the code focus on what is higher
 this threshold.
 """
 threshold = 17
-Param_dist = Gdist.estimateParameter(
+Param_dist = Gdist.estimate_parameter(
     method="optimization", ObjFunc=Gumbel.ObjectiveFn, threshold=threshold
 )
 print(Param_dist)
 loc = Param_dist[0]
 scale = Param_dist[1]
-Gdist.probapilityPlot(loc, scale, cdf_Weibul, alpha=0.1)
+Gdist.probapility_plot(loc, scale, cdf_Weibul, alpha=0.1)
 #%%
 threshold = 18
-Param_dist = Gdist.estimateParameter(
+Param_dist = Gdist.estimate_parameter(
     method="optimization", ObjFunc=Gumbel.ObjectiveFn, threshold=threshold
 )
 print(Param_dist)
 loc = Param_dist[0]
 scale = Param_dist[1]
-Gdist.probapilityPlot(loc, scale, cdf_Weibul, alpha=0.1)
+Gdist.probapility_plot(loc, scale, cdf_Weibul, alpha=0.1)
 #%% Generalized Extreme Value (GEV)
 Gevdist = GEV(time_series2)
 # default parameter estimation method is maximum liklihood method
-mle_param = Gevdist.estimateParameter(method="mle")
+mle_param = Gevdist.estimate_parameter(method="mle")
 Gevdist.ks()
 Gevdist.chisquare()
 
@@ -81,7 +81,7 @@ scale = mle_param[2]
 pdf, fig, ax = Gevdist.pdf(shape, loc, scale, plot_figure=True)
 cdf, _, _ = Gevdist.cdf(shape, loc, scale, plot_figure=True)
 #%% lmoment method
-lmom_param = Gevdist.estimateParameter(method="lmoments")
+lmom_param = Gevdist.estimate_parameter(method="lmoments")
 print(lmom_param)
 shape = lmom_param[0]
 loc = lmom_param[1]
@@ -95,10 +95,10 @@ time_series1.sort()
 cdf_Weibul = PlottingPosition.weibul(time_series1)
 T = PlottingPosition.weibul(time_series1, option=2)
 # TheporeticalEstimate method calculates the theoretical values based on the Gumbel distribution
-Qth = Gevdist.theporeticalEstimate(shape, loc, scale, cdf_Weibul)
+Qth = Gevdist.theoretical_estimate(shape, loc, scale, cdf_Weibul)
 
 func = GEV.ci_func
-upper, lower = Gevdist.confidenceInterval(
+upper, lower = Gevdist.confidence_interval(
     shape,
     loc,
     scale,
@@ -121,6 +121,6 @@ CI = ConfidenceInterval.BootStrap(
 LB = CI["LB"]
 UB = CI["UB"]
 #%%
-fig, ax = Gevdist.probapilityPlot(
+fig, ax = Gevdist.probapility_plot(
     shape, loc, scale, cdf_Weibul, func=func, n_samples=len(time_series1)
 )

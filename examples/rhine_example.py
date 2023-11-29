@@ -23,7 +23,7 @@ rockenau_gauge = ams.loc[:, "rockenau"].values
 #%% Exponential distribution (mle)
 dist_obj = Exponential(cologne_gauge)
 # default parameter estimation method is maximum liklihood method
-mle_param = dist_obj.estimateParameter(method="mle")
+mle_param = dist_obj.estimate_parameter(method="mle")
 dist_obj.ks()
 dist_obj.chisquare()
 
@@ -36,7 +36,7 @@ cdf, _, _ = dist_obj.cdf(loc, scale, plot_figure=True)
 #%% exponential distribution (lmoments)
 dist_obj = Exponential(cologne_gauge)
 # default parameter estimation method is maximum liklihood method
-mle_param = dist_obj.estimateParameter(method="lmoments")
+mle_param = dist_obj.estimate_parameter(method="lmoments")
 dist_obj.ks()
 dist_obj.chisquare()
 
@@ -49,7 +49,7 @@ cdf, _, _ = dist_obj.cdf(loc, scale, plot_figure=True)
 #%% GEV (mle)
 gev_cologne = GEV(cologne_gauge)
 # default parameter estimation method is maximum liklihood method
-mle_param = gev_cologne.estimateParameter(method="mle")
+mle_param = gev_cologne.estimate_parameter(method="mle")
 gev_cologne.ks()
 gev_cologne.chisquare()
 
@@ -64,7 +64,7 @@ cdf, _, _ = gev_cologne.cdf(shape, loc, scale, plot_figure=True)
 #%% cologne (lmoment)
 gev_cologne = GEV(cologne_gauge)
 # default parameter estimation method is maximum liklihood method
-lmom_param = gev_cologne.estimateParameter(method="lmoments")
+lmom_param = gev_cologne.estimate_parameter(method="lmoments")
 gev_cologne.ks()
 gev_cologne.chisquare()
 
