@@ -388,6 +388,7 @@ class Gumbel(AbstractDistribution):
 
     cdf_Weibul: ndarray
     parameters: dict[str, Union[float, Any]]
+    data: ndarray
 
     def __init__(
         self,
@@ -643,6 +644,7 @@ class Gumbel(AbstractDistribution):
         elif method == "optimization":
             if ObjFunc is None or threshold is None:
                 raise TypeError("threshold should be numeric value")
+
             Param = gumbel_r.fit(self.data, method="mle")
             # then we use the result as starting value for your truncated Gumbel fit
             Param = so.fmin(
@@ -699,7 +701,7 @@ class Gumbel(AbstractDistribution):
         Qth = loc - scale * (np.log(-np.log(cdf)))
 
         # the main equation form scipy
-        # Qth = gumbel_r.ppf(F, loc=param_dist[0], scale=param_dist[1])
+        # Qth = gumbel_r.ppf(F, loc=loc, scale=scale)
         return Qth
 
     def ks(self) -> tuple:
@@ -971,6 +973,7 @@ class GEV(AbstractDistribution):
 
         # pdf = np.array(pdf)
         pdf = genextreme.pdf(ts, loc=loc, scale=scale, c=shape)
+
         if plot_figure:
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
@@ -1708,47 +1711,34 @@ class GEV(AbstractDistribution):
 #         return Qth
 
 
-class Exponential:
-
+class Exponential(AbstractDistribution):
     """
     f(x: threshold, scale) = (1/scale) e **(- (x-threshold)/scale)
-
     """
 
     def __init__(
         self,
         data: Union[list, np.ndarray] = None,
-        loc: Union[int, float] = None,
-        scale: Union[int, float] = None,
+        parameters: Dict[str, str] = None,
     ):
-        """Gumbel.
+        """Exponential Distribution.
 
         Parameters
         ----------
         data : [list]
             data time series.
-        loc: [numeric]
-            location parameter
-        scale: [numeric]
-            scale parameter
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val}
+            - loc: [numeric]
+                location parameter of the exponential distribution.
+            - scale: [numeric]
+                scale parameter of the exponential distribution.
         """
-        if isinstance(data, list) or isinstance(data, np.ndarray):
-            self.data = np.array(data)
-            self.data_sorted = np.sort(data)
-            self.cdf_Weibul = PlottingPosition.weibul(data)
-            self.KStable = 1.22 / np.sqrt(len(self.data))
-
-        self.loc = loc
-        self.scale = scale
-        self.Dstatic = None
-        self.KS_Pvalue = None
-        self.chistatic = None
-        self.chi_Pvalue = None
+        super().__init__(data, parameters)
 
     def pdf(
         self,
-        loc: Union[float, int],
-        scale: Union[float, int],
+        parameters: Dict[str, Union[float, Any]],
         plot_figure: bool = False,
         figsize: tuple = (6, 5),
         xlabel: str = "Actual data",
@@ -1762,16 +1752,21 @@ class Exponential:
 
         Parameters:
         -----------
-        loc : [numeric]
-            location parameter of the gumbel distribution.
-        scale : [numeric]
-            scale parameter of the gumbel distribution.
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val}
+            - loc: [numeric]
+                location parameter of the gumbel distribution.
+            - scale: [numeric]
+                scale parameter of the gumbel distribution.
 
         Returns
         -------
         pdf : [array]
             probability density function pdf.
         """
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
@@ -1793,11 +1788,12 @@ class Exponential:
         #     pdf = pdf[0]
 
         pdf = expon.pdf(ts, loc=loc, scale=scale)
+
         if plot_figure:
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
             )
-            pdf_fitted = self.pdf(loc, scale, actualdata=Qx)
+            pdf_fitted = self.pdf(parameters, actualdata=Qx)
 
             fig, ax = Plot.pdf(
                 Qx,
@@ -1814,8 +1810,7 @@ class Exponential:
 
     def cdf(
         self,
-        loc: Union[float, int],
-        scale: Union[float, int],
+        parameters: Dict[str, Union[float, Any]],
         plot_figure: bool = False,
         figsize: tuple = (6, 5),
         xlabel: str = "data",
@@ -1829,11 +1824,15 @@ class Exponential:
 
         parameter:
         ----------
-            1- loc : [numeric]
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val}
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            2- scale : [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         """
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
         if loc <= 0:
@@ -1856,7 +1855,7 @@ class Exponential:
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
             )
-            cdf_fitted = self.cdf(loc, scale, actualdata=Qx)
+            cdf_fitted = self.cdf(parameters, actualdata=Qx)
 
             cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
 
@@ -1941,8 +1940,8 @@ class Exponential:
             )
             Param = [Param[1], Param[2]]
 
-        self.loc = Param[0]
-        self.scale = Param[1]
+        Param = {"loc": Param[0], "scale": Param[1]}
+        self.parameters = Param
 
         if test:
             self.ks()
@@ -1955,9 +1954,8 @@ class Exponential:
 
     @staticmethod
     def theoretical_estimate(
-        loc: Union[float, int],
-        scale: Union[float, int],
-        F: np.ndarray,
+        parameters: Dict[str, Union[float, Any]],
+        cdf: np.ndarray,
     ) -> np.ndarray:
         """TheporeticalEstimate.
 
@@ -1965,9 +1963,13 @@ class Exponential:
 
         Parameters:
         -----------
-        param : [list]
-            location ans scale parameters of the gumbel distribution.
-        F : [list]
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val}
+            - loc: [numeric]
+                location parameter of the gumbel distribution.
+            - scale: [numeric]
+                scale parameter of the gumbel distribution.
+        cdf: [list]
             cummulative distribution function/ Non Exceedence probability.
 
         Return:
@@ -1975,14 +1977,17 @@ class Exponential:
         theoreticalvalue : [numeric]
             Value based on the theoretical distribution
         """
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+
         if scale <= 0:
             raise ValueError("Parameters Invalid")
 
-        if any(F) < 0 or any(F) > 1:
+        if any(cdf) < 0 or any(cdf) > 1:
             raise ValueError("cdf Value Invalid")
 
         # the main equation from scipy
-        Qth = expon.ppf(F, loc=loc, scale=scale)
+        Qth = expon.ppf(cdf, loc=loc, scale=scale)
         return Qth
 
     def ks(self):
@@ -1998,43 +2003,10 @@ class Exponential:
             Pvalue : [numeric]
                 IF Pvalue < signeficance level ------ reject the null hypotethis
         """
-        if not hasattr(self, "loc") or not hasattr(self, "scale"):
-            raise ValueError(
-                "Value of loc/scale parameter is unknown please use "
-                "'EstimateParameter' to obtain them"
-            )
-        Qth = self.theoretical_estimate(self.loc, self.scale, self.cdf_Weibul)
-
-        test = ks_2samp(self.data, Qth)
-        self.Dstatic = test.statistic
-        self.KS_Pvalue = test.pvalue
-        print("-----KS Test--------")
-        print("Statistic = " + str(test.statistic))
-        if self.Dstatic < self.KStable:
-            print("Accept Hypothesis")
-        else:
-            print("reject Hypothesis")
-        print("P value = " + str(test.pvalue))
-
-        return test.statistic, test.pvalue
+        return super().ks()
 
     def chisquare(self):
-        if not hasattr(self, "loc") or not hasattr(self, "scale"):
-            raise ValueError(
-                "Value of loc/scale parameter is unknown please use "
-                "'EstimateParameter' to obtain them"
-            )
-
-        Qth = self.theoretical_estimate(self.loc, self.scale, self.cdf_Weibul)
-
-        test = chisquare(st.standardize(Qth), st.standardize(self.data))
-        self.chistatic = test.statistic
-        self.chi_Pvalue = test.pvalue
-        print("-----chisquare Test-----")
-        print("Statistic = " + str(test.statistic))
-        print("P value = " + str(test.pvalue))
-
-        return test.statistic, test.pvalue
+        return super().chisquare()
 
 
 class Normal:

@@ -33,7 +33,7 @@ class TestPlottingPosition:
 
 
 class TestGumbel:
-    def test_create_gumbel_instance(
+    def test_create_instance(
         self,
         time_series1: list,
     ):
@@ -41,7 +41,7 @@ class TestGumbel:
         assert isinstance(Gdist.data, np.ndarray)
         assert isinstance(Gdist.data_sorted, np.ndarray)
 
-    def test_gumbel_estimate_parameter(
+    def test_estimate_parameter(
         self,
         time_series2: list,
         dist_estimation_parameters: List[str],
@@ -73,7 +73,7 @@ class TestGumbel:
         assert Gdist.parameters.get("loc") is not None
         assert Gdist.parameters.get("scale") is not None
 
-    def test_gumbel_ks(
+    def test_ks(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
@@ -84,7 +84,7 @@ class TestGumbel:
         assert Gdist.Dstatic
         assert Gdist.KS_Pvalue
 
-    def test_gumbel_chisquare(
+    def test_chisquare(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
@@ -95,7 +95,7 @@ class TestGumbel:
         assert Gdist.chistatic
         assert Gdist.chi_Pvalue
 
-    def test_gumbel_pdf(
+    def test_pdf(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
@@ -109,7 +109,7 @@ class TestGumbel:
         assert isinstance(pdf, np.ndarray)
         assert isinstance(fig, Figure)
 
-    def test_gumbel_cdf(
+    def test_cdf(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
@@ -333,9 +333,10 @@ class TestExponential:
             param = Edist.estimate_parameter(
                 method=dist_estimation_parameters[i], test=False
             )
-            assert isinstance(param, list)
-            assert Edist.loc
-            assert Edist.scale
+            assert isinstance(param, dict)
+            assert all(i in param.keys() for i in ["loc", "scale"])
+            assert Edist.parameters.get("loc") is not None
+            assert Edist.parameters.get("scale") is not None
 
     def test_pdf(
         self,
@@ -346,7 +347,7 @@ class TestExponential:
         Param = Edist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
-        pdf, fig, ax = Edist.pdf(Param[0], Param[1], plot_figure=True)
+        pdf, fig, ax = Edist.pdf(Param, plot_figure=True)
         assert isinstance(pdf, np.ndarray)
         assert isinstance(fig, Figure)
 
@@ -359,7 +360,7 @@ class TestExponential:
         Param = Edist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
-        cdf, fig, ax = Edist.cdf(Param[0], Param[1], plot_figure=True)
+        cdf, fig, ax = Edist.cdf(Param, plot_figure=True)
         assert isinstance(cdf, np.ndarray)
         assert isinstance(fig, Figure)
 
@@ -373,7 +374,7 @@ class TestExponential:
         Param = Edist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
-        Qth = Edist.theoretical_estimate(Param[0], Param[1], cdf_Weibul)
+        Qth = Edist.theoretical_estimate(Param, cdf_Weibul)
         assert isinstance(Qth, np.ndarray)
 
 
