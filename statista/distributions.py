@@ -319,6 +319,7 @@ class AbstractDistribution(ABC):
         """
         pass
 
+    @abstractmethod
     def ks(self) -> tuple:
         """Kolmogorov-Smirnov (KS) test.
 
@@ -352,12 +353,9 @@ class AbstractDistribution(ABC):
         print(f"P value = {test.pvalue}")
         return test.statistic, test.pvalue
 
-    def chisquare(self) -> tuple:
+    def chisquare(self) -> Union[tuple, None]:
         """
-
-        Returns
-        -------
-
+        chisquare test
         """
         if self.parameters is None:
             raise ValueError(
@@ -779,10 +777,10 @@ class Gumbel(AbstractDistribution):
             raise ValueError("cdf Value Invalid")
 
         cdf = np.array(cdf)
-        Qth = loc - scale * (np.log(-np.log(cdf)))
+        # Qth = loc - scale * (np.log(-np.log(cdf)))
 
         # the main equation form scipy
-        # Qth = gumbel_r.ppf(F, loc=loc, scale=scale)
+        Qth = gumbel_r.ppf(cdf, loc=loc, scale=scale)
         return Qth
 
     def ks(self) -> tuple:
@@ -801,12 +799,7 @@ class Gumbel(AbstractDistribution):
         return super().ks()
 
     def chisquare(self) -> tuple:
-        """
-
-        Returns
-        -------
-
-        """
+        """chisquare test"""
         return super().chisquare()
 
     def confidence_interval(
@@ -1245,7 +1238,7 @@ class GEV(AbstractDistribution):
     @staticmethod
     def theoretical_estimate(
         parameters: Dict[str, Union[float, Any]],
-        F: np.ndarray,
+        cdf: np.ndarray,
     ) -> np.ndarray:
         """TheporeticalEstimate.
 
@@ -1255,7 +1248,7 @@ class GEV(AbstractDistribution):
         -----------
         param : [list]
             location ans scale parameters of the gumbel distribution.
-        F : [list]
+        cdf: [list]
             cummulative distribution function/ Non Exceedence probability.
 
         Return:
@@ -1270,27 +1263,27 @@ class GEV(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Parameters Invalid")
 
-        if any(F) < 0 or any(F) > 1:
+        if any(cdf) < 0 or any(cdf) > 1:
             raise ValueError("cdf Value Invalid")
 
         # Qth = list()
-        # for i in range(len(F)):
-        #     if F[i] <= 0 or F[i] >= 1:
-        #         if F[i] == 0 and shape < 0:
+        # for i in range(len(cdf)):
+        #     if cdf[i] <= 0 or cdf[i] >= 1:
+        #         if cdf[i] == 0 and shape < 0:
         #             Qth.append(loc + scale / shape)
-        #         elif F[i] == 1 and shape > 0:
+        #         elif cdf[i] == 1 and shape > 0:
         #             Qth.append(loc + scale / shape)
         #         else:
-        #             raise ValueError(str(F[i]) + " value of cdf is Invalid")
-        #     # F = np.array(F)
-        #     Y = -np.log(-np.log(F[i]))
+        #             raise ValueError(str(cdf[i]) + " value of cdf is Invalid")
+        #     # cdf = np.array(cdf)
+        #     Y = -np.log(-np.log(cdf[i]))
         #     if shape != 0:
         #         Y = (1 - np.exp(-1 * shape * Y)) / shape
         #
         #     Qth.append(loc + scale * Y)
         # Qth = np.array(Qth)
         # the main equation from scipy
-        Qth = genextreme.ppf(F, shape, loc=loc, scale=scale)
+        Qth = genextreme.ppf(cdf, shape, loc=loc, scale=scale)
         return Qth
 
     def ks(self):
@@ -1308,7 +1301,8 @@ class GEV(AbstractDistribution):
         """
         return super().ks()
 
-    def chisquare(self):
+    def chisquare(self) -> tuple:
+        """chisquare test"""
         return super().chisquare()
 
     def confidence_interval(
@@ -2078,7 +2072,8 @@ class Exponential(AbstractDistribution):
         """
         return super().ks()
 
-    def chisquare(self):
+    def chisquare(self) -> tuple:
+        """chisquare test"""
         return super().chisquare()
 
 
@@ -2351,3 +2346,22 @@ class Normal(AbstractDistribution):
         # the main equation from scipy
         Qth = norm.ppf(cdf, loc=loc, scale=scale)
         return Qth
+
+    def ks(self):
+        """Kolmogorov-Smirnov (KS) test.
+
+        The smaller the D static the more likely that the two samples are drawn from the same distribution
+        IF Pvalue < signeficance level ------ reject
+
+        returns:
+        --------
+            Dstatic: [numeric]
+                The smaller the D static the more likely that the two samples are drawn from the same distribution
+            Pvalue : [numeric]
+                IF Pvalue < signeficance level ------ reject the null hypotethis
+        """
+        return super().ks()
+
+    def chisquare(self) -> tuple:
+        """chisquare test"""
+        return super().chisquare()
