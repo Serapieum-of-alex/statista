@@ -1016,32 +1016,13 @@ class GEV(AbstractDistribution):
         else:
             return pdf
 
-    def cdf(
-        self,
-        parameters: Dict[str, Union[float, Any]],
-        plot_figure: bool = False,
-        figsize: tuple = (6, 5),
-        xlabel: str = "Actual data",
-        ylabel: str = "cdf",
-        fontsize: int = 11,
-        actual_data: Union[bool, np.ndarray] = True,
-    ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
-        """cdf.
-
-        Returns the value of Gumbel's cdf with parameters loc and scale
-        at x.
-        """
+    @staticmethod
+    def _cdf_eq(
+        data: Union[list, np.ndarray], parameters: Dict[str, Union[float, Any]]
+    ) -> np.ndarray:
         loc = parameters.get("loc")
         scale = parameters.get("scale")
         shape = parameters.get("shape")
-
-        if scale <= 0:
-            raise ValueError("Scale parameter is negative")
-
-        if isinstance(actual_data, bool):
-            ts = self.data
-        else:
-            ts = actual_data
         # equation https://www.rdocumentation.org/packages/evd/versions/2.3-6/topics/fextreme
         # z = (ts - loc) / scale
         # if shape == 0:
@@ -1060,7 +1041,38 @@ class GEV(AbstractDistribution):
         #             cdf.append(1)
         #
         # cdf = np.array(cdf)
-        cdf = genextreme.cdf(ts, c=shape, loc=loc, scale=scale)
+        cdf = genextreme.cdf(data, c=shape, loc=loc, scale=scale)
+        return cdf
+
+    def cdf(
+        self,
+        parameters: Dict[str, Union[float, Any]],
+        plot_figure: bool = False,
+        figsize: tuple = (6, 5),
+        xlabel: str = "Actual data",
+        ylabel: str = "cdf",
+        fontsize: int = 11,
+        actual_data: Union[bool, np.ndarray] = True,
+    ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
+        """cdf.
+
+        Returns the value of Gumbel's cdf with parameters loc and scale
+        at x.
+        """
+        # loc = parameters.get("loc")
+        scale = parameters.get("scale")
+        # shape = parameters.get("shape")
+
+        if scale <= 0:
+            raise ValueError("Scale parameter is negative")
+
+        if isinstance(actual_data, bool):
+            ts = self.data
+        else:
+            ts = actual_data
+
+        cdf = self._cdf_eq(ts, parameters)
+
         if plot_figure:
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
