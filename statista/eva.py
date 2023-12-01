@@ -151,14 +151,14 @@ def ams_analysis(
             threshold = np.quantile(ams_df, quartile)
             if distribution == "GEV":
                 dist = GEV(ams_df)
-                param_dist = dist.estimate_parameter(
+                param_dist = dist.fit_model(
                     method="optimization",
                     ObjFunc=Gumbel.ObjectiveFn,
                     threshold=threshold,
                 )
             else:
                 dist = Gumbel(ams_df)
-                param_dist = dist.estimate_parameter(
+                param_dist = dist.fit_model(
                     method="optimization",
                     ObjFunc=Gumbel.ObjectiveFn,
                     threshold=threshold,
@@ -169,12 +169,12 @@ def ams_analysis(
                 if distribution == "GEV":
                     dist = GEV(ams_df)
                     # defult parameter estimation method is maximum liklihood method
-                    param_dist = dist.estimate_parameter(method=method)
+                    param_dist = dist.fit_model(method=method)
                 else:
                     # A gumbel distribution is fitted to the annual maxima
                     dist = Gumbel(ams_df)
                     # defult parameter estimation method is maximum liklihood method
-                    param_dist = dist.estimate_parameter(method=method)
+                    param_dist = dist.fit_model(method=method)
             except Exception as e:
                 logger.warning(
                     f"The gauge {i} parameters could not be estimated because of {e}"

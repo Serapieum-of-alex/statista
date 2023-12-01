@@ -246,13 +246,13 @@ class AbstractDistribution(ABC):
             return cdf
 
     @abstractmethod
-    def estimate_parameter(
+    def fit_model(
         self,
         method: str = "mle",
         ObjFunc: Callable = None,
         threshold: Union[None, float, int] = None,
         test: bool = True,
-    ) -> Dict[str, str]:
+    ) -> Union[Dict[str, str], Any]:
         """estimateParameter.
 
         EstimateParameter estimate the distribution parameter based on MLM
@@ -286,7 +286,12 @@ class AbstractDistribution(ABC):
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
         """
-        pass
+        method = method.lower()
+        if method not in ["mle", "mm", "lmoments", "optimization"]:
+            raise ValueError(
+                f"{method} value should be 'mle', 'mm', 'lmoments' or 'optimization'"
+            )
+        return method
 
     @staticmethod
     def theoretical_estimate(
@@ -663,13 +668,13 @@ class Gumbel(AbstractDistribution):
         # print x1, nx2, L1, L2
         return L1 + L2
 
-    def estimate_parameter(
+    def fit_model(
         self,
         method: str = "mle",
         ObjFunc: Callable = None,
         threshold: Union[None, float, int] = None,
         test: bool = True,
-    ) -> Dict[str, str]:
+    ) -> Dict[str, float]:
         """estimate_parameter.
 
         EstimateParameter estimate the distribution parameter based on MLM
@@ -706,11 +711,8 @@ class Gumbel(AbstractDistribution):
         # obj_func = lambda p, x: (-np.log(Gumbel.pdf(x, p[0], p[1]))).sum()
         # #first we make a simple Gumbel fit
         # Par1 = so.fmin(obj_func, [0.5,0.5], args=(np.array(data),))
-        method = method.lower()
-        if method not in ["mle", "mm", "lmoments", "optimization"]:
-            raise ValueError(
-                f"{method} value should be 'mle', 'mm', 'lmoments' or 'optimization'"
-            )
+        method = super().fit_model(method=method)
+
         if method == "mle" or method == "mm":
             Param = list(gumbel_r.fit(self.data, method=method))
         elif method == "lmoments":
@@ -731,6 +733,8 @@ class Gumbel(AbstractDistribution):
                 maxfun=500,
             )
             Param = [Param[1], Param[2]]
+        else:
+            raise ValueError(f"The given: {method} does not exist")
 
         Param = {"loc": Param[0], "scale": Param[1]}
         self.parameters = Param
@@ -1162,13 +1166,13 @@ class GEV(AbstractDistribution):
 
         return rp
 
-    def estimate_parameter(
+    def fit_model(
         self,
         method: str = "mle",
         ObjFunc=None,
         threshold: Union[int, float, None] = None,
         test: bool = True,
-    ) -> Dict[str, Any]:
+    ) -> Dict[str, float]:
         """estimateParameter.
 
         EstimateParameter estimate the distribution parameter based on MLM
@@ -1201,11 +1205,8 @@ class GEV(AbstractDistribution):
         # obj_func = lambda p, x: (-np.log(Gumbel.pdf(x, p[0], p[1]))).sum()
         # #first we make a simple Gumbel fit
         # Par1 = so.fmin(obj_func, [0.5,0.5], args=(np.array(data),))
-        method = method.lower()
-        if method not in ["mle", "mm", "lmoments", "optimization"]:
-            raise ValueError(
-                method + "value should be 'mle', 'mm', 'lmoments' or 'optimization'"
-            )
+
+        method = super().fit_model(method=method)
         if method == "mle" or method == "mm":
             Param = list(genextreme.fit(self.data, method=method))
         elif method == "lmoments":
@@ -1226,6 +1227,8 @@ class GEV(AbstractDistribution):
                 maxfun=500,
             )
             Param = [Param[1], Param[2], Param[3]]
+        else:
+            raise ValueError(f"The given: {method} does not exist")
 
         Param = {"loc": Param[1], "scale": Param[2], "shape": Param[0]}
         self.parameters = Param
@@ -1490,7 +1493,7 @@ class GEV(AbstractDistribution):
 
         # get parameters based on the new generated sample
         Gdist = GEV(sample)
-        new_param = Gdist.estimate_parameter(method=method, test=False)
+        new_param = Gdist.fit_model(method=method, test=False)
 
         # return period
         # T = np.arange(0.1, 999.1, 0.1) + 1
@@ -1946,13 +1949,13 @@ class Exponential(AbstractDistribution):
         )
         return result
 
-    def estimate_parameter(
+    def fit_model(
         self,
         method: str = "mle",
         ObjFunc=None,
         threshold: Union[int, float, None] = None,
         test: bool = True,
-    ) -> tuple:
+    ) -> Dict[str, float]:
         """estimateParameter.
 
         EstimateParameter estimate the distribution parameter based on MLM
@@ -1985,11 +1988,7 @@ class Exponential(AbstractDistribution):
         # obj_func = lambda p, x: (-np.log(Gumbel.pdf(x, p[0], p[1]))).sum()
         # #first we make a simple Gumbel fit
         # Par1 = so.fmin(obj_func, [0.5,0.5], args=(np.array(data),))
-        method = method.lower()
-        if method not in ["mle", "mm", "lmoments", "optimization"]:
-            raise ValueError(
-                method + "value should be 'mle', 'mm', 'lmoments' or 'optimization'"
-            )
+        method = super().fit_model(method=method)
 
         if method == "mle" or method == "mm":
             Param = list(expon.fit(self.data, method=method))
@@ -2011,6 +2010,8 @@ class Exponential(AbstractDistribution):
                 maxfun=500,
             )
             Param = [Param[1], Param[2]]
+        else:
+            raise ValueError(f"The given: {method} does not exist")
 
         Param = {"loc": Param[0], "scale": Param[1]}
         self.parameters = Param
@@ -2237,13 +2238,13 @@ class Normal(AbstractDistribution):
         )
         return result
 
-    def estimate_parameter(
+    def fit_model(
         self,
         method: str = "mle",
         ObjFunc=None,
         threshold: Union[int, float, None] = None,
         test: bool = True,
-    ) -> tuple:
+    ) -> Dict[str, float]:
         """estimateParameter.
 
         EstimateParameter estimate the distribution parameter based on MLM
@@ -2276,11 +2277,7 @@ class Normal(AbstractDistribution):
         # obj_func = lambda p, x: (-np.log(Gumbel.pdf(x, p[0], p[1]))).sum()
         # #first we make a simple Gumbel fit
         # Par1 = so.fmin(obj_func, [0.5,0.5], args=(np.array(data),))
-        method = method.lower()
-        if method not in ["mle", "mm", "lmoments", "optimization"]:
-            raise ValueError(
-                method + "value should be 'mle', 'mm', 'lmoments' or 'optimization'"
-            )
+        method = super().fit_model(method=method)
 
         if method == "mle" or method == "mm":
             Param = list(norm.fit(self.data, method=method))
@@ -2302,6 +2299,8 @@ class Normal(AbstractDistribution):
                 maxfun=500,
             )
             Param = [Param[1], Param[2]]
+        else:
+            raise ValueError(f"The given: {method} does not exist")
 
         Param = {"loc": Param[0], "scale": Param[1]}
         self.parameters = Param

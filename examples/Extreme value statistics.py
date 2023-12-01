@@ -10,20 +10,18 @@ from statista.distributions import GEV, ConfidenceInterval, Gumbel, PlottingPosi
 
 time_series1 = pd.read_csv("examples/data/time_series1.txt", header=None)[0].tolist()
 time_series2 = pd.read_csv("examples/data/time_series2.txt", header=None)[0].tolist()
-#%%
+# %%
 Gdist = Gumbel(time_series1)
 # defult parameter estimation method is maximum liklihood method
-Param_mle = Gdist.estimate_parameter(method="mle")
+Param_mle = Gdist.fit_model(method="mle")
 Gdist.ks()
 Gdist.chisquare()
 print(Param_mle)
-loc = Param_mle[0]
-scale = Param_mle[1]
 # calculate and plot the pdf
-pdf = Gdist.pdf(loc, scale, plot_figure=True)
-cdf, _, _ = Gdist.cdf(loc, scale, plot_figure=True)
-#%% lmoments
-Param_lmoments = Gdist.estimate_parameter(method="lmoments")
+pdf = Gdist.pdf(Param_mle, plot_figure=True)
+cdf, _, _ = Gdist.cdf(Param_mle, plot_figure=True)
+# %% lmoments
+Param_lmoments = Gdist.fit_model(method="lmoments")
 Gdist.ks()
 Gdist.chisquare()
 print(Param_lmoments)
@@ -32,7 +30,7 @@ scale = Param_lmoments[1]
 # calculate and plot the pdf
 pdf = Gdist.pdf(loc, scale, plot_figure=True)
 cdf, _, _ = Gdist.cdf(loc, scale, plot_figure=True)
-#%%
+# %%
 # calculate the CDF(Non Exceedance probability) using weibul plotting position
 time_series1.sort()
 # calculate the F (Non Exceedence probability based on weibul)
@@ -44,32 +42,32 @@ Qth = Gdist.theoretical_estimate(loc, scale, cdf_Weibul)
 upper, lower = Gdist.confidence_interval(loc, scale, cdf_Weibul, alpha=0.1)
 # ProbapilityPlot can estimate the Qth and the lower and upper confidence interval in the process of plotting
 fig, ax = Gdist.probapility_plot(loc, scale, cdf_Weibul, alpha=0.1)
-#%%
+# %%
 """
 if you want to focus only on high values, you can use a threshold to make the code focus on what is higher
 this threshold.
 """
 threshold = 17
-Param_dist = Gdist.estimate_parameter(
+Param_dist = Gdist.fit_model(
     method="optimization", ObjFunc=Gumbel.ObjectiveFn, threshold=threshold
 )
 print(Param_dist)
 loc = Param_dist[0]
 scale = Param_dist[1]
 Gdist.probapility_plot(loc, scale, cdf_Weibul, alpha=0.1)
-#%%
+# %%
 threshold = 18
-Param_dist = Gdist.estimate_parameter(
+Param_dist = Gdist.fit_model(
     method="optimization", ObjFunc=Gumbel.ObjectiveFn, threshold=threshold
 )
 print(Param_dist)
 loc = Param_dist[0]
 scale = Param_dist[1]
 Gdist.probapility_plot(loc, scale, cdf_Weibul, alpha=0.1)
-#%% Generalized Extreme Value (GEV)
+# %% Generalized Extreme Value (GEV)
 Gevdist = GEV(time_series2)
 # default parameter estimation method is maximum liklihood method
-mle_param = Gevdist.estimate_parameter(method="mle")
+mle_param = Gevdist.fit_model(method="mle")
 Gevdist.ks()
 Gevdist.chisquare()
 
@@ -80,8 +78,8 @@ scale = mle_param[2]
 # calculate and plot the pdf
 pdf, fig, ax = Gevdist.pdf(shape, loc, scale, plot_figure=True)
 cdf, _, _ = Gevdist.cdf(shape, loc, scale, plot_figure=True)
-#%% lmoment method
-lmom_param = Gevdist.estimate_parameter(method="lmoments")
+# %% lmoment method
+lmom_param = Gevdist.fit_model(method="lmoments")
 print(lmom_param)
 shape = lmom_param[0]
 loc = lmom_param[1]
@@ -107,7 +105,7 @@ upper, lower = Gevdist.confidence_interval(
     statfunction=func,
     n_samples=len(time_series1),
 )
-#%%
+# %%
 """
 calculate the confidence interval using the boot strap method directly
 """
@@ -120,7 +118,7 @@ CI = ConfidenceInterval.BootStrap(
 )
 LB = CI["LB"]
 UB = CI["UB"]
-#%%
+# %%
 fig, ax = Gevdist.probapility_plot(
     shape, loc, scale, cdf_Weibul, func=func, n_samples=len(time_series1)
 )
