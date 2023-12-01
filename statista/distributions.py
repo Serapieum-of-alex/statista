@@ -294,6 +294,7 @@ class AbstractDistribution(ABC):
         return method
 
     @staticmethod
+    @abstractmethod
     def theoretical_estimate(
         parameters: Dict[str, Union[float, Any]], cdf: np.ndarray
     ) -> np.ndarray:
@@ -353,6 +354,7 @@ class AbstractDistribution(ABC):
         print(f"P value = {test.pvalue}")
         return test.statistic, test.pvalue
 
+    @abstractmethod
     def chisquare(self) -> Union[tuple, None]:
         """
         chisquare test
