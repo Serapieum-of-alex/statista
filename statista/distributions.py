@@ -2090,6 +2090,18 @@ class Normal(AbstractDistribution):
         self.chistatic = None
         self.chi_Pvalue = None
 
+    @staticmethod
+    def _pdf_eq(
+        data: Union[list, np.ndarray], parameters: Dict[str, Union[float, Any]]
+    ) -> np.ndarray:
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+        if scale <= 0:
+            raise ValueError("Scale parameter is negative")
+        pdf = norm.pdf(data, loc=loc, scale=scale)
+
+        return pdf
+
     def pdf(
         self,
         parameters: Dict[str, Union[float, Any]],
@@ -2118,15 +2130,10 @@ class Normal(AbstractDistribution):
         pdf : [array]
             probability density function pdf.
         """
-        loc = parameters.get("loc")
-        scale = parameters.get("scale")
-
-        if scale <= 0:
-            raise ValueError("Scale parameter is negative")
-
         ts = super().pdf(parameters, actual_data=actual_data)
 
-        pdf = norm.pdf(ts, loc=loc, scale=scale)
+        pdf = self._pdf_eq(ts, parameters)
+
         if plot_figure:
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
@@ -2145,6 +2152,21 @@ class Normal(AbstractDistribution):
             return pdf, fig, ax
         else:
             return pdf
+
+    @staticmethod
+    def _cdf_eq(
+        data: Union[list, np.ndarray], parameters: Dict[str, Union[float, Any]]
+    ) -> np.ndarray:
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+
+        if scale <= 0:
+            raise ValueError("Scale parameter is negative")
+        if loc <= 0:
+            raise ValueError("Threshold parameter should be greater than zero")
+
+        cdf = norm.cdf(data, loc=loc, scale=scale)
+        return cdf
 
     def cdf(
         self,
@@ -2169,20 +2191,12 @@ class Normal(AbstractDistribution):
             - scale: [numeric]
                 scale parameter of the Normal distribution.
         """
-        loc = parameters.get("loc")
-        scale = parameters.get("scale")
-
-        if scale <= 0:
-            raise ValueError("Scale parameter is negative")
-        if loc <= 0:
-            raise ValueError("Threshold parameter should be greater than zero")
-
         if isinstance(actual_data, bool):
             ts = self.data
         else:
             ts = actual_data
 
-        cdf = norm.cdf(ts, loc=loc, scale=scale)
+        cdf = self._cdf_eq(ts, parameters)
 
         if plot_figure:
             Qx = np.linspace(
