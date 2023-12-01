@@ -215,7 +215,35 @@ class AbstractDistribution(ABC):
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
         """
-        pass
+        if isinstance(actual_data, bool):
+            ts = self.data
+        else:
+            ts = actual_data
+
+        cdf = self._cdf_eq(ts, parameters)
+
+        if plot_figure:
+            Qx = np.linspace(
+                float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
+            )
+            cdf_fitted = self.cdf(parameters, actual_data=Qx)
+
+            cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
+
+            fig, ax = Plot.cdf(
+                Qx,
+                cdf_fitted,
+                self.data_sorted,
+                cdf_Weibul,
+                figsize=figsize,
+                xlabel=xlabel,
+                ylabel=ylabel,
+                fontsize=fontsize,
+            )
+
+            return cdf, fig, ax
+        else:
+            return cdf
 
     @abstractmethod
     def estimate_parameter(
@@ -540,11 +568,9 @@ class Gumbel(AbstractDistribution):
         self,
         parameters: Dict[str, Union[float, Any]],
         plot_figure: bool = False,
-        figsize: tuple = (6, 5),
-        xlabel: str = "data",
-        ylabel: str = "cdf",
-        fontsize: int = 15,
         actual_data: Union[bool, np.ndarray] = True,
+        *args,
+        **kwargs,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """cdf.
 
@@ -558,36 +584,29 @@ class Gumbel(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
+        actual_data : [bool/array]
+            true if you want to calculate the pdf for the actual time series, array
+            if you want to calculate the pdf for a theoretical time series
+        plot_figure: [bool]
+            Default is False.
+        kwargs:
+            figsize: [tuple]
+                Default is (6, 5).
+            xlabel: [str]
+                Default is "Actual data".
+            ylabel: [str]
+                Default is "cdf".
+            fontsize: [int]
+                Default is 15.
         """
-        if isinstance(actual_data, bool):
-            ts = self.data
-        else:
-            ts = actual_data
-
-        cdf = self._cdf_eq(ts, parameters)
-
-        if plot_figure:
-            Qx = np.linspace(
-                float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
-            )
-            cdf_fitted = self.cdf(parameters, actual_data=Qx)
-
-            cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
-
-            fig, ax = Plot.cdf(
-                Qx,
-                cdf_fitted,
-                self.data_sorted,
-                cdf_Weibul,
-                figsize=figsize,
-                xlabel=xlabel,
-                ylabel=ylabel,
-                fontsize=fontsize,
-            )
-
-            return cdf, fig, ax
-        else:
-            return cdf
+        result = super().cdf(
+            parameters,
+            actual_data=actual_data,
+            plot_figure=plot_figure,
+            *args,
+            **kwargs,
+        )
+        return result
 
     def get_rp(self, loc, scale, data):
         """getRP.
@@ -1073,52 +1092,45 @@ class GEV(AbstractDistribution):
         self,
         parameters: Dict[str, Union[float, Any]],
         plot_figure: bool = False,
-        figsize: tuple = (6, 5),
-        xlabel: str = "Actual data",
-        ylabel: str = "cdf",
-        fontsize: int = 11,
         actual_data: Union[bool, np.ndarray] = True,
+        *args,
+        **kwargs,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """cdf.
 
-        Returns the value of Gumbel's cdf with parameters loc and scale
-        at x.
+        cdf calculates the value of Gumbel's cdf with parameters loc and scale at x.
+
+        parameter:
+        ----------
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val}
+            - loc: [numeric]
+                location parameter of the gumbel distribution.
+            - scale: [numeric]
+                scale parameter of the gumbel distribution.
+        actual_data : [bool/array]
+            true if you want to calculate the pdf for the actual time series, array
+            if you want to calculate the pdf for a theoretical time series
+        plot_figure: [bool]
+            Default is False.
+        kwargs:
+            figsize: [tuple]
+                Default is (6, 5).
+            xlabel: [str]
+                Default is "Actual data".
+            ylabel: [str]
+                Default is "cdf".
+            fontsize: [int]
+                Default is 15.
         """
-        # loc = parameters.get("loc")
-        scale = parameters.get("scale")
-        # shape = parameters.get("shape")
-
-        if scale <= 0:
-            raise ValueError("Scale parameter is negative")
-
-        if isinstance(actual_data, bool):
-            ts = self.data
-        else:
-            ts = actual_data
-
-        cdf = self._cdf_eq(ts, parameters)
-
-        if plot_figure:
-            Qx = np.linspace(
-                float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
-            )
-            cdf_fitted = self.cdf(parameters, actual_data=Qx)
-
-            cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
-
-            fig, ax = Plot.cdf(
-                Qx,
-                cdf_fitted,
-                self.data_sorted,
-                cdf_Weibul,
-                figsize=figsize,
-                xlabel=xlabel,
-                ylabel=ylabel,
-                fontsize=fontsize,
-            )
-            return cdf, fig, ax
-        else:
-            return cdf
+        result = super().cdf(
+            parameters,
+            actual_data=actual_data,
+            plot_figure=plot_figure,
+            *args,
+            **kwargs,
+        )
+        return result
 
     def get_rp(self, shape: float, loc: float, scale: float, data: np.ndarray):
         """getRP.
@@ -1894,11 +1906,9 @@ class Exponential(AbstractDistribution):
         self,
         parameters: Dict[str, Union[float, Any]],
         plot_figure: bool = False,
-        figsize: tuple = (6, 5),
-        xlabel: str = "data",
-        ylabel: str = "cdf",
-        fontsize: int = 15,
         actual_data: Union[bool, np.ndarray] = True,
+        *args,
+        **kwargs,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """cdf.
 
@@ -1912,36 +1922,29 @@ class Exponential(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
+        actual_data : [bool/array]
+            true if you want to calculate the pdf for the actual time series, array
+            if you want to calculate the pdf for a theoretical time series
+        plot_figure: [bool]
+            Default is False.
+        kwargs:
+            figsize: [tuple]
+                Default is (6, 5).
+            xlabel: [str]
+                Default is "Actual data".
+            ylabel: [str]
+                Default is "cdf".
+            fontsize: [int]
+                Default is 15.
         """
-        if isinstance(actual_data, bool):
-            ts = self.data
-        else:
-            ts = actual_data
-
-        cdf = self._cdf_eq(ts, parameters)
-
-        if plot_figure:
-            Qx = np.linspace(
-                float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
-            )
-            cdf_fitted = self.cdf(parameters, actual_data=Qx)
-
-            cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
-
-            fig, ax = Plot.cdf(
-                Qx,
-                cdf_fitted,
-                self.data_sorted,
-                cdf_Weibul,
-                figsize=figsize,
-                xlabel=xlabel,
-                ylabel=ylabel,
-                fontsize=fontsize,
-            )
-
-            return cdf, fig, ax
-        else:
-            return cdf
+        result = super().cdf(
+            parameters,
+            actual_data=actual_data,
+            plot_figure=plot_figure,
+            *args,
+            **kwargs,
+        )
+        return result
 
     def estimate_parameter(
         self,
@@ -2194,11 +2197,9 @@ class Normal(AbstractDistribution):
         self,
         parameters: Dict[str, Union[float, Any]],
         plot_figure: bool = False,
-        figsize: tuple = (6, 5),
-        xlabel: str = "data",
-        ylabel: str = "cdf",
-        fontsize: int = 15,
         actual_data: Union[bool, np.ndarray] = True,
+        *args,
+        **kwargs,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """cdf.
 
@@ -2212,36 +2213,29 @@ class Normal(AbstractDistribution):
                 location parameter of the Normal distribution.
             - scale: [numeric]
                 scale parameter of the Normal distribution.
+        actual_data : [bool/array]
+            true if you want to calculate the pdf for the actual time series, array
+            if you want to calculate the pdf for a theoretical time series
+        plot_figure: [bool]
+            Default is False.
+        kwargs:
+            figsize: [tuple]
+                Default is (6, 5).
+            xlabel: [str]
+                Default is "Actual data".
+            ylabel: [str]
+                Default is "cdf".
+            fontsize: [int]
+                Default is 15.
         """
-        if isinstance(actual_data, bool):
-            ts = self.data
-        else:
-            ts = actual_data
-
-        cdf = self._cdf_eq(ts, parameters)
-
-        if plot_figure:
-            Qx = np.linspace(
-                float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
-            )
-            cdf_fitted = self.cdf(parameters, actual_data=Qx)
-
-            cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
-
-            fig, ax = Plot.cdf(
-                Qx,
-                cdf_fitted,
-                self.data_sorted,
-                cdf_Weibul,
-                figsize=figsize,
-                xlabel=xlabel,
-                ylabel=ylabel,
-                fontsize=fontsize,
-            )
-
-            return cdf, fig, ax
-        else:
-            return cdf
+        result = super().cdf(
+            parameters,
+            actual_data=actual_data,
+            plot_figure=plot_figure,
+            *args,
+            **kwargs,
+        )
+        return result
 
     def estimate_parameter(
         self,
