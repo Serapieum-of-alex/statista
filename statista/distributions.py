@@ -148,6 +148,7 @@ class AbstractDistribution(ABC):
             ts = self.data
         else:
             ts = actual_data
+
         return ts
 
     @abstractmethod
@@ -911,6 +912,45 @@ class GEV(AbstractDistribution):
         super().__init__(data, parameters)
         pass
 
+    @staticmethod
+    def _pdf_eq(
+        data: Union[list, np.ndarray], parameters: Dict[str, Union[float, Any]]
+    ) -> np.ndarray:
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+        shape = parameters.get("shape")
+        # pdf = []
+        # for ts_i in ts:
+        #     z = (ts_i - loc) / scale
+        #
+        #     # Gumbel
+        #     if shape == 0:
+        #         val = np.exp(-(z + np.exp(-z)))
+        #         pdf.append((1 / scale) * val)
+        #         continue
+        #
+        #     # GEV
+        #     y = 1 - shape * z
+        #     if y > ninf:
+        #         # np.log(y) = ln(y)
+        #         # ln is the inverse of e
+        #         lnY = (-1 / shape) * np.log(y)
+        #         val = np.exp(-(1 - shape) * lnY - np.exp(-lnY))
+        #         pdf.append((1 / scale) * val)
+        #         continue
+        #
+        #     if shape < 0:
+        #         pdf.append(0)
+        #         continue
+        #     pdf.append(0)
+        #
+        # if len(pdf) == 1:
+        #     pdf = pdf[0]
+
+        # pdf = np.array(pdf)
+        pdf = genextreme.pdf(data, loc=loc, scale=scale, c=shape)
+        return pdf
+
     def pdf(
         self,
         parameters: Dict[str, Union[float, Any]],
@@ -954,40 +994,8 @@ class GEV(AbstractDistribution):
         TYPE
             DESCRIPTION.
         """
-        loc = parameters.get("loc")
-        scale = parameters.get("scale")
-        shape = parameters.get("shape")
         ts = super().pdf(parameters, actual_data=actual_data)
-        # pdf = []
-        # for ts_i in ts:
-        #     z = (ts_i - loc) / scale
-        #
-        #     # Gumbel
-        #     if shape == 0:
-        #         val = np.exp(-(z + np.exp(-z)))
-        #         pdf.append((1 / scale) * val)
-        #         continue
-        #
-        #     # GEV
-        #     y = 1 - shape * z
-        #     if y > ninf:
-        #         # np.log(y) = ln(y)
-        #         # ln is the inverse of e
-        #         lnY = (-1 / shape) * np.log(y)
-        #         val = np.exp(-(1 - shape) * lnY - np.exp(-lnY))
-        #         pdf.append((1 / scale) * val)
-        #         continue
-        #
-        #     if shape < 0:
-        #         pdf.append(0)
-        #         continue
-        #     pdf.append(0)
-        #
-        # if len(pdf) == 1:
-        #     pdf = pdf[0]
-
-        # pdf = np.array(pdf)
-        pdf = genextreme.pdf(ts, loc=loc, scale=scale, c=shape)
+        pdf = self._pdf_eq(ts, parameters)
 
         if plot_figure:
             Qx = np.linspace(
