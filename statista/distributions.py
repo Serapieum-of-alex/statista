@@ -1771,6 +1771,27 @@ class Exponential(AbstractDistribution):
         """
         super().__init__(data, parameters)
 
+    @staticmethod
+    def _pdf_eq(
+        data: Union[list, np.ndarray], parameters: Dict[str, Union[float, Any]]
+    ) -> np.ndarray:
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+        # pdf = []
+        #
+        # for i in ts:
+        #     Y = (i - loc) / scale
+        #     if Y <= 0:
+        #         pdf.append(0)
+        #     else:
+        #         pdf.append(np.exp(-Y) / scale)
+        #
+        # if len(pdf) == 1:
+        #     pdf = pdf[0]
+
+        pdf = expon.pdf(data, loc=loc, scale=scale)
+        return pdf
+
     def pdf(
         self,
         parameters: Dict[str, Union[float, Any]],
@@ -1799,7 +1820,6 @@ class Exponential(AbstractDistribution):
         pdf : [array]
             probability density function pdf.
         """
-        loc = parameters.get("loc")
         scale = parameters.get("scale")
 
         if scale <= 0:
@@ -1807,19 +1827,7 @@ class Exponential(AbstractDistribution):
 
         ts = super().pdf(parameters, actual_data=actual_data)
 
-        # pdf = []
-        #
-        # for i in ts:
-        #     Y = (i - loc) / scale
-        #     if Y <= 0:
-        #         pdf.append(0)
-        #     else:
-        #         pdf.append(np.exp(-Y) / scale)
-        #
-        # if len(pdf) == 1:
-        #     pdf = pdf[0]
-
-        pdf = expon.pdf(ts, loc=loc, scale=scale)
+        pdf = self._pdf_eq(ts, parameters)
 
         if plot_figure:
             Qx = np.linspace(
@@ -1839,6 +1847,25 @@ class Exponential(AbstractDistribution):
             return pdf, fig, ax
         else:
             return pdf
+
+    @staticmethod
+    def _cdf_eq(
+        data: Union[list, np.ndarray], parameters: Dict[str, Union[float, Any]]
+    ) -> np.ndarray:
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+        if scale <= 0:
+            raise ValueError("Scale parameter is negative")
+        if loc <= 0:
+            raise ValueError("Threshold parameter should be greater than zero")
+        # Y = (ts - loc) / scale
+        # cdf = 1 - np.exp(-Y)
+        #
+        # for i in range(0, len(cdf)):
+        #     if cdf[i] < 0:
+        #         cdf[i] = 0
+        cdf = expon.cdf(data, loc=loc, scale=scale)
+        return cdf
 
     def cdf(
         self,
@@ -1863,25 +1890,12 @@ class Exponential(AbstractDistribution):
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
         """
-        loc = parameters.get("loc")
-        scale = parameters.get("scale")
-        if scale <= 0:
-            raise ValueError("Scale parameter is negative")
-        if loc <= 0:
-            raise ValueError("Threshold parameter should be greater than zero")
-
         if isinstance(actual_data, bool):
             ts = self.data
         else:
             ts = actual_data
 
-        # Y = (ts - loc) / scale
-        # cdf = 1 - np.exp(-Y)
-        #
-        # for i in range(0, len(cdf)):
-        #     if cdf[i] < 0:
-        #         cdf[i] = 0
-        cdf = expon.cdf(ts, loc=loc, scale=scale)
+        cdf = self._cdf_eq(ts, parameters)
 
         if plot_figure:
             Qx = np.linspace(
