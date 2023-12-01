@@ -3,9 +3,9 @@ from typing import List
 import numpy as np
 from matplotlib.figure import Figure
 
+from statista.confidence_interval import ConfidenceInterval
 from statista.distributions import (
     GEV,
-    ConfidenceInterval,
     Gumbel,
     PlottingPosition,
     Exponential,
@@ -123,7 +123,7 @@ class TestGumbel:
         assert isinstance(cdf, np.ndarray)
         assert isinstance(fig, Figure)
 
-    def test_gumbel_TheporeticalEstimate(
+    def test_gumbel_theoretical_estimate(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
@@ -246,7 +246,7 @@ class TestGEV:
         assert isinstance(cdf, np.ndarray)
         assert isinstance(fig, Figure)
 
-    def test_gev_TheporeticalEstimate(
+    def test_gev_theoretical_estimate(
         self,
         time_series1: list,
         dist_estimation_parameters_ks: str,
@@ -395,9 +395,10 @@ class TestNormal:
         Edist = Normal(time_series2)
         for method in dist_estimation_parameters:
             param = Edist.estimate_parameter(method=method, test=False)
-            assert isinstance(param, list)
-            assert Edist.loc
-            assert Edist.scale
+            assert isinstance(param, dict)
+            assert all(i in param.keys() for i in ["loc", "scale"])
+            assert Edist.parameters.get("loc") is not None
+            assert Edist.parameters.get("scale") is not None
 
     def test_pdf(
         self,
@@ -408,7 +409,7 @@ class TestNormal:
         Param = Edist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
-        pdf, fig, ax = Edist.pdf(Param[0], Param[1], plot_figure=True)
+        pdf, fig, ax = Edist.pdf(Param, plot_figure=True)
         assert isinstance(pdf, np.ndarray)
         assert isinstance(fig, Figure)
 
@@ -421,7 +422,7 @@ class TestNormal:
         Param = Edist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
-        cdf, fig, ax = Edist.cdf(Param[0], Param[1], plot_figure=True)
+        cdf, fig, ax = Edist.cdf(Param, plot_figure=True)
         assert isinstance(cdf, np.ndarray)
         assert isinstance(fig, Figure)
 
@@ -435,5 +436,5 @@ class TestNormal:
         Param = Edist.estimate_parameter(
             method=dist_estimation_parameters_ks, test=False
         )
-        Qth = Edist.theoretical_estimate(Param[0], Param[1], cdf_Weibul)
+        Qth = Edist.theoretical_estimate(Param, cdf_Weibul)
         assert isinstance(Qth, np.ndarray)

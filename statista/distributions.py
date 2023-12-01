@@ -1,5 +1,6 @@
 """Statistical distributions."""
 from typing import Any, List, Tuple, Union, Dict, Callable
+from abc import ABC, abstractmethod
 import numpy as np
 import scipy.optimize as so
 from matplotlib.figure import Figure
@@ -72,7 +73,7 @@ class PlottingPosition:
             return T
 
 
-class AbstractDistribution:
+class AbstractDistribution(ABC):
     """
     AbstractDistribution.
     """
@@ -113,6 +114,7 @@ class AbstractDistribution:
 
         pass
 
+    @abstractmethod
     def pdf(
         self,
         parameters: Dict[str, Union[float, Any]],
@@ -121,7 +123,7 @@ class AbstractDistribution:
         xlabel: str = "Actual data",
         ylabel: str = "pdf",
         fontsize: Union[float, int] = 15,
-        actualdata: Union[bool, np.ndarray] = True,
+        actual_data: Union[bool, np.ndarray] = True,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
@@ -141,8 +143,14 @@ class AbstractDistribution:
         pdf : [array]
             probability density function pdf.
         """
-        pass
 
+        if actual_data is None:
+            ts = self.data
+        else:
+            ts = actual_data
+        return ts
+
+    @abstractmethod
     def cdf(
         self,
         parameters: Dict[str, Union[float, Any]],
@@ -151,7 +159,7 @@ class AbstractDistribution:
         xlabel: str = "data",
         ylabel: str = "cdf",
         fontsize: int = 15,
-        actualdata: Union[bool, np.ndarray] = True,
+        actual_data: Union[bool, np.ndarray] = True,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """cdf.
 
@@ -168,6 +176,7 @@ class AbstractDistribution:
         """
         pass
 
+    @abstractmethod
     def estimate_parameter(
         self,
         method: str = "mle",
@@ -411,6 +420,19 @@ class Gumbel(AbstractDistribution):
         super().__init__(data, parameters)
         pass
 
+    @staticmethod
+    def _pdf_eq(
+        data: Union[list, np.ndarray], parameters: Dict[str, Union[float, Any]]
+    ) -> np.ndarray:
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+        if scale <= 0:
+            raise ValueError("Scale parameter is negative")
+        # z = (ts - loc) / scale
+        # pdf = (1.0 / scale) * (np.exp(-(z + (np.exp(-z)))))
+        pdf = gumbel_r.pdf(data, loc=loc, scale=scale)
+        return pdf
+
     def pdf(
         self,
         parameters: Dict[str, Union[float, Any]],
@@ -419,7 +441,7 @@ class Gumbel(AbstractDistribution):
         xlabel: str = "Actual data",
         ylabel: str = "pdf",
         fontsize: Union[float, int] = 15,
-        actualdata: Union[bool, np.ndarray] = True,
+        actual_data: np.ndarray = None,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
@@ -439,27 +461,15 @@ class Gumbel(AbstractDistribution):
         pdf : [array]
             probability density function pdf.
         """
-        loc = parameters.get("loc")
-        scale = parameters.get("scale")
+        ts = super().pdf(parameters, actual_data=actual_data)
 
-        if scale <= 0:
-            raise ValueError("Scale parameter is negative")
-
-        if isinstance(actualdata, bool):
-            ts = self.data
-        else:
-            ts = actualdata
-
-        # z = (ts - loc) / scale
-        # pdf = (1.0 / scale) * (np.exp(-(z + (np.exp(-z)))))
-
-        pdf = gumbel_r.pdf(ts, loc=loc, scale=scale)
+        pdf = self._pdf_eq(ts, parameters)
 
         if plot_figure:
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
             )
-            pdf_fitted = self.pdf(parameters, actualdata=Qx)
+            pdf_fitted = self.pdf(parameters, actual_data=Qx)
 
             fig, ax = Plot.pdf(
                 Qx,
@@ -474,6 +484,19 @@ class Gumbel(AbstractDistribution):
         else:
             return pdf
 
+    @staticmethod
+    def _cdf_eq(
+        data: Union[list, np.ndarray], parameters: Dict[str, Union[float, Any]]
+    ) -> np.ndarray:
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+        if scale <= 0:
+            raise ValueError("Scale parameter is negative")
+        # z = (ts - loc) / scale
+        # cdf = np.exp(-np.exp(-z))
+        cdf = gumbel_r.cdf(data, loc=loc, scale=scale)
+        return cdf
+
     def cdf(
         self,
         parameters: Dict[str, Union[float, Any]],
@@ -482,7 +505,7 @@ class Gumbel(AbstractDistribution):
         xlabel: str = "data",
         ylabel: str = "cdf",
         fontsize: int = 15,
-        actualdata: Union[bool, np.ndarray] = True,
+        actual_data: Union[bool, np.ndarray] = True,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """cdf.
 
@@ -497,25 +520,18 @@ class Gumbel(AbstractDistribution):
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
         """
-        loc = parameters.get("loc")
-        scale = parameters.get("scale")
-        if scale <= 0:
-            raise ValueError("Scale parameter is negative")
-
-        if isinstance(actualdata, bool):
+        if isinstance(actual_data, bool):
             ts = self.data
         else:
-            ts = actualdata
+            ts = actual_data
 
-        # z = (ts - loc) / scale
-        # cdf = np.exp(-np.exp(-z))
-        cdf = gumbel_r.cdf(ts, loc=loc, scale=scale)
+        cdf = self._cdf_eq(ts, parameters)
 
         if plot_figure:
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
             )
-            cdf_fitted = self.cdf(parameters, actualdata=Qx)
+            cdf_fitted = self.cdf(parameters, actual_data=Qx)
 
             cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
 
@@ -554,7 +570,7 @@ class Gumbel(AbstractDistribution):
             return period
         """
         # if isinstance(data, list) or isinstance(data, np.ndarray):
-        cdf = self.cdf(loc, scale, actualdata=data)
+        cdf = self.cdf(loc, scale, actual_data=data)
         # else:
         #     cdf = gumbel_r.cdf(data, loc, scale)
 
@@ -581,9 +597,11 @@ class Gumbel(AbstractDistribution):
         # pdf with a scaled pdf
         # L1 is pdf based
         parameters = {"loc": loc, "scale": scale}
-        L1 = (-np.log((Gumbel.pdf(0, parameters, actualdata=x1) / scale))).sum()
+        pdf = Gumbel._pdf_eq(x1, parameters)
+        cdf = Gumbel._cdf_eq(threshold, parameters)
+        L1 = (-np.log((pdf / scale))).sum()
         # L2 is cdf based
-        L2 = (-np.log(1 - Gumbel.cdf(0, parameters, actualdata=threshold))) * nx2
+        L2 = (-np.log(1 - cdf)) * nx2
         # print x1, nx2, L1, L2
         return L1 + L2
 
@@ -594,7 +612,7 @@ class Gumbel(AbstractDistribution):
         threshold: Union[None, float, int] = None,
         test: bool = True,
     ) -> Dict[str, str]:
-        """estimateParameter.
+        """estimate_parameter.
 
         EstimateParameter estimate the distribution parameter based on MLM
         (Maximum liklihood method), if an objective function is entered as an input
@@ -655,6 +673,7 @@ class Gumbel(AbstractDistribution):
                 maxfun=500,
             )
             Param = [Param[1], Param[2]]
+
         Param = {"loc": Param[0], "scale": Param[1]}
         self.parameters = Param
 
@@ -839,8 +858,8 @@ class Gumbel(AbstractDistribution):
         Qx = np.linspace(
             float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
         )
-        pdf_fitted = self.pdf(parameters, actualdata=Qx)
-        cdf_fitted = self.cdf(parameters, actualdata=Qx)
+        pdf_fitted = self.pdf(parameters, actual_data=Qx)
+        cdf_fitted = self.cdf(parameters, actual_data=Qx)
 
         fig, ax = Plot.details(
             Qx,
@@ -900,7 +919,7 @@ class GEV(AbstractDistribution):
         xlabel: str = "Actual data",
         ylabel: str = "pdf",
         fontsize: int = 15,
-        actualdata: np.ndarray = None,
+        actual_data: np.ndarray = None,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
@@ -926,7 +945,7 @@ class GEV(AbstractDistribution):
             Default is "pdf".
         fontsize: [int]
             Default is 15.
-        actualdata : [bool/array]
+        actual_data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
             if you want to calculate the pdf for a theoretical time series
 
@@ -935,14 +954,10 @@ class GEV(AbstractDistribution):
         TYPE
             DESCRIPTION.
         """
-        if actualdata is None:
-            ts = self.data_sorted
-        else:
-            ts = actualdata
         loc = parameters.get("loc")
         scale = parameters.get("scale")
         shape = parameters.get("shape")
-
+        ts = super().pdf(parameters, actual_data=actual_data)
         # pdf = []
         # for ts_i in ts:
         #     z = (ts_i - loc) / scale
@@ -978,7 +993,7 @@ class GEV(AbstractDistribution):
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
             )
-            pdf_fitted = self.pdf(parameters, actualdata=Qx)
+            pdf_fitted = self.pdf(parameters, actual_data=Qx)
 
             fig, ax = Plot.pdf(
                 Qx,
@@ -1001,7 +1016,7 @@ class GEV(AbstractDistribution):
         xlabel: str = "Actual data",
         ylabel: str = "cdf",
         fontsize: int = 11,
-        actualdata: Union[bool, np.ndarray] = True,
+        actual_data: Union[bool, np.ndarray] = True,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """cdf.
 
@@ -1015,10 +1030,10 @@ class GEV(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        if isinstance(actualdata, bool):
+        if isinstance(actual_data, bool):
             ts = self.data
         else:
-            ts = actualdata
+            ts = actual_data
         # equation https://www.rdocumentation.org/packages/evd/versions/2.3-6/topics/fextreme
         # z = (ts - loc) / scale
         # if shape == 0:
@@ -1042,7 +1057,7 @@ class GEV(AbstractDistribution):
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
             )
-            cdf_fitted = self.cdf(parameters, actualdata=Qx)
+            cdf_fitted = self.cdf(parameters, actual_data=Qx)
 
             cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
 
@@ -1082,7 +1097,7 @@ class GEV(AbstractDistribution):
             return period
         """
         # if isinstance(data, list) or isinstance(data, np.ndarray):
-        cdf = self.cdf(shape, loc, scale, actualdata=data)
+        cdf = self.cdf(shape, loc, scale, actual_data=data)
         # else:
         #     cdf = genextreme.cdf(data, shape, loc, scale)
 
@@ -1369,8 +1384,8 @@ class GEV(AbstractDistribution):
         Qx = np.linspace(
             float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
         )
-        pdf_fitted = self.pdf(shape, loc, scale, actualdata=Qx)
-        cdf_fitted = self.cdf(shape, loc, scale, actualdata=Qx)
+        pdf_fitted = self.pdf(shape, loc, scale, actual_data=Qx)
+        cdf_fitted = self.cdf(shape, loc, scale, actual_data=Qx)
 
         fig, ax = Plot.details(
             Qx,
@@ -1479,7 +1494,7 @@ class GEV(AbstractDistribution):
 #         xlabel: str = "Actual data",
 #         ylabel: str = "pdf",
 #         fontsize: Union[float, int] = 15,
-#         actualdata: Union[bool, np.ndarray] = True,
+#         actual_data: Union[bool, np.ndarray] = True,
 #     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
 #         """pdf.
 #
@@ -1500,10 +1515,10 @@ class GEV(AbstractDistribution):
 #         if scale <= 0:
 #             raise ValueError("Scale parameter is negative")
 #
-#         if isinstance(actualdata, bool):
+#         if isinstance(actual_data, bool):
 #             ts = self.data
 #         else:
-#             ts = actualdata
+#             ts = actual_data
 #
 #         # pdf = []
 #         #
@@ -1522,7 +1537,7 @@ class GEV(AbstractDistribution):
 #             Qx = np.linspace(
 #                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
 #             )
-#             pdf_fitted = self.pdf(loc, scale, actualdata=Qx)
+#             pdf_fitted = self.pdf(loc, scale, actual_data=Qx)
 #
 #             fig, ax = Plot.pdf(
 #                 Qx,
@@ -1546,7 +1561,7 @@ class GEV(AbstractDistribution):
 #         xlabel: str = "data",
 #         ylabel: str = "cdf",
 #         fontsize: int = 15,
-#         actualdata: Union[bool, np.ndarray] = True,
+#         actual_data: Union[bool, np.ndarray] = True,
 #     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
 #         """cdf.
 #
@@ -1564,10 +1579,10 @@ class GEV(AbstractDistribution):
 #         if loc <= 0:
 #             raise ValueError("Threshold parameter should be greater than zero")
 #
-#         if isinstance(actualdata, bool):
+#         if isinstance(actual_data, bool):
 #             ts = self.data
 #         else:
-#             ts = actualdata
+#             ts = actual_data
 #
 #         # Y = (ts - loc) / scale
 #         # cdf = 1 - np.exp(-Y)
@@ -1581,7 +1596,7 @@ class GEV(AbstractDistribution):
 #             Qx = np.linspace(
 #                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
 #             )
-#             cdf_fitted = self.cdf(loc, scale, actualdata=Qx)
+#             cdf_fitted = self.cdf(loc, scale, actual_data=Qx)
 #
 #             cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
 #
@@ -1744,7 +1759,7 @@ class Exponential(AbstractDistribution):
         xlabel: str = "Actual data",
         ylabel: str = "pdf",
         fontsize: Union[float, int] = 15,
-        actualdata: Union[bool, np.ndarray] = True,
+        actual_data: np.ndarray = None,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
@@ -1770,10 +1785,7 @@ class Exponential(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        if isinstance(actualdata, bool):
-            ts = self.data
-        else:
-            ts = actualdata
+        ts = super().pdf(parameters, actual_data=actual_data)
 
         # pdf = []
         #
@@ -1793,7 +1805,7 @@ class Exponential(AbstractDistribution):
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
             )
-            pdf_fitted = self.pdf(parameters, actualdata=Qx)
+            pdf_fitted = self.pdf(parameters, actual_data=Qx)
 
             fig, ax = Plot.pdf(
                 Qx,
@@ -1816,7 +1828,7 @@ class Exponential(AbstractDistribution):
         xlabel: str = "data",
         ylabel: str = "cdf",
         fontsize: int = 15,
-        actualdata: Union[bool, np.ndarray] = True,
+        actual_data: Union[bool, np.ndarray] = True,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """cdf.
 
@@ -1838,10 +1850,10 @@ class Exponential(AbstractDistribution):
         if loc <= 0:
             raise ValueError("Threshold parameter should be greater than zero")
 
-        if isinstance(actualdata, bool):
+        if isinstance(actual_data, bool):
             ts = self.data
         else:
-            ts = actualdata
+            ts = actual_data
 
         # Y = (ts - loc) / scale
         # cdf = 1 - np.exp(-Y)
@@ -1855,7 +1867,7 @@ class Exponential(AbstractDistribution):
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
             )
-            cdf_fitted = self.cdf(parameters, actualdata=Qx)
+            cdf_fitted = self.cdf(parameters, actual_data=Qx)
 
             cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
 
@@ -2009,11 +2021,9 @@ class Exponential(AbstractDistribution):
         return super().chisquare()
 
 
-class Normal:
-
+class Normal(AbstractDistribution):
     """
     f(x: threshold, scale) = (1/scale) e **(- (x-threshold)/scale)
-
     """
 
     def __init__(
@@ -2048,14 +2058,13 @@ class Normal:
 
     def pdf(
         self,
-        loc: Union[float, int],
-        scale: Union[float, int],
+        parameters: Dict[str, Union[float, Any]],
         plot_figure: bool = False,
         figsize: tuple = (6, 5),
         xlabel: str = "Actual data",
         ylabel: str = "pdf",
         fontsize: Union[float, int] = 15,
-        actualdata: Union[bool, np.ndarray] = True,
+        actual_data: np.ndarray = None,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
@@ -2063,30 +2072,32 @@ class Normal:
 
         Parameters:
         -----------
-        loc : [numeric]
-            location parameter of the gumbel distribution.
-        scale : [numeric]
-            scale parameter of the gumbel distribution.
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val, "shape": value}
+            - loc: [numeric]
+                location parameter of the GEV distribution.
+            - scale: [numeric]
+                scale parameter of the GEV distribution.
 
         Returns
         -------
         pdf : [array]
             probability density function pdf.
         """
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        if isinstance(actualdata, bool):
-            ts = self.data
-        else:
-            ts = actualdata
+        ts = super().pdf(parameters, actual_data=actual_data)
 
         pdf = norm.pdf(ts, loc=loc, scale=scale)
         if plot_figure:
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
             )
-            pdf_fitted = self.pdf(loc, scale, actualdata=Qx)
+            pdf_fitted = self.pdf(parameters, actual_data=Qx)
 
             fig, ax = Plot.pdf(
                 Qx,
@@ -2103,35 +2114,39 @@ class Normal:
 
     def cdf(
         self,
-        loc: Union[float, int],
-        scale: Union[float, int],
+        parameters: Dict[str, Union[float, Any]],
         plot_figure: bool = False,
         figsize: tuple = (6, 5),
         xlabel: str = "data",
         ylabel: str = "cdf",
         fontsize: int = 15,
-        actualdata: Union[bool, np.ndarray] = True,
+        actual_data: Union[bool, np.ndarray] = True,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """cdf.
 
-        cdf calculates the value of Gumbel's cdf with parameters loc and scale at x.
+        cdf calculates the value of Normal distribution cdf with parameters loc and scale at x.
 
         parameter:
         ----------
-            1- loc : [numeric]
-                location parameter of the gumbel distribution.
-            2- scale : [numeric]
-                scale parameter of the gumbel distribution.
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val, "shape": value}
+            - loc: [numeric]
+                location parameter of the Normal distribution.
+            - scale: [numeric]
+                scale parameter of the Normal distribution.
         """
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
         if loc <= 0:
             raise ValueError("Threshold parameter should be greater than zero")
 
-        if isinstance(actualdata, bool):
+        if isinstance(actual_data, bool):
             ts = self.data
         else:
-            ts = actualdata
+            ts = actual_data
 
         cdf = norm.cdf(ts, loc=loc, scale=scale)
 
@@ -2139,7 +2154,7 @@ class Normal:
             Qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
             )
-            cdf_fitted = self.cdf(loc, scale, actualdata=Qx)
+            cdf_fitted = self.cdf(parameters, actual_data=Qx)
 
             cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
 
@@ -2224,8 +2239,8 @@ class Normal:
             )
             Param = [Param[1], Param[2]]
 
-        self.loc = Param[0]
-        self.scale = Param[1]
+        Param = {"loc": Param[0], "scale": Param[1]}
+        self.parameters = Param
 
         if test:
             self.ks()
@@ -2238,9 +2253,8 @@ class Normal:
 
     @staticmethod
     def theoretical_estimate(
-        loc: Union[float, int],
-        scale: Union[float, int],
-        F: np.ndarray,
+        parameters: Dict[str, Union[float, Any]],
+        cdf: np.ndarray,
     ) -> np.ndarray:
         """TheporeticalEstimate.
 
@@ -2248,22 +2262,29 @@ class Normal:
 
         Parameters:
         -----------
-        param : [list]
-            location ans scale parameters of the gumbel distribution.
-        F : [list]
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val}
+            - loc: [numeric]
+                location parameter of the Normal distribution.
+            - scale: [numeric]
+                scale parameter of the Normal distribution.
+        cdf: [list]
             cummulative distribution function/ Non Exceedence probability.
 
         Return:
         -------
-        theoreticalvalue : [numeric]
+        numeric:
             Value based on the theoretical distribution
         """
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+
         if scale <= 0:
             raise ValueError("Parameters Invalid")
 
-        if any(F) < 0 or any(F) > 1:
+        if any(cdf) < 0 or any(cdf) > 1:
             raise ValueError("cdf Value Invalid")
 
         # the main equation from scipy
-        Qth = norm.ppf(F, loc=loc, scale=scale)
+        Qth = norm.ppf(cdf, loc=loc, scale=scale)
         return Qth
