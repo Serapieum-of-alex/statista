@@ -114,6 +114,13 @@ class AbstractDistribution(ABC):
 
         pass
 
+    @staticmethod
+    @abstractmethod
+    def _pdf_eq(
+        data: Union[list, np.ndarray], parameters: Dict[str, Union[float, Any]]
+    ) -> np.ndarray:
+        pass
+
     @abstractmethod
     def pdf(
         self,
@@ -138,6 +145,13 @@ class AbstractDistribution(ABC):
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
 
+        kwargs:
+            figsize: tuple = (6, 5),
+            xlabel: str = "Actual data",
+            ylabel: str = "pdf",
+            fontsize: Union[float, int] = 15,
+            actual_data: np.ndarray = None,
+
         Returns
         -------
         pdf : [array]
@@ -149,7 +163,33 @@ class AbstractDistribution(ABC):
         else:
             ts = actual_data
 
-        return ts
+        pdf = self._pdf_eq(ts, parameters)
+
+        if plot_figure:
+            Qx = np.linspace(
+                float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
+            )
+            pdf_fitted = self.pdf(parameters, actual_data=Qx)
+
+            fig, ax = Plot.pdf(
+                Qx,
+                pdf_fitted,
+                self.data_sorted,
+                figsize=figsize,
+                xlabel=xlabel,
+                ylabel=ylabel,
+                fontsize=fontsize,
+            )
+            return pdf, fig, ax
+        else:
+            return pdf
+
+    @staticmethod
+    @abstractmethod
+    def _cdf_eq(
+        data: Union[list, np.ndarray], parameters: Dict[str, Union[float, Any]]
+    ) -> np.ndarray:
+        pass
 
     @abstractmethod
     def cdf(
@@ -438,11 +478,9 @@ class Gumbel(AbstractDistribution):
         self,
         parameters: Dict[str, Union[float, Any]],
         plot_figure: bool = False,
-        figsize: tuple = (6, 5),
-        xlabel: str = "Actual data",
-        ylabel: str = "pdf",
-        fontsize: Union[float, int] = 15,
         actual_data: np.ndarray = None,
+        *args,
+        **kwargs,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
@@ -456,34 +494,34 @@ class Gumbel(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
+        actual_data : [bool/array]
+            true if you want to calculate the pdf for the actual time series, array
+            if you want to calculate the pdf for a theoretical time series
+        plot_figure: [bool]
+            Default is False.
+        kwargs:
+            figsize: [tuple]
+                Default is (6, 5).
+            xlabel: [str]
+                Default is "Actual data".
+            ylabel: [str]
+                Default is "pdf".
+            fontsize: [int]
+                Default is 15.
 
         Returns
         -------
         pdf : [array]
             probability density function pdf.
         """
-        ts = super().pdf(parameters, actual_data=actual_data)
-
-        pdf = self._pdf_eq(ts, parameters)
-
-        if plot_figure:
-            Qx = np.linspace(
-                float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
-            )
-            pdf_fitted = self.pdf(parameters, actual_data=Qx)
-
-            fig, ax = Plot.pdf(
-                Qx,
-                pdf_fitted,
-                self.data_sorted,
-                figsize=figsize,
-                xlabel=xlabel,
-                ylabel=ylabel,
-                fontsize=fontsize,
-            )
-            return pdf, fig, ax
-        else:
-            return pdf
+        result = super().pdf(
+            parameters,
+            actual_data=actual_data,
+            plot_figure=plot_figure,
+            *args,
+            **kwargs,
+        )
+        return result
 
     @staticmethod
     def _cdf_eq(
@@ -955,11 +993,9 @@ class GEV(AbstractDistribution):
         self,
         parameters: Dict[str, Union[float, Any]],
         plot_figure: bool = False,
-        figsize: tuple = (6, 5),
-        xlabel: str = "Actual data",
-        ylabel: str = "pdf",
-        fontsize: int = 15,
         actual_data: np.ndarray = None,
+        *args,
+        **kwargs,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
@@ -975,46 +1011,35 @@ class GEV(AbstractDistribution):
                 scale parameter of the GEV distribution.
             - shape: [numeric]
                 shape parameter of the GEV distribution.
-        plot_figure: [bool]
-            Default is False.
-        figsize: [tuple]
-            Default is (6, 5).
-        xlabel: [str]
-            Default is "Actual data".
-        ylabel: [str]
-            Default is "pdf".
-        fontsize: [int]
-            Default is 15.
         actual_data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
             if you want to calculate the pdf for a theoretical time series
+        plot_figure: [bool]
+            Default is False.
+        kwargs:
+            figsize: [tuple]
+                Default is (6, 5).
+            xlabel: [str]
+                Default is "Actual data".
+            ylabel: [str]
+                Default is "pdf".
+            fontsize: [int]
+                Default is 15
 
         Returns
         -------
         TYPE
             DESCRIPTION.
         """
-        ts = super().pdf(parameters, actual_data=actual_data)
-        pdf = self._pdf_eq(ts, parameters)
+        result = super().pdf(
+            parameters,
+            actual_data=actual_data,
+            plot_figure=plot_figure,
+            *args,
+            **kwargs,
+        )
 
-        if plot_figure:
-            Qx = np.linspace(
-                float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
-            )
-            pdf_fitted = self.pdf(parameters, actual_data=Qx)
-
-            fig, ax = Plot.pdf(
-                Qx,
-                pdf_fitted,
-                self.data_sorted,
-                figsize=figsize,
-                xlabel=xlabel,
-                ylabel=ylabel,
-                fontsize=fontsize,
-            )
-            return pdf, fig, ax
-        else:
-            return pdf
+        return result
 
     @staticmethod
     def _cdf_eq(
@@ -1777,6 +1802,10 @@ class Exponential(AbstractDistribution):
     ) -> np.ndarray:
         loc = parameters.get("loc")
         scale = parameters.get("scale")
+
+        if scale <= 0:
+            raise ValueError("Scale parameter is negative")
+
         # pdf = []
         #
         # for i in ts:
@@ -1796,11 +1825,9 @@ class Exponential(AbstractDistribution):
         self,
         parameters: Dict[str, Union[float, Any]],
         plot_figure: bool = False,
-        figsize: tuple = (6, 5),
-        xlabel: str = "Actual data",
-        ylabel: str = "pdf",
-        fontsize: Union[float, int] = 15,
         actual_data: np.ndarray = None,
+        *args,
+        **kwargs,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
@@ -1814,39 +1841,35 @@ class Exponential(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
+        actual_data : [bool/array]
+            true if you want to calculate the pdf for the actual time series, array
+            if you want to calculate the pdf for a theoretical time series
+        plot_figure: [bool]
+            Default is False.
+        kwargs:
+            figsize: [tuple]
+                Default is (6, 5).
+            xlabel: [str]
+                Default is "Actual data".
+            ylabel: [str]
+                Default is "pdf".
+            fontsize: [int]
+                Default is 15
 
         Returns
         -------
         pdf : [array]
             probability density function pdf.
         """
-        scale = parameters.get("scale")
+        result = super().pdf(
+            parameters,
+            actual_data=actual_data,
+            plot_figure=plot_figure,
+            *args,
+            **kwargs,
+        )
 
-        if scale <= 0:
-            raise ValueError("Scale parameter is negative")
-
-        ts = super().pdf(parameters, actual_data=actual_data)
-
-        pdf = self._pdf_eq(ts, parameters)
-
-        if plot_figure:
-            Qx = np.linspace(
-                float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
-            )
-            pdf_fitted = self.pdf(parameters, actual_data=Qx)
-
-            fig, ax = Plot.pdf(
-                Qx,
-                pdf_fitted,
-                self.data_sorted,
-                figsize=figsize,
-                xlabel=xlabel,
-                ylabel=ylabel,
-                fontsize=fontsize,
-            )
-            return pdf, fig, ax
-        else:
-            return pdf
+        return result
 
     @staticmethod
     def _cdf_eq(
@@ -2106,11 +2129,9 @@ class Normal(AbstractDistribution):
         self,
         parameters: Dict[str, Union[float, Any]],
         plot_figure: bool = False,
-        figsize: tuple = (6, 5),
-        xlabel: str = "Actual data",
-        ylabel: str = "pdf",
-        fontsize: Union[float, int] = 15,
         actual_data: np.ndarray = None,
+        *args,
+        **kwargs,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
@@ -2124,34 +2145,35 @@ class Normal(AbstractDistribution):
                 location parameter of the GEV distribution.
             - scale: [numeric]
                 scale parameter of the GEV distribution.
+        actual_data : [bool/array]
+            true if you want to calculate the pdf for the actual time series, array
+            if you want to calculate the pdf for a theoretical time series
+        plot_figure: [bool]
+            Default is False.
+        kwargs:
+            figsize: [tuple]
+                Default is (6, 5).
+            xlabel: [str]
+                Default is "Actual data".
+            ylabel: [str]
+                Default is "pdf".
+            fontsize: [int]
+                Default is 15
 
         Returns
         -------
         pdf : [array]
             probability density function pdf.
         """
-        ts = super().pdf(parameters, actual_data=actual_data)
+        result = super().pdf(
+            parameters,
+            actual_data=actual_data,
+            plot_figure=plot_figure,
+            *args,
+            **kwargs,
+        )
 
-        pdf = self._pdf_eq(ts, parameters)
-
-        if plot_figure:
-            Qx = np.linspace(
-                float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
-            )
-            pdf_fitted = self.pdf(parameters, actual_data=Qx)
-
-            fig, ax = Plot.pdf(
-                Qx,
-                pdf_fitted,
-                self.data_sorted,
-                figsize=figsize,
-                xlabel=xlabel,
-                ylabel=ylabel,
-                fontsize=fontsize,
-            )
-            return pdf, fig, ax
-        else:
-            return pdf
+        return result
 
     @staticmethod
     def _cdf_eq(
