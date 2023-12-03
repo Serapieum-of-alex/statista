@@ -2394,7 +2394,7 @@ class Distribution:
         """Delegate method calls to the sub-class"""
         # Retrieve the attribute or method from the animal object
         try:
-            # Retrieve the attribute or method from the animal object
+            # Retrieve the attribute or method from the sub-classes
             attribute = getattr(self.distribution, name)
 
             # If the attribute is a method, return a callable function
