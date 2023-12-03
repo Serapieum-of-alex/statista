@@ -10,6 +10,7 @@ from statista.distributions import (
     PlottingPosition,
     Exponential,
     Normal,
+    Distribution,
 )
 
 
@@ -400,3 +401,26 @@ class TestNormal:
         Param = Edist.fit_model(method=dist_estimation_parameters_ks, test=False)
         Qth = Edist.theoretical_estimate(Param, cdf_Weibul)
         assert isinstance(Qth, np.ndarray)
+
+
+class TestDistribution:
+    def test_create_instance(
+        self,
+        time_series1: list,
+    ):
+        Gdist = Distribution("Gumbel", data=time_series1)
+        assert isinstance(Gdist.data, np.ndarray)
+        assert isinstance(Gdist.data_sorted, np.ndarray)
+
+    def test_getter_method(
+        self,
+        time_series2: list,
+        dist_estimation_parameters: List[str],
+    ):
+        Gdist = Distribution("Gumbel", data=time_series2)
+        for i in range(len(dist_estimation_parameters)):
+            param = Gdist.fit_model(method=dist_estimation_parameters[i], test=False)
+            assert isinstance(param, dict)
+            assert all(i in param.keys() for i in ["loc", "scale"])
+            assert Gdist.parameters.get("loc") is not None
+            assert Gdist.parameters.get("scale") is not None

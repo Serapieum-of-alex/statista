@@ -15,7 +15,7 @@ from statista.confidence_interval import ConfidenceInterval
 
 ninf = 1e-5
 
-__all__ = ["PlottingPosition", "Gumbel", "GEV", "Exponential", "Normal"]
+__all__ = ["PlottingPosition", "Gumbel", "GEV", "Exponential", "Normal", "Distribution"]
 
 
 class PlottingPosition:
@@ -384,7 +384,7 @@ class AbstractDistribution(ABC):
         F: np.ndarray,
         alpha: float = 0.1,
     ) -> Tuple[np.ndarray, np.ndarray]:
-        """confidenceInterval.
+        """confidence_interval.
 
         Parameters:
         -----------
@@ -810,7 +810,7 @@ class Gumbel(AbstractDistribution):
         F: np.ndarray,
         alpha: float = 0.1,
     ) -> Tuple[np.ndarray, np.ndarray]:
-        """confidenceInterval.
+        """confidence_interval.
 
         Parameters:
         -----------
@@ -1317,7 +1317,7 @@ class GEV(AbstractDistribution):
         method: str = "lmoments",
         **kargs,
     ):
-        """confidenceInterval.
+        """confidence_interval.
 
         Parameters:
         -----------
@@ -2367,3 +2367,49 @@ class Normal(AbstractDistribution):
     def chisquare(self) -> tuple:
         """chisquare test"""
         return super().chisquare()
+
+
+class Distribution:
+    """Distributions."""
+
+    available_distributions = {
+        "GEV": GEV,
+        "Gumbel": Gumbel,
+        "Exponential": Exponential,
+        "Normal": Normal,
+    }
+
+    def __init__(
+        self,
+        distribution: str,
+        data: Union[list, np.ndarray] = None,
+        parameters: Dict[str, str] = None,
+    ):
+        if distribution not in self.available_distributions.keys():
+            raise ValueError(f"{distribution} not supported")
+
+        self.distribution = self.available_distributions[distribution](data, parameters)
+
+    def __getattr__(self, name):
+        """Delegate method calls to the sub-class"""
+        # Retrieve the attribute or method from the animal object
+        try:
+            # Retrieve the attribute or method from the animal object
+            attribute = getattr(self.distribution, name)
+
+            # If the attribute is a method, return a callable function
+            if callable(attribute):
+
+                def method(*args, **kwargs):
+                    """A callable function that simply calls the attribute if it is a method"""
+                    return attribute(*args, **kwargs)
+
+                return method
+
+            # If it's a regular attribute, return its value
+            return attribute
+
+        except AttributeError:
+            raise AttributeError(
+                f"'{type(self).__name__}' object has no attribute '{name}'"
+            )
