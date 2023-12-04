@@ -1384,12 +1384,14 @@ class GEV(AbstractDistribution):
 
         Parameters
         ----------
-        loc : [numeric]
-            Location parameter of the GEV distribution.
-        scale : [numeric]
-            Scale parameter of the GEV distribution.
-        shape: [float, int]
-            Shape parameter for the GEV distribution.
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val, shape: val}
+            - loc : [numeric]
+                Location parameter of the GEV distribution.
+            - scale : [numeric]
+                Scale parameter of the GEV distribution.
+            - shape: [float, int]
+                Shape parameter for the GEV distribution.
         F : [list]
             Theoretical cdf calculated using weibul or using the distribution cdf function.
         method: [str]
@@ -1488,8 +1490,8 @@ class GEV(AbstractDistribution):
         sample = GEV.theoretical_estimate(gevfit, np.random.rand(len(data)))
 
         # get parameters based on the new generated sample
-        Gdist = GEV(sample)
-        new_param = Gdist.fit_model(method=method, test=False)
+        dist = GEV(sample)
+        new_param = dist.fit_model(method=method, test=False)
 
         # return period
         # T = np.arange(0.1, 999.1, 0.1) + 1

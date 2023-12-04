@@ -50,7 +50,10 @@ class ConfidenceInterval:
         n_samples: int = 100,
         **kargs,
     ):  # ->  Dict[str, OrderedDict[str, Tuple[Any, Any]]]
-        """Calculate confidence intervals using parametric bootstrap and the percentil interval method This is used to obtain confidence intervals for the estimators and the return values for several return values.
+        """BootStrap
+
+        Calculate confidence intervals using parametric bootstrap and the percentil interval method This is used to
+        obtain confidence intervals for the estimators and the return values for several return values.
 
         More info about bootstrapping can be found on:
             - Efron: "An Introduction to the Bootstrap", Chapman & Hall (1993)
