@@ -2098,8 +2098,7 @@ class Normal(AbstractDistribution):
     def __init__(
         self,
         data: Union[list, np.ndarray] = None,
-        loc: Union[int, float] = None,
-        scale: Union[int, float] = None,
+        parameters: Dict[str, str] = None,
     ):
         """Gumbel.
 
@@ -2107,23 +2106,14 @@ class Normal(AbstractDistribution):
         ----------
         data : [list]
             data time series.
-        loc: [numeric]
-            location parameter
-        scale: [numeric]
-            scale parameter
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val}
+            - loc: [numeric]
+                location parameter of the exponential distribution.
+            - scale: [numeric]
+                scale parameter of the exponential distribution.
         """
-        if isinstance(data, list) or isinstance(data, np.ndarray):
-            self.data = np.array(data)
-            self.data_sorted = np.sort(data)
-            self.cdf_Weibul = PlottingPosition.weibul(data)
-            self.KStable = 1.22 / np.sqrt(len(self.data))
-
-        self.loc = loc
-        self.scale = scale
-        self.Dstatic = None
-        self.KS_Pvalue = None
-        self.chistatic = None
-        self.chi_Pvalue = None
+        super().__init__(data, parameters)
 
     @staticmethod
     def _pdf_eq(

@@ -154,7 +154,7 @@ class TestGumbel:
         dist = Gumbel(time_series2)
         cdf_weibul = PlottingPosition.weibul(time_series2)
         param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        (fig1, fig2), (ax1, ax2) = dist.probapility_plot(
+        (fig1, fig2), (_, _) = dist.probapility_plot(
             param, cdf_weibul, alpha=confidence_interval_alpha
         )
         assert isinstance(fig1, Figure)
