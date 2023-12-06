@@ -14,7 +14,7 @@ def test_boot_strap(
     - The test function for the boot strap method in the ConfidenceInterval class.
     - the test can not compare the generated LB and UB as they are randomly generated.
     """
-    CI = ConfidenceInterval.BootStrap(
+    ci = ConfidenceInterval.boot_strap(
         time_series1,
         statfunction=GEV.ci_func,
         gevfit=ci_param,
@@ -22,8 +22,8 @@ def test_boot_strap(
         F=ci_cdf,
         method="lmoments",
     )
-    LB = CI["LB"]
-    UB = CI["UB"]
-    assert isinstance(LB, np.ndarray)
-    assert isinstance(UB, np.ndarray)
-    assert LB.shape == UB.shape == (len(time_series1),)
+    lb = ci["lb"]
+    ub = ci["ub"]
+    assert isinstance(lb, np.ndarray)
+    assert isinstance(ub, np.ndarray)
+    assert lb.shape == ub.shape == (len(time_series1),)

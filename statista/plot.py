@@ -1,4 +1,6 @@
+"""Plotting functions for statista package."""
 from typing import Union, Tuple, List, Any
+from numbers import Number
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from matplotlib.figure import Figure
@@ -13,7 +15,7 @@ class Plot:
 
     @staticmethod
     def pdf(
-        Qx: np.ndarray,
+        qx: np.ndarray,
         pdf_fitted,
         data_sorted: np.ndarray,
         figsize: tuple = (6, 5),
@@ -25,7 +27,7 @@ class Plot:
 
         Parameters
         ----------
-        Qx
+        qx
         pdf_fitted
         data_sorted
         figsize
@@ -44,7 +46,7 @@ class Plot:
         # gs = gridspec.GridSpec(nrows=1, ncols=2, figure=fig)
         # Plot the histogram and the fitted distribution, save it for each gauge.
         ax = fig.add_subplot()
-        ax.plot(Qx, pdf_fitted, "-", color="#27408B", linewidth=2)
+        ax.plot(qx, pdf_fitted, "-", color="#27408B", linewidth=2)
         ax.hist(
             data_sorted, density=True, histtype="stepfilled", color="#DC143C"
         )  # , alpha=0.2
@@ -54,10 +56,10 @@ class Plot:
 
     @staticmethod
     def cdf(
-        Qx,
+        qx,
         cdf_fitted,
         data_sorted,
-        cdf_Weibul,
+        cdf_weibul,
         figsize=(6, 5),
         xlabel="Actual data",
         ylabel="cdf",
@@ -67,10 +69,10 @@ class Plot:
 
         Parameters
         ----------
-        Qx
+        qx
         cdf_fitted
         data_sorted
-        cdf_Weibul
+        cdf_weibul
         figsize
         xlabel
         ylabel
@@ -86,11 +88,11 @@ class Plot:
         fig = plt.figure(figsize=figsize)
         ax = fig.add_subplot()
         ax.plot(
-            Qx, cdf_fitted, "-", label="Estimated CDF", color="#27408B", linewidth=2
+            qx, cdf_fitted, "-", label="Estimated CDF", color="#27408B", linewidth=2
         )
         ax.scatter(
             data_sorted,
-            cdf_Weibul,
+            cdf_weibul,
             label="Empirical CDF",
             color="orangered",
             facecolors="none",
@@ -102,15 +104,15 @@ class Plot:
 
     @staticmethod
     def details(
-        Qx: Union[np.ndarray, list],
-        Qth: Union[np.ndarray, list],
-        Qact: Union[np.ndarray, list],
+        qx: Union[np.ndarray, list],
+        qth: Union[np.ndarray, list],
+        q_act: Union[np.ndarray, list],
         pdf: Union[np.ndarray, list],
         cdf_fitted: Union[np.ndarray, list],
         F: Union[np.ndarray, list],
-        Qlower: Union[np.ndarray, list],
-        Qupper: Union[np.ndarray, list],
-        alpha: float,
+        q_lower: Union[np.ndarray, list],
+        q_upper: Union[np.ndarray, list],
+        alpha: Number,
         fig1size: tuple = (10, 5),
         fig2size: tuple = (6, 6),
         xlabel: str = "Actual data",
@@ -121,14 +123,14 @@ class Plot:
 
         Parameters
         ----------
-        Qx
-        Qth
-        Qact
+        qx
+        qth
+        q_act
         pdf
         cdf_fitted
         F
-        Qlower
-        Qupper
+        q_lower
+        q_upper
         alpha
         fig1size
         fig2size
@@ -143,40 +145,40 @@ class Plot:
         gs = gridspec.GridSpec(nrows=1, ncols=2, figure=fig1)
         # Plot the histogram and the fitted distribution, save it for each gauge.
         ax1 = fig1.add_subplot(gs[0, 0])
-        ax1.plot(Qx, pdf, "-", color="#27408B", linewidth=2)
-        ax1.hist(Qact, density=True, histtype="stepfilled", color="#DC143C")
+        ax1.plot(qx, pdf, "-", color="#27408B", linewidth=2)
+        ax1.hist(q_act, density=True, histtype="stepfilled", color="#DC143C")
         ax1.set_xlabel(xlabel, fontsize=fontsize)
         ax1.set_ylabel("pdf", fontsize=fontsize)
 
         ax2 = fig1.add_subplot(gs[0, 1])
-        ax2.plot(Qx, cdf_fitted, "-", color="#27408B", linewidth=2)
+        ax2.plot(qx, cdf_fitted, "-", color="#27408B", linewidth=2)
 
-        Qact.sort()
-        ax2.scatter(Qact, F, color="#DC143C", facecolors="none")
+        q_act.sort()
+        ax2.scatter(q_act, F, color="#DC143C", facecolors="none")
         ax2.set_xlabel(xlabel, fontsize=fontsize)
         ax2.set_ylabel(ylabel, fontsize=15)
 
         fig2 = plt.figure(figsize=fig2size)
-        plt.plot(Qth, Qth, "-.", color="#3D59AB", linewidth=2, label="Theoretical Data")
+        plt.plot(qth, qth, "-.", color="#3D59AB", linewidth=2, label="Theoretical Data")
         # confidence interval
         plt.plot(
-            Qth,
-            Qlower,
+            qth,
+            q_lower,
             "*--",
             color="grey",
             markersize=10,
             label=f"Lower limit ({int((1 - alpha) * 100)} % CI)",
         )
         plt.plot(
-            Qth,
-            Qupper,
+            qth,
+            q_upper,
             "*--",
             color="grey",
             markersize=10,
             label=f"Upper limit ({int((1 - alpha) * 100)} % CI)",
         )
         plt.scatter(
-            Qth, Qact, color="#DC143C", facecolors="none", label="Actual Data"
+            qth, q_act, color="#DC143C", facecolors="none", label="Actual Data"
         )  # "d", markersize=12,
         plt.legend(fontsize=fontsize, framealpha=1)
         plt.xlabel("Theoretical Values", fontsize=fontsize)

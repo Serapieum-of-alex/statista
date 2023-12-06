@@ -153,14 +153,14 @@ def ams_analysis(
                 dist = GEV(ams_df)
                 param_dist = dist.fit_model(
                     method="optimization",
-                    ObjFunc=Gumbel.ObjectiveFn,
+                    obj_func=Gumbel.objective_fn,
                     threshold=threshold,
                 )
             else:
                 dist = Gumbel(ams_df)
                 param_dist = dist.fit_model(
                     method="optimization",
-                    ObjFunc=Gumbel.ObjectiveFn,
+                    obj_func=Gumbel.objective_fn,
                     threshold=threshold,
                 )
         else:

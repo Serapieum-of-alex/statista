@@ -1,4 +1,5 @@
 """Statistical distributions."""
+from numbers import Number
 from typing import Any, List, Tuple, Union, Dict, Callable
 from abc import ABC, abstractmethod
 import numpy as np
@@ -15,7 +16,14 @@ from statista.confidence_interval import ConfidenceInterval
 
 ninf = 1e-5
 
-__all__ = ["PlottingPosition", "Gumbel", "GEV", "Exponential", "Normal", "Distribution"]
+__all__ = [
+    "PlottingPosition",
+    "Gumbel",
+    "GEV",
+    "Exponential",
+    "Normal",
+    "Distributions",
+]
 
 
 class PlottingPosition:
@@ -25,12 +33,12 @@ class PlottingPosition:
         pass
 
     @staticmethod
-    def return_period(F: Union[list, np.ndarray]) -> np.ndarray:
+    def return_period(prob_non_exceed: Union[list, np.ndarray]) -> np.ndarray:
         """returnPeriod.
 
         Parameters
         ----------
-        F: [list/array]
+        prob_non_exceed: [list/array]
             non exceedence probability.
 
         Returns
@@ -38,9 +46,9 @@ class PlottingPosition:
         array:
            return period.
         """
-        F = np.array(F)
-        T = 1 / (1 - F)
-        return T
+        prob_non_exceed = np.array(prob_non_exceed)
+        t = 1 / (1 - prob_non_exceed)
+        return t
 
     @staticmethod
     def weibul(data: Union[list, np.ndarray], return_period: int = False) -> np.ndarray:
@@ -69,8 +77,8 @@ class PlottingPosition:
         if not return_period:
             return cdf
         else:
-            T = PlottingPosition.return_period(cdf)
-            return T
+            t = PlottingPosition.return_period(cdf)
+            return t
 
 
 class AbstractDistribution(ABC):
@@ -166,13 +174,13 @@ class AbstractDistribution(ABC):
         pdf = self._pdf_eq(ts, parameters)
 
         if plot_figure:
-            Qx = np.linspace(
+            qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
             )
-            pdf_fitted = self.pdf(parameters, actual_data=Qx)
+            pdf_fitted = self.pdf(parameters, actual_data=qx)
 
             fig, ax = Plot.pdf(
-                Qx,
+                qx,
                 pdf_fitted,
                 self.data_sorted,
                 figsize=figsize,
@@ -223,18 +231,18 @@ class AbstractDistribution(ABC):
         cdf = self._cdf_eq(ts, parameters)
 
         if plot_figure:
-            Qx = np.linspace(
+            qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
             )
-            cdf_fitted = self.cdf(parameters, actual_data=Qx)
+            cdf_fitted = self.cdf(parameters, actual_data=qx)
 
-            cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
+            cdf_weibul = PlottingPosition.weibul(self.data_sorted)
 
             fig, ax = Plot.cdf(
-                Qx,
+                qx,
                 cdf_fitted,
                 self.data_sorted,
-                cdf_Weibul,
+                cdf_weibul,
                 figsize=figsize,
                 xlabel=xlabel,
                 ylabel=ylabel,
@@ -249,7 +257,7 @@ class AbstractDistribution(ABC):
     def fit_model(
         self,
         method: str = "mle",
-        ObjFunc: Callable = None,
+        obj_func: Callable = None,
         threshold: Union[None, float, int] = None,
         test: bool = True,
     ) -> Union[Dict[str, str], Any]:
@@ -268,7 +276,7 @@ class AbstractDistribution(ABC):
 
         Parameters
         ----------
-        ObjFunc : [function]
+        obj_func : [function]
             function to be used to get the distribution parameters.
         threshold : [numeric]
             Value you want to consider only the greater values.
@@ -339,9 +347,9 @@ class AbstractDistribution(ABC):
                 "Value of parameters is unknown please use "
                 "'EstimateParameter' to obtain estimate the distribution parameters"
             )
-        Qth = self.theoretical_estimate(self.parameters, self.cdf_Weibul)
+        qth = self.theoretical_estimate(self.parameters, self.cdf_Weibul)
 
-        test = ks_2samp(self.data, Qth)
+        test = ks_2samp(self.data, qth)
         self.Dstatic = test.statistic
         self.KS_Pvalue = test.pvalue
 
@@ -365,9 +373,9 @@ class AbstractDistribution(ABC):
                 "'EstimateParameter' to obtain them"
             )
 
-        Qth = self.theoretical_estimate(self.parameters, self.cdf_Weibul)
+        qth = self.theoretical_estimate(self.parameters, self.cdf_Weibul)
         try:
-            test = chisquare(st.standardize(Qth), st.standardize(self.data))
+            test = chisquare(st.standardize(qth), st.standardize(self.data))
             self.chistatic = test.statistic
             self.chi_Pvalue = test.pvalue
             print("-----chisquare Test-----")
@@ -381,7 +389,7 @@ class AbstractDistribution(ABC):
     def confidence_interval(
         self,
         parameters: Dict[str, Union[float, Any]],
-        F: np.ndarray,
+        prob_non_exceed: np.ndarray,
         alpha: float = 0.1,
     ) -> Tuple[np.ndarray, np.ndarray]:
         """confidence_interval.
@@ -394,7 +402,7 @@ class AbstractDistribution(ABC):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        F : [list]
+        prob_non_exceed : [list]
             Non Exceedence probability
         alpha : [numeric]
             alpha or SignificanceLevel is a value of the confidence interval.
@@ -407,9 +415,9 @@ class AbstractDistribution(ABC):
                 location parameter
             - scale: [numeric]
                 scale parameter
-        Qupper : [list]
+        q_upper : [list]
             upper bound coresponding to the confidence interval.
-        Qlower : [list]
+        q_lower : [list]
             lower bound coresponding to the confidence interval.
         """
         pass
@@ -417,7 +425,7 @@ class AbstractDistribution(ABC):
     def probapility_plot(
         self,
         parameters: Dict[str, Union[float, Any]],
-        F: np.ndarray,
+        prob_non_exceed: np.ndarray,
         alpha: float = 0.1,
         fig1size: tuple = (10, 5),
         fig2size: tuple = (6, 6),
@@ -438,7 +446,7 @@ class AbstractDistribution(ABC):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        F : [np.ndarray]
+        prob_non_exceed : [np.ndarray]
             theoretical cdf calculated using weibul or using the distribution cdf function.
         alpha : [float]
             value between 0 and 1.
@@ -458,9 +466,9 @@ class AbstractDistribution(ABC):
         Qth : [list]
             theoretical generated values based on the theoretical cdf calculated from
             weibul or the distribution parameters.
-        Qupper : [list]
+        q_upper : [list]
             upper bound coresponding to the confidence interval.
-        Qlower : [list]
+        q_lower : [list]
             lower bound coresponding to the confidence interval.
         """
         pass
@@ -642,10 +650,12 @@ class Gumbel(AbstractDistribution):
         return rp
 
     @staticmethod
-    def ObjectiveFn(p, x):
+    def objective_fn(p, x):
         """ObjectiveFn.
 
-        Link : https://stackoverflow.com/questions/23217484/how-to-find-parameters-of-gumbels-distribution-using-scipy-optimize
+        Link :
+        https://stackoverflow.com/questions/23217484/how-to-find-parameters-of-gumbels-distribution-using-scipy-optimize
+
         Parameters
         ----------
         p:
@@ -662,16 +672,16 @@ class Gumbel(AbstractDistribution):
         parameters = {"loc": loc, "scale": scale}
         pdf = Gumbel._pdf_eq(x1, parameters)
         cdf = Gumbel._cdf_eq(threshold, parameters)
-        L1 = (-np.log((pdf / scale))).sum()
+        l1 = (-np.log((pdf / scale))).sum()
         # L2 is cdf based
-        L2 = (-np.log(1 - cdf)) * nx2
+        l2 = (-np.log(1 - cdf)) * nx2
         # print x1, nx2, L1, L2
-        return L1 + L2
+        return l1 + l2
 
     def fit_model(
         self,
         method: str = "mle",
-        ObjFunc: Callable = None,
+        obj_func: Callable = None,
         threshold: Union[None, float, int] = None,
         test: bool = True,
     ) -> Dict[str, float]:
@@ -690,7 +700,7 @@ class Gumbel(AbstractDistribution):
 
         Parameters
         ----------
-        ObjFunc : [function]
+        obj_func : [function]
             function to be used to get the distribution parameters.
         threshold : [numeric]
             Value you want to consider only the greater values.
@@ -714,36 +724,36 @@ class Gumbel(AbstractDistribution):
         method = super().fit_model(method=method)
 
         if method == "mle" or method == "mm":
-            Param = list(gumbel_r.fit(self.data, method=method))
+            param = list(gumbel_r.fit(self.data, method=method))
         elif method == "lmoments":
-            LM = Lmoments(self.data)
-            LMU = LM.Lmom()
-            Param = Lmoments.gumbel(LMU)
+            lm = Lmoments(self.data)
+            lmu = lm.Lmom()
+            param = Lmoments.gumbel(lmu)
         elif method == "optimization":
-            if ObjFunc is None or threshold is None:
+            if obj_func is None or threshold is None:
                 raise TypeError("threshold should be numeric value")
 
-            Param = gumbel_r.fit(self.data, method="mle")
+            param = gumbel_r.fit(self.data, method="mle")
             # then we use the result as starting value for your truncated Gumbel fit
-            Param = so.fmin(
-                ObjFunc,
-                [threshold, Param[0], Param[1]],
+            param = so.fmin(
+                obj_func,
+                [threshold, param[0], param[1]],
                 args=(self.data,),
                 maxiter=500,
                 maxfun=500,
             )
-            Param = [Param[1], Param[2]]
+            param = [param[1], param[2]]
         else:
             raise ValueError(f"The given: {method} does not exist")
 
-        Param = {"loc": Param[0], "scale": Param[1]}
-        self.parameters = Param
+        param = {"loc": param[0], "scale": param[1]}
+        self.parameters = param
 
         if test:
             self.ks()
             self.chisquare()
 
-        return Param
+        return param
 
     @staticmethod
     def theoretical_estimate(
@@ -782,8 +792,8 @@ class Gumbel(AbstractDistribution):
         # Qth = loc - scale * (np.log(-np.log(cdf)))
 
         # the main equation form scipy
-        Qth = gumbel_r.ppf(cdf, loc=loc, scale=scale)
-        return Qth
+        qth = gumbel_r.ppf(cdf, loc=loc, scale=scale)
+        return qth
 
     def ks(self) -> tuple:
         """Kolmogorov-Smirnov (KS) test.
@@ -807,7 +817,7 @@ class Gumbel(AbstractDistribution):
     def confidence_interval(
         self,
         parameters: Dict[str, Union[float, Any]],
-        F: np.ndarray,
+        prob_non_exceed: np.ndarray,
         alpha: float = 0.1,
     ) -> Tuple[np.ndarray, np.ndarray]:
         """confidence_interval.
@@ -820,7 +830,7 @@ class Gumbel(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        F : [list]
+        prob_non_exceed : [list]
             Non Exceedence probability
         alpha : [numeric]
             alpha or SignificanceLevel is a value of the confidence interval.
@@ -833,9 +843,9 @@ class Gumbel(AbstractDistribution):
                 location parameter
             - scale: [numeric]
                 scale parameter
-        Qupper : [list]
+        q_upper : [list]
             upper bound coresponding to the confidence interval.
-        Qlower : [list]
+        q_lower : [list]
             lower bound coresponding to the confidence interval.
         """
         scale = parameters.get("scale")
@@ -843,29 +853,29 @@ class Gumbel(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        Qth = self.theoretical_estimate(parameters, F)
-        Y = [-np.log(-np.log(j)) for j in F]
-        StdError = [
+        qth = self.theoretical_estimate(parameters, prob_non_exceed)
+        y = [-np.log(-np.log(j)) for j in prob_non_exceed]
+        std_error = [
             (scale / np.sqrt(len(self.data)))
             * np.sqrt(1.1087 + 0.5140 * j + 0.6079 * j**2)
-            for j in Y
+            for j in y
         ]
         v = norm.ppf(1 - alpha / 2)
-        Qupper = np.array([Qth[j] + v * StdError[j] for j in range(len(self.data))])
-        Qlower = np.array([Qth[j] - v * StdError[j] for j in range(len(self.data))])
-        return Qupper, Qlower
+        q_upper = np.array([qth[j] + v * std_error[j] for j in range(len(self.data))])
+        q_lower = np.array([qth[j] - v * std_error[j] for j in range(len(self.data))])
+        return q_upper, q_lower
 
     def probapility_plot(
         self,
         parameters: Dict[str, Union[float, Any]],
-        F: np.ndarray,
+        cdf: np.ndarray,
         alpha: float = 0.1,
         fig1size: tuple = (10, 5),
         fig2size: tuple = (6, 6),
         xlabel: str = "Actual data",
         ylabel: str = "cdf",
         fontsize: int = 15,
-    ) -> Tuple[List[Figure], list]:
+    ) -> tuple[list[Figure], list[Any]]:
         """probapilityPlot.
 
         ProbapilityPlot method calculates the theoretical values based on the Gumbel distribution
@@ -879,7 +889,7 @@ class Gumbel(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        F : [np.ndarray]
+        cdf : [np.ndarray]
             theoretical cdf calculated using weibul or using the distribution cdf function.
         alpha : [float]
             value between 0 and 1.
@@ -899,9 +909,9 @@ class Gumbel(AbstractDistribution):
         Qth : [list]
             theoretical generated values based on the theoretical cdf calculated from
             weibul or the distribution parameters.
-        Qupper : [list]
+        q_upper : [list]
             upper bound coresponding to the confidence interval.
-        Qlower : [list]
+        q_lower : [list]
             lower bound coresponding to the confidence interval.
         """
         scale = parameters.get("scale")
@@ -909,24 +919,24 @@ class Gumbel(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        Qth = self.theoretical_estimate(parameters, F)
-        Qupper, Qlower = self.confidence_interval(parameters, F, alpha)
+        q_th = self.theoretical_estimate(parameters, cdf)
+        q_upper, q_lower = self.confidence_interval(parameters, cdf, alpha)
 
-        Qx = np.linspace(
+        q_x = np.linspace(
             float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
         )
-        pdf_fitted = self.pdf(parameters, actual_data=Qx)
-        cdf_fitted = self.cdf(parameters, actual_data=Qx)
+        pdf_fitted = self.pdf(parameters, actual_data=q_x)
+        cdf_fitted = self.cdf(parameters, actual_data=q_x)
 
         fig, ax = Plot.details(
-            Qx,
-            Qth,
+            q_x,
+            q_th,
             self.data,
             pdf_fitted,
             cdf_fitted,
-            F,
-            Qlower,
-            Qupper,
+            cdf,
+            q_lower,
+            q_upper,
             alpha,
             fig1size=fig1size,
             fig2size=fig2size,
@@ -1131,8 +1141,8 @@ class GEV(AbstractDistribution):
         )
         return result
 
-    def get_rp(self, shape: float, loc: float, scale: float, data: np.ndarray):
-        """getRP.
+    def get_rp(self, parameters: Dict[str, Union[float, Any]], data: np.ndarray):
+        """get_rp.
 
             getRP calculates the return period for a list/array of values or a single value.
 
@@ -1140,22 +1150,21 @@ class GEV(AbstractDistribution):
         ----------
         data:[list/array/float]
             value you want the coresponding return value for
-        shape: [float]
-            shape parameter
-        loc: [float]
-            location parameter
-        scale: [float]
-            scale parameter
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val, "shape": value}
+            - shape: [float]
+                shape parameter
+            - loc: [float]
+                location parameter
+            - scale: [float]
+                scale parameter
 
         Returns
         -------
         float:
             return period
         """
-        # if isinstance(data, list) or isinstance(data, np.ndarray):
-        cdf = self.cdf(shape, loc, scale, actual_data=data)
-        # else:
-        #     cdf = genextreme.cdf(data, shape, loc, scale)
+        cdf = self.cdf(parameters, actual_data=data)
 
         rp = 1 / (1 - cdf)
 
@@ -1164,7 +1173,7 @@ class GEV(AbstractDistribution):
     def fit_model(
         self,
         method: str = "mle",
-        ObjFunc=None,
+        obj_func=None,
         threshold: Union[int, float, None] = None,
         test: bool = True,
     ) -> Dict[str, float]:
@@ -1183,7 +1192,7 @@ class GEV(AbstractDistribution):
 
         Parameters
         ----------
-        ObjFunc : [function]
+        obj_func : [function]
             function to be used to get the distribution parameters.
         threshold : [numeric]
             Value you want to consider only the greater values.
@@ -1203,30 +1212,30 @@ class GEV(AbstractDistribution):
 
         method = super().fit_model(method=method)
         if method == "mle" or method == "mm":
-            Param = list(genextreme.fit(self.data, method=method))
+            param = list(genextreme.fit(self.data, method=method))
         elif method == "lmoments":
-            LM = Lmoments(self.data)
-            LMU = LM.Lmom()
-            Param = Lmoments.gev(LMU)
+            lm = Lmoments(self.data)
+            lmu = lm.Lmom()
+            param = Lmoments.gev(lmu)
         elif method == "optimization":
-            if ObjFunc is None or threshold is None:
-                raise TypeError("ObjFunc and threshold should be numeric value")
+            if obj_func is None or threshold is None:
+                raise TypeError("obj_func and threshold should be numeric value")
 
-            Param = genextreme.fit(self.data, method="mle")
+            param = genextreme.fit(self.data, method="mle")
             # then we use the result as starting value for your truncated Gumbel fit
-            Param = so.fmin(
-                ObjFunc,
-                [threshold, Param[0], Param[1], Param[2]],
+            param = so.fmin(
+                obj_func,
+                [threshold, param[0], param[1], param[2]],
                 args=(self.data,),
                 maxiter=500,
                 maxfun=500,
             )
-            Param = [Param[1], Param[2], Param[3]]
+            param = [param[1], param[2], param[3]]
         else:
             raise ValueError(f"The given: {method} does not exist")
 
-        Param = {"loc": Param[1], "scale": Param[2], "shape": Param[0]}
-        self.parameters = Param
+        param = {"loc": param[1], "scale": param[2], "shape": param[0]}
+        self.parameters = param
 
         if test:
             self.ks()
@@ -1235,7 +1244,7 @@ class GEV(AbstractDistribution):
             except ValueError:
                 print("chisquare test failed")
 
-        return Param
+        return param
 
     @staticmethod
     def theoretical_estimate(
@@ -1265,16 +1274,19 @@ class GEV(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Parameters Invalid")
 
+        if shape is None:
+            raise ValueError("Shape parameter should not be None")
+
         if any(cdf) < 0 or any(cdf) > 1:
             raise ValueError("cdf Value Invalid")
 
-        # Qth = list()
+        # q_th = list()
         # for i in range(len(cdf)):
         #     if cdf[i] <= 0 or cdf[i] >= 1:
         #         if cdf[i] == 0 and shape < 0:
-        #             Qth.append(loc + scale / shape)
+        #             q_th.append(loc + scale / shape)
         #         elif cdf[i] == 1 and shape > 0:
-        #             Qth.append(loc + scale / shape)
+        #             q_th.append(loc + scale / shape)
         #         else:
         #             raise ValueError(str(cdf[i]) + " value of cdf is Invalid")
         #     # cdf = np.array(cdf)
@@ -1282,11 +1294,11 @@ class GEV(AbstractDistribution):
         #     if shape != 0:
         #         Y = (1 - np.exp(-1 * shape * Y)) / shape
         #
-        #     Qth.append(loc + scale * Y)
-        # Qth = np.array(Qth)
+        #     q_th.append(loc + scale * Y)
+        # q_th = np.array(q_th)
         # the main equation from scipy
-        Qth = genextreme.ppf(cdf, shape, loc=loc, scale=scale)
-        return Qth
+        q_th = genextreme.ppf(cdf, shape, loc=loc, scale=scale)
+        return q_th
 
     def ks(self):
         """Kolmogorov-Smirnov (KS) test.
@@ -1310,7 +1322,7 @@ class GEV(AbstractDistribution):
     def confidence_interval(
         self,
         parameters: Dict[str, Union[float, Any]],
-        F: np.ndarray,
+        prob_non_exceed: np.ndarray,
         alpha: float = 0.1,
         statfunction=np.average,
         n_samples: int = 100,
@@ -1325,7 +1337,7 @@ class GEV(AbstractDistribution):
             location parameter of the gumbel distribution.
         scale : [numeric]
             scale parameter of the gumbel distribution.
-        F : [list]
+        prob_non_exceed : [list]
             Non Exceedence probability
         alpha : [numeric]
             alpha or SignificanceLevel is a value of the confidence interval.
@@ -1339,40 +1351,40 @@ class GEV(AbstractDistribution):
 
         Return:
         -------
-        Qupper : [list]
+        q_upper : [list]
             upper bound coresponding to the confidence interval.
-        Qlower : [list]
+        q_lower : [list]
             lower bound coresponding to the confidence interval.
         """
         scale = parameters.get("scale")
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        CI = ConfidenceInterval.BootStrap(
+        ci = ConfidenceInterval.boot_strap(
             self.data,
             statfunction=statfunction,
             gevfit=parameters,
-            F=F,
+            F=prob_non_exceed,
             alpha=alpha,
             n_samples=n_samples,
             method=method,
             **kargs,
         )
-        Qlower = CI["LB"]
-        Qupper = CI["UB"]
+        q_lower = ci["lb"]
+        q_upper = ci["ub"]
 
-        return Qupper, Qlower
+        return q_upper, q_lower
 
     def probapility_plot(
         self,
         parameters: Dict[str, Union[float, Any]],
-        F,
-        alpha=0.1,
-        func=None,
+        prob_non_exceed,
+        alpha: Number = 0.1,
+        func: Callable = None,
         method: str = "lmoments",
         n_samples=100,
-        fig1size=(10, 5),
-        fig2size=(6, 6),
+        fig1_size=(10, 5),
+        fig2_size=(6, 6),
         xlabel="Actual data",
         ylabel="cdf",
         fontsize=15,
@@ -1392,7 +1404,7 @@ class GEV(AbstractDistribution):
                 Scale parameter of the GEV distribution.
             - shape: [float, int]
                 Shape parameter for the GEV distribution.
-        F : [list]
+        prob_non_exceed : [list]
             Theoretical cdf calculated using weibul or using the distribution cdf function.
         method: [str]
             Method used to fit the generated samples from the bootstrap method ["lmoments", "mle", "mm"]. Default is
@@ -1405,9 +1417,9 @@ class GEV(AbstractDistribution):
             y label string
         xlabel : [string]
             X label string
-        fig1size : [tuple]
+        fig1_size : [tuple]
             size of the pdf and cdf figure
-        fig2size : [tuple]
+        fig2_size : [tuple]
             size of the confidence interval figure
         n_samples : [integer]
             number of points in the condidence interval calculation
@@ -1416,47 +1428,44 @@ class GEV(AbstractDistribution):
         func : [function]
             function to be used in the confidence interval calculation.
         """
-        loc = parameters.get("loc")
         scale = parameters.get("scale")
-        shape = parameters.get("shape")
 
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        Qth = self.theoretical_estimate(parameters, F)
+        q_th = self.theoretical_estimate(parameters, prob_non_exceed)
         if func is None:
             func = GEV.ci_func
 
-        Param_dist = [shape, loc, scale]
-        CI = ConfidenceInterval.BootStrap(
+        ci = ConfidenceInterval.boot_strap(
             self.data,
             statfunction=func,
-            gevfit=Param_dist,
+            gevfit=parameters,
             n_samples=n_samples,
-            F=F,
+            F=prob_non_exceed,
             method=method,
         )
-        Qlower = CI["LB"]
-        Qupper = CI["UB"]
+        q_lower = ci["lb"]
+        q_upper = ci["ub"]
 
-        Qx = np.linspace(
+        q_x = np.linspace(
             float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
         )
-        pdf_fitted = self.pdf(shape, loc, scale, actual_data=Qx)
-        cdf_fitted = self.cdf(shape, loc, scale, actual_data=Qx)
+        pdf_fitted = self.pdf(parameters, actual_data=q_x)
+        cdf_fitted = self.cdf(parameters, actual_data=q_x)
 
         fig, ax = Plot.details(
-            Qx,
-            Qth,
+            q_x,
+            q_th,
             self.data,
             pdf_fitted,
             cdf_fitted,
-            F,
-            Qlower,
-            Qupper,
+            prob_non_exceed,
+            q_lower,
+            q_upper,
             alpha,
-            fig1size=fig1size,
-            fig2size=fig2size,
+            fig1size=fig1_size,
+            fig2size=fig2_size,
             xlabel=xlabel,
             ylabel=ylabel,
             fontsize=fontsize,
@@ -1484,7 +1493,7 @@ class GEV(AbstractDistribution):
                 "lmoments".
         """
         gevfit = kwargs["gevfit"]
-        F = kwargs["F"]
+        prob_non_exceed = kwargs["F"]
         method = kwargs["method"]
         # generate theoretical estimates based on a random cdf, and the dist parameters
         sample = GEV.theoretical_estimate(gevfit, np.random.rand(len(data)))
@@ -1498,11 +1507,11 @@ class GEV(AbstractDistribution):
         # +1 in order not to make 1- 1/0.1 = -9
         # T = np.linspace(0.1, 999, len(data)) + 1
         # coresponding theoretical estimate to T
-        # F = 1 - 1 / T
-        Qth = GEV.theoretical_estimate(new_param, F)
+        # prob_non_exceed = 1 - 1 / T
+        q_th = GEV.theoretical_estimate(new_param, prob_non_exceed)
 
         res = list(new_param.values())
-        res.extend(Qth)
+        res.extend(q_th)
         return tuple(res)
 
 
@@ -1592,13 +1601,13 @@ class GEV(AbstractDistribution):
 #
 #         pdf = expon.pdf(ts, loc=loc, scale=scale)
 #         if plot_figure:
-#             Qx = np.linspace(
+#             q_x = np.linspace(
 #                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
 #             )
-#             pdf_fitted = self.pdf(loc, scale, actual_data=Qx)
+#             pdf_fitted = self.pdf(loc, scale, actual_data=q_x)
 #
 #             fig, ax = Plot.pdf(
-#                 Qx,
+#                 q_x,
 #                 pdf_fitted,
 #                 self.data_sorted,
 #                 figsize=figsize,
@@ -1651,15 +1660,15 @@ class GEV(AbstractDistribution):
 #         cdf = expon.cdf(ts, loc=loc, scale=scale)
 #
 #         if plot_figure:
-#             Qx = np.linspace(
+#             q_x = np.linspace(
 #                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
 #             )
-#             cdf_fitted = self.cdf(loc, scale, actual_data=Qx)
+#             cdf_fitted = self.cdf(loc, scale, actual_data=q_x)
 #
 #             cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
 #
 #             fig, ax = Plot.cdf(
-#                 Qx,
+#                 q_x,
 #                 cdf_fitted,
 #                 self.data_sorted,
 #                 cdf_Weibul,
@@ -1676,7 +1685,7 @@ class GEV(AbstractDistribution):
 #     def estimateParameter(
 #         self,
 #         method: str = "mle",
-#         ObjFunc=None,
+#         obj_func=None,
 #         threshold: Union[int, float, None] = None,
 #         test: bool = True,
 #     ) -> tuple:
@@ -1695,7 +1704,7 @@ class GEV(AbstractDistribution):
 #
 #         Parameters
 #         ----------
-#         ObjFunc : [function]
+#         obj_func : [function]
 #             function to be used to get the distribution parameters.
 #         threshold : [numeric]
 #             Value you want to consider only the greater values.
@@ -1725,13 +1734,13 @@ class GEV(AbstractDistribution):
 #             LMU = LM.Lmom()
 #             Param = Lmoments.gev(LMU)
 #         elif method == "optimization":
-#             if ObjFunc is None or threshold is None:
-#                 raise TypeError("ObjFunc and threshold should be numeric value")
+#             if obj_func is None or threshold is None:
+#                 raise TypeError("obj_func and threshold should be numeric value")
 #
 #             Param = expon.fit(self.data, method="mle")
 #             # then we use the result as starting value for your truncated Gumbel fit
 #             Param = so.fmin(
-#                 ObjFunc,
+#                 obj_func,
 #                 [threshold, Param[0], Param[1]],
 #                 args=(self.data,),
 #                 maxiter=500,
@@ -1755,7 +1764,7 @@ class GEV(AbstractDistribution):
 #     def theporeticalEstimate(
 #         loc: Union[float, int],
 #         scale: Union[float, int],
-#         F: np.ndarray,
+#         prob_non_exceed: np.ndarray,
 #     ) -> np.ndarray:
 #         """TheporeticalEstimate.
 #
@@ -1765,7 +1774,7 @@ class GEV(AbstractDistribution):
 #         -----------
 #         param : [list]
 #             location ans scale parameters of the gumbel distribution.
-#         F : [list]
+#         prob_non_exceed : [list]
 #             cummulative distribution function/ Non Exceedence probability.
 #
 #         Return:
@@ -1776,12 +1785,12 @@ class GEV(AbstractDistribution):
 #         if scale <= 0:
 #             raise ValueError("Parameters Invalid")
 #
-#         if any(F) < 0 or any(F) > 1:
+#         if any(prob_non_exceed) < 0 or any(prob_non_exceed) > 1:
 #             raise ValueError("cdf Value Invalid")
 #
 #         # the main equation from scipy
-#         Qth = expon.ppf(F, loc=loc, scale=scale)
-#         return Qth
+#         q_th = expon.ppf(prob_non_exceed, loc=loc, scale=scale)
+#         return q_th
 
 
 class Exponential(AbstractDistribution):
@@ -1950,7 +1959,7 @@ class Exponential(AbstractDistribution):
     def fit_model(
         self,
         method: str = "mle",
-        ObjFunc=None,
+        obj_func=None,
         threshold: Union[int, float, None] = None,
         test: bool = True,
     ) -> Dict[str, float]:
@@ -1969,7 +1978,7 @@ class Exponential(AbstractDistribution):
 
         Parameters
         ----------
-        ObjFunc : [function]
+        obj_func : [function]
             function to be used to get the distribution parameters.
         threshold : [numeric]
             Value you want to consider only the greater values.
@@ -1980,7 +1989,7 @@ class Exponential(AbstractDistribution):
 
         Returns
         -------
-        Param : [list]
+        param : [list]
             shape, loc, scale parameter of the gumbel distribution in that order.
         """
         # obj_func = lambda p, x: (-np.log(Gumbel.pdf(x, p[0], p[1]))).sum()
@@ -1989,30 +1998,30 @@ class Exponential(AbstractDistribution):
         method = super().fit_model(method=method)
 
         if method == "mle" or method == "mm":
-            Param = list(expon.fit(self.data, method=method))
+            param = list(expon.fit(self.data, method=method))
         elif method == "lmoments":
-            LM = Lmoments(self.data)
-            LMU = LM.Lmom()
-            Param = Lmoments.exponential(LMU)
+            lm = Lmoments(self.data)
+            lmu = lm.Lmom()
+            param = Lmoments.exponential(lmu)
         elif method == "optimization":
-            if ObjFunc is None or threshold is None:
-                raise TypeError("ObjFunc and threshold should be numeric value")
+            if obj_func is None or threshold is None:
+                raise TypeError("obj_func and threshold should be numeric value")
 
-            Param = expon.fit(self.data, method="mle")
+            param = expon.fit(self.data, method="mle")
             # then we use the result as starting value for your truncated Gumbel fit
-            Param = so.fmin(
-                ObjFunc,
-                [threshold, Param[0], Param[1]],
+            param = so.fmin(
+                obj_func,
+                [threshold, param[0], param[1]],
                 args=(self.data,),
                 maxiter=500,
                 maxfun=500,
             )
-            Param = [Param[1], Param[2]]
+            param = [param[1], param[2]]
         else:
             raise ValueError(f"The given: {method} does not exist")
 
-        Param = {"loc": Param[0], "scale": Param[1]}
-        self.parameters = Param
+        param = {"loc": param[0], "scale": param[1]}
+        self.parameters = param
 
         if test:
             self.ks()
@@ -2021,7 +2030,7 @@ class Exponential(AbstractDistribution):
             except ValueError:
                 print("chisquare test failed")
 
-        return Param
+        return param
 
     @staticmethod
     def theoretical_estimate(
@@ -2058,8 +2067,8 @@ class Exponential(AbstractDistribution):
             raise ValueError("cdf Value Invalid")
 
         # the main equation from scipy
-        Qth = expon.ppf(cdf, loc=loc, scale=scale)
-        return Qth
+        q_th = expon.ppf(cdf, loc=loc, scale=scale)
+        return q_th
 
     def ks(self):
         """Kolmogorov-Smirnov (KS) test.
@@ -2240,7 +2249,7 @@ class Normal(AbstractDistribution):
     def fit_model(
         self,
         method: str = "mle",
-        ObjFunc=None,
+        obj_func=None,
         threshold: Union[int, float, None] = None,
         test: bool = True,
     ) -> Dict[str, float]:
@@ -2259,7 +2268,7 @@ class Normal(AbstractDistribution):
 
         Parameters
         ----------
-        ObjFunc : [function]
+        obj_func : [function]
             function to be used to get the distribution parameters.
         threshold : [numeric]
             Value you want to consider only the greater values.
@@ -2270,7 +2279,7 @@ class Normal(AbstractDistribution):
 
         Returns
         -------
-        Param : [list]
+        param : [list]
             shape, loc, scale parameter of the gumbel distribution in that order.
         """
         # obj_func = lambda p, x: (-np.log(Gumbel.pdf(x, p[0], p[1]))).sum()
@@ -2279,30 +2288,30 @@ class Normal(AbstractDistribution):
         method = super().fit_model(method=method)
 
         if method == "mle" or method == "mm":
-            Param = list(norm.fit(self.data, method=method))
+            param = list(norm.fit(self.data, method=method))
         elif method == "lmoments":
-            LM = Lmoments(self.data)
-            LMU = LM.Lmom()
-            Param = Lmoments.normal(LMU)
+            lm = Lmoments(self.data)
+            lmu = lm.Lmom()
+            param = Lmoments.normal(lmu)
         elif method == "optimization":
-            if ObjFunc is None or threshold is None:
-                raise TypeError("ObjFunc and threshold should be numeric value")
+            if obj_func is None or threshold is None:
+                raise TypeError("obj_func and threshold should be numeric value")
 
-            Param = norm.fit(self.data, method="mle")
+            param = norm.fit(self.data, method="mle")
             # then we use the result as starting value for your truncated Gumbel fit
-            Param = so.fmin(
-                ObjFunc,
-                [threshold, Param[0], Param[1]],
+            param = so.fmin(
+                obj_func,
+                [threshold, param[0], param[1]],
                 args=(self.data,),
                 maxiter=500,
                 maxfun=500,
             )
-            Param = [Param[1], Param[2]]
+            param = [param[1], param[2]]
         else:
             raise ValueError(f"The given: {method} does not exist")
 
-        Param = {"loc": Param[0], "scale": Param[1]}
-        self.parameters = Param
+        param = {"loc": param[0], "scale": param[1]}
+        self.parameters = param
 
         if test:
             self.ks()
@@ -2311,7 +2320,7 @@ class Normal(AbstractDistribution):
             except ValueError:
                 print("chisquare test failed")
 
-        return Param
+        return param
 
     @staticmethod
     def theoretical_estimate(
@@ -2348,8 +2357,8 @@ class Normal(AbstractDistribution):
             raise ValueError("cdf Value Invalid")
 
         # the main equation from scipy
-        Qth = norm.ppf(cdf, loc=loc, scale=scale)
-        return Qth
+        q_th = norm.ppf(cdf, loc=loc, scale=scale)
+        return q_th
 
     def ks(self):
         """Kolmogorov-Smirnov (KS) test.
@@ -2371,7 +2380,7 @@ class Normal(AbstractDistribution):
         return super().chisquare()
 
 
-class Distribution:
+class Distributions:
     """Distributions."""
 
     available_distributions = {
