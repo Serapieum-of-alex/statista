@@ -2,6 +2,7 @@ from typing import List, Dict
 
 import numpy as np
 import pandas as pd
+from pandas import DataFrame
 import pytest
 
 
@@ -73,3 +74,23 @@ def ci_cdf() -> np.ndarray:
 @pytest.fixture(scope="module")
 def ci_param() -> Dict[str, float]:
     return {"loc": 464.825, "scale": 222.120, "shape": 0.01012}
+
+
+@pytest.fixture(scope="module")
+def ams_gauges() -> DataFrame:
+    """AMS gauges"""
+    ams = pd.read_csv(f"tests/data/ams-gauges.csv")
+    ams.index = ams["date"]
+    return ams
+
+
+@pytest.fixture(scope="module")
+def gauges_statistical_properties() -> DataFrame:
+    """AMS gauges"""
+    return pd.read_csv(f"tests/data/statistical_properties.csv", index_col="id")
+
+
+@pytest.fixture(scope="module")
+def gauges_distribution_properties() -> DataFrame:
+    """AMS gauges"""
+    return pd.read_csv(f"tests/data/distribution_properties.csv", index_col="id")
