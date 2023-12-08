@@ -61,8 +61,8 @@ def ams_analysis(
 
     Returns
     -------
-    Statistical Properties.csv:
-        file containing some statistical properties like mean, std, min, 5%, 25%,
+    DataFrame:
+        Statistical properties like mean, std, min, 5%, 25%,
         median, 75%, 95%, max, t_beg, t_end, nyr, q1.5, q2, q5, q10, q25, q50,
         q100, q200, q500.
 
@@ -74,9 +74,9 @@ def ams_analysis(
         Cologne,6489.3,2056.1,1580.0,3354.5,5277.5,6585.0,7560.0,9728.9,10700.0,1951.0,2004.0,,5583.6,6507.7,8297.0,9182.4,10046.1,10542.9,10542.9,10940.9,11261.1,11591.7
         Rees,6701.4,2094.5,1810.0,3556.5,5450.0,6575.0,7901.8,10005.0,11300.0,1951.0,2004.0,,5759.2,6693.5,8533.3,9463.1,10386.9,10928.2,10928.2,11368.4,11728.2,12106.0
         date,1977.5,15.7,1951.0,1953.7,1964.2,1977.5,1990.8,2001.3,2004.0,1951.0,2004.0,,1970.3,1977.4,1991.6,1998.7,2005.8,2010.0,2010.0,2013.4,2016.1,2019.1
-    Distribution Properties.csv:
-        the shape, location, and scale parameters of the fitted distribution, plus the D-static and P-Value of the KS
-        test.
+    DataFrame:
+        Distribution properties like the shape, location, and scale parameters of the fitted distribution, plus the
+        D-static and P-Value of the KS test.
 
         id,c,loc,scale,D-static,P-Value
         Frankfurt,0.1,718.7,376.2,0.1,1.0
