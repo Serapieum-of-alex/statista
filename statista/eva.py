@@ -20,7 +20,6 @@ def ams_analysis(
     distribution: str = "GEV",
     method: str = "lmoments",
     obj_func: callable = None,
-    estimate_parameters: bool = False,
     quartile: float = 0,
     significance_level: float = 0.1,
 ) -> Tuple[DataFrame, DataFrame]:
@@ -54,8 +53,6 @@ def ams_analysis(
     obj_func: [callable]
         objective function to be used in the optimization method, default is None. for Gumbel distribution there is the
         Gumbel.objective_fn and similarly for the GEV distribution there is the GEV.objective_fn.
-    estimate_parameters: [bool]
-        Default is False.
     quartile: [float]
         the quartile is only used when estinating the distribution parameters based on optimization and a threshould
         value, the threshould value will be calculated as a the quartile coresponding to the value of this parameter.
@@ -68,6 +65,27 @@ def ams_analysis(
         file containing some statistical properties like mean, std, min, 5%, 25%,
         median, 75%, 95%, max, t_beg, t_end, nyr, q1.5, q2, q5, q10, q25, q50,
         q100, q200, q500.
+
+        id,mean,std,min,5%,25%,median,75%,95%,max,t_beg,t_end,nyr,q1.5,q2,q5,q10,q25,q50,q100,q200,q500,q1000
+        Frankfurt,694.4,552.8,-9.0,-9.0,220.8,671.0,1090.0,1760.0,1990.0,1951.0,2004.0,,683.3,855.3,1261.6,1517.8,1827.5,2047.6,2047.6,2258.3,2460.8,2717.0
+        Mainz,4153.3,1192.8,1150.0,2286.5,3415.0,4190.0,4987.5,5914.0,6920.0,1951.0,2004.0,,3627.9,4164.8,5203.5,5716.9,6217.2,6504.8,6504.8,6734.9,6919.9,7110.8
+        Kaub,4327.1,1254.7,1190.0,2394.5,3635.0,4350.0,5147.5,6383.5,7160.0,1951.0,2004.0,,3761.3,4321.1,5425.0,5983.7,6539.7,6865.8,6865.8,7131.4,7348.7,7577.3
+        Andernach,6333.4,2035.1,1470.0,3178.0,5175.0,6425.0,7412.5,9717.0,10400.0,1951.0,2004.0,,5450.1,6369.7,8129.5,8987.6,9813.9,10283.1,10283.1,10654.9,10950.9,11252.8
+        Cologne,6489.3,2056.1,1580.0,3354.5,5277.5,6585.0,7560.0,9728.9,10700.0,1951.0,2004.0,,5583.6,6507.7,8297.0,9182.4,10046.1,10542.9,10542.9,10940.9,11261.1,11591.7
+        Rees,6701.4,2094.5,1810.0,3556.5,5450.0,6575.0,7901.8,10005.0,11300.0,1951.0,2004.0,,5759.2,6693.5,8533.3,9463.1,10386.9,10928.2,10928.2,11368.4,11728.2,12106.0
+        date,1977.5,15.7,1951.0,1953.7,1964.2,1977.5,1990.8,2001.3,2004.0,1951.0,2004.0,,1970.3,1977.4,1991.6,1998.7,2005.8,2010.0,2010.0,2013.4,2016.1,2019.1
+    Distribution Properties.csv:
+        the shape, location, and scale parameters of the fitted distribution, plus the D-static and P-Value of the KS
+        test.
+
+        id,c,loc,scale,D-static,P-Value
+        Frankfurt,0.1,718.7,376.2,0.1,1.0
+        Mainz,0.3,3743.8,1214.6,0.1,1.0
+        Kaub,0.3,3881.6,1262.4,0.1,1.0
+        Andernach,0.3,5649.1,2084.4,0.1,1.0
+        Cologne,0.3,5783.0,2090.2,0.1,1.0
+        Rees,0.3,5960.0,2107.2,0.1,1.0
+        date,0.3,1971.8,16.2,0.1,1.0
     """
     gauges = time_series_df.columns.tolist()
     # List of the table output, including some general data and the return periods.
