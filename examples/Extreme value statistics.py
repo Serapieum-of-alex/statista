@@ -31,14 +31,14 @@ cdf, _, _ = gumbel_dist.cdf(param_lmoments, plot_figure=True)
 # calculate the CDF(Non Exceedance probability) using weibul plotting position
 time_series1.sort()
 # calculate the F (Non Exceedence probability based on weibul)
-cdf_Weibul = PlottingPosition.weibul(time_series1)
+cdf_weibul = PlottingPosition.weibul(time_series1)
 # TheporeticalEstimate method calculates the theoretical values based on the Gumbel distribution
-Qth = gumbel_dist.theoretical_estimate(param_lmoments, cdf_Weibul)
+Qth = gumbel_dist.theoretical_estimate(param_lmoments, cdf_weibul)
 # test = stats.chisquare(st.Standardize(Qth), st.Standardize(time_series1),ddof=5)
 # calculate the confidence interval
-upper, lower = gumbel_dist.confidence_interval(param_lmoments, cdf_Weibul, alpha=0.1)
+upper, lower = gumbel_dist.confidence_interval(param_lmoments, cdf_weibul, alpha=0.1)
 # ProbapilityPlot can estimate the Qth and the lower and upper confidence interval in the process of plotting
-fig, ax = gumbel_dist.probapility_plot(param_lmoments, cdf_Weibul, alpha=0.1)
+fig, ax = gumbel_dist.probapility_plot(param_lmoments, cdf_weibul, alpha=0.1)
 # %%
 """
 if you want to focus only on high values, you can use a threshold to make the code focus on what is higher
@@ -46,17 +46,17 @@ this threshold.
 """
 threshold = 17
 param_dist = gumbel_dist.fit_model(
-    method="optimization", ObjFunc=Gumbel.objective_fn, threshold=threshold
+    method="optimization", obj_func=Gumbel.objective_fn, threshold=threshold
 )
 print(param_dist)
-gumbel_dist.probapility_plot(param_dist, cdf_Weibul, alpha=0.1)
+gumbel_dist.probapility_plot(param_dist, cdf_weibul, alpha=0.1)
 # %%
 threshold = 18
 param_dist = gumbel_dist.fit_model(
-    method="optimization", ObjFunc=Gumbel.objective_fn, threshold=threshold
+    method="optimization", obj_func=Gumbel.objective_fn, threshold=threshold
 )
 print(param_dist)
-gumbel_dist.probapility_plot(param_dist, cdf_Weibul, alpha=0.1)
+gumbel_dist.probapility_plot(param_dist, cdf_weibul, alpha=0.1)
 # %% Generalized Extreme Value (GEV)
 gev_dist = GEV(time_series2)
 # default parameter estimation method is maximum liklihood method
@@ -77,15 +77,15 @@ cdf, _, _ = gev_dist.cdf(gev_lmom_param, plot_figure=True)
 #%%
 time_series1.sort()
 # calculate the F (Non Exceedence probability based on weibul)
-cdf_Weibul = PlottingPosition.weibul(time_series1)
+cdf_weibul = PlottingPosition.weibul(time_series1)
 T = PlottingPosition.weibul(time_series1, return_period=True)
 # TheporeticalEstimate method calculates the theoretical values based on the Gumbel distribution
-Qth = gev_dist.theoretical_estimate(gev_lmom_param, cdf_Weibul)
+Qth = gev_dist.theoretical_estimate(gev_lmom_param, cdf_weibul)
 
 func = GEV.ci_func
 upper, lower = gev_dist.confidence_interval(
     gev_lmom_param,
-    F=cdf_Weibul,
+    prob_non_exceed=cdf_weibul,
     alpha=0.1,
     statfunction=func,
     n_samples=len(time_series1),
@@ -100,12 +100,12 @@ CI = ConfidenceInterval.boot_strap(
     statfunction=func,
     gevfit=gev_lmom_param,
     n_samples=len(time_series1),
-    F=cdf_Weibul,
+    F=cdf_weibul,
     method="lmoments",
 )
-LB = CI["LB"]
-UB = CI["UB"]
+LB = CI["lb"]
+UB = CI["ub"]
 # %%
 fig, ax = gev_dist.probapility_plot(
-    gev_lmom_param, cdf_Weibul, func=func, n_samples=len(time_series1)
+    gev_lmom_param, cdf_weibul, func=func, n_samples=len(time_series1)
 )
