@@ -67,11 +67,11 @@ Metrics = dict()
 
 Qobs = Coello.QGauges[Coello.QGauges.columns[0]]
 
-Metrics["RMSE"] = PC.RMSE(Qobs, Coello.Qsim["q"])
-Metrics["NSE"] = PC.NSE(Qobs, Coello.Qsim["q"])
-Metrics["NSEhf"] = PC.NSEHF(Qobs, Coello.Qsim["q"])
-Metrics["KGE"] = PC.KGE(Qobs, Coello.Qsim["q"])
-Metrics["WB"] = PC.WB(Qobs, Coello.Qsim["q"])
+Metrics["RMSE"] = PC.rmse(Qobs, Coello.Qsim["q"])
+Metrics["NSE"] = PC.nse(Qobs, Coello.Qsim["q"])
+Metrics["NSEhf"] = PC.nse_hf(Qobs, Coello.Qsim["q"])
+Metrics["KGE"] = PC.kge(Qobs, Coello.Qsim["q"])
+Metrics["WB"] = PC.wb(Qobs, Coello.Qsim["q"])
 
 print("RMSE= " + str(round(Metrics["RMSE"], 2)))
 print("NSE= " + str(round(Metrics["NSE"], 2)))
@@ -120,7 +120,7 @@ def WrapperType1(Randpar, Route, RoutingFn, Qobs):
     Coello.Parameters = Randpar
 
     Run.RunLumped(Coello, Route, RoutingFn)
-    rmse = PC.RMSE(Qobs, Coello.Qsim["q"])
+    rmse = PC.rmse(Qobs, Coello.Qsim["q"])
     return rmse
 
 
@@ -129,7 +129,7 @@ def WrapperType2(Randpar, Route, RoutingFn, Qobs):
     Coello.Parameters = Randpar
 
     Run.RunLumped(Coello, Route, RoutingFn)
-    rmse = PC.RMSE(Qobs, Coello.Qsim["q"])
+    rmse = PC.rmse(Qobs, Coello.Qsim["q"])
     return rmse, Coello.Qsim["q"]
 
 

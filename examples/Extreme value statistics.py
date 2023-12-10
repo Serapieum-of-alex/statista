@@ -1,7 +1,4 @@
-"""Created on Wed Sep  9 23:31:11 2020.
-
-@author: mofarrag
-"""
+"""Extreme value statistics"""
 import matplotlib
 
 matplotlib.use("TkAgg")
