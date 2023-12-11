@@ -2384,7 +2384,7 @@ class Distributions:
         self,
         distribution: str,
         data: Union[list, np.ndarray] = None,
-        parameters: Dict[str, str] = None,
+        parameters: Dict[str, Number] = None,
     ):
         if distribution not in self.available_distributions.keys():
             raise ValueError(f"{distribution} not supported")
