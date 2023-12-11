@@ -584,7 +584,9 @@ class Gumbel(AbstractDistribution):
         actual_data: Union[bool, np.ndarray] = True,
         *args,
         **kwargs,
-    ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
+    ) -> Union[
+        Tuple[np.ndarray, Figure, Any], np.ndarray
+    ]:  # pylint: disable=arguments-differ
         """cdf.
 
         cdf calculates the value of Gumbel's cdf with parameters loc and scale at x.
@@ -875,7 +877,7 @@ class Gumbel(AbstractDistribution):
         xlabel: str = "Actual data",
         ylabel: str = "cdf",
         fontsize: int = 15,
-    ) -> tuple[list[Figure], list[Any]]:
+    ) -> tuple[list[Figure], list[Any]]:  # pylint: disable=arguments-differ
         """probapilityPlot.
 
         ProbapilityPlot method calculates the theoretical values based on the Gumbel distribution
@@ -1328,7 +1330,7 @@ class GEV(AbstractDistribution):
         n_samples: int = 100,
         method: str = "lmoments",
         **kargs,
-    ):
+    ):  # pylint: disable=arguments-differ
         """confidence_interval.
 
         Parameters:

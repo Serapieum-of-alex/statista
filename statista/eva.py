@@ -203,7 +203,7 @@ def ams_analysis(
         # based on the Gumbel distribution
         # parameters, theoretical cdf (or weibul), and calculate the confidence interval
         if save_plots:
-            fig, ax = dist.probapility_plot(
+            fig, _ = dist.probapility_plot(
                 param_dist,
                 cdf_weibul,
                 alpha=significance_level,
