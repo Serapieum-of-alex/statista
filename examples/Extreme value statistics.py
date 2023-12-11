@@ -38,7 +38,7 @@ Qth = gumbel_dist.theoretical_estimate(param_lmoments, cdf_weibul)
 # calculate the confidence interval
 upper, lower = gumbel_dist.confidence_interval(param_lmoments, cdf_weibul, alpha=0.1)
 # ProbapilityPlot can estimate the Qth and the lower and upper confidence interval in the process of plotting
-fig, ax = gumbel_dist.probapility_plot(param_lmoments, cdf_weibul, alpha=0.1)
+fig, ax = gumbel_dist.probability_plot(param_lmoments, cdf_weibul, alpha=0.1)
 # %%
 """
 if you want to focus only on high values, you can use a threshold to make the code focus on what is higher
@@ -49,14 +49,14 @@ param_dist = gumbel_dist.fit_model(
     method="optimization", obj_func=Gumbel.objective_fn, threshold=threshold
 )
 print(param_dist)
-gumbel_dist.probapility_plot(param_dist, cdf_weibul, alpha=0.1)
+gumbel_dist.probability_plot(param_dist, cdf_weibul, alpha=0.1)
 # %%
 threshold = 18
 param_dist = gumbel_dist.fit_model(
     method="optimization", obj_func=Gumbel.objective_fn, threshold=threshold
 )
 print(param_dist)
-gumbel_dist.probapility_plot(param_dist, cdf_weibul, alpha=0.1)
+gumbel_dist.probability_plot(param_dist, cdf_weibul, alpha=0.1)
 # %% Generalized Extreme Value (GEV)
 gev_dist = Distributions("GEV", time_series2)
 # default parameter estimation method is maximum liklihood method
@@ -106,6 +106,6 @@ CI = ConfidenceInterval.boot_strap(
 LB = CI["lb"]
 UB = CI["ub"]
 # %%
-fig, ax = gev_dist.probapility_plot(
+fig, ax = gev_dist.probability_plot(
     gev_lmom_param, cdf_weibul, func=func, n_samples=len(time_series1)
 )

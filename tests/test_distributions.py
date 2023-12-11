@@ -145,7 +145,7 @@ class TestGumbel:
         assert isinstance(upper, np.ndarray)
         assert isinstance(lower, np.ndarray)
 
-    def test_probapility_plot(
+    def test_probability_plot(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
@@ -154,7 +154,7 @@ class TestGumbel:
         dist = Gumbel(time_series2)
         cdf_weibul = PlottingPosition.weibul(time_series2)
         param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        (fig1, fig2), (_, _) = dist.probapility_plot(
+        (fig1, fig2), (_, _) = dist.probability_plot(
             param, cdf_weibul, alpha=confidence_interval_alpha
         )
         assert isinstance(fig1, Figure)

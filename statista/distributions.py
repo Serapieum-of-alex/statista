@@ -422,7 +422,7 @@ class AbstractDistribution(ABC):
         """
         pass
 
-    def probapility_plot(
+    def probability_plot(
         self,
         parameters: Dict[str, Union[float, Any]],
         prob_non_exceed: np.ndarray,
@@ -867,7 +867,7 @@ class Gumbel(AbstractDistribution):
         q_lower = np.array([qth[j] - v * std_error[j] for j in range(len(self.data))])
         return q_upper, q_lower
 
-    def probapility_plot(
+    def probability_plot(
         self,
         parameters: Dict[str, Union[float, Any]],
         cdf: np.ndarray,
@@ -1379,7 +1379,7 @@ class GEV(AbstractDistribution):
 
         return q_upper, q_lower
 
-    def probapility_plot(
+    def probability_plot(
         self,
         parameters: Dict[str, Union[float, Any]],
         prob_non_exceed,
@@ -1923,7 +1923,9 @@ class Exponential(AbstractDistribution):
         actual_data: Union[bool, np.ndarray] = True,
         *args,
         **kwargs,
-    ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
+    ) -> Union[
+        Tuple[np.ndarray, Figure, Any], np.ndarray
+    ]:  # pylint: disable=arguments-differ
         """cdf.
 
         cdf calculates the value of Gumbel's cdf with parameters loc and scale at x.
@@ -2395,7 +2397,7 @@ class Distributions:
 
         self.distribution = self.available_distributions[distribution](data, parameters)
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str):
         """Delegate method calls to the sub-class"""
         # Retrieve the attribute or method from the animal object
         try:
