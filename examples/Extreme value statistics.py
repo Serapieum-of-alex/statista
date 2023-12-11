@@ -4,13 +4,13 @@ import matplotlib
 matplotlib.use("TkAgg")
 import pandas as pd
 
-from statista.distributions import GEV, Gumbel, PlottingPosition
+from statista.distributions import GEV, Gumbel, PlottingPosition, Distributions
 from statista.confidence_interval import ConfidenceInterval
 
 time_series1 = pd.read_csv("examples/data/time_series1.txt", header=None)[0].tolist()
 time_series2 = pd.read_csv("examples/data/time_series2.txt", header=None)[0].tolist()
 # %%
-gumbel_dist = Gumbel(time_series1)
+gumbel_dist = Distributions("Gumbel", time_series1)
 # defult parameter estimation method is maximum liklihood method
 param_mle = gumbel_dist.fit_model(method="mle")
 gumbel_dist.ks()
@@ -58,7 +58,7 @@ param_dist = gumbel_dist.fit_model(
 print(param_dist)
 gumbel_dist.probapility_plot(param_dist, cdf_weibul, alpha=0.1)
 # %% Generalized Extreme Value (GEV)
-gev_dist = GEV(time_series2)
+gev_dist = Distributions("GEV", time_series2)
 # default parameter estimation method is maximum liklihood method
 gev_mle_param = gev_dist.fit_model(method="mle")
 gev_dist.ks()
