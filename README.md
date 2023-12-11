@@ -65,7 +65,7 @@ pip install git+https://github.com/MAfarrag/statista
 ## pip
 to install the last release you can easly use pip
 ```
-pip install statista==0.4.0
+pip install statista==0.5.0
 ```
 
 Quick start
