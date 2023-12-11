@@ -109,12 +109,12 @@ class Plot:
         q_act: Union[np.ndarray, list],
         pdf: Union[np.ndarray, list],
         cdf_fitted: Union[np.ndarray, list],
-        F: Union[np.ndarray, list],
+        cdf: Union[np.ndarray, list],
         q_lower: Union[np.ndarray, list],
         q_upper: Union[np.ndarray, list],
         alpha: Number,
-        fig1size: Tuple[float, float] = (10, 5),
-        fig2size: Tuple[float, float] = (6, 6),
+        fig1_size: Tuple[float, float] = (10, 5),
+        fig2_size: Tuple[float, float] = (6, 6),
         xlabel: str = "Actual data",
         ylabel: str = "cdf",
         fontsize: int = 11,
@@ -128,12 +128,12 @@ class Plot:
         q_act
         pdf
         cdf_fitted
-        F
+        cdf
         q_lower
         q_upper
         alpha
-        fig1size
-        fig2size
+        fig1_size
+        fig2_size
         xlabel
         ylabel
         fontsize
@@ -141,7 +141,7 @@ class Plot:
         Returns
         -------
         """
-        fig1 = plt.figure(figsize=fig1size)
+        fig1 = plt.figure(figsize=fig1_size)
         gs = gridspec.GridSpec(nrows=1, ncols=2, figure=fig1)
         # Plot the histogram and the fitted distribution, save it for each gauge.
         ax1 = fig1.add_subplot(gs[0, 0])
@@ -154,11 +154,11 @@ class Plot:
         ax2.plot(qx, cdf_fitted, "-", color="#27408B", linewidth=2)
 
         q_act.sort()
-        ax2.scatter(q_act, F, color="#DC143C", facecolors="none")
+        ax2.scatter(q_act, cdf, color="#DC143C", facecolors="none")
         ax2.set_xlabel(xlabel, fontsize=fontsize)
         ax2.set_ylabel(ylabel, fontsize=15)
 
-        fig2 = plt.figure(figsize=fig2size)
+        fig2 = plt.figure(figsize=fig2_size)
         plt.plot(qth, qth, "-.", color="#3D59AB", linewidth=2, label="Theoretical Data")
         # confidence interval
         plt.plot(

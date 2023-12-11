@@ -870,10 +870,10 @@ class Gumbel(AbstractDistribution):
     def probability_plot(
         self,
         parameters: Dict[str, Union[float, Any]],
-        cdf: np.ndarray,
+        cdf: Union[np.ndarray, list],
         alpha: float = 0.1,
-        fig1size: tuple = (10, 5),
-        fig2size: tuple = (6, 6),
+        fig1_size: Tuple[float, float] = (10, 5),
+        fig2_size: Tuple[float, float] = (6, 6),
         xlabel: str = "Actual data",
         ylabel: str = "cdf",
         fontsize: int = 15,
@@ -895,9 +895,9 @@ class Gumbel(AbstractDistribution):
             theoretical cdf calculated using weibul or using the distribution cdf function.
         alpha : [float]
             value between 0 and 1.
-        fig1size: [tuple]
+        fig1_size: [tuple]
             Default is (10, 5)
-        fig2size: [tuple]
+        fig2_size: [tuple]
             Default is (6, 6)
         xlabel: [str]
             Default is "Actual data"
@@ -940,8 +940,8 @@ class Gumbel(AbstractDistribution):
             q_lower,
             q_upper,
             alpha,
-            fig1size=fig1size,
-            fig2size=fig2size,
+            fig1_size=fig1_size,
+            fig2_size=fig2_size,
             xlabel=xlabel,
             ylabel=ylabel,
             fontsize=fontsize,
@@ -1382,7 +1382,7 @@ class GEV(AbstractDistribution):
     def probability_plot(
         self,
         parameters: Dict[str, Union[float, Any]],
-        prob_non_exceed,
+        cdf: Union[np.ndarray, list],
         alpha: Number = 0.1,
         func: Callable = None,
         method: str = "lmoments",
@@ -1408,7 +1408,7 @@ class GEV(AbstractDistribution):
                 Scale parameter of the GEV distribution.
             - shape: [float, int]
                 Shape parameter for the GEV distribution.
-        prob_non_exceed : [list]
+        cdf : [list]
             Theoretical cdf calculated using weibul or using the distribution cdf function.
         method: [str]
             Method used to fit the generated samples from the bootstrap method ["lmoments", "mle", "mm"]. Default is
@@ -1437,7 +1437,7 @@ class GEV(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        q_th = self.theoretical_estimate(parameters, prob_non_exceed)
+        q_th = self.theoretical_estimate(parameters, cdf)
         if func is None:
             func = GEV.ci_func
 
@@ -1446,7 +1446,7 @@ class GEV(AbstractDistribution):
             statfunction=func,
             gevfit=parameters,
             n_samples=n_samples,
-            F=prob_non_exceed,
+            F=cdf,
             method=method,
         )
         q_lower = ci["lb"]
@@ -1464,12 +1464,12 @@ class GEV(AbstractDistribution):
             self.data,
             pdf_fitted,
             cdf_fitted,
-            prob_non_exceed,
+            cdf,
             q_lower,
             q_upper,
             alpha,
-            fig1size=fig1_size,
-            fig2size=fig2_size,
+            fig1_size=fig1_size,
+            fig2_size=fig2_size,
             xlabel=xlabel,
             ylabel=ylabel,
             fontsize=fontsize,
