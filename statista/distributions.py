@@ -1106,7 +1106,9 @@ class GEV(AbstractDistribution):
         actual_data: Union[bool, np.ndarray] = True,
         *args,
         **kwargs,
-    ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
+    ) -> Union[
+        Tuple[np.ndarray, Figure, Any], np.ndarray
+    ]:  # pylint: disable=arguments-differ
         """cdf.
 
         cdf calculates the value of Gumbel's cdf with parameters loc and scale at x.
