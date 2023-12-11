@@ -1,7 +1,3 @@
-"""Created on Sun Jun 21 01:55:25 2020.
-
-@author: mofarrag
-"""
 # import os
 Path = "F:/01Algorithms/Hydrology/HAPI/examples"
 import matplotlib
@@ -19,15 +15,14 @@ from Hapi.sm.sensitivityanalysis import SensitivityAnalysis as SA
 
 Parameterpath = Path + "/data/Lumped/Coello_Lumped2021-03-08_muskingum.txt"
 Path = Path + "/data/Lumped/"
-#%%
-### meteorological data
+# %% meteorological data
 start = "2009-01-01"
 end = "2011-12-31"
 name = "Coello"
 Coello = Catchment(name, start, end)
 Coello.ReadLumpedInputs(Path + "meteo_data-MSWEP.csv")
 
-### Basic_inputs
+# %% Basic_inputs
 # catchment area
 CatArea = 1530
 # temporal resolution
