@@ -687,7 +687,7 @@ class Gumbel(AbstractDistribution):
         threshold: Union[None, float, int] = None,
         test: bool = True,
     ) -> Dict[str, float]:
-        """estimate_parameter.
+        """fit_model.
 
         EstimateParameter estimate the distribution parameter based on MLM
         (Maximum liklihood method), if an objective function is entered as an input
