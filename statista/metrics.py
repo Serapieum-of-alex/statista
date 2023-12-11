@@ -1,3 +1,4 @@
+""" Performance Metrics """
 from numbers import Number
 from typing import Union
 
@@ -5,7 +6,7 @@ import numpy as np
 from sklearn.metrics import r2_score
 
 
-def RMSE(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
+def rmse(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
     """Root Mean Squared Error. Metric for the estimation of performance of the hydrological model.
 
     Parameters
@@ -29,11 +30,11 @@ def RMSE(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
     return rmse
 
 
-def RMSEHF(
+def rmse_hf(
     obs: Union[list, np.ndarray],
     sim: Union[list, np.ndarray],
-    WStype: int,
-    N: int,
+    ws_type: int,
+    n: int,
     alpha: Union[int, float],
 ) -> float:
     """Weighted Root mean square Error for High flow.
@@ -44,9 +45,9 @@ def RMSEHF(
         observed flow
     sim: [list/array]
         simulated flow
-    WStype:
+    ws_type:
         Weighting scheme (1,2,3,4)
-    N:
+    n:
         power
     alpha:
         Upper limit for low flow weight
@@ -55,44 +56,51 @@ def RMSEHF(
     -------
     error values
     """
-    # input data validation
-    # data type
-    assert isinstance(
-        WStype, int
-    ), f"Weighting scheme should be an integer number between 1 and 4 and you entered {WStype}"
-    assert isinstance(alpha, int) or isinstance(
-        alpha, float
-    ), "alpha should be a number and between 0 & 1"
-    assert isinstance(N, Number), "N should be a number and between 0 & 1"
+    if not isinstance(ws_type, int):
+        raise TypeError(
+            f"Weighting scheme should be an integer number between 1 and 4 and you entered {ws_type}"
+        )
+
+    if not isinstance(alpha, int) or not isinstance(alpha, float):
+        raise ValueError("alpha should be a number and between 0 & 1")
+
+    if not isinstance(n, Number):
+        raise TypeError("N should be a number and between 0 & 1")
+
     # Input values
-    assert (
-        1 <= WStype <= 4
-    ), f"Weighting scheme should be an integer number between 1 and 4 you have enters {WStype}"
-    assert (
-        N >= 0
-    ), f"Weighting scheme Power should be positive number you have entered {N}"
-    assert (
-        0 < alpha < 1
-    ), f"alpha should be float number and between 0 & 1 you have entered {alpha}"
+    if not (1 <= ws_type <= 4):
+        raise ValueError(
+            f"Weighting scheme should be an integer number between 1 and 4 you have enters {ws_type}"
+        )
+
+    if not (n >= 0):
+        raise ValueError(
+            f"Weighting scheme Power should be positive number you have entered {n}"
+        )
+
+    if not (0 < alpha < 1):
+        raise ValueError(
+            f"alpha should be float number and between 0 & 1 you have entered {alpha}"
+        )
 
     # convert obs & sim into arrays
     obs = np.array(obs)
     sim = np.array(sim)
 
-    Qmax = max(obs)
-    h = obs / Qmax  # rational Discharge
+    qmax = max(obs)
+    h = obs / qmax  # rational Discharge
 
-    if WStype == 1:
-        w = h**N  # rational Discharge power N
+    if ws_type == 1:
+        w = h**n  # rational Discharge power N
     elif (
-        WStype == 2
+        ws_type == 2
     ):  # -------------------------------------------------------------N is not in the equation
-        w = (h / alpha) ** N
+        w = (h / alpha) ** n
         w[h > alpha] = 1
-    elif WStype == 3:
+    elif ws_type == 3:
         w = np.zeros(np.size(h))  # zero for h < alpha and 1 for h > alpha
         w[h > alpha] = 1
-    elif WStype == 4:
+    elif ws_type == 4:
         w = np.zeros(np.size(h))  # zero for h < alpha and 1 for h > alpha
         w[h > alpha] = 1
     else:  # sigmoid function
@@ -106,11 +114,11 @@ def RMSEHF(
     return error
 
 
-def RMSELF(
+def rmse_lf(
     obs: Union[list, np.ndarray],
-    Qsim: Union[list, np.ndarray],
-    WStype: int,
-    N: int,
+    qsim: Union[list, np.ndarray],
+    ws_type: int,
+    n: int,
     alpha: Union[int, float],
 ) -> float:
     """Weighted Root mean square Error for low flow.
@@ -132,26 +140,26 @@ def RMSELF(
     -------
     error values
     """
-    if not isinstance(WStype, int):
+    if not isinstance(ws_type, int):
         raise TypeError(
-            f"Weighting scheme should be an integer number between 1 and 4 and you entered {WStype}"
+            f"Weighting scheme should be an integer number between 1 and 4 and you entered {ws_type}"
         )
 
     if not (isinstance(alpha, int) or isinstance(alpha, float)):
         raise TypeError("alpha should be a number and between 0 & 1")
 
-    if not isinstance(N, Number):
+    if not isinstance(n, Number):
         raise TypeError("N should be a number and between 0 & 1")
 
     # Input values
-    if not 1 <= WStype <= 4:
+    if not 1 <= ws_type <= 4:
         raise ValueError(
-            f"Weighting scheme should be an integer number between 1 and 4 you have enters {WStype}"
+            f"Weighting scheme should be an integer number between 1 and 4 you have enters {ws_type}"
         )
 
-    if not N >= 0:
+    if not n >= 0:
         raise ValueError(
-            f"Weighting scheme Power should be positive number you have entered {N}"
+            f"Weighting scheme Power should be positive number you have entered {n}"
         )
 
     if not 0 < alpha < 1:
@@ -161,22 +169,22 @@ def RMSELF(
 
     # convert obs & sim into arrays
     obs = np.array(obs)
-    Qsim = np.array(Qsim)
+    qsim = np.array(qsim)
 
-    Qmax = max(obs)  # rational Discharge power N
-    qr = (Qmax - obs) / Qmax
+    qmax = max(obs)  # rational Discharge power N
+    qr = (qmax - obs) / qmax
 
-    if WStype == 1:
-        w = qr**N
-    elif WStype == 2:  # ------------------------------- N is not in the equation
+    if ws_type == 1:
+        w = qr**n
+    elif ws_type == 2:  # ------------------------------- N is not in the equation
         #        w=1-qr*((0.50 - alpha)**N)
         w = ((1 / (alpha**2)) * (1 - qr) ** 2) - ((2 / alpha) * (1 - qr)) + 1
         w[1 - qr > alpha] = 0
-    elif WStype == 3:  # the same like WStype 2
+    elif ws_type == 3:  # the same like WStype 2
         #        w=1-qr*((0.50 - alpha)**N)
         w = ((1 / (alpha**2)) * (1 - qr) ** 2) - ((2 / alpha) * (1 - qr)) + 1
         w[1 - qr > alpha] = 0
-    elif WStype == 4:
+    elif ws_type == 4:
         #        w = 1-qr*(0.50 - alpha)
         w = 1 - ((1 - qr) / alpha)
         w[1 - qr > alpha] = 0
@@ -184,7 +192,7 @@ def RMSELF(
         #        w=1/(1+np.exp(10*h-5))
         w = 1 / (1 + np.exp(-10 * qr + 5))
 
-    a = (obs - Qsim) ** 2
+    a = (obs - qsim) ** 2
     b = a * w
     c = sum(b)
     error = np.sqrt(c / len(obs))
@@ -192,8 +200,13 @@ def RMSELF(
     return error
 
 
-def KGE(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
-    """(Gupta et al. 2009) have showed the limitation of using a single error function to measure the efficiency of calculated flow and showed that Nash-Sutcliff efficiency (NSE) or RMSE can be decomposed into three component correlation, variability and bias.
+def kge(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
+    """kge.
+
+    ling–Gupta efficiency
+    (Gupta et al. 2009) have showed the limitation of using a single error function to measure the efficiency of
+    calculated flow and showed that Nash-Sutcliff efficiency (NSE) or RMSE can be decomposed into three component
+    correlation, variability and bias.
 
     Parameters
     ----------
@@ -219,8 +232,13 @@ def KGE(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     return kge
 
 
-def WB(obs, Qsim):
-    """The mean cumulative error measures how much the model succeed to reproduce the stream flow volume correctly. This error allows error compensation from time step to another and it is not an indication on how accurate is the model in the simulated flow. the naive model of Nash-Sutcliffe (simulated flow is as accurate as average observed flow) will result in WB error equals to 100 %. (Oudin et al. 2006)
+def wb(obs, qsim):
+    """wb.
+    Water balance error.
+    The mean cumulative error measures how much the model succeed to reproduce the stream flow volume correctly.
+    This error allows error compensation from time step to another and it is not an indication on how accurate is the
+    model in the simulated flow. the naive model of Nash-Sutcliffe (simulated flow is as accurate as average observed
+    flow) will result in WB error equals to 100 %. (Oudin et al. 2006)
 
      inputs:
      ----------
@@ -233,14 +251,14 @@ def WB(obs, Qsim):
      -------
      error values
     """
-    Qobssum = np.sum(obs)
-    Qsimsum = np.sum(Qsim)
-    wb = 100 * (1 - np.abs(1 - (Qsimsum / Qobssum)))
+    qobs_sum = np.sum(obs)
+    qsim_sum = np.sum(qsim)
+    wb = 100 * (1 - np.abs(1 - (qsim_sum / qobs_sum)))
 
     return wb
 
 
-def NSE(obs: np.ndarray, sim: np.ndarray):
+def nse(obs: np.ndarray, sim: np.ndarray):
     """Nash-Sutcliffe efficiency. Metric for the estimation of performance of the hydrological model.
 
     Parameters
@@ -266,7 +284,7 @@ def NSE(obs: np.ndarray, sim: np.ndarray):
     return e
 
 
-def NSEHF(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
+def nse_hf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     """NSEHF.
 
     Modified Nash-Sutcliffe efficiency. Metric for the estimation of performance of the
@@ -301,7 +319,7 @@ def NSEHF(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     return e
 
 
-def NSELF(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
+def nse_lf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     """NSELF.
 
     Modified Nash-Sutcliffe efficiency. Metric for the estimation of performance of the
@@ -336,7 +354,7 @@ def NSELF(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     return e
 
 
-def MBE(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
+def mbe(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     """MBE (mean bias error)
 
     MBE = (sim - obs)/n
@@ -357,7 +375,7 @@ def MBE(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     return (np.array(sim) - np.array(obs)).mean()
 
 
-def MAE(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
+def mae(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     """MAE (mean absolute error)
 
     MAE = |(obs - sim)|/n
@@ -378,7 +396,7 @@ def MAE(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     return np.abs(np.array(obs) - np.array(sim)).mean()
 
 
-def PearsonCorre(x: Union[list, np.ndarray], y: Union[list, np.ndarray]) -> Number:
+def pearson_corre(x: Union[list, np.ndarray], y: Union[list, np.ndarray]) -> Number:
     """Pearson correlation coefficient.
 
         - Pearson correlation coefficient is independent of the magnitude of the numbers.
@@ -405,7 +423,7 @@ def PearsonCorre(x: Union[list, np.ndarray], y: Union[list, np.ndarray]) -> Numb
     return np.corrcoef(np.array(x), np.array(y))[0][1]
 
 
-def R2(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
+def r2(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     """R2.
 
         the coefficient of determination measures how well the predicted

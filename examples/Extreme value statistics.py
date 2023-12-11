@@ -1,126 +1,111 @@
-"""Created on Wed Sep  9 23:31:11 2020.
-
-@author: mofarrag
-"""
+"""Extreme value statistics"""
 import matplotlib
 
 matplotlib.use("TkAgg")
 import pandas as pd
-from statista.distributions import GEV, ConfidenceInterval, Gumbel, PlottingPosition
+
+from statista.distributions import GEV, Gumbel, PlottingPosition, Distributions
+from statista.confidence_interval import ConfidenceInterval
 
 time_series1 = pd.read_csv("examples/data/time_series1.txt", header=None)[0].tolist()
 time_series2 = pd.read_csv("examples/data/time_series2.txt", header=None)[0].tolist()
-#%%
-Gdist = Gumbel(time_series1)
+# %%
+gumbel_dist = Distributions("Gumbel", time_series1)
 # defult parameter estimation method is maximum liklihood method
-Param_mle = Gdist.estimateParameter(method="mle")
-Gdist.ks()
-Gdist.chisquare()
-print(Param_mle)
-loc = Param_mle[0]
-scale = Param_mle[1]
+param_mle = gumbel_dist.fit_model(method="mle")
+gumbel_dist.ks()
+gumbel_dist.chisquare()
+print(param_mle)
 # calculate and plot the pdf
-pdf = Gdist.pdf(loc, scale, plot_figure=True)
-cdf, _, _ = Gdist.cdf(loc, scale, plot_figure=True)
-#%% lmoments
-Param_lmoments = Gdist.estimateParameter(method="lmoments")
-Gdist.ks()
-Gdist.chisquare()
-print(Param_lmoments)
-loc = Param_lmoments[0]
-scale = Param_lmoments[1]
+pdf = gumbel_dist.pdf(param_mle, plot_figure=True)
+cdf, _, _ = gumbel_dist.cdf(param_mle, plot_figure=True)
+# %% lmoments
+param_lmoments = gumbel_dist.fit_model(method="lmoments")
+gumbel_dist.ks()
+gumbel_dist.chisquare()
+print(param_lmoments)
 # calculate and plot the pdf
-pdf = Gdist.pdf(loc, scale, plot_figure=True)
-cdf, _, _ = Gdist.cdf(loc, scale, plot_figure=True)
-#%%
+pdf = gumbel_dist.pdf(param_lmoments, plot_figure=True)
+cdf, _, _ = gumbel_dist.cdf(param_lmoments, plot_figure=True)
+# %%
 # calculate the CDF(Non Exceedance probability) using weibul plotting position
 time_series1.sort()
 # calculate the F (Non Exceedence probability based on weibul)
-cdf_Weibul = PlottingPosition.weibul(time_series1)
+cdf_weibul = PlottingPosition.weibul(time_series1)
 # TheporeticalEstimate method calculates the theoretical values based on the Gumbel distribution
-Qth = Gdist.theporeticalEstimate(loc, scale, cdf_Weibul)
+Qth = gumbel_dist.theoretical_estimate(param_lmoments, cdf_weibul)
 # test = stats.chisquare(st.Standardize(Qth), st.Standardize(time_series1),ddof=5)
 # calculate the confidence interval
-upper, lower = Gdist.confidenceInterval(loc, scale, cdf_Weibul, alpha=0.1)
+upper, lower = gumbel_dist.confidence_interval(param_lmoments, cdf_weibul, alpha=0.1)
 # ProbapilityPlot can estimate the Qth and the lower and upper confidence interval in the process of plotting
-fig, ax = Gdist.probapilityPlot(loc, scale, cdf_Weibul, alpha=0.1)
-#%%
+fig, ax = gumbel_dist.probability_plot(param_lmoments, cdf_weibul, alpha=0.1)
+# %%
 """
 if you want to focus only on high values, you can use a threshold to make the code focus on what is higher
 this threshold.
 """
 threshold = 17
-Param_dist = Gdist.estimateParameter(
-    method="optimization", ObjFunc=Gumbel.ObjectiveFn, threshold=threshold
+param_dist = gumbel_dist.fit_model(
+    method="optimization", obj_func=Gumbel.objective_fn, threshold=threshold
 )
-print(Param_dist)
-loc = Param_dist[0]
-scale = Param_dist[1]
-Gdist.probapilityPlot(loc, scale, cdf_Weibul, alpha=0.1)
-#%%
+print(param_dist)
+gumbel_dist.probability_plot(param_dist, cdf_weibul, alpha=0.1)
+# %%
 threshold = 18
-Param_dist = Gdist.estimateParameter(
-    method="optimization", ObjFunc=Gumbel.ObjectiveFn, threshold=threshold
+param_dist = gumbel_dist.fit_model(
+    method="optimization", obj_func=Gumbel.objective_fn, threshold=threshold
 )
-print(Param_dist)
-loc = Param_dist[0]
-scale = Param_dist[1]
-Gdist.probapilityPlot(loc, scale, cdf_Weibul, alpha=0.1)
-#%% Generalized Extreme Value (GEV)
-Gevdist = GEV(time_series2)
+print(param_dist)
+gumbel_dist.probability_plot(param_dist, cdf_weibul, alpha=0.1)
+# %% Generalized Extreme Value (GEV)
+gev_dist = Distributions("GEV", time_series2)
 # default parameter estimation method is maximum liklihood method
-mle_param = Gevdist.estimateParameter(method="mle")
-Gevdist.ks()
-Gevdist.chisquare()
+gev_mle_param = gev_dist.fit_model(method="mle")
+gev_dist.ks()
+gev_dist.chisquare()
 
-print(mle_param)
-shape = mle_param[0]
-loc = mle_param[1]
-scale = mle_param[2]
+print(gev_mle_param)
 # calculate and plot the pdf
-pdf, fig, ax = Gevdist.pdf(shape, loc, scale, plot_figure=True)
-cdf, _, _ = Gevdist.cdf(shape, loc, scale, plot_figure=True)
-#%% lmoment method
-lmom_param = Gevdist.estimateParameter(method="lmoments")
-print(lmom_param)
-shape = lmom_param[0]
-loc = lmom_param[1]
-scale = lmom_param[2]
+pdf, fig, ax = gev_dist.pdf(gev_mle_param, plot_figure=True)
+cdf, _, _ = gev_dist.cdf(gev_mle_param, plot_figure=True)
+# %% lmoment method
+gev_lmom_param = gev_dist.fit_model(method="lmoments")
+print(gev_lmom_param)
 # calculate and plot the pdf
-pdf, fig, ax = Gevdist.pdf(shape, loc, scale, plot_figure=True)
-cdf, _, _ = Gevdist.cdf(shape, loc, scale, plot_figure=True)
+pdf, fig, ax = gev_dist.pdf(gev_lmom_param, plot_figure=True)
+cdf, _, _ = gev_dist.cdf(gev_lmom_param, plot_figure=True)
 #%%
 time_series1.sort()
 # calculate the F (Non Exceedence probability based on weibul)
-cdf_Weibul = PlottingPosition.weibul(time_series1)
-T = PlottingPosition.weibul(time_series1, option=2)
+cdf_weibul = PlottingPosition.weibul(time_series1)
+T = PlottingPosition.weibul(time_series1, return_period=True)
 # TheporeticalEstimate method calculates the theoretical values based on the Gumbel distribution
-Qth = Gevdist.theporeticalEstimate(shape, loc, scale, cdf_Weibul)
+Qth = gev_dist.theoretical_estimate(gev_lmom_param, cdf_weibul)
 
 func = GEV.ci_func
-upper, lower = Gevdist.confidenceInterval(
-    shape,
-    loc,
-    scale,
-    F=cdf_Weibul,
+upper, lower = gev_dist.confidence_interval(
+    gev_lmom_param,
+    prob_non_exceed=cdf_weibul,
     alpha=0.1,
     statfunction=func,
     n_samples=len(time_series1),
+    method="lmoments",
 )
-#%%
+# %%
 """
 calculate the confidence interval using the boot strap method directly
 """
-CI = ConfidenceInterval.BootStrap(
+CI = ConfidenceInterval.boot_strap(
     time_series1,
     statfunction=func,
-    gevfit=Param_dist,
+    gevfit=gev_lmom_param,
     n_samples=len(time_series1),
-    F=cdf_Weibul,
+    F=cdf_weibul,
+    method="lmoments",
 )
-LB = CI["LB"]
-UB = CI["UB"]
-#%%
-fig, ax = Gevdist.probapilityPlot(
-    shape, loc, scale, cdf_Weibul, func=func, n_samples=len(time_series1)
+LB = CI["lb"]
+UB = CI["ub"]
+# %%
+fig, ax = gev_dist.probability_plot(
+    gev_lmom_param, cdf_weibul, func=func, n_samples=len(time_series1)
 )

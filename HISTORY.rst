@@ -35,10 +35,18 @@ History
 * modify the pdf, cdf, and probability plot plots
 * create separate plot and confidence_interval modules.
 
-0.4.0 (2023-011-23)
+0.4.0 (2023-11-23)
 ------------------
 
 * add Pearson 3 distribution
 * Use setup.py instead of pyproject.toml.
 * Correct pearson correlation coefficient and add documentation .
 * replace the pdf and cdf by the methods from scipy package.
+
+0.5.0 (2023-12-11)
+------------------
+
+* Unify the all the methods for the distributions.
+* Use factory design pattern to create the distributions.
+* add tests for the eva module.
+* use snake_case for the methods and variables.

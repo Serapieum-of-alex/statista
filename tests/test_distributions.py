@@ -1,57 +1,60 @@
+"""Test distributions module."""
 from typing import List
 
 import numpy as np
 from matplotlib.figure import Figure
 
+from statista.confidence_interval import ConfidenceInterval
 from statista.distributions import (
     GEV,
-    ConfidenceInterval,
     Gumbel,
     PlottingPosition,
     Exponential,
     Normal,
+    Distributions,
 )
 
 
-def test_plotting_position_weibul(
-    time_series1: list,
-):
-    cdf = PlottingPosition.weibul(time_series1, option=1)
-    assert isinstance(cdf, np.ndarray)
-    rp = PlottingPosition.weibul(time_series1, option=2)
-    assert isinstance(rp, np.ndarray)
-
-
-def test_plotting_position_rp(
-    time_series1: list,
-):
-    cdf = PlottingPosition.weibul(time_series1, option=1)
-    rp = PlottingPosition.returnPeriod(cdf)
-    assert isinstance(rp, np.ndarray)
-
-
-class TestGumbel:
-    def test_create_gumbel_instance(
+class TestPlottingPosition:
+    def test_plotting_position_weibul(
         self,
         time_series1: list,
     ):
-        Gdist = Gumbel(time_series1)
-        assert isinstance(Gdist.data, np.ndarray)
-        assert isinstance(Gdist.data_sorted, np.ndarray)
+        cdf = PlottingPosition.weibul(time_series1)
+        assert isinstance(cdf, np.ndarray)
+        rp = PlottingPosition.weibul(time_series1, return_period=True)
+        assert isinstance(rp, np.ndarray)
 
-    def test_gumbel_estimate_parameter(
+    def test_plotting_position_rp(
+        self,
+        time_series1: list,
+    ):
+        cdf = PlottingPosition.weibul(time_series1)
+        rp = PlottingPosition.return_period(cdf)
+        assert isinstance(rp, np.ndarray)
+
+
+class TestGumbel:
+    def test_create_instance(
+        self,
+        time_series1: list,
+    ):
+        dist = Gumbel(time_series1)
+        assert isinstance(dist.data, np.ndarray)
+        assert isinstance(dist.data_sorted, np.ndarray)
+
+    def test_estimate_parameter(
         self,
         time_series2: list,
         dist_estimation_parameters: List[str],
     ):
-        Gdist = Gumbel(time_series2)
+        dist = Gumbel(time_series2)
         for i in range(len(dist_estimation_parameters)):
-            param = Gdist.estimateParameter(
-                method=dist_estimation_parameters[i], test=False
-            )
-            assert isinstance(param, list)
-            assert Gdist.loc
-            assert Gdist.scale
+            param = dist.fit_model(method=dist_estimation_parameters[i], test=False)
+            assert isinstance(param, dict)
+            assert all(i in param.keys() for i in ["loc", "scale"])
+            assert dist.parameters.get("loc") is not None
+            assert dist.parameters.get("scale") is not None
 
     def test_parameter_estimation_optimization(
         self,
@@ -59,107 +62,100 @@ class TestGumbel:
         dist_estimation_parameters: List[str],
         parameter_estimation_optimization_threshold: int,
     ):
-        Gdist = Gumbel(time_series2)
-        param = Gdist.estimateParameter(
+        dist = Gumbel(time_series2)
+        param = dist.fit_model(
             method="optimization",
-            ObjFunc=Gumbel.ObjectiveFn,
+            obj_func=Gumbel.objective_fn,
             threshold=parameter_estimation_optimization_threshold,
         )
-        assert isinstance(param, list)
-        assert Gdist.loc
-        assert Gdist.scale
+        assert isinstance(param, dict)
+        assert all(i in param.keys() for i in ["loc", "scale"])
+        assert dist.parameters.get("loc") is not None
+        assert dist.parameters.get("scale") is not None
 
-    def test_gumbel_ks(
+    def test_ks(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
     ):
-        Gdist = Gumbel(time_series2)
-        Gdist.estimateParameter(method=dist_estimation_parameters_ks, test=False)
-        Gdist.ks()
-        assert Gdist.Dstatic
-        assert Gdist.KS_Pvalue
+        dist = Gumbel(time_series2)
+        dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        dist.ks()
+        assert dist.Dstatic
+        assert dist.KS_Pvalue
 
-    def test_gumbel_chisquare(
+    def test_chisquare(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
     ):
-        Gdist = Gumbel(time_series2)
-        Gdist.estimateParameter(method=dist_estimation_parameters_ks, test=False)
-        Gdist.chisquare()
-        assert Gdist.chistatic
-        assert Gdist.chi_Pvalue
+        dist = Gumbel(time_series2)
+        dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        dist.chisquare()
+        assert dist.chistatic
+        assert dist.chi_Pvalue
 
-    def test_gumbel_pdf(
+    def test_pdf(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
     ):
-        Gdist = Gumbel(time_series2)
-        Param = Gdist.estimateParameter(
-            method=dist_estimation_parameters_ks, test=False
-        )
-        pdf, fig, ax = Gdist.pdf(Param[0], Param[1], plot_figure=True)
+        dist = Gumbel(time_series2)
+        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+
+        pdf, fig, ax = dist.pdf(param, plot_figure=True)
         assert isinstance(pdf, np.ndarray)
         assert isinstance(fig, Figure)
 
-    def test_gumbel_cdf(
+    def test_cdf(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
     ):
-        Gdist = Gumbel(time_series2)
-        Param = Gdist.estimateParameter(
-            method=dist_estimation_parameters_ks, test=False
-        )
-        cdf, fig, ax = Gdist.cdf(Param[0], Param[1], plot_figure=True)
+        dist = Gumbel(time_series2)
+        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        cdf, fig, ax = dist.cdf(param, plot_figure=True)
+
         assert isinstance(cdf, np.ndarray)
         assert isinstance(fig, Figure)
 
-    def test_gumbel_TheporeticalEstimate(
+    def test_theoretical_estimate(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
     ):
-        Gdist = Gumbel(time_series2)
-        cdf_Weibul = PlottingPosition.weibul(time_series2)
-        Param = Gdist.estimateParameter(
-            method=dist_estimation_parameters_ks, test=False
-        )
-        Qth = Gdist.theporeticalEstimate(Param[0], Param[1], cdf_Weibul)
-        assert isinstance(Qth, np.ndarray)
+        dist = Gumbel(time_series2)
+        cdf_weibul = PlottingPosition.weibul(time_series2)
+        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        qth = dist.theoretical_estimate(param, cdf_weibul)
+        assert isinstance(qth, np.ndarray)
 
-    def test_gumbel_confidence_interval(
+    def test_confidence_interval(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
         confidence_interval_alpha: float,
     ):
-        Gdist = Gumbel(time_series2)
-        cdf_Weibul = PlottingPosition.weibul(time_series2)
-        Param = Gdist.estimateParameter(
-            method=dist_estimation_parameters_ks, test=False
-        )
-        upper, lower = Gdist.confidenceInterval(
-            Param[0], Param[1], cdf_Weibul, alpha=confidence_interval_alpha
+        dist = Gumbel(time_series2)
+        cdf_weibul = PlottingPosition.weibul(time_series2)
+        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        upper, lower = dist.confidence_interval(
+            param, cdf_weibul, alpha=confidence_interval_alpha
         )
         assert isinstance(upper, np.ndarray)
         assert isinstance(lower, np.ndarray)
 
-    def test_gumbel_probapility_plot(
+    def test_probability_plot(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
         confidence_interval_alpha: float,
     ):
-        Gdist = Gumbel(time_series2)
-        cdf_Weibul = PlottingPosition.weibul(time_series2)
-        Param = Gdist.estimateParameter(
-            method=dist_estimation_parameters_ks, test=False
-        )
-        [fig1, fig2], [ax1, ax2] = Gdist.probapilityPlot(
-            Param[0], Param[1], cdf_Weibul, alpha=confidence_interval_alpha
+        dist = Gumbel(time_series2)
+        cdf_weibul = PlottingPosition.weibul(time_series2)
+        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        (fig1, fig2), (_, _) = dist.probability_plot(
+            param, cdf_weibul, alpha=confidence_interval_alpha
         )
         assert isinstance(fig1, Figure)
         assert isinstance(fig2, Figure)
@@ -170,57 +166,56 @@ class TestGEV:
         self,
         time_series1: list,
     ):
-        Gdist = GEV(time_series1)
-        assert isinstance(Gdist.data, np.ndarray)
-        assert isinstance(Gdist.data_sorted, np.ndarray)
+        dist = GEV(time_series1)
+        assert isinstance(dist.data, np.ndarray)
+        assert isinstance(dist.data_sorted, np.ndarray)
 
     def test_gev_estimate_parameter(
         self,
         time_series1: list,
         dist_estimation_parameters: List[str],
     ):
-        Gdist = GEV(time_series1)
+        dist = GEV(time_series1)
         for i in range(len(dist_estimation_parameters)):
-            param = Gdist.estimateParameter(
-                method=dist_estimation_parameters[i], test=False
-            )
-            assert isinstance(param, list)
-            assert Gdist.loc
-            assert Gdist.scale
-            assert Gdist.shape
+            param = dist.fit_model(method=dist_estimation_parameters[i], test=False)
+
+            assert isinstance(param, dict)
+            assert all(i in param.keys() for i in ["loc", "scale", "shape"])
+            assert dist.parameters.get("loc") is not None
+            assert dist.parameters.get("scale") is not None
+            assert dist.parameters.get("shape") is not None
 
     def test_gev_ks(
         self,
         time_series1: list,
         dist_estimation_parameters_ks: str,
     ):
-        Gdist = GEV(time_series1)
-        Gdist.estimateParameter(method=dist_estimation_parameters_ks, test=False)
-        Gdist.ks()
-        assert Gdist.Dstatic
-        assert Gdist.KS_Pvalue
+        dist = GEV(time_series1)
+        dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        dist.ks()
+        assert dist.Dstatic
+        assert dist.KS_Pvalue
 
     def test_gev_chisquare(
         self,
         time_series1: list,
         dist_estimation_parameters_ks: str,
     ):
-        Gdist = GEV(time_series1)
-        Gdist.estimateParameter(method=dist_estimation_parameters_ks, test=False)
-        Gdist.chisquare()
-        assert Gdist.chistatic
-        assert Gdist.chi_Pvalue
+        dist = GEV(time_series1)
+        dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        dist.chisquare()
+        assert dist.chistatic
+        assert dist.chi_Pvalue
 
     def test_gev_pdf(
         self,
         time_series1: list,
         dist_estimation_parameters_ks: str,
     ):
-        Gdist = GEV(time_series1)
-        Param = Gdist.estimateParameter(
-            method=dist_estimation_parameters_ks, test=False
-        )
-        pdf, fig, ax = Gdist.pdf(Param[0], Param[1], Param[2], plot_figure=True)
+        dist = GEV(time_series1)
+        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+
+        pdf, fig, ax = dist.pdf(param, plot_figure=True)
         assert isinstance(pdf, np.ndarray)
         assert isinstance(fig, Figure)
 
@@ -229,26 +224,22 @@ class TestGEV:
         time_series1: list,
         dist_estimation_parameters_ks: str,
     ):
-        Gdist = GEV(time_series1)
-        Param = Gdist.estimateParameter(
-            method=dist_estimation_parameters_ks, test=False
-        )
-        cdf, fig, ax = Gdist.cdf(Param[0], Param[1], Param[2], plot_figure=True)
+        dist = GEV(time_series1)
+        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        cdf, fig, ax = dist.cdf(param, plot_figure=True)
         assert isinstance(cdf, np.ndarray)
         assert isinstance(fig, Figure)
 
-    def test_gev_TheporeticalEstimate(
+    def test_gev_theoretical_estimate(
         self,
         time_series1: list,
         dist_estimation_parameters_ks: str,
     ):
-        Gdist = GEV(time_series1)
-        cdf_Weibul = PlottingPosition.weibul(time_series1)
-        Param = Gdist.estimateParameter(
-            method=dist_estimation_parameters_ks, test=False
-        )
-        Qth = Gdist.theporeticalEstimate(Param[0], Param[1], Param[2], cdf_Weibul)
-        assert isinstance(Qth, np.ndarray)
+        dist = GEV(time_series1)
+        cdf_weibul = PlottingPosition.weibul(time_series1)
+        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        qth = dist.theoretical_estimate(param, cdf_weibul)
+        assert isinstance(qth, np.ndarray)
 
     def test_gev_confidence_interval(
         self,
@@ -256,17 +247,14 @@ class TestGEV:
         dist_estimation_parameters_ks: str,
         confidence_interval_alpha: float,
     ):
-        Gdist = GEV(time_series1)
-        cdf_Weibul = PlottingPosition.weibul(time_series1)
-        Param = Gdist.estimateParameter(
-            method=dist_estimation_parameters_ks, test=False
-        )
+        dist = GEV(time_series1)
+        cdf_weibul = PlottingPosition.weibul(time_series1)
+        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+
         func = GEV.ci_func
-        upper, lower = Gdist.confidenceInterval(
-            Param[0],
-            Param[1],
-            Param[2],
-            F=cdf_Weibul,
+        upper, lower = dist.confidence_interval(
+            param,
+            prob_non_exceed=cdf_weibul,
             alpha=confidence_interval_alpha,
             statfunction=func,
             n_samples=len(time_series1),
@@ -280,26 +268,28 @@ class TestGEV:
         dist_estimation_parameters_ks: str,
         confidence_interval_alpha: float,
     ):
-        Gdist = GEV(time_series1)
-        cdf_Weibul = PlottingPosition.weibul(time_series1)
-        Param = Gdist.estimateParameter(
-            method=dist_estimation_parameters_ks, test=False
-        )
+        dist = GEV(time_series1)
+        cdf_weibul = PlottingPosition.weibul(time_series1)
+        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+
         func = GEV.ci_func
 
-        CI = ConfidenceInterval.BootStrap(
+        ci = ConfidenceInterval.boot_strap(
             time_series1,
             statfunction=func,
-            gevfit=Param,
+            gevfit=param,
             n_samples=len(time_series1),
-            F=cdf_Weibul,
+            F=cdf_weibul,
             method="lmoments",
         )
-        LB = CI["LB"]
-        UB = CI["UB"]
+        lb = ci["lb"]
+        ub = ci["ub"]
 
-        assert isinstance(LB, np.ndarray)
-        assert isinstance(UB, np.ndarray)
+        assert isinstance(lb, np.ndarray)
+        assert isinstance(ub, np.ndarray)
+
+
+# class TestAbstractDistrition:
 
 
 class TestExponential:
@@ -307,34 +297,33 @@ class TestExponential:
         self,
         time_series1: list,
     ):
-        Edist = Exponential(time_series1)
-        assert isinstance(Edist.data, np.ndarray)
-        assert isinstance(Edist.data_sorted, np.ndarray)
+        expo_dist = Exponential(time_series1)
+        assert isinstance(expo_dist.data, np.ndarray)
+        assert isinstance(expo_dist.data_sorted, np.ndarray)
 
     def test_estimate_parameter(
         self,
         time_series2: list,
         dist_estimation_parameters: List[str],
     ):
-        Edist = Exponential(time_series2)
+        expo_dist = Exponential(time_series2)
         for i in range(len(dist_estimation_parameters)):
-            param = Edist.estimateParameter(
+            param = expo_dist.fit_model(
                 method=dist_estimation_parameters[i], test=False
             )
-            assert isinstance(param, list)
-            assert Edist.loc
-            assert Edist.scale
+            assert isinstance(param, dict)
+            assert all(i in param.keys() for i in ["loc", "scale"])
+            assert expo_dist.parameters.get("loc") is not None
+            assert expo_dist.parameters.get("scale") is not None
 
     def test_pdf(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
     ):
-        Edist = Exponential(time_series2)
-        Param = Edist.estimateParameter(
-            method=dist_estimation_parameters_ks, test=False
-        )
-        pdf, fig, ax = Edist.pdf(Param[0], Param[1], plot_figure=True)
+        expo_dist = Exponential(time_series2)
+        param = expo_dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        pdf, fig, ax = expo_dist.pdf(param, plot_figure=True)
         assert isinstance(pdf, np.ndarray)
         assert isinstance(fig, Figure)
 
@@ -343,26 +332,22 @@ class TestExponential:
         time_series2: list,
         dist_estimation_parameters_ks: str,
     ):
-        Edist = Exponential(time_series2)
-        Param = Edist.estimateParameter(
-            method=dist_estimation_parameters_ks, test=False
-        )
-        cdf, fig, ax = Edist.cdf(Param[0], Param[1], plot_figure=True)
+        expo_dist = Exponential(time_series2)
+        param = expo_dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        cdf, fig, ax = expo_dist.cdf(param, plot_figure=True)
         assert isinstance(cdf, np.ndarray)
         assert isinstance(fig, Figure)
 
-    def test_TheporeticalEstimate(
+    def test_theoretical_estimate(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
     ):
-        Edist = Exponential(time_series2)
-        cdf_Weibul = PlottingPosition.weibul(time_series2)
-        Param = Edist.estimateParameter(
-            method=dist_estimation_parameters_ks, test=False
-        )
-        Qth = Edist.theporeticalEstimate(Param[0], Param[1], cdf_Weibul)
-        assert isinstance(Qth, np.ndarray)
+        expo_dist = Exponential(time_series2)
+        cdf_weibul = PlottingPosition.weibul(time_series2)
+        param = expo_dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        qth = expo_dist.theoretical_estimate(param, cdf_weibul)
+        assert isinstance(qth, np.ndarray)
 
 
 class TestNormal:
@@ -370,32 +355,31 @@ class TestNormal:
         self,
         time_series1: list,
     ):
-        Edist = Normal(time_series1)
-        assert isinstance(Edist.data, np.ndarray)
-        assert isinstance(Edist.data_sorted, np.ndarray)
+        norm_dist = Normal(time_series1)
+        assert isinstance(norm_dist.data, np.ndarray)
+        assert isinstance(norm_dist.data_sorted, np.ndarray)
 
     def test_estimate_parameter(
         self,
         time_series2: list,
         dist_estimation_parameters: List[str],
     ):
-        Edist = Normal(time_series2)
+        norm_dist = Normal(time_series2)
         for method in dist_estimation_parameters:
-            param = Edist.estimateParameter(method=method, test=False)
-            assert isinstance(param, list)
-            assert Edist.loc
-            assert Edist.scale
+            param = norm_dist.fit_model(method=method, test=False)
+            assert isinstance(param, dict)
+            assert all(i in param.keys() for i in ["loc", "scale"])
+            assert norm_dist.parameters.get("loc") is not None
+            assert norm_dist.parameters.get("scale") is not None
 
     def test_pdf(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
     ):
-        Edist = Normal(time_series2)
-        Param = Edist.estimateParameter(
-            method=dist_estimation_parameters_ks, test=False
-        )
-        pdf, fig, ax = Edist.pdf(Param[0], Param[1], plot_figure=True)
+        norm_dist = Normal(time_series2)
+        param = norm_dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        pdf, fig, ax = norm_dist.pdf(param, plot_figure=True)
         assert isinstance(pdf, np.ndarray)
         assert isinstance(fig, Figure)
 
@@ -404,23 +388,42 @@ class TestNormal:
         time_series2: list,
         dist_estimation_parameters_ks: str,
     ):
-        Edist = Normal(time_series2)
-        Param = Edist.estimateParameter(
-            method=dist_estimation_parameters_ks, test=False
-        )
-        cdf, fig, ax = Edist.cdf(Param[0], Param[1], plot_figure=True)
+        norm_dist = Normal(time_series2)
+        param = norm_dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        cdf, fig, ax = norm_dist.cdf(param, plot_figure=True)
         assert isinstance(cdf, np.ndarray)
         assert isinstance(fig, Figure)
 
-    def test_TheporeticalEstimate(
+    def test_theoretical_estimate(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
     ):
-        Edist = Normal(time_series2)
-        cdf_Weibul = PlottingPosition.weibul(time_series2)
-        Param = Edist.estimateParameter(
-            method=dist_estimation_parameters_ks, test=False
-        )
-        Qth = Edist.theporeticalEstimate(Param[0], Param[1], cdf_Weibul)
-        assert isinstance(Qth, np.ndarray)
+        norm_dist = Normal(time_series2)
+        cdf_weibul = PlottingPosition.weibul(time_series2)
+        param = norm_dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        qth = norm_dist.theoretical_estimate(param, cdf_weibul)
+        assert isinstance(qth, np.ndarray)
+
+
+class TestDistribution:
+    def test_create_instance(
+        self,
+        time_series1: list,
+    ):
+        dist = Distributions("Gumbel", data=time_series1)
+        assert isinstance(dist.data, np.ndarray)
+        assert isinstance(dist.data_sorted, np.ndarray)
+
+    def test_getter_method(
+        self,
+        time_series2: list,
+        dist_estimation_parameters: List[str],
+    ):
+        dist = Distributions("Gumbel", data=time_series2)
+        for i in range(len(dist_estimation_parameters)):
+            param = dist.fit_model(method=dist_estimation_parameters[i], test=False)
+            assert isinstance(param, dict)
+            assert all(i in param.keys() for i in ["loc", "scale"])
+            assert dist.parameters.get("loc") is not None
+            assert dist.parameters.get("scale") is not None

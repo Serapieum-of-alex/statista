@@ -13,8 +13,8 @@ class ConfidenceInterval:
         pass
 
     @staticmethod
-    def BSIndexes(data, n_samples=10000) -> np.ndarray:
-        """BSIndexes.
+    def bs_indexes(data, n_samples=10000) -> np.ndarray:
+        """bs_indexes.
 
             - generate random indeces to shuffle the data of the given array.
             - using the indeces, you can access the given data array and obtain randomly generated data from the
@@ -33,7 +33,7 @@ class ConfidenceInterval:
         Examples
         --------
         >>> data = [3.1, 2.4, 5.6, 8.4]
-        >>> indeces = ConfidenceInterval.BSIndexes(data, n_samples=2)
+        >>> indeces = ConfidenceInterval.bs_indexes(data, n_samples=2)
         >>> print(indeces)
         >>> [1, 4, 4, 3]
         >>> print(indeces)
@@ -43,14 +43,17 @@ class ConfidenceInterval:
             yield randint(data.shape[0], size=(data.shape[0],))
 
     @staticmethod
-    def BootStrap(
+    def boot_strap(
         data: Union[list, np.ndarray],
         statfunction,
         alpha: float = 0.05,
         n_samples: int = 100,
         **kargs,
     ):  # ->  Dict[str, OrderedDict[str, Tuple[Any, Any]]]
-        """Calculate confidence intervals using parametric bootstrap and the percentil interval method This is used to obtain confidence intervals for the estimators and the return values for several return values.
+        """boot_strap
+
+        Calculate confidence intervals using parametric bootstrap and the percentil interval method This is used to
+        obtain confidence intervals for the estimators and the return values for several return values.
 
         More info about bootstrapping can be found on:
             - Efron: "An Introduction to the Bootstrap", Chapman & Hall (1993)
@@ -75,7 +78,7 @@ class ConfidenceInterval:
         # We don't need to generate actual samples; that would take more memory.
         # Instead, we can generate just the indexes, and then apply the statfun
         # to those indexes.
-        bootindexes = ConfidenceInterval.BSIndexes(tdata[0], n_samples)
+        bootindexes = ConfidenceInterval.bs_indexes(tdata[0], n_samples)
         stat = np.array(
             [
                 statfunction(*(x[indexes] for x in tdata), **kargs)
@@ -114,11 +117,11 @@ class ConfidenceInterval:
             # point in other axes.
             out = stat[(nvals, np.indices(nvals.shape)[1:].squeeze())]
 
-        UB = out[0, 3:]
-        LB = out[1, 3:]
+        ub = out[0, 3:]
+        lb = out[1, 3:]
         params = OrderedDict()
         params["shape"] = (out[0, 0], out[1, 0])
         params["location"] = (out[0, 1], out[1, 1])
         params["scale"] = (out[0, 2], out[1, 3])
 
-        return {"LB": LB, "UB": UB, "params": params}
+        return {"lb": lb, "ub": ub, "params": params}
