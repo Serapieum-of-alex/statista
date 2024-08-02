@@ -244,7 +244,7 @@ def wb(obs, qsim):
      ----------
     obs: [list/array]
          observed flow
-     sim: [list/array]
+    sim: [list/array]
          simulated flow
 
      Returns
@@ -396,7 +396,9 @@ def mae(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     return np.abs(np.array(obs) - np.array(sim)).mean()
 
 
-def pearson_corre(x: Union[list, np.ndarray], y: Union[list, np.ndarray]) -> Number:
+def pearson_corr_coeff(
+    x: Union[list, np.ndarray], y: Union[list, np.ndarray]
+) -> Number:
     """Pearson correlation coefficient.
 
         - Pearson correlation coefficient is independent of the magnitude of the numbers.

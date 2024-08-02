@@ -1035,6 +1035,7 @@ class GEV(AbstractDistribution):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val, "shape": value}
+
             - loc: [numeric]
                 location parameter of the GEV distribution.
             - scale: [numeric]

@@ -1,5 +1,5 @@
 # import os
-Path = "F:/01Algorithms/Hydrology/HAPI/examples"
+Path = "F:/algorithms/Hydrology/HAPI/examples"
 import matplotlib
 
 matplotlib.use("TkAgg")
