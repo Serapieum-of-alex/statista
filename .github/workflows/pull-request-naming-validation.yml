@@ -14,9 +14,9 @@ jobs:
       - name: Check Branch Name
         run: |
           # Define your branch name pattern using regex
-          modules="distributions|tools|sensitivity|plot|parameters|metrics|eva|confidence_interval"
+          modules="distributions|tools|sensitivity|plot|parameters|metrics|eva|confidence_interval|dev"
 
-          pattern=f"^({modules})/(feature|bugfix|hotfix|release|docs)/[a-zA-Z0-9_-]+$"
+          pattern=f"^({modules})/(feature|bugfix|hotfix|release|docs)(/[a-zA-Z0-9_-]+)?$"
 
           branch_name=$(echo "${{ github.ref }}" | awk -F/ '{print $3}')
 
