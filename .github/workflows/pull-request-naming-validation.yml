@@ -23,6 +23,7 @@ jobs:
           if [[ ! "${branch_name}" =~ ${pattern} ]]; then
             echo "Branch name does not match the naming convention."
             echo "Expected format: 'type/branch-name'"
+            echo "given: '${branch_name}'"
             exit 1
           fi
 
