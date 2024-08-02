@@ -1,4 +1,5 @@
 """Statistical distributions."""
+
 from numbers import Number
 from typing import Any, List, Tuple, Union, Dict, Callable
 from abc import ABC, abstractmethod
@@ -13,6 +14,7 @@ from statista.parameters import Lmoments
 from statista.tools import Tools as st
 from statista.plot import Plot
 from statista.confidence_interval import ConfidenceInterval
+
 
 ninf = 1e-5
 
@@ -39,7 +41,7 @@ class PlottingPosition:
         Parameters
         ----------
         prob_non_exceed: [list/array]
-            non exceedence probability.
+            non-exceedance probability.
 
         Returns
         -------
@@ -69,6 +71,16 @@ class PlottingPosition:
         -------
         cdf/T: [list]
             list of cumulative distribution function or return period.
+
+        Examples
+        --------
+        >>> from statista.distributions import PlottingPosition
+
+        >>> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        >>> cdf = PlottingPosition.weibul(data)
+        >>> print(cdf)
+        [0.09090909 0.18181818 0.27272727 0.36363636 0.45454545 0.54545455
+         0.63636364 0.72727273 0.81818182 0.90909091]
         """
         data = np.array(data)
         data.sort()
