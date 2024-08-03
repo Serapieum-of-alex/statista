@@ -495,17 +495,26 @@ class Gumbel(AbstractDistribution):
 
     The Gumbel distribution is used to model the distribution of the maximum (or the minimum) of a number of samples of various distributions.
 
-    The probability density function (PDF) of the Gumbel distribution (Type I) is:
+    - The probability density function (PDF) of the Gumbel distribution (Type I) is:
 
-    .. math::
-        f(x; \\zeta, \\delta) = \\frac{1}{\\delta} \\exp\\left(-\\frac{x - \\zeta}{\\delta} \\right)
-        \\exp\\left(-\\exp\\left(-\\frac{x - \\zeta}{\\delta} \\right) \\right)
-      :label: gumbel-equation
+        .. math::
+            f(x; \\zeta, \\delta) = \\frac{1}{\\delta} \\exp\\left(-\\frac{x - \\zeta}{\\delta} \\right)
+            \\exp\\left(-\\exp\\left(-\\frac{x - \\zeta}{\\delta} \\right) \\right)
+          :label: gumbel-pdf
 
+        where :math:`\\zeta` (zeta) is the location parameter, and :math:`\\delta`  (delta) is the scale parameter.
 
-    where :math:`\\zeta` is the location parameter, and :math:`\\delta` is the scale parameter.
+        The probability density function above is defined in the “un-standardized” form.
 
-    The probability density function above is defined in the “un-standardized” form.
+    The Gumbel distribution is a special case of the Generalized Extreme Value (GEV) distribution for a particular
+    choice of the shape parameter, :math:`\\xi = 0` (xi).
+
+    - The cumulative distribution functions.
+
+        .. math::
+            F(x; \\zeta, \\delta) = \\exp\\left(-\\exp\\left(-\\frac{x - \\zeta}{\\delta} \\right) \\right)
+          :label: gumbel-cdf
+
     """
 
     cdf_Weibul: ndarray
@@ -992,25 +1001,37 @@ class Gumbel(AbstractDistribution):
 class GEV(AbstractDistribution):
     """GEV (Generalized Extreme value statistics)
 
-    .. math::
-        f(x)=\\frac{1}{\\delta}\\mathrm{*}{\\mathrm{Q(x)}}^{\\xi+1}\\mathrm{
-        *} e^{\\mathrm{-Q(x)}}
+    - The probability density function (PDF) of the Generalized-extreme-value distribution is:
 
-    .. math::
-        f(x)=
-        \\begin{cases}
-            \\left(1+ \\xi \\left(\\frac{x-\\zeta}{\\delta} \\right) \\right)^\\frac{-1}{\\xi} &
-            \\quad\\land\\xi\\neq 0 \\\\
-            e^{- \\left(\\frac{x-\\zeta}{\\delta} \\right)} & \\quad \\land \\xi=0
-        \\end{cases}
-      :label: gev-equation
+        .. math::
+            f(x; \\zeta, \\delta, \\xi)=\\frac{1}{\\delta}\\mathrm{*}{\\mathrm{Q(x)}}^{\\xi+1}\\mathrm{
+            *} e^{\\mathrm{-Q(x)}}
 
+        .. math::
+            Q(x; \\zeta, \\delta, \\xi)=
+            \\begin{cases}
+                \\left(1+ \\xi \\left(\\frac{x-\\zeta}{\\delta} \\right) \\right)^\\frac{-1}{\\xi} &
+                \\quad\\land\\xi\\neq 0 \\\\
+                e^{- \\left(\\frac{x-\\zeta}{\\delta} \\right)} & \\quad \\land \\xi=0
+            \\end{cases}
+          :label: gev-pdf
 
-    Where the :math:`\\delta` is the scale parameter affecting the extension of the x-direction, :math:`\\zeta` is the
-    location parameter, and :math:`\\xi` is the shape parameter.
+        Where the :math:`\\delta` (delta) is the scale parameter affecting the extension of the x-direction,
+        :math:`\\zeta` (zeta) is the location parameter, and :math:`\\xi` (xi) is the shape parameter.
 
-    In hydrology, the distribution is reparametrized with :math:`k=-\\xi` (El Adlouni et al., 2008)
-    The cumulative distribution functions.
+        In hydrology, the distribution is reparametrized with :math:`k=-\\xi` (xi) (El Adlouni et al., 2008)
+        The cumulative distribution functions.
+
+    - The cumulative distribution functions.
+
+        .. math::
+            F(x; \\zeta, \\delta, \\xi)=
+            \\begin{cases}
+                \\exp\\left(- \\left(1+ \\xi \\left(\\frac{x-\\zeta}{\\delta} \\right) \\right)^\\frac{-1}{\\xi} \\right) &
+                \\quad\\land\\xi\\neq 0 and 1 + \\xi \\left( \\frac{x-\\zeta}{\\delta}\\right) \\\\
+                \\exp\\left(- \\exp\\left(- \\frac{x-\\zeta}{\\delta} \\right) \\right) & \\quad \\land \\xi=0
+            \\end{cases}
+          :label: gev-cdf
     """
 
     parameters: dict[str, Union[float, Any]]
