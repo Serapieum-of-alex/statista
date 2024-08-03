@@ -410,12 +410,12 @@ class AbstractDistribution(ABC):
         -----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter of the gumbel distribution.
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter of the gumbel distribution.
         prob_non_exceed : [list]
-            Non Exceedence probability
+            Non-Exceedance probability
         alpha : [numeric]
             alpha or SignificanceLevel is a value of the confidence interval.
 
@@ -423,13 +423,13 @@ class AbstractDistribution(ABC):
         -------
         parameters: Dict[str, str]
             {"loc": val, "scale": val, "shape": value}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter
-        q_upper : [list]
-            upper bound coresponding to the confidence interval.
-        q_lower : [list]
+        q_upper: [list]
+            upper-bound coresponding to the confidence interval.
+        q_lower: [list]
             lower bound coresponding to the confidence interval.
         """
         pass
@@ -445,18 +445,18 @@ class AbstractDistribution(ABC):
         ylabel: str = "cdf",
         fontsize: int = 15,
     ) -> Tuple[List[Figure], list]:
-        """probapilityPlot.
+        """Probability Plot.
 
-        ProbapilityPlot method calculates the theoretical values based on the Gumbel distribution
-        parameters, theoretical cdf (or weibul), and calculate the confidence interval.
+        Probability Plot method calculates the theoretical values based on the Gumbel distribution
+        parameters, theoretical cdf (or weibul), and calculates the confidence interval.
 
         Parameters
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter of the gumbel distribution.
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter of the gumbel distribution.
         prob_non_exceed : [np.ndarray]
             theoretical cdf calculated using weibul or using the distribution cdf function.
@@ -475,13 +475,13 @@ class AbstractDistribution(ABC):
 
         Returns
         -------
-        Qth : [list]
-            theoretical generated values based on the theoretical cdf calculated from
+        Qth: [list]
+            theoretical-generated values based on the theoretical cdf calculated from
             weibul or the distribution parameters.
-        q_upper : [list]
-            upper bound coresponding to the confidence interval.
-        q_lower : [list]
-            lower bound coresponding to the confidence interval.
+        q_upper: [list]
+            upper-bound coresponding to the confidence interval.
+        q_lower: [list]
+            lower-bound coresponding to the confidence interval.
         """
         pass
 
@@ -496,8 +496,8 @@ class Gumbel(AbstractDistribution):
     .. math:: f(x; \\mu, \\beta) = \\frac{1}{\\beta} \\exp\\left(-\\frac{x - \\mu}{\beta} \\right) \\exp\\left(-\\exp\\left(-\\frac{x -\\mu}{\\beta} \\right) \\right)
 
     where:
-        .. math:\\mu is the location parameter.
-        .. math:\\beta is the scale parameter.
+    .. math:\\mu is the location parameter.
+    .. math:\\beta is the scale parameter.
     """
 
     cdf_Weibul: ndarray
@@ -548,15 +548,15 @@ class Gumbel(AbstractDistribution):
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
-        Returns the value of Gumbel's pdf with parameters loc and scale at x .
+        Returns the value of Gumbel's pdf with parameters loc and scale at x.
 
         Parameters:
         -----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter of the gumbel distribution.
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter of the gumbel distribution.
         actual_data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
@@ -716,10 +716,10 @@ class Gumbel(AbstractDistribution):
         (Maximum likelihood method), if an objective function is entered as an input
 
         There are two likelihood functions (L1 and L2), one for values above some
-        threshold (x>=C) and one for values below (x < C), now the likeliest parameters
+        threshold (x>=C) and one for the values below (x < C), now the likeliest parameters
         are those at the max value of multiplication between two functions max(L1*L2).
 
-        In this case the L1 is still the product of multiplication of probability
+        In this case, the L1 is still the product of multiplication of probability
         density function's values at xi, but the L2 is the probability that threshold
         value C will be exceeded (1-F(C)).
 
@@ -738,9 +738,9 @@ class Gumbel(AbstractDistribution):
         -------
         Dict[str, str]:
             {"loc": val, "scale": val}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter of the gumbel distribution.
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter of the gumbel distribution.
         """
         # obj_func = lambda p, x: (-np.log(Gumbel.pdf(x, p[0], p[1]))).sum()
@@ -792,16 +792,16 @@ class Gumbel(AbstractDistribution):
         -----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter of the gumbel distribution.
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter of the gumbel distribution.
         cdf: [list]
             cumulative distribution function/ Non Exceedance probability.
 
         Return:
         -------
-        theoretical value : [numeric]
+        theoretical value: [numeric]
             Value based on the theoretical distribution
         """
         loc = parameters.get("loc")
@@ -851,9 +851,9 @@ class Gumbel(AbstractDistribution):
         -----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter of the gumbel distribution.
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter of the gumbel distribution.
         prob_non_exceed : [list]
             Non Exceedance probability
@@ -864,9 +864,9 @@ class Gumbel(AbstractDistribution):
         -------
         parameters: Dict[str, str]
             {"loc": val, "scale": val, "shape": value}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter
         q_upper : [list]
             upper bound corresponding to the confidence interval.
@@ -910,9 +910,9 @@ class Gumbel(AbstractDistribution):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter of the gumbel distribution.
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter of the gumbel distribution.
         cdf : [np.ndarray]
             theoretical cdf calculated using weibul or using the distribution cdf function.
@@ -931,12 +931,12 @@ class Gumbel(AbstractDistribution):
 
         Returns
         -------
-        Qth : [list]
+        Qth: [list]
             theoretical-generated values based on the theoretical cdf calculated from
             weibul or the distribution parameters.
-        q_upper : [list]
+        q_upper: [list]
             upper-bound coresponding to the confidence interval.
-        q_lower : [list]
+        q_lower: [list]
             lower-bound coresponding to the confidence interval.
         """
         scale = parameters.get("scale")
@@ -1213,7 +1213,7 @@ class GEV(AbstractDistribution):
         threshold (x>=C) and one for the values below (x < C), now the likeliest parameters
         are those at the max value of multiplication between two functions max(L1*L2).
 
-        In this case the L1 is still the product of multiplication of probability
+        In this case, the L1 is still the product of multiplication of probability
         density function's values at xi, but the L2 is the probability that threshold
         value C will be exceeded (1-F(C)).
 
@@ -1379,7 +1379,7 @@ class GEV(AbstractDistribution):
         Return:
         -------
         q_upper : [list]
-            upper bound coresponding to the confidence interval.
+            upper-bound coresponding to the confidence interval.
         q_lower : [list]
             lower bound coresponding to the confidence interval.
         """
@@ -1998,10 +1998,10 @@ class Exponential(AbstractDistribution):
         (Maximum likelihood method), if an objective function is entered as an input
 
         There are two likelihood functions (L1 and L2), one for values above some
-        threshold (x>=C) and one for values below (x < C), now the likeliest parameters
+        threshold (x>=C) and one for the values below (x < C), now the likeliest parameters
         are those at the max value of multiplication between two functions max(L1*L2).
 
-        In this case the L1 is still the product of multiplication of probability
+        In this case, the L1 is still the product of multiplication of probability
         density function's values at xi, but the L2 is the probability that threshold
         value C will be exceeded (1-F(C)).
 
@@ -2074,9 +2074,9 @@ class Exponential(AbstractDistribution):
         -----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter of the gumbel distribution.
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter of the gumbel distribution.
         cdf: [list]
             cumulative distribution function/ Non-Exceedance probability.
@@ -2354,9 +2354,9 @@ class Normal(AbstractDistribution):
         -----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter of the Normal distribution.
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter of the Normal distribution.
         cdf: [list]
             cumulative distribution function/ Non-Exceedance probability.

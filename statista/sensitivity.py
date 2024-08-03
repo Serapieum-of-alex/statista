@@ -123,19 +123,19 @@ class Sensitivity:
             arguments of the function with the same exact names inside the function.
         **kwargs: [keyword argument]
             keyword arguments of the function with the same exact names inside the function.
-            - parameter: [dataframe]
+            parameter: [dataframe]
                 parameters dataframe including the parameter values in a column with
                 name 'value' and the parameters' name as index.
-            - LB: [List]
+            LB: [List]
                 parameters upper bounds.
-            - UB: [List]
+            UB: [List]
                 parameters lower bounds.
-            - function: [function]
+            function: [function]
                 the function you want to run it several times.
 
         Returns
         -------
-        sen : [Dict]
+        sen: [Dict]
             for each parameter as a key, there is a list containing 4 lists,
             1-relative parameter values, 2-metric values, 3-Real parameter values
             4- addition calculated values from the function if you choose return_values=2.
