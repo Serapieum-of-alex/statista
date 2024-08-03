@@ -498,14 +498,12 @@ class Gumbel(AbstractDistribution):
     The probability density function (PDF) of the Gumbel distribution (Type I) is:
 
     .. math::
-        f(x; \\mu, \\beta) = \\frac{1}{\\beta} \\exp\\left(-\\frac{x - \\mu}{\\beta} \\right)
-        \\exp\\left(-\\exp\\left(-\\frac{x - \\mu}{\\beta} \\right) \\right)
+        f(x; \\zeta, \\delta) = \\frac{1}{\\delta} \\exp\\left(-\\frac{x - \\zeta}{\\delta} \\right)
+        \\exp\\left(-\\exp\\left(-\\frac{x - \\zeta}{\\delta} \\right) \\right)
       :label: gumbel-equation
 
 
-    where:
-        .. math:\\mu is the location parameter.
-        .. math:\\beta is the scale parameter.
+    where :math:`\\zeta` is the location parameter, and :math:`\\delta` is the scale parameter.
 
     The probability density function above is defined in the “un-standardized” form.
     """
