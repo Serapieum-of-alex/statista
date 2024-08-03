@@ -1889,10 +1889,23 @@ class GEV(AbstractDistribution):
 class Exponential(AbstractDistribution):
     """Exponential distribution.
 
-    .. math::
-        f(x; \\text{threshold}, \\text{scale}) = \\frac{1}{\\text{scale}} e^{-\\frac{x - \\text{threshold}}{\\text{scale}}}
-      :label: exp-equation
+    - The probability density function (PDF) of the Exponential distribution is:
 
+        .. math::
+            \\begin{cases}
+                f(x; \\beta, \\delta) = \\frac{1}{\\delta} e^{-\\frac{x - \\beta}{\\delta}} & \\quad x \\geq 0 \\\\
+                0 & \\quad x < 0
+            \\end{cases}
+          :label: exp-equation
+
+    - The cumulative distribution functions.
+
+        .. math::
+            \\begin{cases}
+                F(x; \\beta, \\delta) = 1 - e^{-\\frac{x - \\beta}{\\delta}} & \\quad x \\geq 0 \\\\
+                0 & \\quad x < 0
+            \\end{cases}
+          :label: exp-cdf
     """
 
     def __init__(
@@ -2196,9 +2209,17 @@ class Exponential(AbstractDistribution):
 class Normal(AbstractDistribution):
     """Normal Distribution.
 
-    .. math::
-        f(x: threshold, scale) = (1/scale) e **(- (x-threshold)/scale)
-      :label: normal-equation
+    - The probability density function (PDF) of the Normal distribution is:
+
+        .. math::
+            f(x: threshold, scale) = (1/scale) e **(- (x-threshold)/scale)
+          :label: normal-equation
+
+    - The cumulative distribution functions.
+
+        .. math::
+            F(x: threshold, scale) = 1 - e **(- (x-threshold)/scale)
+          :label: normal-cdf
     """
 
     def __init__(
