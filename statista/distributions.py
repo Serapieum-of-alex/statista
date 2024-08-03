@@ -1823,8 +1823,10 @@ class GEV(AbstractDistribution):
 
 
 class Exponential(AbstractDistribution):
-    """
-    f(x: threshold, scale) = (1/scale) e **(- (x-threshold)/scale)
+    """Exponential distribution.
+
+    .. math::
+        f(x; \text{threshold}, \text{scale}) = \frac{1}{\text{scale}} e^{-\frac{x - \text{threshold}}{\text{scale}}}
     """
 
     def __init__(
@@ -1888,9 +1890,10 @@ class Exponential(AbstractDistribution):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         actual_data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
@@ -1959,9 +1962,10 @@ class Exponential(AbstractDistribution):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         actual_data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
@@ -2076,9 +2080,10 @@ class Exponential(AbstractDistribution):
         -----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         cdf: [list]
             cumulative distribution function/ Non-Exceedance probability.

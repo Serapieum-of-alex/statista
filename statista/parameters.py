@@ -1,4 +1,4 @@
-"""L moments."""
+"""Parameters estimation."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-""" Performance Metrics """
+"""Performance Metrics """
 
 from numbers import Number
 from typing import Union

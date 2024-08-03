@@ -1,3 +1,5 @@
+""""Statistical tools"""
+
 from typing import List, Union
 import numpy as np
 
