@@ -87,6 +87,7 @@ Main Features
    Extreme Value Analysis <eva-class.rst>
    Metrics <metrics-module.rst>
    Tools <tools-module.rst>
+   Plot <plot-class.rst>
 
 
 Indices and tables
