@@ -82,8 +82,7 @@ Main Features
    :maxdepth: 1
 
    Installation <installation.rst>
-   Distributions <distributions.rst>
-   Distributions class <distributions-class.rst>
+   Distributions <distributions-tree.rst>
    Sensitivity analysis <sensitivity_analysis.rst>
 
 Indices and tables

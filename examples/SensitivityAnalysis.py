@@ -54,10 +54,10 @@ Coello.ReadDischargeGauges(Path + "Qout_c.csv", fmt="%Y-%m-%d")
 Route = 1
 # RoutingFn=Routing.TriangularRouting2
 RoutingFn = Routing.Muskingum
-#%%
+# %%
 ### run the model
 Run.RunLumped(Coello, Route, RoutingFn)
-#%%
+# %%
 Metrics = dict()
 
 Qobs = Coello.QGauges[Coello.QGauges.columns[0]]
@@ -73,7 +73,7 @@ print("NSE= " + str(round(Metrics["NSE"], 2)))
 print("NSEhf= " + str(round(Metrics["NSEhf"], 2)))
 print("KGE= " + str(round(Metrics["KGE"], 2)))
 print("WB= " + str(round(Metrics["WB"], 2)))
-#%%
+# %%
 """
 first the Sensitivity method takes 4 arguments :
     1-parameters:previous obtained parameters
@@ -110,6 +110,8 @@ as keys,
 Each parameter has a disctionary with two keys 0: list of parameters woth relative values
 1: list of parameter values
 """
+
+
 # For Type 1
 def WrapperType1(Randpar, Route, RoutingFn, Qobs):
     Coello.Parameters = Randpar
@@ -138,8 +140,8 @@ Positions = [10]
 
 
 Sen = SA(parameters, Coello.LB, Coello.UB, fn, Positions, 5, Type=Type)
-Sen.OAT(Route, RoutingFn, Qobs)
-#%%
+Sen.one_at_a_time(Route, RoutingFn, Qobs)
+# %%
 From = ""
 To = ""
 if Type == 1:

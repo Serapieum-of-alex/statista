@@ -1,20 +1,15 @@
-"""Created on Mon Mar 29 21:32:29 2021.
+"""Sensitivity Analysis."""
 
-@author: mofarrag
-"""
 from typing import List
 import matplotlib.pyplot as plt
 import numpy as np
+from pandas import DataFrame
 
 
 class Sensitivity:
     """Sensitivity.
 
     Sensitivity class
-
-    Methods
-        1- OAT
-        2- Sobol
     """
 
     MarkerStyleList = [
@@ -32,7 +27,14 @@ class Sensitivity:
     ]
 
     def __init__(
-        self, parameter, LB, UB, function, positions=None, n_values=5, return_values=1
+        self,
+        parameter: DataFrame,
+        lower_bound: List[int, float],
+        upper_bound: List[int, float],
+        function: callable,
+        positions=None,
+        n_values=5,
+        return_values=1,
     ):
         """Sensitivity.
 
@@ -41,26 +43,26 @@ class Sensitivity:
 
         Parameters
         ----------
-        parameter : [dataframe]
+        parameter: [dataframe]
             dataframe with the index as the name of the parameters and one column
             with the name "value" contains the values of the parameters.
-        LB : [list]
+        lower_bound: [list]
             lower bound of the parameter.
-        UB : [list]
+        upper_bound: [list]
             upper bound of the parameter.
-        function : TYPE
+        function: Callable
             DESCRIPTION.
-        positions : [list], optional
+        positions: [list], optional
             position of the parameter in the list (the beginning of the list starts
-            with 0), if the Position argument is empty list the sensitivity will
+            with 0), if the Position argument is an empty list, the sensitivity will
             be done for all parameters. The default is None.
-        n_values : [integer], optional
+        n_values: [integer], optional
             number of parameter values between the bounds you want to calculate the
-            metric for, if the values does not include the value if the given parameter
+            metric for, if the values do not include the value if the given parameter
             it will be appended to the values. The default is 5.
-        return_values : [integer], optional
-            return_values equals 1 if the function resurns one value (the measured metric)
-            return_values equals 2 if the function resurns two values (the measured metric,
+        return_values: [integer], optional
+            return_values equals 1 if the function returns one value (the measured metric)
+            return_values equals 2 if the function returns two values (the measured metric,
             and any calculated values you want to check how they change by changing
             the value of the parameter). The default is 1.
 
@@ -69,20 +71,20 @@ class Sensitivity:
         None.
         """
         self.parameter = parameter
-        self.LB = LB
-        self.UB = UB
+        self.LB = lower_bound
+        self.UB = upper_bound
 
         assert (
             len(self.parameter) == len(self.LB) == len(self.UB)
-        ), "Length of the boundary shoulf be of the same length as the length of the parameters"
+        ), "The Length of the boundary should be of the same length as the length of the parameters"
         assert callable(
             function
-        ), "function should be of type callable (function that takes arguments)"
+        ), "function should be of type-callable (function that takes arguments)"
         self.function = function
 
         self.NoValues = n_values
         self.return_values = return_values
-        # if the Position argument is empty list the sensitivity will be done for all parameters
+        # if the Position argument is empty list, the sensitivity will be done for all parameters
         if positions is None:
             self.NoPar = len(parameter)
             self.Positions = list(range(len(parameter)))
@@ -91,7 +93,7 @@ class Sensitivity:
             self.Positions = positions
 
     @staticmethod
-    def markerStyle(style):
+    def marker_style(style):
         """MarkerStyle.
 
         Marker styles for plotting
@@ -107,19 +109,19 @@ class Sensitivity:
             DESCRIPTION.
         """
         if style > len(Sensitivity.MarkerStyleList) - 1:
-            style = style % len(Sensitivity.MarkerStyleList)
+            style %= len(Sensitivity.MarkerStyleList)
         return Sensitivity.MarkerStyleList[style]
 
-    def OAT(self, *args, **kwargs):
+    def one_at_a_time(self, *args, **kwargs):
         """OAT.
 
         OAT one-at-a-time sensitivity analysis.
 
         Parameters
         ----------
-        *args : [positional argument]
+        *args: [positional argument]
             arguments of the function with the same exact names inside the function.
-        **kwargs : [keyword argument]
+        **kwargs: [keyword argument]
             keyword arguments of the function with the same exact names inside the function.
             - parameter : [dataframe]
                 parameters dataframe including the parameters values in a column with
@@ -197,34 +199,34 @@ class Sensitivity:
 
         Parameters
         ----------
-        real_values : [bool], optional
+        real_values: [bool], optional
             if you want to plot the real values in the x-axis not the relative
             values, works properly only if you are checking the sensitivity of
             one parameter as the range of parameters differes. The default is False.
-        CalculatedValues : [bool], optional
+        CalculatedValues: [bool], optional
             if you choose return_values=2 in the OAT method, then the function returns
             calculated values, and here you can True to plot it . The default is False.
-        title : [string], optional
+        title: [string], optional
             DESCRIPTION. The default is ''.
-        xlabel : [string], optional
+        xlabel: [string], optional
             DESCRIPTION. The default is 'xlabel'.
-        ylabel : [string], optional
+        ylabel: [string], optional
             DESCRIPTION. The default is 'Metric values'.
-        labelfontsize : [integer], optional
+        labelfontsize: [integer], optional
             DESCRIPTION. The default is 12.
         plotting_from : TYPE, optional
             the calculated values are in array type and From attribute is from
             where the plotting will start. The default is ''.
-        plotting_to : TYPE, optional
+        plotting_to: TYPE, optional
             the calculated values are in array type and plotting_to attribute is from
             where the plotting will end. The default is ''.
-        title2 : TYPE, optional
+        title2: TYPE, optional
             DESCRIPTION. The default is ''.
-        xlabel2 : TYPE, optional
+        xlabel2: TYPE, optional
             DESCRIPTION. The default is 'xlabel2'.
-        ylabel2 : TYPE, optional
+        ylabel2: TYPE, optional
             DESCRIPTION. The default is 'ylabel2'.
-        spaces : TYPE, optional
+        spaces: TYPE, optional
             DESCRIPTION. The default is [None,None,None,None,None,None].
 
         Returns
@@ -239,7 +241,7 @@ class Sensitivity:
                     ax.plot(
                         self.sen[self.parameter.index[k]][2],
                         self.sen[self.parameter.index[k]][1],
-                        Sensitivity.markerStyle(k),
+                        Sensitivity.marker_style(k),
                         linewidth=3,
                         markersize=10,
                         label=self.parameter.index[k],
@@ -248,7 +250,7 @@ class Sensitivity:
                     ax.plot(
                         self.sen[self.parameter.index[k]][0],
                         self.sen[self.parameter.index[k]][1],
-                        Sensitivity.markerStyle(k),
+                        Sensitivity.marker_style(k),
                         linewidth=3,
                         markersize=10,
                         label=self.parameter.index[k],
@@ -274,7 +276,7 @@ class Sensitivity:
                         ax1.plot(
                             self.sen[self.parameter.index[k]][2],
                             self.sen[self.parameter.index[k]][1],
-                            Sensitivity.markerStyle(k),
+                            Sensitivity.marker_style(k),
                             linewidth=3,
                             markersize=10,
                             label=self.parameter.index[k],
@@ -283,7 +285,7 @@ class Sensitivity:
                         ax1.plot(
                             self.sen[self.parameter.index[k]][0],
                             self.sen[self.parameter.index[k]][1],
-                            Sensitivity.markerStyle(k),
+                            Sensitivity.marker_style(k),
                             linewidth=3,
                             markersize=10,
                             label=self.parameter.index[k],
@@ -339,18 +341,3 @@ class Sensitivity:
 
             plt.tight_layout()
             return fig, (ax1, ax2)
-
-    def ListAttributes(self):
-        """Print Attributes List."""
-
-        print("\n")
-        print(
-            f"Attributes List of: {repr(self.__dict__['name'])} - {self.__class__.__name__} Instance\n"
-        )
-        self_keys = list(self.__dict__.keys())
-        self_keys.sort()
-        for key in self_keys:
-            if key != "name":
-                print(str(key) + " : " + repr(self.__dict__[key]))
-
-        print("\n")
