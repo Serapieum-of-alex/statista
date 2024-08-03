@@ -993,8 +993,8 @@ class GEV(AbstractDistribution):
     """GEV (Generalized Extreme value statistics)
 
     .. math::
-        \\mathrm{f(x)=}\\frac{\\mathrm{1}}{\\mathrm{\\delta}}\\mathrm{*}{\\mathrm{Q(x)}}^{\\mathrm{\\xi+1}}\\mathrm{
-        *}\\mathrm{e}^{\\mathrm{-Q(x)}}
+        f(x)=\\frac{1}{\\delta}\\mathrm{*}{\\mathrm{Q(x)}}^{\\xi+1}\\mathrm{
+        *} e^{\\mathrm{-Q(x)}}
 
     .. math::
         f(x)=
@@ -1004,10 +1004,10 @@ class GEV(AbstractDistribution):
             e^{- \\left(\\frac{x-\\zeta}{\\delta} \\right)} & \\quad \\land \\xi=0
         \\end{cases}
 
-    Where the \\delta is the scale parameter affecting the extension of the x-direction, \\zeta is the location
-    parameter, and \\xi is the shape parameter.
+    Where the :math:`\\delta` is the scale parameter affecting the extension of the x-direction, :math:`\\zeta` is the
+    location parameter, and :math:`\\xi` is the shape parameter.
 
-    In hydrology, the distribution is reparametrized with k=-\\xi (El Adlouni et al., 2008)
+    In hydrology, the distribution is reparametrized with :math:`k=-\\xi` (El Adlouni et al., 2008)
     The cumulative distribution functions.
     """
 
