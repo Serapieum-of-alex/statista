@@ -1892,6 +1892,7 @@ class Exponential(AbstractDistribution):
     - The probability density function (PDF) of the Exponential distribution is:
 
         .. math::
+            f(x; \\beta, \\delta) =
             \\begin{cases}
                 f(x; \\beta, \\delta) = \\frac{1}{\\delta} e^{-\\frac{x - \\beta}{\\delta}} & \\quad x \\geq 0 \\\\
                 0 & \\quad x < 0
@@ -1901,6 +1902,7 @@ class Exponential(AbstractDistribution):
     - The cumulative distribution functions.
 
         .. math::
+            F(x; \\beta, \\delta) =
             \\begin{cases}
                 F(x; \\beta, \\delta) = 1 - e^{-\\frac{x - \\beta}{\\delta}} & \\quad x \\geq 0 \\\\
                 0 & \\quad x < 0
