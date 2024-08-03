@@ -504,6 +504,8 @@ class Gumbel(AbstractDistribution):
     where:
         .. math:\\mu is the location parameter.
         .. math:\\beta is the scale parameter.
+
+    The probability density function above is defined in the “un-standardized” form.
     """
 
     cdf_Weibul: ndarray
@@ -991,18 +993,23 @@ class GEV(AbstractDistribution):
     """GEV (Generalized Extreme value statistics)
 
     .. math::
-
         \\mathrm{f(x)=}\\frac{\\mathrm{1}}{\\mathrm{\\delta}}\\mathrm{*}{\\mathrm{Q(x)}}^{\\mathrm{\\xi+1}}\\mathrm{
         *}\\mathrm{e}^{\\mathrm{-Q(x)}}
 
+    .. math::
         \\[f(x)=
             \\begin{cases}
-            \\left( 1+ \\xi(\\left\\frac{x-\\zeta}{\\delta}\\right) \\right)^\\frac{-1}{\\xi}  & \\quad
-            \\land\\xi\\neq 0 \\
-            e^{-(\\left\\frac{x-\\zeta}{\\delta}\\right)} & \\quad   \\land \\xi=0
+                (\\left 1+ \\xi(\\left\\frac{x-\\zeta}{\\delta}\\right) \\right)^\\frac{-1}{\\xi}  & \\quad
+                \\land\\xi\\neq 0 \\
+                e^{-(\\left\\frac{x-\\zeta}{\\delta}\\right)} & \\quad   \\land \\xi=0
             \\end{cases}
         \\]
 
+    Where the \\delta is the scale parameter affecting the extension of the x-direction, \\zeta is the location
+    parameter, and \\xi is the shape parameter.
+
+    In hydrology, the distribution is reparametrized with k=-\\xi (El Adlouni et al., 2008)
+    The cumulative distribution functions.
     """
 
     parameters: dict[str, Union[float, Any]]
@@ -1017,7 +1024,7 @@ class GEV(AbstractDistribution):
 
         Parameters
         ----------
-        data : [list]
+        data: [list]
             data time series.
         parameters: Dict[str, str]
             {"loc": val, "scale": val, "shape": value}
@@ -1026,8 +1033,9 @@ class GEV(AbstractDistribution):
                 location parameter of the GEV distribution.
             - scale: [numeric]
                 scale parameter of the GEV distribution.
-            shape: [numeric]
+            - shape: [numeric]
                 shape parameter of the GEV distribution.
+
         """
         super().__init__(data, parameters)
         pass
