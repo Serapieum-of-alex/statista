@@ -988,7 +988,22 @@ class Gumbel(AbstractDistribution):
 
 
 class GEV(AbstractDistribution):
-    """GEV (Generalized Extreme value statistics)"""
+    """GEV (Generalized Extreme value statistics)
+
+    .. math::
+
+        \\mathrm{f(x)=}\\frac{\\mathrm{1}}{\\mathrm{\\delta}}\\mathrm{*}{\\mathrm{Q(x)}}^{\\mathrm{\\xi+1}}\\mathrm{
+        *}\\mathrm{e}^{\\mathrm{-Q(x)}}
+
+        \\[f(x)=
+            \\begin{cases}
+            \\left( 1+ \\xi(\\left\\frac{x-\\zeta}{\\delta}\\right) \\right)^\\frac{-1}{\\xi}  & \\quad
+            \\land\\xi\\neq 0 \\
+            e^{-(\\left\\frac{x-\\zeta}{\\delta}\\right)} & \\quad   \\land \\xi=0
+            \\end{cases}
+        \\]
+
+    """
 
     parameters: dict[str, Union[float, Any]]
     data: ndarray
