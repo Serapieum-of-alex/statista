@@ -161,9 +161,10 @@ class AbstractDistribution(ABC):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         kwargs:
             figsize: tuple = (6, 5),
@@ -230,9 +231,10 @@ class AbstractDistribution(ABC):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         """
         if isinstance(actual_data, bool):
@@ -326,9 +328,10 @@ class AbstractDistribution(ABC):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         cdf: [list]
             cumulative distribution function/ Non-Exceedance probability.
@@ -409,9 +412,10 @@ class AbstractDistribution(ABC):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         prob_non_exceed : [list]
             Non-Exceedance probability
@@ -453,9 +457,10 @@ class AbstractDistribution(ABC):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         prob_non_exceed : [np.ndarray]
             theoretical cdf calculated using weibul or using the distribution cdf function.
@@ -518,9 +523,10 @@ class Gumbel(AbstractDistribution):
             data time series.
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         """
         super().__init__(data, parameters)
@@ -555,9 +561,10 @@ class Gumbel(AbstractDistribution):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         actual_data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
@@ -619,9 +626,10 @@ class Gumbel(AbstractDistribution):
         ---------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         actual_data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array if you want to calculate the pdf
@@ -793,9 +801,10 @@ class Gumbel(AbstractDistribution):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         cdf: [list]
             cumulative distribution function/ Non Exceedance probability.
@@ -852,9 +861,10 @@ class Gumbel(AbstractDistribution):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         prob_non_exceed : [list]
             Non Exceedance probability
@@ -911,9 +921,10 @@ class Gumbel(AbstractDistribution):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         cdf: [np.ndarray]
             theoretical cdf calculated using weibul or using the distribution cdf function.
@@ -1058,11 +1069,12 @@ class GEV(AbstractDistribution):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val, "shape": value}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the GEV distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the GEV distribution.
-            shape: [numeric]
+            - shape: [numeric]
                 shape parameter of the GEV distribution.
         actual_data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
@@ -1140,9 +1152,10 @@ class GEV(AbstractDistribution):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         actual_data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
@@ -1362,9 +1375,10 @@ class GEV(AbstractDistribution):
         ----------
         parameters:
             {"loc": val, "scale": val, "shape": value}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         prob_non_exceed : [list]
             Non-Exceedance probability
@@ -1427,11 +1441,12 @@ class GEV(AbstractDistribution):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val, shape: val}
-            loc : [numeric]
+
+            - loc : [numeric]
                 Location parameter of the GEV distribution.
-            scale : [numeric]
+            - scale : [numeric]
                 Scale parameter of the GEV distribution.
-            shape: [float, int]
+            - shape: [float, int]
                 Shape parameter for the GEV distribution.
         cdf: [list]
             Theoretical cdf calculated using weibul or using the distribution cdf function.
@@ -1826,7 +1841,7 @@ class Exponential(AbstractDistribution):
     """Exponential distribution.
 
     .. math::
-        f(x; \text{threshold}, \text{scale}) = \frac{1}{\text{scale}} e^{-\frac{x - \text{threshold}}{\text{scale}}}
+        f(x; \\text{threshold}, \\text{scale}) = \\frac{1}{\\text{scale}} e^{-\\frac{x - \\text{threshold}}{\\text{scale}}}
     """
 
     def __init__(
@@ -2074,7 +2089,7 @@ class Exponential(AbstractDistribution):
     ) -> np.ndarray:
         """Theoretical Estimate.
 
-        Theoretical Estimate method calculates the theoretical values based on a given  non exceedence probability
+        Theoretical Estimate method calculates the theoretical values based on a given  non-exceedance probability
 
         Parameters
         -----------
@@ -2179,9 +2194,10 @@ class Normal(AbstractDistribution):
         -----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val, "shape": value}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the GEV distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the GEV distribution.
         actual_data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
@@ -2244,9 +2260,10 @@ class Normal(AbstractDistribution):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val, "shape": value}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the Normal distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the Normal distribution.
         actual_data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
@@ -2361,9 +2378,10 @@ class Normal(AbstractDistribution):
         -----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the Normal distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the Normal distribution.
         cdf: [list]
             cumulative distribution function/ Non-Exceedance probability.
