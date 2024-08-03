@@ -498,7 +498,7 @@ class Gumbel(AbstractDistribution):
     The probability density function (PDF) of the Gumbel distribution (Type I) is:
 
     .. math::
-        :label: gumbel-equation
+      :label: gumbel-equation
         f(x; \\mu, \\beta) = \\frac{1}{\\beta} \\exp\\left(-\\frac{x - \\mu}{\\beta} \\right)
         \\exp\\left(-\\exp\\left(-\\frac{x - \\mu}{\\beta} \\right) \\right)
 
@@ -999,7 +999,7 @@ class GEV(AbstractDistribution):
         *} e^{\\mathrm{-Q(x)}}
 
     .. math::
-        :label: gev-equation
+      :label: gev-equation
         f(x)=
         \\begin{cases}
             \\left(1+ \\xi \\left(\\frac{x-\\zeta}{\\delta} \\right) \\right)^\\frac{-1}{\\xi} &
@@ -1871,7 +1871,7 @@ class Exponential(AbstractDistribution):
     """Exponential distribution.
 
     .. math::
-        :label: exp-equation
+      :label: exp-equation
         f(x; \\text{threshold}, \\text{scale}) = \\frac{1}{\\text{scale}} e^{-\\frac{x - \\text{threshold}}{\\text{scale}}}
 
     """

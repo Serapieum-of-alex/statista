@@ -40,7 +40,6 @@ extensions = [
     "sphinx.ext.graphviz",  # Allows rendering of graphviz diagrams
     "sphinx.ext.napoleon",  # Allows for Google-style and Numpy docstrings
     "sphinx.ext.mathjax",  # For rendering LaTeX math equations
-    "sphinx.ext.viewcode",
 ]
 
 templates_path = ["_templates"]
