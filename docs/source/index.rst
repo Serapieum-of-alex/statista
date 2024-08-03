@@ -84,6 +84,7 @@ Main Features
    Installation <installation.rst>
    Distributions <distributions-tree.rst>
    Sensitivity analysis <sensitivity-tree.rst>
+   Extreme Value Analysis <eva-class.rst>
 
 Indices and tables
 ==================
