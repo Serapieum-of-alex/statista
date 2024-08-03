@@ -498,8 +498,10 @@ class Gumbel(AbstractDistribution):
     The probability density function (PDF) of the Gumbel distribution (Type I) is:
 
     .. math::
+        :label: gumbel-equation
         f(x; \\mu, \\beta) = \\frac{1}{\\beta} \\exp\\left(-\\frac{x - \\mu}{\\beta} \\right)
         \\exp\\left(-\\exp\\left(-\\frac{x - \\mu}{\\beta} \\right) \\right)
+
 
     where:
         .. math:\\mu is the location parameter.
@@ -997,12 +999,14 @@ class GEV(AbstractDistribution):
         *} e^{\\mathrm{-Q(x)}}
 
     .. math::
+        :label: gev-equation
         f(x)=
         \\begin{cases}
             \\left(1+ \\xi \\left(\\frac{x-\\zeta}{\\delta} \\right) \\right)^\\frac{-1}{\\xi} &
             \\quad\\land\\xi\\neq 0 \\\\
             e^{- \\left(\\frac{x-\\zeta}{\\delta} \\right)} & \\quad \\land \\xi=0
         \\end{cases}
+
 
     Where the :math:`\\delta` is the scale parameter affecting the extension of the x-direction, :math:`\\zeta` is the
     location parameter, and :math:`\\xi` is the shape parameter.
@@ -1867,7 +1871,9 @@ class Exponential(AbstractDistribution):
     """Exponential distribution.
 
     .. math::
+        :label: exp-equation
         f(x; \\text{threshold}, \\text{scale}) = \\frac{1}{\\text{scale}} e^{-\\frac{x - \\text{threshold}}{\\text{scale}}}
+
     """
 
     def __init__(
