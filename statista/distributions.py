@@ -1001,6 +1001,7 @@ class GEV(AbstractDistribution):
             \\begin{cases}
                 \\left( 1+ \\xi \\left(\\frac{x-\\zeta}{\\delta} \\right) \\right)^\\frac{-1}{\\xi}  & \\quad
                 \\land\\xi\\neq 0 \\
+
                 e^{- \\left(\\frac{x-\\zeta}{\\delta} \\right)} & \\quad   \\land \\xi=0
             \\end{cases}
         \\]
