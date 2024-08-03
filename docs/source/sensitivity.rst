@@ -1,6 +1,6 @@
-******************************
-Sensetivity Analysis (OAT)
-******************************
+**************************
+Sensitivity Analysis (OAT)
+**************************
 OAT sensitivity analysis is a tool that is based
 
 One of the simplest and most common approaches of sensitivity analysis is that of changing one-factor-at-a-time (OAT), to see what effect this produces on the output.
@@ -185,12 +185,12 @@ Display the result with the SOBOL plot
 
 - Type 1 with one parameter
 
-.. image:: images/sensitivityAnalysis1.png
+.. image:: _images/sensitivityAnalysis1.png
     :width: 400pt
     :align: center
 
 - Type 1 with all parameters
-.. image:: images/sensitivityAnalysis3.png
+.. image:: _images/sensitivityAnalysis3.png
     :width: 400pt
     :align: center
 
@@ -220,6 +220,6 @@ The second type
 
 - Type 2
 
-.. image:: images/sensitivityAnalysis2.png
+.. image:: _images/sensitivityAnalysis2.png
     :width: 400pt
     :align: center

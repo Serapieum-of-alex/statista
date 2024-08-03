@@ -1,6 +1,6 @@
-############
-Colors Class
-############
+#################
+Sensitivity Class
+#################
 
 .. automodule:: sensitivity
    :members: Sensitivity

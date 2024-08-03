@@ -139,13 +139,15 @@ elif Type == 2:
 Positions = [10]
 
 
-Sen = SA(parameters, Coello.LB, Coello.UB, fn, Positions, 5, Type=Type)
+Sen = SA(
+    parameters, Coello.lower_bound, Coello.upper_bound, fn, Positions, 5, Type=Type
+)
 Sen.one_at_a_time(Route, RoutingFn, Qobs)
 # %%
 From = ""
 To = ""
 if Type == 1:
-    fig, ax1 = Sen.Sobol(
+    fig, ax1 = Sen.sobol(
         real_values=False,
         title="Sensitivity Analysis of the RMSE to models parameters",
         xlabel="Maxbas Values",
@@ -157,7 +159,7 @@ if Type == 1:
         spaces=[None, None, None, None, None, None],
     )
 elif Type == 2:
-    fig, (ax1, ax2) = Sen.Sobol(
+    fig, (ax1, ax2) = Sen.sobol(
         real_values=False,
         title="Sensitivity Analysis of the RMSE to models parameters",
         xlabel="Maxbas Values",

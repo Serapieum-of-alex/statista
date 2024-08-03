@@ -71,11 +71,11 @@ class Sensitivity:
         None.
         """
         self.parameter = parameter
-        self.LB = lower_bound
-        self.UB = upper_bound
+        self.lower_bound = lower_bound
+        self.upper_bound = upper_bound
 
         assert (
-            len(self.parameter) == len(self.LB) == len(self.UB)
+            len(self.parameter) == len(self.lower_bound) == len(self.upper_bound)
         ), "The Length of the boundary should be of the same length as the length of the parameters"
         assert callable(
             function
@@ -86,11 +86,11 @@ class Sensitivity:
         self.return_values = return_values
         # if the Position argument is empty list, the sensitivity will be done for all parameters
         if positions is None:
-            self.NoPar = len(parameter)
-            self.Positions = list(range(len(parameter)))
+            self.num_parameters = len(parameter)
+            self.positions = list(range(len(parameter)))
         else:
-            self.NoPar = len(positions)
-            self.Positions = positions
+            self.num_parameters = len(positions)
+            self.positions = positions
 
     @staticmethod
     def marker_style(style):
@@ -123,14 +123,14 @@ class Sensitivity:
             arguments of the function with the same exact names inside the function.
         **kwargs: [keyword argument]
             keyword arguments of the function with the same exact names inside the function.
-            - parameter : [dataframe]
-                parameters dataframe including the parameters values in a column with
-                name 'value' and the parameters name as index.
-            - LB : [List]
+            - parameter: [dataframe]
+                parameters dataframe including the parameter values in a column with
+                name 'value' and the parameters' name as index.
+            - LB: [List]
                 parameters upper bounds.
-            - UB : [List]
+            - UB: [List]
                 parameters lower bounds.
-            - function : [function]
+            - function: [function]
                 the function you want to run it several times.
 
         Returns
@@ -138,18 +138,20 @@ class Sensitivity:
         sen : [Dict]
             for each parameter as a key, there is a list containing 4 lists,
             1-relative parameter values, 2-metric values, 3-Real parameter values
-            4- adition calculated values from the function if you choose return_values=2.
+            4- addition calculated values from the function if you choose return_values=2.
         """
         self.sen = {}
 
-        for i in range(self.NoPar):
-            k = self.Positions[i]
+        for i in range(self.num_parameters):
+            k = self.positions[i]
             if self.return_values == 1:
                 self.sen[self.parameter.index[k]] = [[], [], []]
             else:
                 self.sen[self.parameter.index[k]] = [[], [], [], []]
             # generate 5 random values between the high and low parameter bounds
-            rand_value = np.linspace(self.LB[k], self.UB[k], self.NoValues)
+            rand_value = np.linspace(
+                self.lower_bound[k], self.upper_bound[k], self.NoValues
+            )
             # add the value of the calibrated parameter and sort the values
             rand_value = np.sort(np.append(rand_value, self.parameter["value"][k]))
             # store the relative values of the parameters in the first list in the dict
@@ -157,16 +159,18 @@ class Sensitivity:
                 ((h) / self.parameter["value"][k]) for h in rand_value
             ]
 
-            Randpar = self.parameter["value"].tolist()
+            random_param = self.parameter["value"].tolist()
             for j in range(len(rand_value)):
-                Randpar[k] = rand_value[j]
+                random_param[k] = rand_value[j]
                 # args = list(args)
-                # args.insert(Position,Randpar)
+                # args.insert(Position, random_param)
                 if self.return_values == 1:
-                    metric = self.function(Randpar, *args, **kwargs)
+                    metric = self.function(random_param, *args, **kwargs)
                 else:
-                    metric, CalculatedValues = self.function(Randpar, *args, **kwargs)
-                    self.sen[self.parameter.index[k]][3].append(CalculatedValues)
+                    metric, calculated_values = self.function(
+                        random_param, *args, **kwargs
+                    )
+                    self.sen[self.parameter.index[k]][3].append(calculated_values)
                 try:
                     # store the metric value in the second list in the dict
                     self.sen[self.parameter.index[k]][1].append(round(metric, 3))
@@ -181,7 +185,7 @@ class Sensitivity:
                 print(str(k) + "-" + self.parameter.index[k] + " -" + str(j))
                 print(round(metric, 3))
 
-    def Sobol(
+    def sobol(
         self,
         real_values: bool = False,
         title: str = "",  # CalculatedValues=False,
@@ -227,7 +231,7 @@ class Sensitivity:
         ylabel2: TYPE, optional
             DESCRIPTION. The default is 'ylabel2'.
         spaces: TYPE, optional
-            DESCRIPTION. The default is [None,None,None,None,None,None].
+            DESCRIPTION. The default is [None, None, None, None, None, None].
 
         Returns
         -------
@@ -235,8 +239,8 @@ class Sensitivity:
         if self.return_values == 1:
             fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(8, 6))
 
-            for i in range(self.NoPar):
-                k = self.Positions[i]
+            for i in range(self.num_parameters):
+                k = self.positions[i]
                 if real_values:
                     ax.plot(
                         self.sen[self.parameter.index[k]][2],
@@ -269,9 +273,9 @@ class Sensitivity:
             try:
                 fig, (ax1, ax2) = plt.subplots(ncols=1, nrows=2, figsize=(8, 6))
 
-                for i in range(self.NoPar):
+                for i in range(self.num_parameters):
                     # for i in range(len(self.sen[self.parameter.index[0]][0])):
-                    k = self.Positions[i]
+                    k = self.positions[i]
                     if real_values:
                         ax1.plot(
                             self.sen[self.parameter.index[k]][2],
@@ -298,8 +302,8 @@ class Sensitivity:
 
                 ax1.legend(fontsize=12)
 
-                for i in range(self.NoPar):
-                    k = self.Positions[i]
+                for i in range(self.num_parameters):
+                    k = self.positions[i]
                     # for j in range(self.n_values):
                     for j in range(len(self.sen[self.parameter.index[k]][0])):
                         if plotting_from == "":
@@ -336,7 +340,7 @@ class Sensitivity:
 
             except ValueError:
                 assert ValueError(
-                    "to plot Calculated Values you should choose return_values==2 in the sentivivity object"
+                    "To plot calculated values, you should choose return_values==2 in the sensitivity object"
                 )
 
             plt.tight_layout()
