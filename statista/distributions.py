@@ -997,13 +997,12 @@ class GEV(AbstractDistribution):
         *}\\mathrm{e}^{\\mathrm{-Q(x)}}
 
     .. math::
-        \\[f(x)=
-            \\begin{cases}
-                \\left( 1+ \\xi \\left(\\frac{x-\\zeta}{\\delta} \\right) \\right)^\\frac{-1}{\\xi}  & \\quad
-                \\land\\xi\\neq0 \\
-                e^{- \\left(\\frac{x-\\zeta}{\\delta} \\right)} & \\quad   \\land \\xi=0
-            \\end{cases}
-        \\]
+        f(x)=
+        \\begin{cases}
+            \\left(1+ \\xi \\left(\\frac{x-\\zeta}{\\delta} \\right) \\right)^\\frac{-1}{\\xi} &
+            \\quad\\land\\xi\\neq 0 \\\\
+            e^{- \\left(\\frac{x-\\zeta}{\\delta} \\right)} & \\quad \\land \\xi=0
+        \\end{cases}
 
     Where the \\delta is the scale parameter affecting the extension of the x-direction, \\zeta is the location
     parameter, and \\xi is the shape parameter.
