@@ -5,6 +5,7 @@ from numbers import Number
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from matplotlib.figure import Figure
+from matplotlib.axes import Axes
 import numpy as np
 
 
@@ -23,7 +24,7 @@ class Plot:
         xlabel: str = "Actual data",
         ylabel: str = "pdf",
         fontsize: int = 11,
-    ) -> Tuple[Figure, Any]:
+    ) -> Tuple[Figure, Axes]:
         """pdf.
 
         Parameters
@@ -40,7 +41,7 @@ class Plot:
         -------
         Figure:
             matplotlib figure object
-        Axis:
+        Axes:
             matplotlib plot axis
         """
         fig = plt.figure(figsize=figsize)
@@ -65,7 +66,7 @@ class Plot:
         xlabel="Actual data",
         ylabel="cdf",
         fontsize=11,
-    ) -> Tuple[Figure, Any]:
+    ) -> Tuple[Figure, Axes]:
         """cdf.
 
         Parameters
