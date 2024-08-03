@@ -85,6 +85,8 @@ Main Features
    Distributions <distributions-tree.rst>
    Sensitivity analysis <sensitivity-tree.rst>
    Extreme Value Analysis <eva-class.rst>
+   Metrics <metrics-module.rst>
+   Tools <tools-module.rst>
 
 Indices and tables
 ==================

@@ -1,8 +1,8 @@
-#########
-EVA Class
-#########
+############
+Tools module
+############
 
-.. automodule:: eva
+.. automodule:: tools
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,8 +1,8 @@
-#########
-EVA Class
-#########
+##############
+Metrics module
+##############
 
-.. automodule:: eva
+.. automodule:: metrics
    :members:
    :undoc-members:
    :show-inheritance:
