@@ -493,14 +493,11 @@ class Gumbel(AbstractDistribution):
 
     The probability density function (PDF) of the Gumbel distribution (Type I) is:
 
-    .. math::
-
-      f(x; \\mu, \\beta) = \\frac{1}{\\beta} \\exp\\left( -\\frac{x - \\mu}{\beta} \\right) \\exp\\left( -\\exp\\left( -\\frac{x
-      -\\mu}{\\beta} \\right) \\right)
+    .. math:: f(x; \\mu, \\beta) = \\frac{1}{\\beta} \\exp\\left(-\\frac{x - \\mu}{\beta} \\right) \\exp\\left(-\\exp\\left(-\\frac{x -\\mu}{\\beta} \\right) \\right)
 
     where:
-        :math:\\mu is the location parameter.
-        :math:\\beta is the scale parameter.
+        .. math:\\mu is the location parameter.
+        .. math:\\beta is the scale parameter.
     """
 
     cdf_Weibul: ndarray
@@ -520,9 +517,9 @@ class Gumbel(AbstractDistribution):
             data time series.
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter of the gumbel distribution.
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter of the gumbel distribution.
         """
         super().__init__(data, parameters)
@@ -626,10 +623,10 @@ class Gumbel(AbstractDistribution):
             scale: [numeric]
                 scale parameter of the gumbel distribution.
         actual_data : [bool/array]
-            true if you want to calculate the pdf for the actual time series, array
-            if you want to calculate the pdf for a theoretical time series
-        plot_figure: [bool]
-            Default is False.
+            true if you want to calculate the pdf for the actual time series, array if you want to calculate the pdf
+            for a theoretical time series.
+        plot_figure: [bool], Default is False.
+            True to plot the figure.
         kwargs:
             figsize: [tuple]
                 Default is (6, 5).
