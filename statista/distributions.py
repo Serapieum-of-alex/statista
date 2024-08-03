@@ -487,7 +487,21 @@ class AbstractDistribution(ABC):
 
 
 class Gumbel(AbstractDistribution):
-    """Gumbel distribution."""
+    """Gumbel distribution.
+
+    The Gumbel distribution is used to model the distribution of the maximum (or the minimum) of a number of samples of various distributions.
+
+    The probability density function (PDF) of the Gumbel distribution (Type I) is:
+
+    .. math::
+
+      f(x; \mu, \beta) = \frac{1}{\beta} \exp\left( -\frac{x - \mu}{\beta} \right) \exp\left( -\exp\left( -\frac{x -\mu}{\beta} \right) \right)
+
+    where:
+
+    :math:\mu is the location parameter.
+    :math:\beta is the scale parameter.
+    """
 
     cdf_Weibul: ndarray
     parameters: dict[str, Union[float, Any]]

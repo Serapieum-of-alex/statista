@@ -1,4 +1,5 @@
 """Extreme value analysis."""
+
 from typing import Union, Tuple
 from pathlib import Path
 import matplotlib.pyplot as plt

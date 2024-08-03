@@ -1,4 +1,5 @@
 """Heavy tail example."""
+
 import pandas as pd
 
 rdir = rf"examples/data"

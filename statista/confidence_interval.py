@@ -1,4 +1,5 @@
 """Confidence interval module."""
+
 from collections import OrderedDict
 from loguru import logger
 from typing import Union

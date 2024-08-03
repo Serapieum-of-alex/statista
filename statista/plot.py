@@ -1,4 +1,5 @@
 """Plotting functions for statista package."""
+
 from typing import Union, Tuple, List, Any
 from numbers import Number
 import matplotlib.pyplot as plt

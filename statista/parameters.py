@@ -1,4 +1,5 @@
 """L moments."""
+
 from __future__ import annotations
 
 from typing import Any, List, Union
@@ -66,9 +67,9 @@ class Lmoments:
             raise ValueError("Insufficient length of data for specified nmoments")
 
         # Calculate first order
-        coefl1 = 1.0 / self._comb(n, 1)
-        suml1 = sum(x)
-        lmoments = [coefl1 * suml1]
+        coef_l1 = 1.0 / self._comb(n, 1)
+        sum_l1 = sum(x)
+        lmoments = [coef_l1 * sum_l1]
 
         if nmom == 1:
             return lmoments[0]
@@ -84,23 +85,23 @@ class Lmoments:
             coefl = 1.0 / mom * 1.0 / self._comb(n, mom)
             xtrans = []
             for i in range(0, n):
-                coeftemp = []
+                coef_temp = []
                 for _ in range(0, mom):
-                    coeftemp.append(1)
+                    coef_temp.append(1)
 
                 for j in range(0, mom - 1):
-                    coeftemp[j] = coeftemp[j] * comb[mom - j - 2][i]
+                    coef_temp[j] = coef_temp[j] * comb[mom - j - 2][i]
 
                 for j in range(1, mom):
-                    coeftemp[j] = coeftemp[j] * comb[j - 1][n - i - 1]
+                    coef_temp[j] = coef_temp[j] * comb[j - 1][n - i - 1]
 
                 for j in range(0, mom):
-                    coeftemp[j] = coeftemp[j] * self._comb(mom - 1, j)
+                    coef_temp[j] = coef_temp[j] * self._comb(mom - 1, j)
 
                 for j in range(0, int(0.5 * mom)):
-                    coeftemp[j * 2 + 1] = -coeftemp[j * 2 + 1]
-                coeftemp = sum(coeftemp)
-                xtrans.append(x[i] * coeftemp)
+                    coef_temp[j * 2 + 1] = -coef_temp[j * 2 + 1]
+                coef_temp = sum(coef_temp)
+                xtrans.append(x[i] * coef_temp)
 
             if mom > 2:
                 lmoments.append(coefl * sum(xtrans) / lmoments[1])
@@ -134,7 +135,7 @@ class Lmoments:
         # for i in range(1,n+1):
         # #        comb1.append(comb(i-1,1))
         # #        comb2.append(comb(n-i,1))
-        # Can be simplifed to comb1 = range(0,n)
+        # Can be simplified to comb1 = range(0,n)
 
         comb1 = range(0, n)
         comb2 = range(n - 1, -1, -1)
@@ -142,8 +143,8 @@ class Lmoments:
         coefl2 = 0.5 * 1.0 / self._comb(n, 2)
         xtrans = []
         for i in range(0, n):
-            coeftemp = comb1[i] - comb2[i]
-            xtrans.append(coeftemp * sample[i])
+            coef_temp = comb1[i] - comb2[i]
+            xtrans.append(coef_temp * sample[i])
 
         l_moment_2 = coefl2 * sum(xtrans)
 
@@ -158,15 +159,15 @@ class Lmoments:
         comb3 = []
         comb4 = []
         for i in range(0, n):
-            combtemp = self._comb(i, 2)
-            comb3.append(combtemp)
-            comb4.insert(0, combtemp)
+            comb_temp = self._comb(i, 2)
+            comb3.append(comb_temp)
+            comb4.insert(0, comb_temp)
 
         coefl3 = 1.0 / 3 * 1.0 / self._comb(n, 3)
         xtrans = []
         for i in range(0, n):
-            coeftemp = comb3[i] - 2 * comb1[i] * comb2[i] + comb4[i]
-            xtrans.append(coeftemp * sample[i])
+            coef_temp = comb3[i] - 2 * comb1[i] * comb2[i] + comb4[i]
+            xtrans.append(coef_temp * sample[i])
 
         l_moment_3 = coefl3 * sum(xtrans) / l_moment_2
 
@@ -179,17 +180,17 @@ class Lmoments:
         comb5 = []
         comb6 = []
         for i in range(0, n):
-            combtemp = self._comb(i, 3)
-            comb5.append(combtemp)
-            comb6.insert(0, combtemp)
+            comb_temp = self._comb(i, 3)
+            comb5.append(comb_temp)
+            comb6.insert(0, comb_temp)
 
         coefl4 = 1.0 / 4 * 1.0 / self._comb(n, 4)
         xtrans = []
         for i in range(0, n):
-            coeftemp = (
+            coef_temp = (
                 comb5[i] - 3 * comb3[i] * comb2[i] + 3 * comb1[i] * comb4[i] - comb6[i]
             )
-            xtrans.append(coeftemp * sample[i])
+            xtrans.append(coef_temp * sample[i])
 
         l_moment_4 = coefl4 * sum(xtrans) / l_moment_2
 
@@ -200,21 +201,21 @@ class Lmoments:
         comb7 = []
         comb8 = []
         for i in range(0, n):
-            combtemp = self._comb(i, 4)
-            comb7.append(combtemp)
-            comb8.insert(0, combtemp)
+            comb_temp = self._comb(i, 4)
+            comb7.append(comb_temp)
+            comb8.insert(0, comb_temp)
 
         coefl5 = 1.0 / 5 * 1.0 / self._comb(n, 5)
         xtrans = []
         for i in range(0, n):
-            coeftemp = (
+            coef_temp = (
                 comb7[i]
                 - 4 * comb5[i] * comb2[i]
                 + 6 * comb3[i] * comb4[i]
                 - 4 * comb1[i] * comb6[i]
                 + comb8[i]
             )
-            xtrans.append(coeftemp * sample[i])
+            xtrans.append(coef_temp * sample[i])
 
         l_moment_5 = coefl5 * sum(xtrans) / l_moment_2
 

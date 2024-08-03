@@ -1,4 +1,5 @@
 """Test distributions module."""
+
 from typing import List
 
 import numpy as np

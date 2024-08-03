@@ -1,4 +1,5 @@
 """Extreme value statistics"""
+
 import matplotlib
 
 matplotlib.use("TkAgg")
@@ -74,7 +75,7 @@ print(gev_lmom_param)
 # calculate and plot the pdf
 pdf, fig, ax = gev_dist.pdf(gev_lmom_param, plot_figure=True)
 cdf, _, _ = gev_dist.cdf(gev_lmom_param, plot_figure=True)
-#%%
+# %%
 time_series1.sort()
 # calculate the F (Non Exceedence probability based on weibul)
 cdf_weibul = PlottingPosition.weibul(time_series1)
