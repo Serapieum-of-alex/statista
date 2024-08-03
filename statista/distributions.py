@@ -495,12 +495,12 @@ class Gumbel(AbstractDistribution):
 
     .. math::
 
-      f(x; \mu, \beta) = \frac{1}{\beta} \exp\left( -\frac{x - \mu}{\beta} \right) \exp\left( -\exp\left( -\frac{x -\mu}{\beta} \right) \right)
+      f(x; \\mu, \\beta) = \\frac{1}{\\beta} \\exp\\left( -\\frac{x - \\mu}{\beta} \\right) \\exp\\left( -\\exp\\left( -\\frac{x
+      -\\mu}{\\beta} \\right) \\right)
 
     where:
-
-    :math:\mu is the location parameter.
-    :math:\beta is the scale parameter.
+        :math:\\mu is the location parameter.
+        :math:\\beta is the scale parameter.
     """
 
     cdf_Weibul: ndarray
@@ -621,9 +621,9 @@ class Gumbel(AbstractDistribution):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter of the gumbel distribution.
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter of the gumbel distribution.
         actual_data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
@@ -657,7 +657,7 @@ class Gumbel(AbstractDistribution):
         Parameters
         ----------
         data:[list/array/float]
-            value you want the coresponding return value for
+            value you want the corresponding return value for
         loc: [float]
             location parameter
         scale: [float]
@@ -716,11 +716,11 @@ class Gumbel(AbstractDistribution):
         """fit_model.
 
         EstimateParameter estimate the distribution parameter based on MLM
-        (Maximum liklihood method), if an objective function is entered as an input
+        (Maximum likelihood method), if an objective function is entered as an input
 
         There are two likelihood functions (L1 and L2), one for values above some
         threshold (x>=C) and one for values below (x < C), now the likeliest parameters
-        are those at the max value of mutiplication between two functions max(L1*L2).
+        are those at the max value of multiplication between two functions max(L1*L2).
 
         In this case the L1 is still the product of multiplication of probability
         density function's values at xi, but the L2 is the probability that threshold
@@ -787,9 +787,9 @@ class Gumbel(AbstractDistribution):
     def theoretical_estimate(
         parameters: Dict[str, Union[float, Any]], cdf: np.ndarray
     ) -> np.ndarray:
-        """theporeticalEstimate.
+        """theoreticalEstimate.
 
-        TheporeticalEstimate method calculates the theoretical values based on the Gumbel distribution
+        TheoreticalEstimate method calculates the theoretical values based on the Gumbel distribution
 
         Parameters:
         -----------
@@ -800,11 +800,11 @@ class Gumbel(AbstractDistribution):
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
         cdf: [list]
-            cummulative distribution function/ Non Exceedence probability.
+            cumulative distribution function/ Non Exceedance probability.
 
         Return:
         -------
-        theoreticalvalue : [numeric]
+        theoretical value : [numeric]
             Value based on the theoretical distribution
         """
         loc = parameters.get("loc")
@@ -819,22 +819,22 @@ class Gumbel(AbstractDistribution):
         cdf = np.array(cdf)
         # Qth = loc - scale * (np.log(-np.log(cdf)))
 
-        # the main equation form scipy
+        # the main equation from scipy
         qth = gumbel_r.ppf(cdf, loc=loc, scale=scale)
         return qth
 
     def ks(self) -> tuple:
         """Kolmogorov-Smirnov (KS) test.
 
-        The smaller the D static the more likely that the two samples are drawn from the same distribution
-        IF Pvalue < signeficance level ------ reject
+        The smaller the D static, the more likely that the two samples are drawn from the same distribution
+        IF P value < significance level ------ reject
 
         returns:
         --------
         Dstatic: [numeric]
             The smaller the D static the more likely that the two samples are drawn from the same distribution
-        Pvalue : [numeric]
-            IF Pvalue < signeficance level ------ reject the null hypotethis
+        P value: [numeric]
+            IF P value < significance level ------ reject the null hypothesis
         """
         return super().ks()
 
@@ -859,7 +859,7 @@ class Gumbel(AbstractDistribution):
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
         prob_non_exceed : [list]
-            Non Exceedence probability
+            Non Exceedance probability
         alpha : [numeric]
             alpha or SignificanceLevel is a value of the confidence interval.
 
@@ -872,9 +872,9 @@ class Gumbel(AbstractDistribution):
             - scale: [numeric]
                 scale parameter
         q_upper : [list]
-            upper bound coresponding to the confidence interval.
+            upper bound corresponding to the confidence interval.
         q_lower : [list]
-            lower bound coresponding to the confidence interval.
+            lower bound corresponding to the confidence interval.
         """
         scale = parameters.get("scale")
 
@@ -904,10 +904,10 @@ class Gumbel(AbstractDistribution):
         ylabel: str = "cdf",
         fontsize: int = 15,
     ) -> tuple[list[Figure], list[Any]]:  # pylint: disable=arguments-differ
-        """probapilityPlot.
+        """Probability plot.
 
-        ProbapilityPlot method calculates the theoretical values based on the Gumbel distribution
-        parameters, theoretical cdf (or weibul), and calculate the confidence interval.
+        Probability Plot method calculates the theoretical values based on the Gumbel distribution
+        parameters, theoretical cdf (or weibul), and calculates the confidence interval.
 
         Parameters
         ----------
@@ -935,12 +935,12 @@ class Gumbel(AbstractDistribution):
         Returns
         -------
         Qth : [list]
-            theoretical generated values based on the theoretical cdf calculated from
+            theoretical-generated values based on the theoretical cdf calculated from
             weibul or the distribution parameters.
         q_upper : [list]
-            upper bound coresponding to the confidence interval.
+            upper-bound coresponding to the confidence interval.
         q_lower : [list]
-            lower bound coresponding to the confidence interval.
+            lower-bound coresponding to the confidence interval.
         """
         scale = parameters.get("scale")
 
@@ -977,7 +977,7 @@ class Gumbel(AbstractDistribution):
 
 
 class GEV(AbstractDistribution):
-    """GEV (Genalized Extreme value statistics)"""
+    """GEV (Generalized Extreme value statistics)"""
 
     parameters: dict[str, Union[float, Any]]
     data: ndarray
@@ -1055,18 +1055,17 @@ class GEV(AbstractDistribution):
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
-        Returns the value of GEV's pdf with parameters loc and scale at x .
+        Returns the value of GEV's pdf with parameters loc and scale at x.
 
         Parameters
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val, "shape": value}
-
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter of the GEV distribution.
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter of the GEV distribution.
-            - shape: [numeric]
+            shape: [numeric]
                 shape parameter of the GEV distribution.
         actual_data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
@@ -1211,11 +1210,11 @@ class GEV(AbstractDistribution):
         """estimateParameter.
 
         EstimateParameter estimate the distribution parameter based on MLM
-        (Maximum liklihood method), if an objective function is entered as an input
+        (Maximum likelihood method), if an objective function is entered as an input
 
         There are two likelihood functions (L1 and L2), one for values above some
-        threshold (x>=C) and one for values below (x < C), now the likeliest parameters
-        are those at the max value of mutiplication between two functions max(L1*L2).
+        threshold (x>=C) and one for the values below (x < C), now the likeliest parameters
+        are those at the max value of multiplication between two functions max(L1*L2).
 
         In this case the L1 is still the product of multiplication of probability
         density function's values at xi, but the L2 is the probability that threshold
@@ -1282,20 +1281,20 @@ class GEV(AbstractDistribution):
         parameters: Dict[str, Union[float, Any]],
         cdf: np.ndarray,
     ) -> np.ndarray:
-        """TheporeticalEstimate.
+        """Theoretical Estimate.
 
-        TheporeticalEstimate method calculates the theoretical values based on a given  non exceedence probability
+        Theoretical Estimate method calculates the theoretical values based on a given non-exceedance probability
 
         Parameters:
         -----------
-        param : [list]
-            location ans scale parameters of the gumbel distribution.
+        parameter: [list]
+            location and scale parameters of the gumbel distribution.
         cdf: [list]
-            cummulative distribution function/ Non Exceedence probability.
+            cumulative distribution function/ Non-Exceedance probability.
 
         Return:
         -------
-        theoreticalvalue : [numeric]
+        theoretical value: [numeric]
             Value based on the theoretical distribution
         """
         loc = parameters.get("loc")
@@ -1334,15 +1333,15 @@ class GEV(AbstractDistribution):
     def ks(self):
         """Kolmogorov-Smirnov (KS) test.
 
-        The smaller the D static the more likely that the two samples are drawn from the same distribution
-        IF Pvalue < signeficance level ------ reject
+        The smaller the D static, the more likely that the two samples are drawn from the same distribution
+        IF Pvalue < significance level ------ reject
 
         returns:
         --------
             Dstatic: [numeric]
                 The smaller the D static the more likely that the two samples are drawn from the same distribution
             Pvalue : [numeric]
-                IF Pvalue < signeficance level ------ reject the null hypotethis
+                IF Pvalue < significance level ------ reject the null hypothesis
         """
         return super().ks()
 
@@ -1358,7 +1357,7 @@ class GEV(AbstractDistribution):
         statfunction=np.average,
         n_samples: int = 100,
         method: str = "lmoments",
-        **kargs,
+        **kwargs,
     ):  # pylint: disable=arguments-differ
         """confidence_interval.
 
@@ -1369,7 +1368,7 @@ class GEV(AbstractDistribution):
         scale : [numeric]
             scale parameter of the gumbel distribution.
         prob_non_exceed : [list]
-            Non Exceedence probability
+            Non-Exceedance probability
         alpha : [numeric]
             alpha or SignificanceLevel is a value of the confidence interval.
         statfunction: [callable]
@@ -1399,7 +1398,7 @@ class GEV(AbstractDistribution):
             alpha=alpha,
             n_samples=n_samples,
             method=method,
-            **kargs,
+            **kwargs,
         )
         q_lower = ci["lb"]
         q_upper = ci["ub"]
@@ -1420,43 +1419,43 @@ class GEV(AbstractDistribution):
         ylabel="cdf",
         fontsize=15,
     ):
-        """probapilityPlot.
+        """Probability Plot.
 
-        ProbapilityPlot method calculates the theoretical values based on the Gumbel distribution
+        Probability Plot method calculates the theoretical values based on the Gumbel distribution
         parameters, theoretical cdf (or weibul), and calculate the confidence interval.
 
         Parameters
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val, shape: val}
-            - loc : [numeric]
+            loc : [numeric]
                 Location parameter of the GEV distribution.
-            - scale : [numeric]
+            scale : [numeric]
                 Scale parameter of the GEV distribution.
-            - shape: [float, int]
+            shape: [float, int]
                 Shape parameter for the GEV distribution.
-        cdf : [list]
+        cdf: [list]
             Theoretical cdf calculated using weibul or using the distribution cdf function.
         method: [str]
             Method used to fit the generated samples from the bootstrap method ["lmoments", "mle", "mm"]. Default is
             "lmoments".
-        alpha : [float]
+        alpha: [float]
             Value between 0 and 1.
-        fontsize : [numeric]
+        fontsize: [numeric]
             Font size of the axis labels and legend
-        ylabel : [string]
+        ylabel: [string]
             y label string
-        xlabel : [string]
+        xlabel: [string]
             X label string
-        fig1_size : [tuple]
+        fig1_size: [tuple]
             size of the pdf and cdf figure
-        fig2_size : [tuple]
+        fig2_size: [tuple]
             size of the confidence interval figure
-        n_samples : [integer]
-            number of points in the condidence interval calculation
-        alpha : [numeric]
+        n_samples: [integer]
+            number of points in the confidence interval calculation
+        alpha: [numeric]
             alpha or SignificanceLevel is a value of the confidence interval.
-        func : [function]
+        func: [function]
             function to be used in the confidence interval calculation.
         """
         scale = parameters.get("scale")
@@ -1515,11 +1514,11 @@ class GEV(AbstractDistribution):
         data: [list, np.ndarray]
             time series
         kwargs:
-            - gevfit: [list]
+            gevfit: [list]
                 GEV parameter [shape, location, scale]
-            - F: [list]
-                Non Exceedence probability
-            - method: [str]
+            F: [list]
+                Non-Exceedance probability
+            method: [str]
                 method used to fit the generated samples from the bootstrap method ["lmoments", "mle", "mm"]. Default is
                 "lmoments".
         """
@@ -1842,9 +1841,9 @@ class Exponential(AbstractDistribution):
             data time series.
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter of the exponential distribution.
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter of the exponential distribution.
         """
         super().__init__(data, parameters)
@@ -1884,15 +1883,15 @@ class Exponential(AbstractDistribution):
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
-        Returns the value of Gumbel's pdf with parameters loc and scale at x .
+        Returns the value of Gumbel's pdf with parameters loc and scale at x.
 
         Parameters:
         -----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter of the gumbel distribution.
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter of the gumbel distribution.
         actual_data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
@@ -1961,9 +1960,9 @@ class Exponential(AbstractDistribution):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter of the gumbel distribution.
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter of the gumbel distribution.
         actual_data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
@@ -1999,11 +1998,11 @@ class Exponential(AbstractDistribution):
         """estimateParameter.
 
         EstimateParameter estimate the distribution parameter based on MLM
-        (Maximum liklihood method), if an objective function is entered as an input
+        (Maximum likelihood method), if an objective function is entered as an input
 
         There are two likelihood functions (L1 and L2), one for values above some
         threshold (x>=C) and one for values below (x < C), now the likeliest parameters
-        are those at the max value of mutiplication between two functions max(L1*L2).
+        are those at the max value of multiplication between two functions max(L1*L2).
 
         In this case the L1 is still the product of multiplication of probability
         density function's values at xi, but the L2 is the probability that threshold
@@ -2070,9 +2069,9 @@ class Exponential(AbstractDistribution):
         parameters: Dict[str, Union[float, Any]],
         cdf: np.ndarray,
     ) -> np.ndarray:
-        """TheporeticalEstimate.
+        """Theoretical Estimate.
 
-        TheporeticalEstimate method calculates the theoretical values based on a given  non exceedence probability
+        Theoretical Estimate method calculates the theoretical values based on a given  non exceedence probability
 
         Parameters:
         -----------
@@ -2083,11 +2082,11 @@ class Exponential(AbstractDistribution):
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
         cdf: [list]
-            cummulative distribution function/ Non Exceedence probability.
+            cumulative distribution function/ Non-Exceedance probability.
 
         Return:
         -------
-        theoreticalvalue : [numeric]
+        theoretical value: [numeric]
             Value based on the theoretical distribution
         """
         loc = parameters.get("loc")
@@ -2106,15 +2105,15 @@ class Exponential(AbstractDistribution):
     def ks(self):
         """Kolmogorov-Smirnov (KS) test.
 
-        The smaller the D static the more likely that the two samples are drawn from the same distribution
-        IF Pvalue < signeficance level ------ reject
+        The smaller the D static, the more likely that the two samples are drawn from the same distribution
+        IF Pvalue < significance level ------ reject
 
         returns:
         --------
             Dstatic: [numeric]
                 The smaller the D static the more likely that the two samples are drawn from the same distribution
             Pvalue : [numeric]
-                IF Pvalue < signeficance level ------ reject the null hypotethis
+                IF Pvalue < significance level ------ reject the null hypothesis
         """
         return super().ks()
 
@@ -2170,15 +2169,15 @@ class Normal(AbstractDistribution):
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
-        Returns the value of Gumbel's pdf with parameters loc and scale at x .
+        Returns the value of Gumbel's pdf with parameters loc and scale at x.
 
         Parameters:
         -----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val, "shape": value}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter of the GEV distribution.
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter of the GEV distribution.
         actual_data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
@@ -2241,9 +2240,9 @@ class Normal(AbstractDistribution):
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val, "shape": value}
-            - loc: [numeric]
+            loc: [numeric]
                 location parameter of the Normal distribution.
-            - scale: [numeric]
+            scale: [numeric]
                 scale parameter of the Normal distribution.
         actual_data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
@@ -2279,23 +2278,23 @@ class Normal(AbstractDistribution):
         """estimateParameter.
 
         EstimateParameter estimate the distribution parameter based on MLM
-        (Maximum liklihood method), if an objective function is entered as an input
+        (Maximum likelihood method), if an objective function is entered as an input
 
         There are two likelihood functions (L1 and L2), one for values above some
-        threshold (x>=C) and one for values below (x < C), now the likeliest parameters
-        are those at the max value of mutiplication between two functions max(L1*L2).
+        threshold (x>=C) and one for the values below (x < C), now the likeliest parameters
+        are those at the max value of multiplication between two functions max(L1*L2).
 
-        In this case the L1 is still the product of multiplication of probability
+        In this case, the L1 is still the product of multiplication of probability
         density function's values at xi, but the L2 is the probability that threshold
         value C will be exceeded (1-F(C)).
 
         Parameters
         ----------
-        obj_func : [function]
+        obj_func: [function]
             function to be used to get the distribution parameters.
-        threshold : [numeric]
+        threshold: [numeric]
             Value you want to consider only the greater values.
-        method : [string]
+        method: [string]
             'mle', 'mm', 'lmoments', optimization
         test: bool
             Default is True
@@ -2350,9 +2349,9 @@ class Normal(AbstractDistribution):
         parameters: Dict[str, Union[float, Any]],
         cdf: np.ndarray,
     ) -> np.ndarray:
-        """TheporeticalEstimate.
+        """Theoretical Estimate.
 
-        TheporeticalEstimate method calculates the theoretical values based on a given  non exceedence probability
+        Theoretical Estimate method calculates the theoretical values based on a given  non exceedence probability
 
         Parameters:
         -----------
@@ -2363,7 +2362,7 @@ class Normal(AbstractDistribution):
             - scale: [numeric]
                 scale parameter of the Normal distribution.
         cdf: [list]
-            cummulative distribution function/ Non Exceedence probability.
+            cumulative distribution function/ Non-Exceedance probability.
 
         Return:
         -------
@@ -2386,7 +2385,7 @@ class Normal(AbstractDistribution):
     def ks(self):
         """Kolmogorov-Smirnov (KS) test.
 
-        The smaller the D static the more likely that the two samples are drawn from the same distribution
+        The smaller the D static, the more likely that the two samples are drawn from the same distribution
         IF Pvalue < signeficance level ------ reject
 
         returns:
@@ -2394,7 +2393,7 @@ class Normal(AbstractDistribution):
             Dstatic: [numeric]
                 The smaller the D static the more likely that the two samples are drawn from the same distribution
             Pvalue : [numeric]
-                IF Pvalue < signeficance level ------ reject the null hypotethis
+                IF Pvalue < signeficance level ------ reject the null hypothesis
         """
         return super().ks()
 
@@ -2425,10 +2424,10 @@ class Distributions:
         self.distribution = self.available_distributions[distribution](data, parameters)
 
     def __getattr__(self, name: str):
-        """Delegate method calls to the sub-class"""
+        """Delegate method calls to the subclass"""
         # Retrieve the attribute or method from the animal object
         try:
-            # Retrieve the attribute or method from the sub-classes
+            # Retrieve the attribute or method from the subclasses
             attribute = getattr(self.distribution, name)
 
             # If the attribute is a method, return a callable function

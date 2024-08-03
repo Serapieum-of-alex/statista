@@ -1,6 +1,6 @@
 """Sensitivity Analysis."""
 
-from typing import List
+from typing import List, Union
 import matplotlib.pyplot as plt
 import numpy as np
 from pandas import DataFrame
@@ -29,8 +29,8 @@ class Sensitivity:
     def __init__(
         self,
         parameter: DataFrame,
-        lower_bound: List[int, float],
-        upper_bound: List[int, float],
+        lower_bound: List[Union[int, float]],
+        upper_bound: List[Union[int, float]],
         function: callable,
         positions=None,
         n_values=5,
