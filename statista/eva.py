@@ -24,9 +24,9 @@ def ams_analysis(
     quartile: float = 0,
     significance_level: float = 0.1,
 ) -> Tuple[DataFrame, DataFrame]:
-    """ams_analysis.
+    """Annual Maximum Series analysis.
 
-    ams analysis method reads resamples all the the time series in the given dataframe to annual maximum, then fits
+    ams analysis method reads resamples all the time series in the given dataframe to annual maximum, then fits
     the time series to a given distribution and parameter estimation method.
 
     Parameters
@@ -34,29 +34,28 @@ def ams_analysis(
     time_series_df : [DataFrame]
         DataFrame containing multiple time series to do the statistical analysis on.
     ams: [bool]
-        True if the the given time series is annual mean series. Default is False.
+        True if the given time series is annual mean series. Default is False.
     ams_start: [str]
         The beginning of the year which is used to resample the time series to get the annual maximum series.
-        Default is"A-OCT".
+        Default is "A-OCT".
     save_plots : [Bool]
         True if you want to save the plots.
     save_to : [str]
-        The rdir where you want to  save the statistical properties.
+        The rdir where you want to save the statistical properties.
     filter_out: [Bool]
-        For observed or hydraulic model data it has gaps of times where the
-        model did not run or gaps in the observed data if these gap days
-        are filled with a specific value and you want to ignore it here
+        For observed or hydraulic model data it has gaps of times where the model did not run or gaps in the observed
+        data if these gap days are filled with a specific value and you want to ignore it here
         give filter_out = Value you want
-    distribution: [str]
-        Default is "GEV".
-    method: [str]
-        available methods are 'mle', 'mm', 'lmoments', 'optimization'. Default is "lmoments"
+    distribution: str, Default is "GEV".
+        distribution name.
+    method: str, Default is "lmoments".
+        available methods are 'mle', 'mm', 'lmoments', 'optimization'.
     obj_func: [callable]
         objective function to be used in the optimization method, default is None. for Gumbel distribution there is the
-        Gumbel.objective_fn and similarly for the GEV distribution there is the GEV.objective_fn.
+        `Gumbel.objective_fn` and similarly for the GEV distribution there is the GEV.objective_fn.
     quartile: [float]
-        the quartile is only used when estinating the distribution parameters based on optimization and a threshould
-        value, the threshould value will be calculated as a the quartile coresponding to the value of this parameter.
+        the quartile is only used when estimating the distribution parameters based on optimization and a threshould
+        value, the threshold value will be calculated as the quartile coresponding to the value of this parameter.
     significance_level:
         Default is [0.1].
 

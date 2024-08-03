@@ -747,9 +747,10 @@ class Gumbel(AbstractDistribution):
         -------
         Dict[str, str]:
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the gumbel distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the gumbel distribution.
         """
         # obj_func = lambda p, x: (-np.log(Gumbel.pdf(x, p[0], p[1]))).sum()
@@ -875,9 +876,10 @@ class Gumbel(AbstractDistribution):
         -------
         parameters: Dict[str, str]
             {"loc": val, "scale": val, "shape": value}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter
         q_upper : [list]
             upper bound corresponding to the confidence interval.
@@ -1004,9 +1006,10 @@ class GEV(AbstractDistribution):
             data time series.
         parameters: Dict[str, str]
             {"loc": val, "scale": val, "shape": value}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the GEV distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the GEV distribution.
             shape: [numeric]
                 shape parameter of the GEV distribution.
@@ -1192,11 +1195,12 @@ class GEV(AbstractDistribution):
             value you want the coresponding return value for
         parameters: Dict[str, str]
             {"loc": val, "scale": val, "shape": value}
-            shape: [float]
+
+            - shape: [float]
                 shape parameter
-            loc: [float]
+            - loc: [float]
                 location parameter
-            scale: [float]
+            - scale: [float]
                 scale parameter
 
         Returns
@@ -1857,9 +1861,10 @@ class Exponential(AbstractDistribution):
             data time series.
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the exponential distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the exponential distribution.
         """
         super().__init__(data, parameters)
@@ -2142,8 +2147,10 @@ class Exponential(AbstractDistribution):
 
 
 class Normal(AbstractDistribution):
-    """
-    f(x: threshold, scale) = (1/scale) e **(- (x-threshold)/scale)
+    """Normal Distribution.
+
+    .. math::
+        f(x: threshold, scale) = (1/scale) e **(- (x-threshold)/scale)
     """
 
     def __init__(
@@ -2159,9 +2166,10 @@ class Normal(AbstractDistribution):
             data time series.
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
-            loc: [numeric]
+
+            - loc: [numeric]
                 location parameter of the exponential distribution.
-            scale: [numeric]
+            - scale: [numeric]
                 scale parameter of the exponential distribution.
         """
         super().__init__(data, parameters)

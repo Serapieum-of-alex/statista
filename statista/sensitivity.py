@@ -121,8 +121,9 @@ class Sensitivity:
         ----------
         *args: [positional argument]
             arguments of the function with the same exact names inside the function.
-        **kwargs: [keyword argument]
+        **kwargs
             keyword arguments of the function with the same exact names inside the function.
+
             parameter: [dataframe]
                 parameters dataframe including the parameter values in a column with
                 name 'value' and the parameters' name as index.

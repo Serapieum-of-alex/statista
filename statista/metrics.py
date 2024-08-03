@@ -429,17 +429,17 @@ def pearson_corr_coeff(
 def r2(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     """R2.
 
-        the coefficient of determination measures how well the predicted
-        values match (and not just follow) the observed values.
-        It depends on the distance between the points and the 1:1 line
-        (and not the best-fit line)
-        Closer the data to the 1:1 line, higher the coefficient of determination.
-        The coefficient of determination is often denoted by R². However,
-        it is not the square of anything. It can range from any negative number to +1
-        - R² = +1 indicates that the predictions match the observations perfectly
-        - R² = 0 indicates that the predictions are as good as random guesses around
-            the mean of the observed values
-        - Negative R² indicates that the predictions are worse than random
+    the coefficient of determination measures how well the predicted
+    values match (and not just follow) the observed values.
+    It depends on the distance between the points and the 1:1 line
+    (and not the best-fit line)
+    Closer the data to the 1:1 line, higher the coefficient of determination.
+    The coefficient of determination is often denoted by R². However,
+    it is not the square of anything. It can range from any negative number to +1
+    - R² = +1 indicates that the predictions match the observations perfectly
+    - R² = 0 indicates that the predictions are as good as random guesses around
+        the mean of the observed values
+    - Negative R² indicates that the predictions are worse than random
 
     Since R² indicates the distance of points from the 1:1 line, it does depend
     on the magnitude of the numbers (unlike r² peason correlation coefficient).
