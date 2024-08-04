@@ -122,7 +122,7 @@ class TestGumbel:
         assert isinstance(cdf, np.ndarray)
         assert isinstance(fig, Figure)
 
-    def test_theoretical_estimate(
+    def test_inverse_cdf(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
@@ -130,7 +130,7 @@ class TestGumbel:
         dist = Gumbel(time_series2)
         cdf_weibul = PlottingPosition.weibul(time_series2)
         param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        qth = dist.theoretical_estimate(param, cdf_weibul)
+        qth = dist.inverse_cdf(param, cdf_weibul)
         assert isinstance(qth, np.ndarray)
 
     def test_confidence_interval(
@@ -236,7 +236,7 @@ class TestGEV:
         assert isinstance(cdf, np.ndarray)
         assert isinstance(fig, Figure)
 
-    def test_gev_theoretical_estimate(
+    def test_gev_inverse_cdf(
         self,
         time_series1: list,
         dist_estimation_parameters_ks: str,
@@ -244,7 +244,7 @@ class TestGEV:
         dist = GEV(time_series1)
         cdf_weibul = PlottingPosition.weibul(time_series1)
         param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        qth = dist.theoretical_estimate(param, cdf_weibul)
+        qth = dist.inverse_cdf(param, cdf_weibul)
         assert isinstance(qth, np.ndarray)
 
     def test_gev_confidence_interval(
@@ -357,7 +357,7 @@ class TestExponential:
         assert isinstance(cdf, np.ndarray)
         assert isinstance(fig, Figure)
 
-    def test_theoretical_estimate(
+    def test_inverse_cdf(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
@@ -365,7 +365,7 @@ class TestExponential:
         expo_dist = Exponential(time_series2)
         cdf_weibul = PlottingPosition.weibul(time_series2)
         param = expo_dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        qth = expo_dist.theoretical_estimate(param, cdf_weibul)
+        qth = expo_dist.inverse_cdf(param, cdf_weibul)
         assert isinstance(qth, np.ndarray)
 
 
@@ -415,7 +415,7 @@ class TestNormal:
         assert isinstance(cdf, np.ndarray)
         assert isinstance(fig, Figure)
 
-    def test_theoretical_estimate(
+    def test_inverse_cdf(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
@@ -423,7 +423,7 @@ class TestNormal:
         norm_dist = Normal(time_series2)
         cdf_weibul = PlottingPosition.weibul(time_series2)
         param = norm_dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        qth = norm_dist.theoretical_estimate(param, cdf_weibul)
+        qth = norm_dist.inverse_cdf(param, cdf_weibul)
         assert isinstance(qth, np.ndarray)
 
 

@@ -192,7 +192,7 @@ def ams_analysis(
 
         # Return periods from the fitted distribution are stored.
         # get the Discharge coresponding to the return periods
-        q_rp = dist.theoretical_estimate(param_dist, non_exceed_prop)
+        q_rp = dist.inverse_cdf(param_dist, non_exceed_prop)
 
         # to get the Non Exceedance probability for a specific Value
         # sort the ams_df

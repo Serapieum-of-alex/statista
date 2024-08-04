@@ -329,7 +329,7 @@ class AbstractDistribution(ABC):
 
     @staticmethod
     @abstractmethod
-    def theoretical_estimate(
+    def inverse_cdf(
         parameters: Dict[str, Union[float, Any]], cdf: np.ndarray
     ) -> np.ndarray:
         """theoretical Estimate.
@@ -373,7 +373,7 @@ class AbstractDistribution(ABC):
             raise ValueError(
                 "The Value of parameters is unknown. Please use 'fit_model' to estimate the distribution parameters"
             )
-        qth = self.theoretical_estimate(self.parameters, self.cdf_Weibul)
+        qth = self.inverse_cdf(self.parameters, self.cdf_Weibul)
 
         test = ks_2samp(self.data, qth)
         self.Dstatic = test.statistic
@@ -398,7 +398,7 @@ class AbstractDistribution(ABC):
                 "The Value of parameters is unknown. Please use 'fit_model' to estimate the distribution parameters"
             )
 
-        qth = self.theoretical_estimate(self.parameters, self.cdf_Weibul)
+        qth = self.inverse_cdf(self.parameters, self.cdf_Weibul)
         try:
             test = chisquare(st.standardize(qth), st.standardize(self.data))
             self.chistatic = test.statistic
@@ -825,12 +825,12 @@ class Gumbel(AbstractDistribution):
         return param
 
     @staticmethod
-    def theoretical_estimate(
+    def inverse_cdf(
         parameters: Dict[str, Union[float, Any]], cdf: np.ndarray
     ) -> np.ndarray:
-        """theoreticalEstimate.
+        """inverse CDF.
 
-        TheoreticalEstimate method calculates the theoretical values based on the Gumbel distribution
+        inverse_cdf method calculates the theoretical values based on a given cumulative distribution function.
 
         Parameters
         ----------
@@ -925,7 +925,7 @@ class Gumbel(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        qth = self.theoretical_estimate(parameters, prob_non_exceed)
+        qth = self.inverse_cdf(parameters, prob_non_exceed)
         y = [-np.log(-np.log(j)) for j in prob_non_exceed]
         std_error = [
             (scale / np.sqrt(len(self.data)))
@@ -992,7 +992,7 @@ class Gumbel(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        q_th = self.theoretical_estimate(parameters, cdf)
+        q_th = self.inverse_cdf(parameters, cdf)
         q_upper, q_lower = self.confidence_interval(parameters, cdf, alpha)
 
         q_x = np.linspace(
@@ -1359,7 +1359,7 @@ class GEV(AbstractDistribution):
         return param
 
     @staticmethod
-    def theoretical_estimate(
+    def inverse_cdf(
         parameters: Dict[str, Union[float, Any]],
         cdf: np.ndarray,
     ) -> np.ndarray:
@@ -1549,7 +1549,7 @@ class GEV(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        q_th = self.theoretical_estimate(parameters, cdf)
+        q_th = self.inverse_cdf(parameters, cdf)
         if func is None:
             func = GEV.ci_func
 
@@ -1612,7 +1612,7 @@ class GEV(AbstractDistribution):
         prob_non_exceed = kwargs["F"]
         method = kwargs["method"]
         # generate theoretical estimates based on a random cdf, and the dist parameters
-        sample = GEV.theoretical_estimate(gevfit, np.random.rand(len(data)))
+        sample = GEV.inverse_cdf(gevfit, np.random.rand(len(data)))
 
         # get parameters based on the new generated sample
         dist = GEV(sample)
@@ -1624,7 +1624,7 @@ class GEV(AbstractDistribution):
         # T = np.linspace(0.1, 999, len(data)) + 1
         # coresponding theoretical estimate to T
         # prob_non_exceed = 1 - 1 / T
-        q_th = GEV.theoretical_estimate(new_param, prob_non_exceed)
+        q_th = GEV.inverse_cdf(new_param, prob_non_exceed)
 
         res = list(new_param.values())
         res.extend(q_th)
@@ -1877,14 +1877,14 @@ class GEV(AbstractDistribution):
 #         return Param
 #
 #     @staticmethod
-#     def theoretical_estimate(
+#     def inverse_cdf(
 #         loc: Union[float, int],
 #         scale: Union[float, int],
 #         prob_non_exceed: np.ndarray,
 #     ) -> np.ndarray:
-#         """theoretical_estimate.
+#         """inverse_cdf.
 #
-#         theoretical_estimate method calculates the theoretical values based on a given non-exceedance probability
+#         inverse_cdf method calculates the theoretical values based on a given non-exceedance probability
 #
 #         Parameters
 #         -----------
@@ -2173,7 +2173,7 @@ class Exponential(AbstractDistribution):
         return param
 
     @staticmethod
-    def theoretical_estimate(
+    def inverse_cdf(
         parameters: Dict[str, Union[float, Any]],
         cdf: np.ndarray,
     ) -> np.ndarray:
@@ -2468,7 +2468,7 @@ class Normal(AbstractDistribution):
         return param
 
     @staticmethod
-    def theoretical_estimate(
+    def inverse_cdf(
         parameters: Dict[str, Union[float, Any]],
         cdf: np.ndarray,
     ) -> np.ndarray:
