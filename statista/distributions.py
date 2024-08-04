@@ -275,9 +275,9 @@ class AbstractDistribution(ABC):
         threshold: Union[None, float, int] = None,
         test: bool = True,
     ) -> Union[Dict[str, str], Any]:
-        """estimateParameter.
+        """fit_model.
 
-        EstimateParameter estimate the distribution parameter based on MLM
+        fit_model estimates the distribution parameter based on MLM
         (Maximum likelihood method), if an objective function is entered as an input
 
         There are two likelihood functions (L1 and L2), one for values above some
@@ -359,7 +359,7 @@ class AbstractDistribution(ABC):
         """
         if self.parameters is None:
             raise ValueError(
-                "The Value of parameters is unknown. please use 'EstimateParameter' to obtain estimate the distribution parameters"
+                "The Value of parameters is unknown. Please use 'fit_model' to estimate the distribution parameters"
             )
         qth = self.theoretical_estimate(self.parameters, self.cdf_Weibul)
 
@@ -383,8 +383,7 @@ class AbstractDistribution(ABC):
         """
         if self.parameters is None:
             raise ValueError(
-                "Value of loc/scale parameter is unknown please use "
-                "'EstimateParameter' to obtain them"
+                "The Value of parameters is unknown. Please use 'fit_model' to estimate the distribution parameters"
             )
 
         qth = self.theoretical_estimate(self.parameters, self.cdf_Weibul)
@@ -732,7 +731,7 @@ class Gumbel(AbstractDistribution):
     ) -> Dict[str, float]:
         """fit_model.
 
-        EstimateParameter estimate the distribution parameter based on MLM
+        fit_model estimates the distribution parameter based on MLM
         (Maximum likelihood method), if an objective function is entered as an input
 
         There are two likelihood functions (L1 and L2), one for values above some
@@ -1268,7 +1267,7 @@ class GEV(AbstractDistribution):
     ) -> Dict[str, float]:
         """Fit model.
 
-        EstimateParameter estimate the distribution parameter based on MLM
+        fit_model estimates the distribution parameter based on MLM
         (Maximum likelihood method), if an objective function is entered as an input
 
         There are two likelihood functions (L1 and L2), one for values above some
@@ -1775,21 +1774,21 @@ class GEV(AbstractDistribution):
 #         else:
 #             return cdf
 #
-#     def estimateParameter(
+#     def fit_model(
 #         self,
 #         method: str = "mle",
 #         obj_func=None,
 #         threshold: Union[int, float, None] = None,
 #         test: bool = True,
 #     ) -> tuple:
-#         """estimateParameter.
+#         """fit_model.
 #
-#         EstimateParameter estimate the distribution parameter based on MLM
-#         (Maximum liklihood method), if an objective function is entered as an input
+#         fit_model estimates the distribution parameter based on MLM
+#         (Maximum likelihood method), if an objective function is entered as an input
 #
 #         There are two likelihood functions (L1 and L2), one for values above some
 #         threshold (x>=C) and one for values below (x < C), now the likeliest parameters
-#         are those at the max value of mutiplication between two functions max(L1*L2).
+#         are those at the max value of multiplication between two functions max(L1*L2).
 #
 #         In this case the L1 is still the product of multiplication of probability
 #         density function's values at xi, but the L2 is the probability that threshold
@@ -1854,14 +1853,14 @@ class GEV(AbstractDistribution):
 #         return Param
 #
 #     @staticmethod
-#     def theporeticalEstimate(
+#     def theoretical_estimate(
 #         loc: Union[float, int],
 #         scale: Union[float, int],
 #         prob_non_exceed: np.ndarray,
 #     ) -> np.ndarray:
-#         """TheporeticalEstimate.
+#         """theoretical_estimate.
 #
-#         TheporeticalEstimate method calculates the theoretical values based on a given  non exceedence probability
+#         theoretical_estimate method calculates the theoretical values based on a given non-exceedance probability
 #
 #         Parameters
 #         -----------
@@ -2080,9 +2079,9 @@ class Exponential(AbstractDistribution):
         threshold: Union[int, float, None] = None,
         test: bool = True,
     ) -> Dict[str, float]:
-        """estimateParameter.
+        """fit_model.
 
-        EstimateParameter estimate the distribution parameter based on MLM
+        fit_model estimates the distribution parameter based on MLM
         (Maximum likelihood method), if an objective function is entered as an input
 
         There are two likelihood functions (L1 and L2), one for values above some
@@ -2375,9 +2374,9 @@ class Normal(AbstractDistribution):
         threshold: Union[int, float, None] = None,
         test: bool = True,
     ) -> Dict[str, float]:
-        """estimateParameter.
+        """fit_model.
 
-        EstimateParameter estimate the distribution parameter based on MLM
+        fit_model estimates the distribution parameter based on MLM
         (Maximum likelihood method), if an objective function is entered as an input
 
         There are two likelihood functions (L1 and L2), one for values above some

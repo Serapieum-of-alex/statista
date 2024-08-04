@@ -1,4 +1,5 @@
 """ Rhine gauges example """
+
 import matplotlib
 
 matplotlib.use("TkAgg")
@@ -18,12 +19,12 @@ ams = pd.read_csv("examples/data/rhine.csv")
 ams.head()
 ams.replace(0, np.nan, inplace=True)
 ams.dropna(axis=0, inplace=True)
-#%%
+# %%
 rees_gauge = ams.loc[:, "rees"].values
 cologne_gauge = ams.loc[:, "cologne"].values
 maxau_gauge = ams.loc[:, "maxau"].values
 rockenau_gauge = ams.loc[:, "rockenau"].values
-#%% Exponential distribution (mle)
+# %% Exponential distribution (mle)
 dist_obj = Distributions("Exponential", cologne_gauge)
 # default parameter estimation method is maximum liklihood method
 mle_param = dist_obj.fit_model(method="mle")
@@ -34,7 +35,7 @@ print(mle_param)
 # calculate and plot the pdf
 pdf, fig, ax = dist_obj.pdf(mle_param, plot_figure=True)
 cdf, _, _ = dist_obj.cdf(mle_param, plot_figure=True)
-#%% exponential distribution (lmoments)
+# %% exponential distribution (lmoments)
 dist_obj = Distributions("Exponential", cologne_gauge)
 # default parameter estimation method is maximum liklihood method
 mle_param = dist_obj.fit_model(method="lmoments")
@@ -45,7 +46,7 @@ print(mle_param)
 # calculate and plot the pdf
 pdf, fig, ax = dist_obj.pdf(mle_param, plot_figure=True)
 cdf, _, _ = dist_obj.cdf(mle_param, plot_figure=True)
-#%% GEV (mle)
+# %% GEV (mle)
 gev_cologne = Distributions("GEV", cologne_gauge)
 # default parameter estimation method is maximum liklihood method
 mle_param = gev_cologne.fit_model(method="mle")
@@ -57,7 +58,7 @@ print(mle_param)
 # calculate and plot the pdf
 pdf, fig, ax = gev_cologne.pdf(mle_param, plot_figure=True)
 cdf, _, _ = gev_cologne.cdf(mle_param, plot_figure=True)
-#%% cologne (lmoment)
+# %% cologne (lmoment)
 gev_cologne = Distributions("GEV", cologne_gauge)
 # default parameter estimation method is maximum liklihood method
 lmom_param = gev_cologne.fit_model(method="lmoments")

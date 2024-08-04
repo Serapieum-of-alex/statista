@@ -31,14 +31,14 @@ cdf, _, _ = gumbel_dist.cdf(param_lmoments, plot_figure=True)
 # %%
 # calculate the CDF(Non Exceedance probability) using weibul plotting position
 time_series1.sort()
-# calculate the F (Non Exceedence probability based on weibul)
+# calculate the F (Non-Exceedance probability based on weibul)
 cdf_weibul = PlottingPosition.weibul(time_series1)
-# TheporeticalEstimate method calculates the theoretical values based on the Gumbel distribution
+# theoretical_estimate method calculates the theoretical values based on the Gumbel distribution
 Qth = gumbel_dist.theoretical_estimate(param_lmoments, cdf_weibul)
 # test = stats.chisquare(st.Standardize(Qth), st.Standardize(time_series1),ddof=5)
 # calculate the confidence interval
 upper, lower = gumbel_dist.confidence_interval(param_lmoments, cdf_weibul, alpha=0.1)
-# ProbapilityPlot can estimate the Qth and the lower and upper confidence interval in the process of plotting
+# probability_plot can estimate the Qth and the lower and upper confidence interval in the process of plotting
 fig, ax = gumbel_dist.probability_plot(param_lmoments, cdf_weibul, alpha=0.1)
 # %%
 """
@@ -77,10 +77,10 @@ pdf, fig, ax = gev_dist.pdf(gev_lmom_param, plot_figure=True)
 cdf, _, _ = gev_dist.cdf(gev_lmom_param, plot_figure=True)
 # %%
 time_series1.sort()
-# calculate the F (Non Exceedence probability based on weibul)
+# calculate the F (Non-Exceedance probability based on weibul)
 cdf_weibul = PlottingPosition.weibul(time_series1)
 T = PlottingPosition.weibul(time_series1, return_period=True)
-# TheporeticalEstimate method calculates the theoretical values based on the Gumbel distribution
+# theoretical_estimate method calculates the theoretical values based on the Gumbel distribution
 Qth = gev_dist.theoretical_estimate(gev_lmom_param, cdf_weibul)
 
 func = GEV.ci_func
@@ -94,7 +94,7 @@ upper, lower = gev_dist.confidence_interval(
 )
 # %%
 """
-calculate the confidence interval using the boot strap method directly
+calculate the confidence interval using the bootstrap method directly
 """
 CI = ConfidenceInterval.boot_strap(
     time_series1,

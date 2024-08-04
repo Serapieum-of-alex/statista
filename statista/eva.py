@@ -197,9 +197,9 @@ def ams_analysis(
         # to get the Non Exceedance probability for a specific Value
         # sort the ams_df
         ams_df.sort()
-        # calculate the F (Exceedence probability based on weibul)
+        # calculate the F (Exceedance probability based on weibul)
         cdf_weibul = PlottingPosition.weibul(ams_df)
-        # Gumbel.probapilityPlot method calculates the theoretical values
+        # Gumbel.probability_plot method calculates the theoretical values
         # based on the Gumbel distribution
         # parameters, theoretical cdf (or weibul), and calculate the confidence interval
         if save_plots:
