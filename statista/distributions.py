@@ -562,6 +562,13 @@ class Gumbel(AbstractDistribution):
             >>> gumbel_dist = Gumbel(data)
             >>> print(gumbel_dist) # doctest: +SKIP
             <statista.distributions.Gumbel object at 0x000001CDDE9563F0>
+
+        - You can also instantiate the Gumbel class with the data and the parameters if you already have them.
+            >>> parameters = {"loc": 463.8040433832974, "scale": 220.0724922663106}
+            >>> gumbel_dist = Gumbel(data, parameters)
+            >>> print(gumbel_dist) # doctest: +SKIP
+            <statista.distributions.Gumbel object at 0x000001CDDEB32C00>
+
         """
         super().__init__(data, parameters)
         pass
@@ -619,6 +626,16 @@ class Gumbel(AbstractDistribution):
         -------
         pdf: [array]
             probability density function pdf.
+
+        Examples
+        --------
+        >>> data = np.loadtxt("examples/data/time_series1.txt")
+        >>> gumbel_dist = Gumbel(data)
+        >>> parameters = {'loc': 16.44841695242862, 'scale': 0.8328854157603985}
+        >>> gumbel_dist.pdf(parameters=parameters, plot_figure=True)
+
+        .. image:: /_image/gumbel-pdf.png
+            :align: center
         """
         result = super().pdf(
             parameters,
@@ -679,6 +696,16 @@ class Gumbel(AbstractDistribution):
                 Default is "cdf".
             fontsize: [int]
                 Default is 15.
+
+        Examples
+        --------
+        >>> data = np.loadtxt("examples/data/time_series1.txt")
+        >>> gumbel_dist = Gumbel(data)
+        >>> parameters = {'loc': 16.44841695242862, 'scale': 0.8328854157603985}
+        >>> gumbel_dist.cdf(parameters=parameters, plot_figure=True)  # doctest: +SKIP
+
+        .. image:: /_image/gumbel-cdf.png
+            :align: center
         """
         result = super().cdf(
             parameters,
@@ -786,6 +813,49 @@ class Gumbel(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
+
+        Examples
+        --------
+        - Instantiate the Gumbel class only with the data.
+
+            >>> data = np.loadtxt("examples/data/time_series1.txt")
+            >>> gumbel_dist = Gumbel(data)
+
+        - Then use the `fit_model` method to estimate the distribution parameters. the method takes the method as
+            parameter, the default is 'mle'. the `test` parameter is used to perform the Kolmogorov-Smirnov and chisquare
+            test.
+
+            >>> parameters = gumbel_dist.fit_model(method="mle", test=True)
+            -----KS Test--------
+            Statistic = 0.18518518518518517
+            Accept Hypothesis
+            P value = 0.7536974563793281
+            >>> print(parameters)
+            {'loc': 16.470245610977667, 'scale': 0.7244863131189487}
+
+        - You can also use the `lmoments` method to estimate the distribution parameters.
+
+            >>> parameters = gumbel_dist.fit_model(method="lmoments", test=True)
+            -----KS Test--------
+            Statistic = 0.14814814814814814
+            Accept Hypothesis
+            P value = 0.9356622290518453
+            >>> print(parameters)
+            {'loc': 16.44841695242862, 'scale': 0.8328854157603974}
+
+        - You can also use the `fit_model` method to estimate the distribution parameters using the 'optimization'
+            method. the optimization method requires the `obj_func` and `threshold` parameter. the method
+            will take the `threshold` number and try to fit the data values that are breater than the threshold.
+
+            >>> parameters = gumbel_dist.fit_model(method="optimization", obj_func=Gumbel.objective_fn, threshold=17)
+            Optimization terminated successfully.
+                         Current function value: 0.000000
+                         Iterations: 25
+                         Function evaluations: 94
+                -----KS Test--------
+                Statistic = 0.25925925925925924
+                reject Hypothesis
+                P value = 0.3290078898658627
         """
         # obj_func = lambda p, x: (-np.log(Gumbel.pdf(x, p[0], p[1]))).sum()
         # #first we make a simple Gumbel fit
@@ -848,6 +918,22 @@ class Gumbel(AbstractDistribution):
         -------
         theoretical value: [numeric]
             Value based on the theoretical distribution
+
+        Examples
+        --------
+        - Instantiate the Gumbel class only with the data.
+
+            >>> data = np.loadtxt("examples/data/time_series1.txt")
+            >>> gumbel_dist = Gumbel(data)
+            >>> parameters = {'loc': 16.44841695242862, 'scale': 0.8328854157603974}
+
+        - We will generate a random numbers between 0 and 1 and pass it to the inverse_cdf method as a probabilities
+            to get the data that coresponds to these probabilities based on the distribution.
+
+            >>> cdf = [0.1, 0.2, 0.4, 0.6, 0.8, 0.9]
+            >>> data_values = gumbel_dist.inverse_cdf(parameters, cdf)
+            >>> print(data_values)
+            [15.75376349 16.05205928 16.5212291  17.00788857 17.69769509 18.32271508]
         """
         loc = parameters.get("loc")
         scale = parameters.get("scale")
