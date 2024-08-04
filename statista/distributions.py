@@ -47,7 +47,21 @@ class PlottingPosition:
         -------
         array:
            return period.
+
+        Examples
+        --------
+        - First generate some random numbers between 0 and 1 as a non-exceedance probability. then use this non-exceedance
+            to calculate the return period.
+
+            >>> data = np.random.random(15)
+            >>> rp = PlottingPosition.return_period(data)
+            >>> print(rp) # doctest: +SKIP
+            [ 1.33088992  4.75342173  2.46855419  1.42836548  2.75320582  2.2268505
+              8.06500888 10.56043917 18.28884687  1.10298241  1.2113997   1.40988022
+              1.02795867  1.01326322  1.05572108]
         """
+        if any(prob_non_exceed > 1):
+            raise ValueError("Non-exceedance probability should be less than 1")
         prob_non_exceed = np.array(prob_non_exceed)
         t = 1 / (1 - prob_non_exceed)
         return t
@@ -74,8 +88,6 @@ class PlottingPosition:
 
         Examples
         --------
-        >>> from statista.distributions import PlottingPosition
-
         >>> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         >>> cdf = PlottingPosition.weibul(data)
         >>> print(cdf)
@@ -538,6 +550,18 @@ class Gumbel(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
+
+        Examples
+        --------
+        - First load a sample data.
+
+            >>> data = np.loadtxt("examples/data/time_series1.txt")
+
+        - I nstantiate the Gumbel class only with the data.
+
+            >>> gumbel_dist = Gumbel(data)
+            >>> print(gumbel_dist) # doctest: +SKIP
+            <statista.distributions.Gumbel object at 0x000001CDDE9563F0>
         """
         super().__init__(data, parameters)
         pass
