@@ -22,31 +22,43 @@ def dist_estimation_parameters() -> List[str]:
 
 
 @pytest.fixture(scope="module")
-def gev_dist_parameters_lm() -> Dict[str, float]:
+def gev_dist_parameters() -> Dict[str, float]:
     return {
-        "loc": 16.392889171307772,
-        "scale": 0.7005442761744839,
-        "shape": -0.1614793298009645,
+        "lmoments": {
+            "loc": 16.392889171307772,
+            "scale": 0.7005442761744839,
+            "shape": -0.1614793298009645,
+        },
+        "mle": {
+            "loc": 16.303264414285966,
+            "scale": 0.5411914328865949,
+            "shape": -0.5013795739666272,
+        },
     }
 
 
 @pytest.fixture(scope="module")
-def dist_parameters_mle() -> Dict[str, float]:
+def exp_dist_parameters() -> Dict[str, float]:
     return {
-        "loc": 16.303264414285966,
-        "scale": 0.5411914328865949,
-        "shape": -0.5013795739666272,
+        "mle": {"loc": 144.0, "scale": 446.83333333333337},
+        "lmoments": {"loc": 285.74807826694627, "scale": 305.0852550663871},
     }
 
 
 @pytest.fixture(scope="module")
-def exp_dist_parameters_mle() -> Dict[str, float]:
-    return {"loc": 144.0, "scale": 446.83333333333337}
+def gum_dist_parameters() -> Dict[str, float]:
+    return {
+        "mle": {"loc": 466.1208189815563, "scale": 214.3001449633138},
+        "lmoments": {"loc": 463.8040433832974, "scale": 220.0724922663106},
+    }
 
 
 @pytest.fixture(scope="module")
-def exp_dist_parameters_lm() -> Dict[str, float]:
-    return {"loc": 285.74807826694627, "scale": 305.0852550663871}
+def normal_dist_parameters() -> Dict[str, float]:
+    return {
+        "mle": {"loc": 590.8333333333334, "scale": 269.6701517423475},
+        "lmoments": {"loc": 590.8333333333334, "scale": 270.3747675984547},
+    }
 
 
 @pytest.fixture(scope="module")

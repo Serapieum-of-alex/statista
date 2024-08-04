@@ -44,18 +44,20 @@ class TestGumbel:
         assert isinstance(dist.data, np.ndarray)
         assert isinstance(dist.data_sorted, np.ndarray)
 
-    def test_estimate_parameter(
+    def test_fit_model(
         self,
         time_series2: list,
         dist_estimation_parameters: List[str],
+        gum_dist_parameters: Dict[str, float],
     ):
         dist = Gumbel(time_series2)
-        for i in range(len(dist_estimation_parameters)):
-            param = dist.fit_model(method=dist_estimation_parameters[i], test=False)
+        for method in dist_estimation_parameters:
+            param = dist.fit_model(method=method, test=False)
             assert isinstance(param, dict)
             assert all(i in param.keys() for i in ["loc", "scale"])
             assert dist.parameters.get("loc") is not None
             assert dist.parameters.get("scale") is not None
+            assert param == gum_dist_parameters[method]
 
     def test_parameter_estimation_optimization(
         self,
@@ -175,19 +177,18 @@ class TestGEV:
         self,
         time_series1: list,
         dist_estimation_parameters: List[str],
-        gev_dist_parameters_lm,
-        dist_parameters_mle: Dict[str, str],
+        gev_dist_parameters: Dict[str, str],
     ):
         dist = GEV(time_series1)
-        for i in range(len(dist_estimation_parameters)):
-            param = dist.fit_model(method=dist_estimation_parameters[i], test=False)
+        for method in dist_estimation_parameters:
+            param = dist.fit_model(method=method, test=False)
 
             assert isinstance(param, dict)
             assert all(i in param.keys() for i in ["loc", "scale", "shape"])
             assert dist.parameters.get("loc") is not None
             assert dist.parameters.get("scale") is not None
             assert dist.parameters.get("shape") is not None
-            assert param == gev_dist_parameters_lm or param == dist_parameters_mle
+            assert param == gev_dist_parameters[method]
 
     def test_gev_ks(
         self,
@@ -321,19 +322,16 @@ class TestExponential:
         self,
         time_series2: list,
         dist_estimation_parameters: List[str],
-        exp_dist_parameters_mle: Dict[str, float],
-        exp_dist_parameters_lm: Dict[str, float],
+        exp_dist_parameters: Dict[str, float],
     ):
         expo_dist = Exponential(time_series2)
-        for i in range(len(dist_estimation_parameters)):
-            param = expo_dist.fit_model(
-                method=dist_estimation_parameters[i], test=False
-            )
+        for method in dist_estimation_parameters:
+            param = expo_dist.fit_model(method=method, test=False)
             assert isinstance(param, dict)
             assert all(i in param.keys() for i in ["loc", "scale"])
             assert expo_dist.parameters.get("loc") is not None
             assert expo_dist.parameters.get("scale") is not None
-            assert param == exp_dist_parameters_lm or param == exp_dist_parameters_mle
+            assert param == exp_dist_parameters[method]
 
     def test_pdf(
         self,
@@ -382,6 +380,7 @@ class TestNormal:
         self,
         time_series2: list,
         dist_estimation_parameters: List[str],
+        normal_dist_parameters: Dict[str, float],
     ):
         norm_dist = Normal(time_series2)
         for method in dist_estimation_parameters:
@@ -390,6 +389,7 @@ class TestNormal:
             assert all(i in param.keys() for i in ["loc", "scale"])
             assert norm_dist.parameters.get("loc") is not None
             assert norm_dist.parameters.get("scale") is not None
+            assert param == normal_dist_parameters[method]
 
     def test_pdf(
         self,
