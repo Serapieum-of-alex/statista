@@ -1,5 +1,8 @@
 """ Tests for the eva module. """
 
+import matplotlib
+
+matplotlib.use("Agg")
 import numpy as np
 from pandas import DataFrame
 import shutil
