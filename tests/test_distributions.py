@@ -153,10 +153,11 @@ class TestGumbel:
         time_series2: list,
         dist_estimation_parameters_ks: str,
         confidence_interval_alpha: float,
+        gum_dist_parameters: Dict[str, Dict[str, float]],
     ):
         dist = Gumbel(time_series2)
         cdf_weibul = PlottingPosition.weibul(time_series2)
-        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        param = gum_dist_parameters[dist_estimation_parameters_ks]
         (fig1, fig2), (_, _) = dist.probability_plot(
             param, cdf_weibul, alpha=confidence_interval_alpha
         )

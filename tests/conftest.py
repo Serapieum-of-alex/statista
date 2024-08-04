@@ -22,7 +22,7 @@ def dist_estimation_parameters() -> List[str]:
 
 
 @pytest.fixture(scope="module")
-def gev_dist_parameters() -> Dict[str, float]:
+def gev_dist_parameters() -> Dict[str, Dict[str, float]]:
     return {
         "lmoments": {
             "loc": 16.392889171307772,
@@ -38,7 +38,7 @@ def gev_dist_parameters() -> Dict[str, float]:
 
 
 @pytest.fixture(scope="module")
-def exp_dist_parameters() -> Dict[str, float]:
+def exp_dist_parameters() -> Dict[str, Dict[str, float]]:
     return {
         "mle": {"loc": 144.0, "scale": 446.83333333333337},
         "lmoments": {"loc": 285.74807826694627, "scale": 305.0852550663871},
@@ -46,7 +46,7 @@ def exp_dist_parameters() -> Dict[str, float]:
 
 
 @pytest.fixture(scope="module")
-def gum_dist_parameters() -> Dict[str, float]:
+def gum_dist_parameters() -> Dict[str, Dict[str, float]]:
     return {
         "mle": {"loc": 466.1208189815563, "scale": 214.3001449633138},
         "lmoments": {"loc": 463.8040433832974, "scale": 220.0724922663106},
@@ -54,7 +54,7 @@ def gum_dist_parameters() -> Dict[str, float]:
 
 
 @pytest.fixture(scope="module")
-def normal_dist_parameters() -> Dict[str, float]:
+def normal_dist_parameters() -> Dict[str, Dict[str, float]]:
     return {
         "mle": {"loc": 590.8333333333334, "scale": 269.6701517423475},
         "lmoments": {"loc": 590.8333333333334, "scale": 270.3747675984547},
