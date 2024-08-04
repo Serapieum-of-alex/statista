@@ -22,6 +22,24 @@ def dist_estimation_parameters() -> List[str]:
 
 
 @pytest.fixture(scope="module")
+def dist_parameters_lm() -> Dict[str, str]:
+    return {
+        "loc": 16.392889171307772,
+        "scale": 0.7005442761744839,
+        "shape": -0.1614793298009645,
+    }
+
+
+@pytest.fixture(scope="module")
+def dist_parameters_mle() -> Dict[str, str]:
+    return {
+        "loc": 16.303264414285966,
+        "scale": 0.5411914328865949,
+        "shape": -0.5013795739666272,
+    }
+
+
+@pytest.fixture(scope="module")
 def dist_estimation_parameters_ks() -> str:
     return "lmoments"
 

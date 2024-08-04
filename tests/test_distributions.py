@@ -1,6 +1,6 @@
 """Test distributions module."""
 
-from typing import List
+from typing import List, Dict
 
 import numpy as np
 from matplotlib.figure import Figure
@@ -171,10 +171,12 @@ class TestGEV:
         assert isinstance(dist.data, np.ndarray)
         assert isinstance(dist.data_sorted, np.ndarray)
 
-    def test_gev_estimate_parameter(
+    def test_gev_fit_model(
         self,
         time_series1: list,
         dist_estimation_parameters: List[str],
+        dist_parameters_lm: Dict[str, str],
+        dist_parameters_mle: Dict[str, str],
     ):
         dist = GEV(time_series1)
         for i in range(len(dist_estimation_parameters)):
@@ -185,6 +187,7 @@ class TestGEV:
             assert dist.parameters.get("loc") is not None
             assert dist.parameters.get("scale") is not None
             assert dist.parameters.get("shape") is not None
+            assert param == dist_parameters_lm or param == dist_parameters_mle
 
     def test_gev_ks(
         self,
@@ -289,8 +292,20 @@ class TestGEV:
         assert isinstance(lb, np.ndarray)
         assert isinstance(ub, np.ndarray)
 
-
-# class TestAbstractDistrition:
+    def test_gev_probability_plot(
+        self,
+        time_series1: list,
+        dist_estimation_parameters_ks: str,
+        confidence_interval_alpha: float,
+    ):
+        dist = GEV(time_series1)
+        cdf_weibul = PlottingPosition.weibul(time_series1)
+        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        (fig1, fig2), (_, _) = dist.probability_plot(
+            param, cdf_weibul, alpha=confidence_interval_alpha
+        )
+        assert isinstance(fig1, Figure)
+        assert isinstance(fig2, Figure)
 
 
 class TestExponential:
@@ -302,7 +317,7 @@ class TestExponential:
         assert isinstance(expo_dist.data, np.ndarray)
         assert isinstance(expo_dist.data_sorted, np.ndarray)
 
-    def test_estimate_parameter(
+    def test_fit_model(
         self,
         time_series2: list,
         dist_estimation_parameters: List[str],
@@ -360,7 +375,7 @@ class TestNormal:
         assert isinstance(norm_dist.data, np.ndarray)
         assert isinstance(norm_dist.data_sorted, np.ndarray)
 
-    def test_estimate_parameter(
+    def test_fit_model(
         self,
         time_series2: list,
         dist_estimation_parameters: List[str],
