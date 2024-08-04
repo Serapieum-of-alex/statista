@@ -175,7 +175,7 @@ class TestGEV:
         self,
         time_series1: list,
         dist_estimation_parameters: List[str],
-        dist_parameters_lm: Dict[str, str],
+        gev_dist_parameters_lm,
         dist_parameters_mle: Dict[str, str],
     ):
         dist = GEV(time_series1)
@@ -187,7 +187,7 @@ class TestGEV:
             assert dist.parameters.get("loc") is not None
             assert dist.parameters.get("scale") is not None
             assert dist.parameters.get("shape") is not None
-            assert param == dist_parameters_lm or param == dist_parameters_mle
+            assert param == gev_dist_parameters_lm or param == dist_parameters_mle
 
     def test_gev_ks(
         self,
@@ -321,6 +321,8 @@ class TestExponential:
         self,
         time_series2: list,
         dist_estimation_parameters: List[str],
+        exp_dist_parameters_mle: Dict[str, float],
+        exp_dist_parameters_lm: Dict[str, float],
     ):
         expo_dist = Exponential(time_series2)
         for i in range(len(dist_estimation_parameters)):
@@ -331,6 +333,7 @@ class TestExponential:
             assert all(i in param.keys() for i in ["loc", "scale"])
             assert expo_dist.parameters.get("loc") is not None
             assert expo_dist.parameters.get("scale") is not None
+            assert param == exp_dist_parameters_lm or param == exp_dist_parameters_mle
 
     def test_pdf(
         self,

@@ -22,7 +22,7 @@ def dist_estimation_parameters() -> List[str]:
 
 
 @pytest.fixture(scope="module")
-def dist_parameters_lm() -> Dict[str, str]:
+def gev_dist_parameters_lm() -> Dict[str, float]:
     return {
         "loc": 16.392889171307772,
         "scale": 0.7005442761744839,
@@ -31,12 +31,22 @@ def dist_parameters_lm() -> Dict[str, str]:
 
 
 @pytest.fixture(scope="module")
-def dist_parameters_mle() -> Dict[str, str]:
+def dist_parameters_mle() -> Dict[str, float]:
     return {
         "loc": 16.303264414285966,
         "scale": 0.5411914328865949,
         "shape": -0.5013795739666272,
     }
+
+
+@pytest.fixture(scope="module")
+def exp_dist_parameters_mle() -> Dict[str, float]:
+    return {"loc": 144.0, "scale": 446.83333333333337}
+
+
+@pytest.fixture(scope="module")
+def exp_dist_parameters_lm() -> Dict[str, float]:
+    return {"loc": 285.74807826694627, "scale": 305.0852550663871}
 
 
 @pytest.fixture(scope="module")
