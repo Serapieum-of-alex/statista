@@ -299,10 +299,11 @@ class TestGEV:
         time_series1: list,
         dist_estimation_parameters_ks: str,
         confidence_interval_alpha: float,
+        gev_dist_parameters: Dict[str, Dict[str, float]],
     ):
         dist = GEV(time_series1)
         cdf_weibul = PlottingPosition.weibul(time_series1)
-        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        param = gev_dist_parameters[dist_estimation_parameters_ks]
         (fig1, fig2), (_, _) = dist.probability_plot(
             param, cdf_weibul, alpha=confidence_interval_alpha
         )
