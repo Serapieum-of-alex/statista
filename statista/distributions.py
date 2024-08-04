@@ -820,7 +820,7 @@ class Gumbel(AbstractDistribution):
 
         if test:
             self.ks()
-            self.chisquare()
+            # self.chisquare()
 
         return param
 
@@ -1351,10 +1351,10 @@ class GEV(AbstractDistribution):
 
         if test:
             self.ks()
-            try:
-                self.chisquare()
-            except ValueError:
-                print("chisquare test failed")
+            # try:
+            #     self.chisquare()
+            # except ValueError:
+            #     print("chisquare test failed")
 
         return param
 
@@ -2165,10 +2165,10 @@ class Exponential(AbstractDistribution):
 
         if test:
             self.ks()
-            try:
-                self.chisquare()
-            except ValueError:
-                print("chisquare test failed")
+            # try:
+            #     self.chisquare()
+            # except ValueError:
+            #     print("chisquare test failed")
 
         return param
 
@@ -2460,10 +2460,10 @@ class Normal(AbstractDistribution):
 
         if test:
             self.ks()
-            try:
-                self.chisquare()
-            except ValueError:
-                print("chisquare test failed")
+            # try:
+            #     self.chisquare()
+            # except ValueError:
+            #     print("chisquare test failed")
 
         return param
 
