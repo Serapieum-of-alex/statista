@@ -634,7 +634,7 @@ class Gumbel(AbstractDistribution):
         >>> parameters = {'loc': 16.44841695242862, 'scale': 0.8328854157603985}
         >>> gumbel_dist.pdf(parameters=parameters, plot_figure=True)
 
-        .. image:: /_image/gumbel-pdf.png
+        .. image:: /_images/gumbel-pdf.png
             :align: center
         """
         result = super().pdf(
@@ -704,7 +704,7 @@ class Gumbel(AbstractDistribution):
         >>> parameters = {'loc': 16.44841695242862, 'scale': 0.8328854157603985}
         >>> gumbel_dist.cdf(parameters=parameters, plot_figure=True)  # doctest: +SKIP
 
-        .. image:: /_image/gumbel-cdf.png
+        .. image:: /_images/gumbel-cdf.png
             :align: center
         """
         result = super().cdf(
