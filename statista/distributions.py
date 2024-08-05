@@ -362,10 +362,11 @@ class AbstractDistribution(ABC):
             )
         return method
 
-    @staticmethod
     @abstractmethod
     def inverse_cdf(
-        parameters: Dict[str, Union[float, Any]], cdf: np.ndarray
+        self,
+        cdf: Union[np.ndarray, List[float]],
+        parameters: Dict[str, Union[float, Any]],
     ) -> np.ndarray:
         """theoretical Estimate.
 
