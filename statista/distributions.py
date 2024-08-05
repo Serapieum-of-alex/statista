@@ -111,9 +111,6 @@ class AbstractDistribution(ABC):
     AbstractDistribution.
     """
 
-    parameters: Dict[str, Union[float, Any]]
-    cdf_weibul: ndarray
-
     def __init__(
         self,
         data: Union[list, np.ndarray] = None,
@@ -207,9 +204,12 @@ class AbstractDistribution(ABC):
                 scale parameter of the gumbel distribution.
         kwargs:
             figsize: tuple = (6, 5),
-            xlabel: str = "Actual data",
-            ylabel: str = "pdf",
-            fontsize: Union[float, int] = 15,
+            xlabel: str = "Actual data".
+                x-axis label.
+            ylabel: str = "pdf".
+                y-axis label.
+            fontsize: Union[float, int] = default is 15.
+
             actual_data: np.ndarray = None,
 
         Returns
@@ -562,10 +562,6 @@ class Gumbel(AbstractDistribution):
           :label: gumbel-cdf
 
     """
-
-    cdf_weibul: ndarray
-    parameters: dict[str, Union[float, Any]]
-    data: ndarray
 
     def __init__(
         self,
@@ -1188,9 +1184,6 @@ class GEV(AbstractDistribution):
             \\end{cases}
           :label: gev-cdf
     """
-
-    parameters: dict[str, Union[float, Any]]
-    data: ndarray
 
     def __init__(
         self,
