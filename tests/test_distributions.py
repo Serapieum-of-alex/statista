@@ -1,5 +1,8 @@
 """Test distributions module."""
 
+import matplotlib
+
+matplotlib.use("Agg")
 from typing import List, Dict
 
 import numpy as np
@@ -43,6 +46,7 @@ class TestGumbel:
         dist = Gumbel(time_series1)
         assert isinstance(dist.data, np.ndarray)
         assert isinstance(dist.data_sorted, np.ndarray)
+        assert dist.parameters is None
 
     def test_fit_model(
         self,
@@ -102,12 +106,14 @@ class TestGumbel:
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
+        gum_dist_parameters: Dict[str, Dict[str, float]],
+        gum_pdf: np.ndarray,
     ):
-        dist = Gumbel(time_series2)
-        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-
-        pdf, fig, ax = dist.pdf(param, plot_figure=True)
+        param = gum_dist_parameters[dist_estimation_parameters_ks]
+        dist = Gumbel(time_series2, param)
+        pdf, fig, ax = dist.pdf(plot_figure=True)
         assert isinstance(pdf, np.ndarray)
+        np.testing.assert_almost_equal(gum_pdf, pdf)
         assert isinstance(fig, Figure)
 
     def test_cdf(
@@ -138,10 +144,11 @@ class TestGumbel:
         time_series2: list,
         dist_estimation_parameters_ks: str,
         confidence_interval_alpha: float,
+        gum_dist_parameters: Dict[str, Dict[str, float]],
     ):
         dist = Gumbel(time_series2)
         cdf_weibul = PlottingPosition.weibul(time_series2)
-        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        param = gum_dist_parameters[dist_estimation_parameters_ks]
         upper, lower = dist.confidence_interval(
             param, cdf_weibul, alpha=confidence_interval_alpha
         )
@@ -217,12 +224,15 @@ class TestGEV:
         self,
         time_series1: list,
         dist_estimation_parameters_ks: str,
+        gev_dist_parameters: Dict[str, Dict[str, float]],
+        gev_pdf: np.ndarray,
     ):
-        dist = GEV(time_series1)
-        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
+        param = gev_dist_parameters[dist_estimation_parameters_ks]
+        dist = GEV(time_series1, param)
 
-        pdf, fig, ax = dist.pdf(param, plot_figure=True)
+        pdf, fig, ax = dist.pdf(plot_figure=True)
         assert isinstance(pdf, np.ndarray)
+        np.testing.assert_almost_equal(gev_pdf, pdf)
         assert isinstance(fig, Figure)
 
     def test_gev_cdf(
@@ -273,11 +283,11 @@ class TestGEV:
         time_series1: list,
         dist_estimation_parameters_ks: str,
         confidence_interval_alpha: float,
+        gev_dist_parameters: Dict[str, Dict[str, float]],
     ):
         dist = GEV(time_series1)
         cdf_weibul = PlottingPosition.weibul(time_series1)
-        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-
+        param = gev_dist_parameters[dist_estimation_parameters_ks]
         func = GEV.ci_func
 
         ci = ConfidenceInterval.boot_strap(
@@ -339,11 +349,14 @@ class TestExponential:
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
+        exp_dist_parameters: Dict[str, Dict[str, float]],
+        exp_pdf: np.ndarray,
     ):
-        expo_dist = Exponential(time_series2)
-        param = expo_dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        pdf, fig, ax = expo_dist.pdf(param, plot_figure=True)
+        param = exp_dist_parameters[dist_estimation_parameters_ks]
+        expo_dist = Exponential(time_series2, param)
+        pdf, fig, ax = expo_dist.pdf(plot_figure=True)
         assert isinstance(pdf, np.ndarray)
+        np.testing.assert_almost_equal(exp_pdf, pdf)
         assert isinstance(fig, Figure)
 
     def test_cdf(
@@ -382,7 +395,7 @@ class TestNormal:
         self,
         time_series2: list,
         dist_estimation_parameters: List[str],
-        normal_dist_parameters: Dict[str, float],
+        normal_dist_parameters: Dict[str, Dict[str, float]],
     ):
         norm_dist = Normal(time_series2)
         for method in dist_estimation_parameters:
@@ -397,10 +410,11 @@ class TestNormal:
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
+        normal_dist_parameters: Dict[str, Dict[str, float]],
     ):
-        norm_dist = Normal(time_series2)
-        param = norm_dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        pdf, fig, ax = norm_dist.pdf(param, plot_figure=True)
+        param = normal_dist_parameters[dist_estimation_parameters_ks]
+        norm_dist = Normal(time_series2, param)
+        pdf, fig, ax = norm_dist.pdf(plot_figure=True)
         assert isinstance(pdf, np.ndarray)
         assert isinstance(fig, Figure)
 

@@ -111,12 +111,12 @@ class AbstractDistribution(ABC):
     """
 
     parameters: Dict[str, Union[float, Any]]
-    cdf_Weibul: ndarray
+    cdf_weibul: ndarray
 
     def __init__(
         self,
         data: Union[list, np.ndarray] = None,
-        parameters: Dict[str, str] = None,
+        parameters: Dict[str, float] = None,
     ):
         """Gumbel.
 
@@ -132,12 +132,9 @@ class AbstractDistribution(ABC):
                 scale parameter
         """
         if isinstance(data, list) or isinstance(data, np.ndarray):
-            self.data = np.array(data)
-            self.data_sorted = np.sort(data)
-            self.cdf_Weibul = PlottingPosition.weibul(data)
-            self.KStable = 1.22 / np.sqrt(len(self.data))
+            self._data = np.array(data)
 
-        self.parameters = parameters
+        self._parameters = parameters
 
         self.Dstatic = None
         self.KS_Pvalue = None
@@ -145,6 +142,35 @@ class AbstractDistribution(ABC):
         self.chi_Pvalue = None
 
         pass
+
+    @property
+    def parameters(self) -> Dict[str, float]:
+        """Distribution parameters"""
+        return self._parameters
+
+    @parameters.setter
+    def parameters(self, value: Dict[str, float]):
+        self._parameters = value
+
+    @property
+    def data(self) -> ndarray:
+        """data."""
+        return self._data
+
+    @property
+    def data_sorted(self) -> ndarray:
+        """data_sorted."""
+        return np.sort(self.data)
+
+    @property
+    def kstable(self) -> float:
+        """KStable."""
+        return 1.22 / np.sqrt(len(self.data))
+
+    @property
+    def cdf_weibul(self) -> ndarray:
+        """cdf_Weibul."""
+        return PlottingPosition.weibul(self.data)
 
     @staticmethod
     @abstractmethod
@@ -156,7 +182,7 @@ class AbstractDistribution(ABC):
     @abstractmethod
     def pdf(
         self,
-        parameters: Dict[str, Union[float, Any]],
+        parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
         figsize: tuple = (6, 5),
         xlabel: str = "Actual data",
@@ -195,6 +221,10 @@ class AbstractDistribution(ABC):
             ts = self.data
         else:
             ts = actual_data
+
+        # if no parameter are provided take the parameters provided in the class initialization.
+        if parameters is None:
+            parameters = self.parameters
 
         pdf = self._pdf_eq(ts, parameters)
 
@@ -373,7 +403,7 @@ class AbstractDistribution(ABC):
             raise ValueError(
                 "The Value of parameters is unknown. Please use 'fit_model' to estimate the distribution parameters"
             )
-        qth = self.inverse_cdf(self.parameters, self.cdf_Weibul)
+        qth = self.inverse_cdf(self.parameters, self.cdf_weibul)
 
         test = ks_2samp(self.data, qth)
         self.Dstatic = test.statistic
@@ -381,7 +411,7 @@ class AbstractDistribution(ABC):
 
         print("-----KS Test--------")
         print(f"Statistic = {test.statistic}")
-        if self.Dstatic < self.KStable:
+        if self.Dstatic < self.kstable:
             print("Accept Hypothesis")
         else:
             print("reject Hypothesis")
@@ -398,7 +428,7 @@ class AbstractDistribution(ABC):
                 "The Value of parameters is unknown. Please use 'fit_model' to estimate the distribution parameters"
             )
 
-        qth = self.inverse_cdf(self.parameters, self.cdf_Weibul)
+        qth = self.inverse_cdf(self.parameters, self.cdf_weibul)
         try:
             test = chisquare(st.standardize(qth), st.standardize(self.data))
             self.chistatic = test.statistic
@@ -528,14 +558,14 @@ class Gumbel(AbstractDistribution):
 
     """
 
-    cdf_Weibul: ndarray
+    cdf_weibul: ndarray
     parameters: dict[str, Union[float, Any]]
     data: ndarray
 
     def __init__(
         self,
         data: Union[list, np.ndarray] = None,
-        parameters: Dict[str, str] = None,
+        parameters: Dict[str, float] = None,
     ):
         """Gumbel.
 
@@ -588,7 +618,7 @@ class Gumbel(AbstractDistribution):
 
     def pdf(
         self,
-        parameters: Dict[str, Union[float, Any]],
+        parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
         actual_data: np.ndarray = None,
         *args,
@@ -1149,7 +1179,7 @@ class GEV(AbstractDistribution):
     def __init__(
         self,
         data: Union[list, np.ndarray] = None,
-        parameters: Dict[str, str] = None,
+        parameters: Dict[str, float] = None,
     ):
         """GEV.
 
@@ -1212,7 +1242,7 @@ class GEV(AbstractDistribution):
 
     def pdf(
         self,
-        parameters: Dict[str, Union[float, Any]],
+        parameters: Dict[str, float] = None,
         plot_figure: bool = False,
         actual_data: np.ndarray = None,
         *args,
@@ -2022,7 +2052,7 @@ class Exponential(AbstractDistribution):
     def __init__(
         self,
         data: Union[list, np.ndarray] = None,
-        parameters: Dict[str, str] = None,
+        parameters: Dict[str, float] = None,
     ):
         """Exponential Distribution.
 
@@ -2067,7 +2097,7 @@ class Exponential(AbstractDistribution):
 
     def pdf(
         self,
-        parameters: Dict[str, Union[float, Any]],
+        parameters: Dict[str, float] = None,
         plot_figure: bool = False,
         actual_data: np.ndarray = None,
         *args,
@@ -2336,7 +2366,7 @@ class Normal(AbstractDistribution):
     def __init__(
         self,
         data: Union[list, np.ndarray] = None,
-        parameters: Dict[str, str] = None,
+        parameters: Dict[str, float] = None,
     ):
         """Gumbel.
 
@@ -2368,7 +2398,7 @@ class Normal(AbstractDistribution):
 
     def pdf(
         self,
-        parameters: Dict[str, Union[float, Any]],
+        parameters: Dict[str, float] = None,
         plot_figure: bool = False,
         actual_data: np.ndarray = None,
         *args,
