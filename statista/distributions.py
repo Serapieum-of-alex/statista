@@ -598,11 +598,11 @@ class Gumbel(AbstractDistribution):
             <statista.distributions.Gumbel object at 0x000001CDDE9563F0>
 
         - You can also instantiate the Gumbel class with the data and the parameters if you already have them.
+
             >>> parameters = {"loc": 463.8040433832974, "scale": 220.0724922663106}
             >>> gumbel_dist = Gumbel(data, parameters)
             >>> print(gumbel_dist) # doctest: +SKIP
             <statista.distributions.Gumbel object at 0x000001CDDEB32C00>
-
         """
         super().__init__(data, parameters)
         pass
@@ -664,9 +664,9 @@ class Gumbel(AbstractDistribution):
         Examples
         --------
         >>> data = np.loadtxt("examples/data/time_series1.txt")
-        >>> gumbel_dist = Gumbel(data)
         >>> parameters = {'loc': 16.44841695242862, 'scale': 0.8328854157603985}
-        >>> gumbel_dist.pdf(parameters=parameters, plot_figure=True)
+        >>> gumbel_dist = Gumbel(data, parameters)
+        >>> gumbel_dist.pdf(plot_figure=True)
 
         .. image:: /_images/gumbel-pdf.png
             :align: center
@@ -734,9 +734,9 @@ class Gumbel(AbstractDistribution):
         Examples
         --------
         >>> data = np.loadtxt("examples/data/time_series1.txt")
-        >>> gumbel_dist = Gumbel(data)
         >>> parameters = {'loc': 16.44841695242862, 'scale': 0.8328854157603985}
-        >>> gumbel_dist.cdf(parameters=parameters, plot_figure=True)  # doctest: +SKIP
+        >>> gumbel_dist = Gumbel(data, parameters)
+        >>> gumbel_dist.cdf(plot_figure=True)  # doctest: +SKIP
 
         .. image:: /_images/gumbel-cdf.png
             :align: center
@@ -959,14 +959,14 @@ class Gumbel(AbstractDistribution):
         - Instantiate the Gumbel class only with the data.
 
             >>> data = np.loadtxt("examples/data/time_series1.txt")
-            >>> gumbel_dist = Gumbel(data)
             >>> parameters = {'loc': 16.44841695242862, 'scale': 0.8328854157603974}
+            >>> gumbel_dist = Gumbel(data, parameters)
 
         - We will generate a random numbers between 0 and 1 and pass it to the inverse_cdf method as a probabilities
             to get the data that coresponds to these probabilities based on the distribution.
 
             >>> cdf = [0.1, 0.2, 0.4, 0.6, 0.8, 0.9]
-            >>> data_values = gumbel_dist.inverse_cdf(parameters, cdf)
+            >>> data_values = gumbel_dist.inverse_cdf(cdf)
             >>> print(data_values)
             [15.75376349 16.05205928 16.5212291  17.00788857 17.69769509 18.32271508]
         """
@@ -1030,20 +1030,13 @@ class Gumbel(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        prob_non_exceed : [list]
+        prob_non_exceed: [list]
             Non Exceedance probability
-        alpha : [numeric]
+        alpha: [numeric]
             alpha or SignificanceLevel is a value of the confidence interval.
 
         Returns
         -------
-        parameters: Dict[str, str]
-            {"loc": val, "scale": val, "shape": value}
-
-            - loc: [numeric]
-                location parameter
-            - scale: [numeric]
-                scale parameter
         q_upper : [list]
             upper bound corresponding to the confidence interval.
         q_lower : [list]
@@ -1267,7 +1260,7 @@ class GEV(AbstractDistribution):
 
         Parameters
         ----------
-        parameters: Dict[str, str]
+        parameters: Dict[str, float], default is None.
             {"loc": val, "scale": val, "shape": value}
 
             - loc: [numeric]
