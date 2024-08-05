@@ -407,7 +407,7 @@ class AbstractDistribution(ABC):
             raise ValueError(
                 "The Value of parameters is unknown. Please use 'fit_model' to estimate the distribution parameters"
             )
-        qth = self.inverse_cdf(self.parameters, self.cdf_weibul)
+        qth = self.inverse_cdf(self.cdf_weibul, self.parameters)
 
         test = ks_2samp(self.data, qth)
         self.Dstatic = test.statistic
@@ -432,7 +432,7 @@ class AbstractDistribution(ABC):
                 "The Value of parameters is unknown. Please use 'fit_model' to estimate the distribution parameters"
             )
 
-        qth = self.inverse_cdf(self.parameters, self.cdf_weibul)
+        qth = self.inverse_cdf(self.cdf_weibul, self.parameters)
         try:
             test = chisquare(st.standardize(qth), st.standardize(self.data))
             self.chistatic = test.statistic
@@ -928,9 +928,10 @@ class Gumbel(AbstractDistribution):
 
         return param
 
-    @staticmethod
     def inverse_cdf(
-        parameters: Dict[str, Union[float, Any]], cdf: np.ndarray
+        self,
+        cdf: Union[np.ndarray, List[float]] = None,
+        parameters: Dict[str, float] = None,
     ) -> np.ndarray:
         """inverse CDF.
 
@@ -969,20 +970,28 @@ class Gumbel(AbstractDistribution):
             >>> print(data_values)
             [15.75376349 16.05205928 16.5212291  17.00788857 17.69769509 18.32271508]
         """
-        loc = parameters.get("loc")
-        scale = parameters.get("scale")
-
-        if scale <= 0:
-            raise ValueError("Scale parameter is negative")
+        if parameters is None:
+            parameters = self.parameters
 
         if any(cdf) <= 0 or any(cdf) > 1:
             raise ValueError("cdf Value Invalid")
 
         cdf = np.array(cdf)
-        # Qth = loc - scale * (np.log(-np.log(cdf)))
+        qth = self._inv_cdf(cdf, parameters)
 
+        return qth
+
+    @staticmethod
+    def _inv_cdf(cdf: Union[np.ndarray, List[float]], parameters: Dict[str, float]):
         # the main equation from scipy
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+        if scale <= 0:
+            raise ValueError("Scale parameter is negative")
+        # the main equation from scipy
+        # Qth = loc - scale * (np.log(-np.log(cdf)))
         qth = gumbel_r.ppf(cdf, loc=loc, scale=scale)
+
         return qth
 
     def ks(self) -> tuple:
@@ -1045,7 +1054,7 @@ class Gumbel(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        qth = self.inverse_cdf(parameters, prob_non_exceed)
+        qth = self._inv_cdf(prob_non_exceed, parameters)
         y = [-np.log(-np.log(j)) for j in prob_non_exceed]
         std_error = [
             (scale / np.sqrt(len(self.data)))
@@ -1112,7 +1121,7 @@ class Gumbel(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        q_th = self.inverse_cdf(parameters, cdf)
+        q_th = self._inv_cdf(cdf, parameters)
         q_upper, q_lower = self.confidence_interval(parameters, cdf, alpha)
 
         q_x = np.linspace(
@@ -1478,10 +1487,10 @@ class GEV(AbstractDistribution):
 
         return param
 
-    @staticmethod
     def inverse_cdf(
-        parameters: Dict[str, Union[float, Any]],
-        cdf: np.ndarray,
+        self,
+        cdf: Union[np.ndarray, List[float]] = None,
+        parameters: Dict[str, Union[float, Any]] = None,
     ) -> np.ndarray:
         """Theoretical Estimate.
 
@@ -1499,6 +1508,17 @@ class GEV(AbstractDistribution):
         theoretical value: [numeric]
             Value based on the theoretical distribution
         """
+        if parameters is None:
+            parameters = self.parameters
+
+        if any(cdf) < 0 or any(cdf) > 1:
+            raise ValueError("cdf Value Invalid")
+
+        q_th = self._inv_cdf(cdf, parameters)
+        return q_th
+
+    @staticmethod
+    def _inv_cdf(cdf: Union[np.ndarray, List[float]], parameters: Dict[str, float]):
         loc = parameters.get("loc")
         scale = parameters.get("scale")
         shape = parameters.get("shape")
@@ -1508,10 +1528,6 @@ class GEV(AbstractDistribution):
 
         if shape is None:
             raise ValueError("Shape parameter should not be None")
-
-        if any(cdf) < 0 or any(cdf) > 1:
-            raise ValueError("cdf Value Invalid")
-
         # q_th = list()
         # for i in range(len(cdf)):
         #     if cdf[i] <= 0 or cdf[i] >= 1:
@@ -1669,7 +1685,7 @@ class GEV(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        q_th = self.inverse_cdf(parameters, cdf)
+        q_th = self.inverse_cdf(cdf, parameters)
         if func is None:
             func = GEV.ci_func
 
@@ -1732,7 +1748,7 @@ class GEV(AbstractDistribution):
         prob_non_exceed = kwargs["F"]
         method = kwargs["method"]
         # generate theoretical estimates based on a random cdf, and the dist parameters
-        sample = GEV.inverse_cdf(gevfit, np.random.rand(len(data)))
+        sample = GEV._inv_cdf(np.random.rand(len(data)), gevfit)
 
         # get parameters based on the new generated sample
         dist = GEV(sample)
@@ -1744,7 +1760,7 @@ class GEV(AbstractDistribution):
         # T = np.linspace(0.1, 999, len(data)) + 1
         # coresponding theoretical estimate to T
         # prob_non_exceed = 1 - 1 / T
-        q_th = GEV.inverse_cdf(new_param, prob_non_exceed)
+        q_th = GEV._inv_cdf(prob_non_exceed, new_param)
 
         res = list(new_param.values())
         res.extend(q_th)
@@ -2292,10 +2308,10 @@ class Exponential(AbstractDistribution):
 
         return param
 
-    @staticmethod
     def inverse_cdf(
-        parameters: Dict[str, Union[float, Any]],
-        cdf: np.ndarray,
+        self,
+        cdf: Union[np.ndarray, List[float]] = None,
+        parameters: Dict[str, Union[float, Any]] = None,
     ) -> np.ndarray:
         """Theoretical Estimate.
 
@@ -2318,6 +2334,9 @@ class Exponential(AbstractDistribution):
         theoretical value: [numeric]
             Value based on the theoretical distribution
         """
+        if parameters is None:
+            parameters = self.parameters
+
         loc = parameters.get("loc")
         scale = parameters.get("scale")
 
@@ -2587,10 +2606,10 @@ class Normal(AbstractDistribution):
 
         return param
 
-    @staticmethod
     def inverse_cdf(
-        parameters: Dict[str, Union[float, Any]],
-        cdf: np.ndarray,
+        self,
+        cdf: Union[np.ndarray, List[float]] = None,
+        parameters: Dict[str, Union[float, Any]] = None,
     ) -> np.ndarray:
         """Theoretical Estimate.
 
@@ -2613,6 +2632,9 @@ class Normal(AbstractDistribution):
         numeric:
             Value based on the theoretical distribution
         """
+        if parameters is None:
+            parameters = self.parameters
+
         loc = parameters.get("loc")
         scale = parameters.get("scale")
 

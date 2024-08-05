@@ -120,24 +120,29 @@ class TestGumbel:
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
+        gum_dist_parameters: Dict[str, Dict[str, float]],
+        gum_cdf: np.ndarray,
     ):
-        dist = Gumbel(time_series2)
-        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        cdf, fig, ax = dist.cdf(param, plot_figure=True)
-
+        param = gum_dist_parameters[dist_estimation_parameters_ks]
+        dist = Gumbel(time_series2, param)
+        cdf, fig, ax = dist.cdf(plot_figure=True)
         assert isinstance(cdf, np.ndarray)
+        np.testing.assert_almost_equal(gum_cdf, cdf)
         assert isinstance(fig, Figure)
 
     def test_inverse_cdf(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
+        gum_dist_parameters: Dict[str, Dict[str, float]],
+        gev_inverse_cdf: np.ndarray,
+        generated_cdf: List[float],
     ):
-        dist = Gumbel(time_series2)
-        cdf_weibul = PlottingPosition.weibul(time_series2)
-        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        qth = dist.inverse_cdf(param, cdf_weibul)
+        param = gum_dist_parameters[dist_estimation_parameters_ks]
+        dist = Gumbel(time_series2, param)
+        qth = dist.inverse_cdf(generated_cdf)
         assert isinstance(qth, np.ndarray)
+        np.testing.assert_almost_equal(gev_inverse_cdf, qth)
 
     def test_confidence_interval(
         self,
@@ -239,23 +244,29 @@ class TestGEV:
         self,
         time_series1: list,
         dist_estimation_parameters_ks: str,
+        gev_dist_parameters: Dict[str, Dict[str, float]],
+        gev_cdf: np.ndarray,
     ):
-        dist = GEV(time_series1)
-        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        cdf, fig, ax = dist.cdf(param, plot_figure=True)
+        param = gev_dist_parameters[dist_estimation_parameters_ks]
+        dist = GEV(time_series1, param)
+        cdf, fig, ax = dist.cdf(plot_figure=True)
         assert isinstance(cdf, np.ndarray)
+        np.testing.assert_almost_equal(gev_cdf, cdf)
         assert isinstance(fig, Figure)
 
     def test_gev_inverse_cdf(
         self,
         time_series1: list,
         dist_estimation_parameters_ks: str,
+        gev_dist_parameters: Dict[str, Dict[str, float]],
+        generated_cdf: List[float],
+        gum_inverse_cdf: np.ndarray,
     ):
-        dist = GEV(time_series1)
-        cdf_weibul = PlottingPosition.weibul(time_series1)
-        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        qth = dist.inverse_cdf(param, cdf_weibul)
+        param = gev_dist_parameters[dist_estimation_parameters_ks]
+        dist = GEV(time_series1, param)
+        qth = dist.inverse_cdf(generated_cdf)
         assert isinstance(qth, np.ndarray)
+        np.testing.assert_almost_equal(gum_inverse_cdf, qth)
 
     def test_gev_confidence_interval(
         self,
@@ -363,23 +374,29 @@ class TestExponential:
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
+        exp_dist_parameters: Dict[str, Dict[str, float]],
+        exp_cdf: np.ndarray,
     ):
-        expo_dist = Exponential(time_series2)
-        param = expo_dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        cdf, fig, ax = expo_dist.cdf(param, plot_figure=True)
+        param = exp_dist_parameters[dist_estimation_parameters_ks]
+        expo_dist = Exponential(time_series2, param)
+        cdf, fig, ax = expo_dist.cdf(plot_figure=True)
         assert isinstance(cdf, np.ndarray)
+        np.testing.assert_almost_equal(exp_cdf, cdf)
         assert isinstance(fig, Figure)
 
     def test_inverse_cdf(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
+        exp_dist_parameters: Dict[str, Dict[str, float]],
+        generated_cdf: List[float],
+        exp_inverse_cdf: np.ndarray,
     ):
-        expo_dist = Exponential(time_series2)
-        cdf_weibul = PlottingPosition.weibul(time_series2)
-        param = expo_dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        qth = expo_dist.inverse_cdf(param, cdf_weibul)
+        param = exp_dist_parameters[dist_estimation_parameters_ks]
+        expo_dist = Exponential(time_series2, param)
+        qth = expo_dist.inverse_cdf(generated_cdf)
         assert isinstance(qth, np.ndarray)
+        np.testing.assert_almost_equal(exp_inverse_cdf, qth)
 
 
 class TestNormal:
@@ -411,34 +428,42 @@ class TestNormal:
         time_series2: list,
         dist_estimation_parameters_ks: str,
         normal_dist_parameters: Dict[str, Dict[str, float]],
+        normal_pdf: np.ndarray,
     ):
         param = normal_dist_parameters[dist_estimation_parameters_ks]
         norm_dist = Normal(time_series2, param)
         pdf, fig, ax = norm_dist.pdf(plot_figure=True)
         assert isinstance(pdf, np.ndarray)
+        np.testing.assert_almost_equal(normal_pdf, pdf)
         assert isinstance(fig, Figure)
 
     def test_cdf(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
+        normal_dist_parameters: Dict[str, Dict[str, float]],
+        normal_cdf: np.ndarray,
     ):
-        norm_dist = Normal(time_series2)
-        param = norm_dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        cdf, fig, ax = norm_dist.cdf(param, plot_figure=True)
+        param = normal_dist_parameters[dist_estimation_parameters_ks]
+        norm_dist = Normal(time_series2, param)
+        cdf, fig, ax = norm_dist.cdf(plot_figure=True)
         assert isinstance(cdf, np.ndarray)
+        np.testing.assert_almost_equal(normal_cdf, cdf)
         assert isinstance(fig, Figure)
 
     def test_inverse_cdf(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
+        normal_dist_parameters: Dict[str, Dict[str, float]],
+        generated_cdf: List[float],
+        normal_inverse_cdf: np.ndarray,
     ):
-        norm_dist = Normal(time_series2)
-        cdf_weibul = PlottingPosition.weibul(time_series2)
-        param = norm_dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        qth = norm_dist.inverse_cdf(param, cdf_weibul)
+        param = normal_dist_parameters[dist_estimation_parameters_ks]
+        norm_dist = Normal(time_series2, param)
+        qth = norm_dist.inverse_cdf(generated_cdf)
         assert isinstance(qth, np.ndarray)
+        np.testing.assert_almost_equal(normal_inverse_cdf, qth)
 
 
 class TestDistribution:

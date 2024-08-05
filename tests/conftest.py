@@ -22,6 +22,11 @@ def dist_estimation_parameters() -> List[str]:
 
 
 @pytest.fixture(scope="module")
+def generated_cdf() -> List[float]:
+    return [0.1, 0.2, 0.4, 0.6, 0.8, 0.99]
+
+
+@pytest.fixture(scope="module")
 def gev_dist_parameters() -> Dict[str, Dict[str, float]]:
     return {
         "lmoments": {
@@ -103,6 +108,20 @@ def gev_cdf() -> np.array:
             0.08014869,
             0.88657059,
             0.9022544,
+        ]
+    )
+
+
+@pytest.fixture(scope="module")
+def gev_inverse_cdf() -> np.array:
+    return np.array(
+        [
+            280.25644453,
+            359.07484643,
+            483.04312657,
+            611.63267666,
+            793.89957452,
+            1476.17034852,
         ]
     )
 
@@ -248,6 +267,13 @@ def gum_cdf() -> np.ndarray:
 
 
 @pytest.fixture(scope="module")
+def gum_inverse_cdf() -> np.ndarray:
+    return np.array(
+        [15.84624901, 16.07199809, 16.45456617, 16.88993364, 17.58184473, 21.17313605]
+    )
+
+
+@pytest.fixture(scope="module")
 def exp_pdf() -> np.ndarray:
     return np.array(
         [
@@ -367,6 +393,20 @@ def exp_cdf() -> np.ndarray:
             0.94838443,
             0.94838443,
             0.95759963,
+        ]
+    )
+
+
+@pytest.fixture(scope="module")
+def exp_inverse_cdf() -> np.ndarray:
+    return np.array(
+        [
+            317.89201806,
+            353.82588554,
+            441.59344399,
+            565.29486992,
+            776.7638543,
+            1690.71759908,
         ]
     )
 
@@ -499,6 +539,20 @@ def normal_cdf() -> np.ndarray:
             0.9866563,
             0.9866563,
             0.99261508,
+        ]
+    )
+
+
+@pytest.fixture(scope="module")
+def normal_inverse_cdf() -> np.ndarray:
+    return np.array(
+        [
+            244.33412663,
+            363.2801879,
+            522.3346692,
+            659.33199747,
+            818.38647877,
+            1219.81909913,
         ]
     )
 

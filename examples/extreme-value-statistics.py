@@ -34,7 +34,7 @@ time_series1.sort()
 # calculate the F (Non-Exceedance probability based on weibul)
 cdf_weibul = PlottingPosition.weibul(time_series1)
 # inverse_cdf method calculates the theoretical values based on the Gumbel distribution
-Qth = gumbel_series_1.inverse_cdf(param_lmoments, cdf_weibul)
+Qth = gumbel_series_1.inverse_cdf(cdf_weibul, param_lmoments)
 # test = stats.chisquare(st.Standardize(Qth), st.Standardize(time_series1),ddof=5)
 # calculate the confidence interval
 upper, lower = gumbel_series_1.confidence_interval(
@@ -83,7 +83,7 @@ time_series1.sort()
 cdf_weibul = PlottingPosition.weibul(time_series2)
 T = PlottingPosition.weibul(time_series2, return_period=True)
 # inverse_cdf method calculates the theoretical values based on the Gumbel distribution
-Qth = gev_series_2.inverse_cdf(gev_lmom_param, cdf_weibul)
+Qth = gev_series_2.inverse_cdf(cdf_weibul, gev_lmom_param)
 
 func = GEV.ci_func
 upper, lower = gev_series_2.confidence_interval(
