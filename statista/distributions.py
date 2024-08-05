@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 import scipy.optimize as so
 from matplotlib.figure import Figure
+from matplotlib.axes import Axes
 
 from numpy import ndarray
 from scipy.stats import chisquare, genextreme, gumbel_r, ks_2samp, norm, expon
@@ -264,7 +265,7 @@ class AbstractDistribution(ABC):
         ylabel: str = "cdf",
         fontsize: int = 15,
         actual_data: Union[bool, np.ndarray] = True,
-    ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
+    ) -> Union[Tuple[np.ndarray, Figure, Axes], np.ndarray]:
         """cdf.
 
         cdf calculates the value of Gumbel's cdf with parameters loc and scale at x.
@@ -701,7 +702,7 @@ class Gumbel(AbstractDistribution):
         *args,
         **kwargs,
     ) -> Union[
-        Tuple[np.ndarray, Figure, Any], np.ndarray
+        Tuple[np.ndarray, Figure, Axes], np.ndarray
     ]:  # pylint: disable=arguments-differ
         """cdf.
 
@@ -730,6 +731,15 @@ class Gumbel(AbstractDistribution):
                 Default is "cdf".
             fontsize: [int]
                 Default is 15.
+
+        Returns
+        -------
+        cdf: [array]
+            cumulative distribution function cdf.
+        fig: matplotlib.figure.Figure
+            Figure object.
+        ax: matplotlib.axes.Axes
+            Axes object.
 
         Examples
         --------
@@ -1288,6 +1298,16 @@ class GEV(AbstractDistribution):
         -------
         TYPE
             DESCRIPTION.
+
+        Examples
+        --------
+        >>> data = np.loadtxt("examples/data/time_series1.txt")
+        >>> parameters = {"loc": 16.303264414285966, "scale": 0.5411914328865949, "shape": -0.5013795739666272}
+        >>> gumbel_dist = GEV(data, parameters)
+        >>> gumbel_dist.pdf(plot_figure=True)
+
+        .. image:: /_images/gev-pdf.png
+            :align: center
         """
         result = super().pdf(
             parameters,
@@ -1335,7 +1355,7 @@ class GEV(AbstractDistribution):
         *args,
         **kwargs,
     ) -> Union[
-        Tuple[np.ndarray, Figure, Any], np.ndarray
+        Tuple[np.ndarray, Figure, Axes], np.ndarray
     ]:  # pylint: disable=arguments-differ
         """cdf.
 
@@ -1364,6 +1384,25 @@ class GEV(AbstractDistribution):
                 Default is "cdf".
             fontsize: [int]
                 Default is 15.
+
+        Returns
+        -------
+        cdf: [array]
+            cumulative distribution function cdf.
+        fig: matplotlib.figure.Figure
+            Figure object.
+        ax: matplotlib.axes.Axes
+            Axes object.
+
+        Examples
+        --------
+        >>> data = np.loadtxt("examples/data/time_series1.txt")
+        >>> parameters = {"loc": 16.303264414285966, "scale": 0.5411914328865949, "shape": -0.5013795739666272}
+        >>> gumbel_dist = GEV(data, parameters)
+        >>> gumbel_dist.cdf(plot_figure=True)
+
+        .. image:: /_images/gev-cdf.png
+            :align: center
         """
         result = super().cdf(
             parameters,
