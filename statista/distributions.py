@@ -257,7 +257,7 @@ class AbstractDistribution(ABC):
     @abstractmethod
     def cdf(
         self,
-        parameters: Dict[str, Union[float, Any]],
+        parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
         figsize: tuple = (6, 5),
         xlabel: str = "data",
@@ -283,6 +283,10 @@ class AbstractDistribution(ABC):
             ts = self.data
         else:
             ts = actual_data
+
+        # if no parameter are provided take the parameters provided in the class initialization.
+        if parameters is None:
+            parameters = self.parameters
 
         cdf = self._cdf_eq(ts, parameters)
 
@@ -691,7 +695,7 @@ class Gumbel(AbstractDistribution):
 
     def cdf(
         self,
-        parameters: Dict[str, Union[float, Any]],
+        parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
         actual_data: Union[bool, np.ndarray] = True,
         *args,
@@ -1323,7 +1327,7 @@ class GEV(AbstractDistribution):
 
     def cdf(
         self,
-        parameters: Dict[str, Union[float, Any]],
+        parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
         actual_data: Union[bool, np.ndarray] = True,
         *args,
@@ -2167,7 +2171,7 @@ class Exponential(AbstractDistribution):
 
     def cdf(
         self,
-        parameters: Dict[str, Union[float, Any]],
+        parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
         actual_data: Union[bool, np.ndarray] = True,
         *args,
@@ -2464,7 +2468,7 @@ class Normal(AbstractDistribution):
 
     def cdf(
         self,
-        parameters: Dict[str, Union[float, Any]],
+        parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
         actual_data: Union[bool, np.ndarray] = True,
         *args,
