@@ -548,9 +548,10 @@ class AbstractDistribution(ABC):
 
 
 class Gumbel(AbstractDistribution):
-    """Gumbel distribution.
+    """Gumbel distribution (Maximum - Right Skewed).
 
-    The Gumbel distribution is used to model the distribution of the maximum (or the minimum) of a number of samples of various distributions.
+    The Gumbel distribution is used to model the distribution of the maximum (or the minimum) of a number of samples of
+    various distributions.
 
     - The probability density function (PDF) of the Gumbel distribution (Type I) is:
 
@@ -561,7 +562,14 @@ class Gumbel(AbstractDistribution):
 
         where :math:`\\zeta` (zeta) is the location parameter, and :math:`\\delta`  (delta) is the scale parameter.
 
-        The probability density function above is defined in the “un-standardized” form.
+    - The location parameter :math:`\\zeta` shifts the distribution along the x-axis. It essentially determines the mode
+        (peak) of the distribution and its location. Changing the location parameter moves the distribution left or
+        right without altering its shape. The location parameter ranges from negative infinity to positive infinity.
+    -  The scale parameter :math:`\\delta` controls the spread or dispersion of the distribution. A larger scale parameter
+        results in a wider distribution, while a smaller scale parameter results in a narrower distribution. It must
+        always be positive.
+
+    - The probability density function above is defined in the “un-standardized” form.
 
     The Gumbel distribution is a special case of the Generalized Extreme Value (GEV) distribution for a particular
     choice of the shape parameter, :math:`\\xi = 0` (xi).
