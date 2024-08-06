@@ -129,15 +129,17 @@ class AbstractDistribution(ABC):
             - scale: [numeric]
                 scale parameter
         """
-        if data is None and parameters is None:
-            raise ValueError("Either data or parameters must be provided")
-
         if isinstance(data, list) or isinstance(data, np.ndarray):
             self._data = np.array(data)
-        else:
-            self._data = data
 
         self._parameters = parameters
+
+        self.Dstatic = None
+        self.KS_Pvalue = None
+        self.chistatic = None
+        self.chi_Pvalue = None
+
+        pass
 
     @property
     def parameters(self) -> Dict[str, float]:
@@ -179,17 +181,17 @@ class AbstractDistribution(ABC):
     def pdf(
         self,
         parameters: Dict[str, Union[float, Any]] = None,
-        actual_data: Union[bool, np.ndarray] = True,
         plot_figure: bool = False,
         figsize: tuple = (6, 5),
         xlabel: str = "Actual data",
         ylabel: str = "pdf",
         fontsize: Union[float, int] = 15,
+        actual_data: Union[bool, np.ndarray] = True,
         **kwargs,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
-        Returns the value of Gumbel's pdf with parameters loc and scale at x.
+        Returns the value of Gumbel's pdf with parameters loc and scale at x .
 
         Parameters
         ----------
@@ -199,20 +201,16 @@ class AbstractDistribution(ABC):
             - loc: [numeric]
                 location parameter of the gumbel distribution.
             - scale: [numeric]
-                scale parameter of the gumbel distribution
-        actual_data: [bool/array]
-            True if you want to calculate the pdf for the actual time series, array
-            if you want to calculate the pdf for a theoretical time series
-        plot_figure: [bool]
-            Default is False.
-        figsize: [tuple]
-            Default is (6, 5).
-        xlabel: [str]
-            Default is "Actual data".
-        ylabel: [str]
-            Default is "pdf".
-        fontsize: [int]
-            Default is 15.
+                scale parameter of the gumbel distribution.
+        kwargs:
+            figsize: tuple = (6, 5),
+            xlabel: str = "Actual data".
+                x-axis label.
+            ylabel: str = "pdf".
+                y-axis label.
+            fontsize: Union[float, int] = default is 15.
+
+            actual_data: np.ndarray = None,
 
         Returns
         -------
@@ -261,12 +259,12 @@ class AbstractDistribution(ABC):
     def cdf(
         self,
         parameters: Dict[str, Union[float, Any]] = None,
-        actual_data: Union[bool, np.ndarray] = True,
         plot_figure: bool = False,
         figsize: tuple = (6, 5),
         xlabel: str = "data",
         ylabel: str = "cdf",
         fontsize: int = 15,
+        data: Union[List[float], np.ndarray] = None,
     ) -> Union[Tuple[np.ndarray, Figure, Axes], np.ndarray]:
         """cdf.
 
@@ -281,13 +279,13 @@ class AbstractDistribution(ABC):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        actual_data : [bool/array]
-            true if you want to calculate the pdf for the actual time series, array if you want to calculate the pdf
+        data : [bool/array]
+            true if you want to calculate the cdf for the actual time series, array if you want to calculate the cdf
             for a theoretical time series.
         plot_figure: [bool], Default is False.
             True to plot the figure.
         figsize: [tuple]
-            Default is (6, 5).
+                Default is (6, 5).
         xlabel: [str]
             Default is "Actual data".
         ylabel: [str]
@@ -295,12 +293,12 @@ class AbstractDistribution(ABC):
         fontsize: [int]
             Default is 15.
         """
-        if isinstance(actual_data, bool):
+        if data is None:
             ts = self.data
         else:
-            ts = actual_data
+            ts = data
 
-        # if no parameter is provided take the parameters provided in the class initialization.
+        # if no parameter are provided take the parameters provided in the class initialization.
         if parameters is None:
             parameters = self.parameters
 
@@ -310,7 +308,7 @@ class AbstractDistribution(ABC):
             qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
             )
-            cdf_fitted = self.cdf(parameters, actual_data=qx)
+            cdf_fitted = self.cdf(parameters, data=qx)
 
             cdf_weibul = PlottingPosition.weibul(self.data_sorted)
 
@@ -411,14 +409,14 @@ class AbstractDistribution(ABC):
         """Kolmogorov-Smirnov (KS) test.
 
         The smaller the D static, the more likely that the two samples are drawn from the same distribution
-        IF Pvalue < significance level ------ reject
+        IF Pvalue < signeficance level ------ reject
 
         returns
         -------
         Dstatic: [numeric]
             The smaller the D static the more likely that the two samples are drawn from the same distribution
         Pvalue : [numeric]
-            IF Pvalue < significance level ------ reject the null hypothesis.
+            IF Pvalue < signeficance level ------ reject the null hypothesis.
         """
         if self.parameters is None:
             raise ValueError(
@@ -427,10 +425,12 @@ class AbstractDistribution(ABC):
         qth = self.inverse_cdf(self.cdf_weibul, self.parameters)
 
         test = ks_2samp(self.data, qth)
+        self.Dstatic = test.statistic
+        self.KS_Pvalue = test.pvalue
 
         print("-----KS Test--------")
         print(f"Statistic = {test.statistic}")
-        if test.statistic < self.kstable:
+        if self.Dstatic < self.kstable:
             print("Accept Hypothesis")
         else:
             print("reject Hypothesis")
@@ -450,12 +450,15 @@ class AbstractDistribution(ABC):
         qth = self.inverse_cdf(self.cdf_weibul, self.parameters)
         try:
             test = chisquare(st.standardize(qth), st.standardize(self.data))
+            self.chistatic = test.statistic
+            self.chi_Pvalue = test.pvalue
             print("-----chisquare Test-----")
             print("Statistic = " + str(test.statistic))
             print("P value = " + str(test.pvalue))
             return test.statistic, test.pvalue
         except Exception as e:
             print(e)
+            return
 
     def confidence_interval(
         self,
@@ -548,10 +551,9 @@ class AbstractDistribution(ABC):
 
 
 class Gumbel(AbstractDistribution):
-    """Gumbel distribution (Maximum - Right Skewed).
+    """Gumbel distribution.
 
-    The Gumbel distribution is used to model the distribution of the maximum (or the minimum) of a number of samples of
-    various distributions.
+    The Gumbel distribution is used to model the distribution of the maximum (or the minimum) of a number of samples of various distributions.
 
     - The probability density function (PDF) of the Gumbel distribution (Type I) is:
 
@@ -562,14 +564,7 @@ class Gumbel(AbstractDistribution):
 
         where :math:`\\zeta` (zeta) is the location parameter, and :math:`\\delta`  (delta) is the scale parameter.
 
-    - The location parameter :math:`\\zeta` shifts the distribution along the x-axis. It essentially determines the mode
-        (peak) of the distribution and its location. Changing the location parameter moves the distribution left or
-        right without altering its shape. The location parameter ranges from negative infinity to positive infinity.
-    -  The scale parameter :math:`\\delta` controls the spread or dispersion of the distribution. A larger scale parameter
-        results in a wider distribution, while a smaller scale parameter results in a narrower distribution. It must
-        always be positive.
-
-    - The probability density function above is defined in the “un-standardized” form.
+        The probability density function above is defined in the “un-standardized” form.
 
     The Gumbel distribution is a special case of the Generalized Extreme Value (GEV) distribution for a particular
     choice of the shape parameter, :math:`\\xi = 0` (xi).
@@ -657,8 +652,8 @@ class Gumbel(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        actual_data: [bool/array]
-            True if you want to calculate the pdf for the actual time series, array
+        actual_data : [bool/array]
+            true if you want to calculate the pdf for the actual time series, array
             if you want to calculate the pdf for a theoretical time series
         plot_figure: [bool]
             Default is False.
@@ -713,7 +708,7 @@ class Gumbel(AbstractDistribution):
         self,
         parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
-        actual_data: Union[bool, np.ndarray] = True,
+        data: Union[List[float], np.ndarray] = None,
         *args,
         **kwargs,
     ) -> Union[
@@ -768,7 +763,7 @@ class Gumbel(AbstractDistribution):
         """
         result = super().cdf(
             parameters,
-            actual_data=actual_data,
+            data=data,
             plot_figure=plot_figure,
             *args,
             **kwargs,
@@ -1146,7 +1141,7 @@ class Gumbel(AbstractDistribution):
             float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
         )
         pdf_fitted = self.pdf(parameters, actual_data=q_x)
-        cdf_fitted = self.cdf(parameters, actual_data=q_x)
+        cdf_fitted = self.cdf(parameters, data=q_x)
 
         fig, ax = Plot.details(
             q_x,
@@ -1363,7 +1358,7 @@ class GEV(AbstractDistribution):
         self,
         parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
-        actual_data: Union[bool, np.ndarray] = True,
+        data: Union[List[float], np.ndarray] = None,
         *args,
         **kwargs,
     ) -> Union[
@@ -1382,7 +1377,7 @@ class GEV(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        actual_data : [bool/array]
+        data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
             if you want to calculate the pdf for a theoretical time series
         plot_figure: [bool]
@@ -1418,7 +1413,7 @@ class GEV(AbstractDistribution):
         """
         result = super().cdf(
             parameters,
-            actual_data=actual_data,
+            data=data,
             plot_figure=plot_figure,
             *args,
             **kwargs,
@@ -1449,7 +1444,7 @@ class GEV(AbstractDistribution):
         float:
             return period
         """
-        cdf = self.cdf(parameters, actual_data=data)
+        cdf = self.cdf(parameters, data=data)
 
         rp = 1 / (1 - cdf)
 
@@ -1748,7 +1743,7 @@ class GEV(AbstractDistribution):
             float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
         )
         pdf_fitted = self.pdf(parameters, actual_data=q_x)
-        cdf_fitted = self.cdf(parameters, actual_data=q_x)
+        cdf_fitted = self.cdf(parameters, data=q_x)
 
         fig, ax = Plot.details(
             q_x,
@@ -2233,7 +2228,7 @@ class Exponential(AbstractDistribution):
         self,
         parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
-        actual_data: Union[bool, np.ndarray] = True,
+        data: Union[List[float], np.ndarray] = None,
         *args,
         **kwargs,
     ) -> Union[
@@ -2269,7 +2264,7 @@ class Exponential(AbstractDistribution):
         """
         result = super().cdf(
             parameters,
-            actual_data=actual_data,
+            data=data,
             plot_figure=plot_figure,
             *args,
             **kwargs,
@@ -2533,7 +2528,7 @@ class Normal(AbstractDistribution):
         self,
         parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
-        actual_data: Union[bool, np.ndarray] = True,
+        data: Union[List[float], np.ndarray] = None,
         *args,
         **kwargs,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
@@ -2550,7 +2545,7 @@ class Normal(AbstractDistribution):
                 location parameter of the Normal distribution.
             - scale: [numeric]
                 scale parameter of the Normal distribution.
-        actual_data : [bool/array]
+        data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
             if you want to calculate the pdf for a theoretical time series
         plot_figure: [bool]
@@ -2567,7 +2562,7 @@ class Normal(AbstractDistribution):
         """
         result = super().cdf(
             parameters,
-            actual_data=actual_data,
+            data=data,
             plot_figure=plot_figure,
             *args,
             **kwargs,
@@ -2696,14 +2691,14 @@ class Normal(AbstractDistribution):
         """Kolmogorov-Smirnov (KS) test.
 
         The smaller the D static, the more likely that the two samples are drawn from the same distribution
-        IF Pvalue < significance level ------ reject
+        IF Pvalue < signeficance level ------ reject
 
         Returns
         -------
         Dstatic: [numeric]
             The smaller the D static the more likely that the two samples are drawn from the same distribution
         Pvalue: [numeric]
-            IF Pvalue < significance level ------ reject the null hypothesis
+            IF Pvalue < signeficance level ------ reject the null hypothesis
         """
         return super().ks()
 
