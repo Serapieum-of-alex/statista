@@ -1,8 +1,8 @@
-##############
-Metrics module
-##############
+##################
+descriptors module
+##################
 
-.. automodule:: metrics
+.. automodule:: descriptors
    :members:
    :undoc-members:
    :show-inheritance:

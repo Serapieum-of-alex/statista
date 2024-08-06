@@ -1,4 +1,4 @@
-"""Performance Metrics """
+"""Statistical descriptors. """
 
 from numbers import Number
 from typing import Union

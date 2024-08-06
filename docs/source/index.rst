@@ -71,7 +71,7 @@ Main Features
 .. digraph:: Linking
 
     statista -> distributions;
-    statista -> metrics;
+    statista -> descriptors;
     statista -> parameters;
     statista -> sensitivity;
     statista -> tools;
@@ -85,7 +85,7 @@ Main Features
    Distributions <distributions-tree.rst>
    Sensitivity analysis <sensitivity-tree.rst>
    Extreme Value Analysis <eva-class.rst>
-   Metrics <metrics-module.rst>
+   Metrics <descriptors-module.rst>
    Tools <tools-module.rst>
    Plot <plot-class.rst>
 
