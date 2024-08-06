@@ -129,8 +129,13 @@ class AbstractDistribution(ABC):
             - scale: [numeric]
                 scale parameter
         """
+        if data is None and parameters is None:
+            raise ValueError("Either data or parameters must be provided")
+
         if isinstance(data, list) or isinstance(data, np.ndarray):
             self._data = np.array(data)
+        else:
+            self._data = data
 
         self._parameters = parameters
 
