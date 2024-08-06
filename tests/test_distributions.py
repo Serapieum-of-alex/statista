@@ -84,23 +84,25 @@ class TestGumbel:
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
+        gum_dist_parameters: Dict[str, Dict[str, float]],
     ):
-        dist = Gumbel(time_series2)
-        dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        dist.ks()
-        assert dist.Dstatic
-        assert dist.KS_Pvalue
+        param = gum_dist_parameters[dist_estimation_parameters_ks]
+        dist = Gumbel(time_series2, param)
+        dstatic, pvalue = dist.ks()
+        assert dstatic == 0.07407407407407407
+        assert pvalue == 0.9987375782247235
 
     def test_chisquare(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
+        gum_dist_parameters: Dict[str, Dict[str, float]],
     ):
-        dist = Gumbel(time_series2)
-        dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        dist.chisquare()
-        assert dist.chistatic
-        assert dist.chi_Pvalue
+        param = gum_dist_parameters[dist_estimation_parameters_ks]
+        dist = Gumbel(time_series2, param)
+        dstatic, pvalue = dist.chisquare()
+        assert dstatic == -0.2813945052127964
+        assert pvalue == 1
 
     def test_pdf(
         self,
@@ -207,23 +209,25 @@ class TestGEV:
         self,
         time_series1: list,
         dist_estimation_parameters_ks: str,
+        gev_dist_parameters: Dict[str, Dict[str, float]],
     ):
-        dist = GEV(time_series1)
-        dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        dist.ks()
-        assert dist.Dstatic
-        assert dist.KS_Pvalue
+        param = gev_dist_parameters[dist_estimation_parameters_ks]
+        dist = GEV(time_series1, param)
+        dstatic, pvalue = dist.ks()
+        assert dstatic == 0.14814814814814814
+        assert pvalue == 0.9356622290518453
 
     def test_gev_chisquare(
         self,
         time_series1: list,
         dist_estimation_parameters_ks: str,
+        gev_dist_parameters: Dict[str, Dict[str, float]],
     ):
-        dist = GEV(time_series1)
-        dist.fit_model(method=dist_estimation_parameters_ks, test=False)
-        dist.chisquare()
-        assert dist.chistatic
-        assert dist.chi_Pvalue
+        param = gev_dist_parameters[dist_estimation_parameters_ks]
+        dist = GEV(time_series1, param)
+        dstatic, pvalue = dist.chisquare()
+        assert dstatic == -22.906818156545253
+        assert pvalue == 1
 
     def test_gev_pdf(
         self,

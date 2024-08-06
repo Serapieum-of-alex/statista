@@ -134,13 +134,6 @@ class AbstractDistribution(ABC):
 
         self._parameters = parameters
 
-        self.Dstatic = None
-        self.KS_Pvalue = None
-        self.chistatic = None
-        self.chi_Pvalue = None
-
-        pass
-
     @property
     def parameters(self) -> Dict[str, float]:
         """Distribution parameters"""
@@ -181,17 +174,17 @@ class AbstractDistribution(ABC):
     def pdf(
         self,
         parameters: Dict[str, Union[float, Any]] = None,
+        actual_data: Union[bool, np.ndarray] = True,
         plot_figure: bool = False,
         figsize: tuple = (6, 5),
         xlabel: str = "Actual data",
         ylabel: str = "pdf",
         fontsize: Union[float, int] = 15,
-        actual_data: Union[bool, np.ndarray] = True,
         **kwargs,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
-        Returns the value of Gumbel's pdf with parameters loc and scale at x .
+        Returns the value of Gumbel's pdf with parameters loc and scale at x.
 
         Parameters
         ----------
