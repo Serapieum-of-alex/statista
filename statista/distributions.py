@@ -194,16 +194,20 @@ class AbstractDistribution(ABC):
             - loc: [numeric]
                 location parameter of the gumbel distribution.
             - scale: [numeric]
-                scale parameter of the gumbel distribution.
-        kwargs:
-            figsize: tuple = (6, 5),
-            xlabel: str = "Actual data".
-                x-axis label.
-            ylabel: str = "pdf".
-                y-axis label.
-            fontsize: Union[float, int] = default is 15.
-
-            actual_data: np.ndarray = None,
+                scale parameter of the gumbel distribution
+        actual_data: [bool/array]
+            True if you want to calculate the pdf for the actual time series, array
+            if you want to calculate the pdf for a theoretical time series
+        plot_figure: [bool]
+            Default is False.
+        figsize: [tuple]
+            Default is (6, 5).
+        xlabel: [str]
+            Default is "Actual data".
+        ylabel: [str]
+            Default is "pdf".
+        fontsize: [int]
+            Default is 15.
 
         Returns
         -------
@@ -252,12 +256,12 @@ class AbstractDistribution(ABC):
     def cdf(
         self,
         parameters: Dict[str, Union[float, Any]] = None,
+        actual_data: Union[bool, np.ndarray] = True,
         plot_figure: bool = False,
         figsize: tuple = (6, 5),
         xlabel: str = "data",
         ylabel: str = "cdf",
         fontsize: int = 15,
-        actual_data: Union[bool, np.ndarray] = True,
     ) -> Union[Tuple[np.ndarray, Figure, Axes], np.ndarray]:
         """cdf.
 
@@ -272,13 +276,26 @@ class AbstractDistribution(ABC):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
+        actual_data : [bool/array]
+            true if you want to calculate the pdf for the actual time series, array if you want to calculate the pdf
+            for a theoretical time series.
+        plot_figure: [bool], Default is False.
+            True to plot the figure.
+        figsize: [tuple]
+            Default is (6, 5).
+        xlabel: [str]
+            Default is "Actual data".
+        ylabel: [str]
+            Default is "cdf".
+        fontsize: [int]
+            Default is 15.
         """
         if isinstance(actual_data, bool):
             ts = self.data
         else:
             ts = actual_data
 
-        # if no parameter are provided take the parameters provided in the class initialization.
+        # if no parameter is provided take the parameters provided in the class initialization.
         if parameters is None:
             parameters = self.parameters
 
@@ -389,14 +406,14 @@ class AbstractDistribution(ABC):
         """Kolmogorov-Smirnov (KS) test.
 
         The smaller the D static, the more likely that the two samples are drawn from the same distribution
-        IF Pvalue < signeficance level ------ reject
+        IF Pvalue < significance level ------ reject
 
         returns
         -------
         Dstatic: [numeric]
             The smaller the D static the more likely that the two samples are drawn from the same distribution
         Pvalue : [numeric]
-            IF Pvalue < signeficance level ------ reject the null hypothesis.
+            IF Pvalue < significance level ------ reject the null hypothesis.
         """
         if self.parameters is None:
             raise ValueError(
@@ -405,12 +422,10 @@ class AbstractDistribution(ABC):
         qth = self.inverse_cdf(self.cdf_weibul, self.parameters)
 
         test = ks_2samp(self.data, qth)
-        self.Dstatic = test.statistic
-        self.KS_Pvalue = test.pvalue
 
         print("-----KS Test--------")
         print(f"Statistic = {test.statistic}")
-        if self.Dstatic < self.kstable:
+        if test.statistic < self.kstable:
             print("Accept Hypothesis")
         else:
             print("reject Hypothesis")
@@ -430,15 +445,12 @@ class AbstractDistribution(ABC):
         qth = self.inverse_cdf(self.cdf_weibul, self.parameters)
         try:
             test = chisquare(st.standardize(qth), st.standardize(self.data))
-            self.chistatic = test.statistic
-            self.chi_Pvalue = test.pvalue
             print("-----chisquare Test-----")
             print("Statistic = " + str(test.statistic))
             print("P value = " + str(test.pvalue))
             return test.statistic, test.pvalue
         except Exception as e:
             print(e)
-            return
 
     def confidence_interval(
         self,
@@ -632,8 +644,8 @@ class Gumbel(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        actual_data : [bool/array]
-            true if you want to calculate the pdf for the actual time series, array
+        actual_data: [bool/array]
+            True if you want to calculate the pdf for the actual time series, array
             if you want to calculate the pdf for a theoretical time series
         plot_figure: [bool]
             Default is False.
@@ -2671,14 +2683,14 @@ class Normal(AbstractDistribution):
         """Kolmogorov-Smirnov (KS) test.
 
         The smaller the D static, the more likely that the two samples are drawn from the same distribution
-        IF Pvalue < signeficance level ------ reject
+        IF Pvalue < significance level ------ reject
 
         Returns
         -------
         Dstatic: [numeric]
             The smaller the D static the more likely that the two samples are drawn from the same distribution
         Pvalue: [numeric]
-            IF Pvalue < signeficance level ------ reject the null hypothesis
+            IF Pvalue < significance level ------ reject the null hypothesis
         """
         return super().ks()
 
