@@ -186,7 +186,7 @@ class AbstractDistribution(ABC):
         xlabel: str = "Actual data",
         ylabel: str = "pdf",
         fontsize: Union[float, int] = 15,
-        actual_data: Union[bool, np.ndarray] = True,
+        data: Union[List[float], np.ndarray] = None,
         **kwargs,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
@@ -202,15 +202,19 @@ class AbstractDistribution(ABC):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        kwargs:
-            figsize: tuple = (6, 5),
-            xlabel: str = "Actual data".
-                x-axis label.
-            ylabel: str = "pdf".
-                y-axis label.
-            fontsize: Union[float, int] = default is 15.
-
-            actual_data: np.ndarray = None,
+        data : [bool/array]
+            true if you want to calculate the cdf for the actual time series, array if you want to calculate the cdf
+            for a theoretical time series.
+        plot_figure: [bool], Default is False.
+            True to plot the figure.
+        figsize: [tuple]
+                Default is (6, 5).
+        xlabel: [str]
+            Default is "Actual data".
+        ylabel: [str]
+            Default is "cdf".
+        fontsize: [int]
+            Default is 15.
 
         Returns
         -------
@@ -218,10 +222,10 @@ class AbstractDistribution(ABC):
             probability density function pdf.
         """
 
-        if actual_data is None:
+        if data is None:
             ts = self.data
         else:
-            ts = actual_data
+            ts = data
 
         # if no parameter are provided take the parameters provided in the class initialization.
         if parameters is None:
@@ -233,7 +237,7 @@ class AbstractDistribution(ABC):
             qx = np.linspace(
                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
             )
-            pdf_fitted = self.pdf(parameters, actual_data=qx)
+            pdf_fitted = self.pdf(parameters, data=qx)
 
             fig, ax = Plot.pdf(
                 qx,
@@ -635,7 +639,7 @@ class Gumbel(AbstractDistribution):
         self,
         parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
-        actual_data: np.ndarray = None,
+        data: Union[List[float], np.ndarray] = None,
         *args,
         **kwargs,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
@@ -652,7 +656,7 @@ class Gumbel(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        actual_data : [bool/array]
+        data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
             if you want to calculate the pdf for a theoretical time series
         plot_figure: [bool]
@@ -684,7 +688,7 @@ class Gumbel(AbstractDistribution):
         """
         result = super().pdf(
             parameters,
-            actual_data=actual_data,
+            data=data,
             plot_figure=plot_figure,
             *args,
             **kwargs,
@@ -1140,7 +1144,7 @@ class Gumbel(AbstractDistribution):
         q_x = np.linspace(
             float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
         )
-        pdf_fitted = self.pdf(parameters, actual_data=q_x)
+        pdf_fitted = self.pdf(parameters, data=q_x)
         cdf_fitted = self.cdf(parameters, data=q_x)
 
         fig, ax = Plot.details(
@@ -1267,7 +1271,7 @@ class GEV(AbstractDistribution):
         self,
         parameters: Dict[str, float] = None,
         plot_figure: bool = False,
-        actual_data: np.ndarray = None,
+        data: Union[List[float], np.ndarray] = None,
         *args,
         **kwargs,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
@@ -1286,7 +1290,7 @@ class GEV(AbstractDistribution):
                 scale parameter of the GEV distribution.
             - shape: [numeric]
                 shape parameter of the GEV distribution.
-        actual_data : [bool/array]
+        data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
             if you want to calculate the pdf for a theoretical time series
         plot_figure: [bool]
@@ -1318,7 +1322,7 @@ class GEV(AbstractDistribution):
         """
         result = super().pdf(
             parameters,
-            actual_data=actual_data,
+            data=data,
             plot_figure=plot_figure,
             *args,
             **kwargs,
@@ -1742,7 +1746,7 @@ class GEV(AbstractDistribution):
         q_x = np.linspace(
             float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
         )
-        pdf_fitted = self.pdf(parameters, actual_data=q_x)
+        pdf_fitted = self.pdf(parameters, data=q_x)
         cdf_fitted = self.cdf(parameters, data=q_x)
 
         fig, ax = Plot.details(
@@ -2158,7 +2162,7 @@ class Exponential(AbstractDistribution):
         self,
         parameters: Dict[str, float] = None,
         plot_figure: bool = False,
-        actual_data: np.ndarray = None,
+        data: Union[List[float], np.ndarray] = None,
         *args,
         **kwargs,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
@@ -2175,7 +2179,7 @@ class Exponential(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        actual_data : [bool/array]
+        data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
             if you want to calculate the pdf for a theoretical time series
         plot_figure: [bool]
@@ -2197,7 +2201,7 @@ class Exponential(AbstractDistribution):
         """
         result = super().pdf(
             parameters,
-            actual_data=actual_data,
+            data=data,
             plot_figure=plot_figure,
             *args,
             **kwargs,
@@ -2462,7 +2466,7 @@ class Normal(AbstractDistribution):
         self,
         parameters: Dict[str, float] = None,
         plot_figure: bool = False,
-        actual_data: np.ndarray = None,
+        data: Union[List[float], np.ndarray] = None,
         *args,
         **kwargs,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
@@ -2479,7 +2483,7 @@ class Normal(AbstractDistribution):
                 location parameter of the GEV distribution.
             - scale: [numeric]
                 scale parameter of the GEV distribution.
-        actual_data : [bool/array]
+        data : [bool/array]
             true if you want to calculate the pdf for the actual time series, array
             if you want to calculate the pdf for a theoretical time series
         plot_figure: [bool]
@@ -2501,7 +2505,7 @@ class Normal(AbstractDistribution):
         """
         result = super().pdf(
             parameters,
-            actual_data=actual_data,
+            data=data,
             plot_figure=plot_figure,
             *args,
             **kwargs,
