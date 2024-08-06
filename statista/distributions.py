@@ -191,7 +191,7 @@ class AbstractDistribution(ABC):
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
-        Returns the value of Gumbel's pdf with parameters loc and scale at x .
+        Returns the value of Gumbel's pdf with parameters loc and scale at x.
 
         Parameters
         ----------
@@ -202,9 +202,9 @@ class AbstractDistribution(ABC):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        data : [bool/array]
-            true if you want to calculate the cdf for the actual time series, array if you want to calculate the cdf
-            for a theoretical time series.
+        data : np.ndarray, default is None.
+            array if you want to calculate the pdf for different data than the time series given to the constructor
+            method.
         plot_figure: [bool], Default is False.
             True to plot the figure.
         figsize: [tuple]
@@ -227,7 +227,7 @@ class AbstractDistribution(ABC):
         else:
             ts = data
 
-        # if no parameter are provided take the parameters provided in the class initialization.
+        # if no parameters are provided, take the parameters provided in the class initialization.
         if parameters is None:
             parameters = self.parameters
 
@@ -283,9 +283,9 @@ class AbstractDistribution(ABC):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        data : [bool/array]
-            true if you want to calculate the cdf for the actual time series, array if you want to calculate the cdf
-            for a theoretical time series.
+        data : np.ndarray, default is None.
+            array if you want to calculate the cdf for different data than the time series given to the constructor
+            method.
         plot_figure: [bool], Default is False.
             True to plot the figure.
         figsize: [tuple]
@@ -656,9 +656,9 @@ class Gumbel(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        data : [bool/array]
-            true if you want to calculate the pdf for the actual time series, array
-            if you want to calculate the pdf for a theoretical time series
+        data : np.ndarray, default is None.
+            array if you want to calculate the pdf for different data than the time series given to the constructor
+            method.
         plot_figure: [bool]
             Default is False.
         kwargs:
@@ -673,7 +673,7 @@ class Gumbel(AbstractDistribution):
 
         Returns
         -------
-        pdf: [array]
+        pdf: [np.ndarray]
             probability density function pdf.
 
         Examples
@@ -731,9 +731,9 @@ class Gumbel(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        actual_data : [bool/array]
-            true if you want to calculate the pdf for the actual time series, array if you want to calculate the pdf
-            for a theoretical time series.
+        data : np.ndarray, default is None.
+            array if you want to calculate the cdf for different data than the time series given to the constructor
+            method.
         plot_figure: [bool], Default is False.
             True to plot the figure.
         kwargs:
@@ -1290,9 +1290,9 @@ class GEV(AbstractDistribution):
                 scale parameter of the GEV distribution.
             - shape: [numeric]
                 shape parameter of the GEV distribution.
-        data : [bool/array]
-            true if you want to calculate the pdf for the actual time series, array
-            if you want to calculate the pdf for a theoretical time series
+        data : np.ndarray, default is None.
+            array if you want to calculate the pdf for different data than the time series given to the constructor
+            method.
         plot_figure: [bool]
             Default is False.
         kwargs:
@@ -1381,9 +1381,9 @@ class GEV(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        data : [bool/array]
-            true if you want to calculate the pdf for the actual time series, array
-            if you want to calculate the pdf for a theoretical time series
+        data : np.ndarray, default is None.
+            array if you want to calculate the cdf for different data than the time series given to the constructor
+            method.
         plot_figure: [bool]
             Default is False.
         kwargs:
@@ -1424,10 +1424,10 @@ class GEV(AbstractDistribution):
         )
         return result
 
-    def get_rp(self, parameters: Dict[str, Union[float, Any]], data: np.ndarray):
-        """get_rp.
+    def return_period(self, parameters: Dict[str, Union[float, Any]], data: np.ndarray):
+        """return_period.
 
-            getRP calculates the return period for a list/array of values or a single value.
+            calculate return period calculates the return period for a list/array of values or a single value.
 
         Parameters
         ----------
@@ -1856,7 +1856,7 @@ class GEV(AbstractDistribution):
 #         xlabel: str = "Actual data",
 #         ylabel: str = "pdf",
 #         fontsize: Union[float, int] = 15,
-#         actual_data: Union[bool, np.ndarray] = True,
+#         data: Union[bool, np.ndarray] = True,
 #     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
 #         """pdf.
 #
@@ -1877,10 +1877,10 @@ class GEV(AbstractDistribution):
 #         if scale <= 0:
 #             raise ValueError("Scale parameter is negative")
 #
-#         if isinstance(actual_data, bool):
+#         if isinstance(data, bool):
 #             ts = self.data
 #         else:
-#             ts = actual_data
+#             ts = data
 #
 #         # pdf = []
 #         #
@@ -1899,7 +1899,7 @@ class GEV(AbstractDistribution):
 #             q_x = np.linspace(
 #                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
 #             )
-#             pdf_fitted = self.pdf(loc, scale, actual_data=q_x)
+#             pdf_fitted = self.pdf(loc, scale, data=q_x)
 #
 #             fig, ax = Plot.pdf(
 #                 q_x,
@@ -1923,7 +1923,7 @@ class GEV(AbstractDistribution):
 #         xlabel: str = "data",
 #         ylabel: str = "cdf",
 #         fontsize: int = 15,
-#         actual_data: Union[bool, np.ndarray] = True,
+#         data: Union[bool, np.ndarray] = True,
 #     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
 #         """cdf.
 #
@@ -1941,10 +1941,10 @@ class GEV(AbstractDistribution):
 #         if loc <= 0:
 #             raise ValueError("Threshold parameter should be greater than zero")
 #
-#         if isinstance(actual_data, bool):
+#         if isinstance(data, bool):
 #             ts = self.data
 #         else:
-#             ts = actual_data
+#             ts = data
 #
 #         # Y = (ts - loc) / scale
 #         # cdf = 1 - np.exp(-Y)
@@ -1958,7 +1958,7 @@ class GEV(AbstractDistribution):
 #             q_x = np.linspace(
 #                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
 #             )
-#             cdf_fitted = self.cdf(loc, scale, actual_data=q_x)
+#             cdf_fitted = self.cdf(loc, scale, data=q_x)
 #
 #             cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
 #
@@ -2179,9 +2179,9 @@ class Exponential(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        data : [bool/array]
-            true if you want to calculate the pdf for the actual time series, array
-            if you want to calculate the pdf for a theoretical time series
+        data: np.ndarray, default is None.
+            array if you want to calculate the pdf for different data than the time series given to the constructor
+            method.
         plot_figure: [bool]
             Default is False.
         kwargs:
@@ -2251,9 +2251,9 @@ class Exponential(AbstractDistribution):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        actual_data : [bool/array]
-            true if you want to calculate the pdf for the actual time series, array
-            if you want to calculate the pdf for a theoretical time series
+        data: np.ndarray, default is None.
+            array if you want to calculate the cdf for different data than the time series given to the constructor
+            method.
         plot_figure: [bool]
             Default is False.
         kwargs:
@@ -2483,9 +2483,9 @@ class Normal(AbstractDistribution):
                 location parameter of the GEV distribution.
             - scale: [numeric]
                 scale parameter of the GEV distribution.
-        data : [bool/array]
-            true if you want to calculate the pdf for the actual time series, array
-            if you want to calculate the pdf for a theoretical time series
+        data : np.ndarray, default is None.
+            array if you want to calculate the pdf for different data than the time series given to the constructor
+            method.
         plot_figure: [bool]
             Default is False.
         kwargs:
@@ -2549,9 +2549,9 @@ class Normal(AbstractDistribution):
                 location parameter of the Normal distribution.
             - scale: [numeric]
                 scale parameter of the Normal distribution.
-        data : [bool/array]
-            true if you want to calculate the pdf for the actual time series, array
-            if you want to calculate the pdf for a theoretical time series
+        data : np.ndarray, default is None.
+            array if you want to calculate the pdf for different data than the time series given to the constructor
+            method.
         plot_figure: [bool]
             Default is False.
         kwargs:
