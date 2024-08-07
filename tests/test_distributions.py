@@ -295,6 +295,19 @@ class TestGEV:
         cdf, fig, ax = dist.cdf(data=time_series1, plot_figure=True)
         assert isinstance(cdf, np.ndarray)
 
+    def test_random(
+        self,
+        dist_estimation_parameters_ks: str,
+        gum_dist_parameters: Dict[str, Dict[str, float]],
+    ):
+        # param = gum_dist_parameters[dist_estimation_parameters_ks]
+        param = {"loc": 0, "scale": 1, "shape": 0.1}
+        dist = Gumbel(parameters=param)
+        rv = dist.random(100)
+        # new_dist = Gumbel(rv, parameters=param)
+        assert isinstance(rv, np.ndarray)
+        assert rv.shape == (100,)
+
     def test_gev_inverse_cdf(
         self,
         time_series1: list,

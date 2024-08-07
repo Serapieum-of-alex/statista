@@ -704,9 +704,7 @@ class Gumbel(AbstractDistribution):
         size: int,
         parameters: Dict[str, Union[float, Any]] = None,
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
-        """pdf.
-
-        Returns the value of Gumbel's pdf with parameters loc and scale at x.
+        """Generate Random Variable.
 
         Parameters
         ----------
@@ -1243,6 +1241,11 @@ class Gumbel(AbstractDistribution):
 class GEV(AbstractDistribution):
     """GEV (Generalized Extreme value statistics)
 
+    - The Generalized Extreme Value (GEV) distribution is used to model the largest or smallest value among a large
+        set of independent, identically distributed random values.
+    - The GEV distribution encompasses three types of distributions: Gumbel, Fréchet, and Weibull, which are
+        distinguished by a shape parameter (:math:`\\xi` (xi)).
+
     - The probability density function (PDF) of the Generalized-extreme-value distribution is:
 
         .. math::
@@ -1258,8 +1261,20 @@ class GEV(AbstractDistribution):
             \\end{cases}
           :label: gev-pdf
 
-        Where the :math:`\\delta` (delta) is the scale parameter affecting the extension of the x-direction,
-        :math:`\\zeta` (zeta) is the location parameter, and :math:`\\xi` (xi) is the shape parameter.
+        Where the :math:`\\delta` (delta) is the scale parameter, :math:`\\zeta` (zeta) is the location parameter,
+        and :math:`\\xi` (xi) is the shape parameter.
+
+    - The location parameter :math:`\\zeta` shifts the distribution along the x-axis. It essentially determines the mode
+        (peak) of the distribution and its location. Changing the location parameter moves the distribution left or
+        right without altering its shape. The location parameter ranges from negative infinity to positive infinity.
+    - The scale parameter :math:`\\delta` controls the spread or dispersion of the distribution. A larger scale parameter
+        results in a wider distribution, while a smaller scale parameter results in a narrower distribution. It must
+        always be positive.
+    - The shape parameter :math:`\\xi` (xi) determines the shape of the distribution. The shape parameter can be positive,
+        negative, or zero. The shape parameter is used to classify the GEV distribution into three types: Gumbel (Type I),
+        Fréchet (Type II), and Weibull (Type III). The shape parameter determines the tail behavior of the distribution.
+        The shape parameter ranges from negative infinity to positive infinity.
+
 
         In hydrology, the distribution is reparametrized with :math:`k=-\\xi` (xi) (El Adlouni et al., 2008)
         The cumulative distribution functions.
@@ -1274,6 +1289,7 @@ class GEV(AbstractDistribution):
                 \\exp\\left(- \\exp\\left(- \\frac{x-\\zeta}{\\delta} \\right) \\right) & \\quad \\land \\xi=0
             \\end{cases}
           :label: gev-cdf
+
     """
 
     def __init__(
@@ -1402,6 +1418,64 @@ class GEV(AbstractDistribution):
         )
 
         return result
+
+    def random(
+        self,
+        size: int,
+        parameters: Dict[str, Union[float, Any]] = None,
+    ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
+        """Generate Random Variable.
+
+        Parameters
+        ----------
+        size: int
+            size of the random generated sample.
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val}
+
+            - loc: [numeric]
+                location parameter of the gumbel distribution.
+            - scale: [numeric]
+                scale parameter of the gumbel distribution.
+
+        Returns
+        -------
+        data: [np.ndarray]
+            random generated data.
+
+        Examples
+        --------
+        - To generate a random sample that follow the gumbel distribution with the parameters loc=0 and scale=1.
+
+            >>> parameters = {'loc': 0, 'scale': 1, "shape": 0.1}
+            >>> gev_dist = GEV(parameters=parameters)
+            >>> random_data = gev_dist.random(100)
+
+        - then we can use the `pdf` method to plot the pdf of the random data.
+
+            >>> gev_dist.pdf(data=random_data, plot_figure=True, xlabel="Random data")
+
+            .. image:: /_images/gev-random-pdf.png
+                :align: center
+
+            >>> gev_dist.cdf(data=random_data, plot_figure=True, xlabel="Random data")
+
+            .. image:: /_images/gev-random-cdf.png
+                :align: center
+        """
+        # if no parameters are provided, take the parameters provided in the class initialization.
+        if parameters is None:
+            parameters = self.parameters
+
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+        shape = parameters.get("shape")
+
+        if scale <= 0:
+            raise ValueError("Scale parameter is negative")
+
+        random_data = genextreme.rvs(loc=loc, scale=scale, c=shape, size=size)
+        return random_data
 
     @staticmethod
     def _cdf_eq(
