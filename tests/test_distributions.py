@@ -59,6 +59,19 @@ class TestGumbel:
         with pytest.raises(TypeError):
             dist = Gumbel(parameters=parameters)
 
+    def test_random(
+        self,
+        dist_estimation_parameters_ks: str,
+        gum_dist_parameters: Dict[str, Dict[str, float]],
+    ):
+        # param = gum_dist_parameters[dist_estimation_parameters_ks]
+        param = {"loc": 0, "scale": 1}
+        dist = Gumbel(parameters=param)
+        rv = dist.random(100)
+        # new_dist = Gumbel(rv, parameters=param)
+        assert isinstance(rv, np.ndarray)
+        assert rv.shape == (100,)
+
     def test_fit_model(
         self,
         time_series2: list,

@@ -273,9 +273,7 @@ class AbstractDistribution(ABC):
         fontsize: int = 15,
         data: Union[List[float], np.ndarray] = None,
     ) -> Union[Tuple[np.ndarray, Figure, Axes], np.ndarray]:
-        """cdf.
-
-        cdf calculates the value of Gumbel's cdf with parameters loc and scale at x.
+        """Cumulative distribution function.
 
         Parameters
         ----------
@@ -565,12 +563,12 @@ class Gumbel(AbstractDistribution):
             \\exp\\left(-\\exp\\left(-\\frac{x - \\zeta}{\\delta} \\right) \\right)
           :label: gumbel-pdf
 
-        where :math:`\\zeta` (zeta) is the location parameter, and :math:`\\delta`  (delta) is the scale parameter.
+        where :math:`\\zeta` (zeta) is the location parameter, and :math:`\\delta` (delta) is the scale parameter.
 
     - The location parameter :math:`\\zeta` shifts the distribution along the x-axis. It essentially determines the mode
         (peak) of the distribution and its location. Changing the location parameter moves the distribution left or
         right without altering its shape. The location parameter ranges from negative infinity to positive infinity.
-    -  The scale parameter :math:`\\delta` controls the spread or dispersion of the distribution. A larger scale parameter
+    - The scale parameter :math:`\\delta` controls the spread or dispersion of the distribution. A larger scale parameter
         results in a wider distribution, while a smaller scale parameter results in a narrower distribution. It must
         always be positive.
 
@@ -701,6 +699,46 @@ class Gumbel(AbstractDistribution):
         )
         return result
 
+    def random(
+        self,
+        size: int,
+        parameters: Dict[str, Union[float, Any]] = None,
+    ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
+        """pdf.
+
+        Returns the value of Gumbel's pdf with parameters loc and scale at x.
+
+        Parameters
+        ----------
+        size: int
+            size of the random generated sample.
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val}
+
+            - loc: [numeric]
+                location parameter of the gumbel distribution.
+            - scale: [numeric]
+                scale parameter of the gumbel distribution.
+
+        Returns
+        -------
+        data: [np.ndarray]
+            random generated data.
+
+        Examples
+        """
+        # if no parameters are provided, take the parameters provided in the class initialization.
+        if parameters is None:
+            parameters = self.parameters
+
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+        if scale <= 0:
+            raise ValueError("Scale parameter is negative")
+
+        random_data = gumbel_r.rvs(loc=loc, scale=scale, size=size)
+        return random_data
+
     @staticmethod
     def _cdf_eq(
         data: Union[list, np.ndarray], parameters: Dict[str, Union[float, Any]]
@@ -724,9 +762,7 @@ class Gumbel(AbstractDistribution):
     ) -> Union[
         Tuple[np.ndarray, Figure, Axes], np.ndarray
     ]:  # pylint: disable=arguments-differ
-        """cdf.
-
-        cdf calculates the value of Gumbel's cdf with parameters loc and scale at x.
+        """Cumulative distribution function.
 
         parameter
         ---------
