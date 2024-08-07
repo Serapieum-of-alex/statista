@@ -227,8 +227,10 @@ class AbstractDistribution(ABC):
 
         if data is None:
             ts = self.data
+            data_sorted = self.data_sorted
         else:
             ts = data
+            data_sorted = np.sort(data)
 
         # if no parameters are provided, take the parameters provided in the class initialization.
         if parameters is None:
@@ -237,15 +239,13 @@ class AbstractDistribution(ABC):
         pdf = self._pdf_eq(ts, parameters)
 
         if plot_figure:
-            qx = np.linspace(
-                float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
-            )
+            qx = np.linspace(float(data_sorted[0]), 1.5 * float(data_sorted[-1]), 10000)
             pdf_fitted = self.pdf(parameters, data=qx)
 
             fig, ax = Plot.pdf(
                 qx,
                 pdf_fitted,
-                self.data_sorted,
+                data_sorted,
                 figsize=figsize,
                 xlabel=xlabel,
                 ylabel=ylabel,
@@ -300,27 +300,27 @@ class AbstractDistribution(ABC):
         """
         if data is None:
             ts = self.data
+            data_sorted = self.data_sorted
         else:
             ts = data
+            data_sorted = np.sort(data)
 
-        # if no parameters are provided take the parameters provided in the class initialization.
+        # if no parameters are provided, take the parameters provided in the class initialization.
         if parameters is None:
             parameters = self.parameters
 
         cdf = self._cdf_eq(ts, parameters)
 
         if plot_figure:
-            qx = np.linspace(
-                float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
-            )
+            qx = np.linspace(float(data_sorted[0]), 1.5 * float(data_sorted[-1]), 10000)
             cdf_fitted = self.cdf(parameters, data=qx)
 
-            cdf_weibul = PlottingPosition.weibul(self.data_sorted)
+            cdf_weibul = PlottingPosition.weibul(data_sorted)
 
             fig, ax = Plot.cdf(
                 qx,
                 cdf_fitted,
-                self.data_sorted,
+                data_sorted,
                 cdf_weibul,
                 figsize=figsize,
                 xlabel=xlabel,
@@ -691,7 +691,7 @@ class Gumbel(AbstractDistribution):
             :align: center
         """
         result = super().pdf(
-            parameters,
+            parameters=parameters,
             data=data,
             plot_figure=plot_figure,
             *args,
@@ -726,6 +726,14 @@ class Gumbel(AbstractDistribution):
             random generated data.
 
         Examples
+        --------
+        >>> parameters = {'loc': 0, 'scale': 1}
+        >>> gumbel_dist = Gumbel(parameters=parameters)
+        >>> random_data = gumbel_dist.random(10)
+        >>> gumbel_dist.pdf(data=random_data, plot_figure=True)
+
+        .. image:: /_images/gumbel-pdf.png
+            :align: center
         """
         # if no parameters are provided, take the parameters provided in the class initialization.
         if parameters is None:
@@ -808,7 +816,7 @@ class Gumbel(AbstractDistribution):
             :align: center
         """
         result = super().cdf(
-            parameters,
+            parameters=parameters,
             data=data,
             plot_figure=plot_figure,
             *args,
@@ -1376,7 +1384,7 @@ class GEV(AbstractDistribution):
             :align: center
         """
         result = super().pdf(
-            parameters,
+            parameters=parameters,
             data=data,
             plot_figure=plot_figure,
             *args,
@@ -1471,7 +1479,7 @@ class GEV(AbstractDistribution):
             :align: center
         """
         result = super().cdf(
-            parameters,
+            parameters=parameters,
             data=data,
             plot_figure=plot_figure,
             *args,
@@ -2255,7 +2263,7 @@ class Exponential(AbstractDistribution):
             probability density function pdf.
         """
         result = super().pdf(
-            parameters,
+            parameters=parameters,
             data=data,
             plot_figure=plot_figure,
             *args,
@@ -2322,7 +2330,7 @@ class Exponential(AbstractDistribution):
                 Default is 15.
         """
         result = super().cdf(
-            parameters,
+            parameters=parameters,
             data=data,
             plot_figure=plot_figure,
             *args,
@@ -2559,7 +2567,7 @@ class Normal(AbstractDistribution):
             probability density function pdf.
         """
         result = super().pdf(
-            parameters,
+            parameters=parameters,
             data=data,
             plot_figure=plot_figure,
             *args,
@@ -2620,7 +2628,7 @@ class Normal(AbstractDistribution):
                 Default is 15.
         """
         result = super().cdf(
-            parameters,
+            parameters=parameters,
             data=data,
             plot_figure=plot_figure,
             *args,

@@ -141,6 +141,10 @@ class TestGumbel:
         assert isinstance(pdf, np.ndarray)
         np.testing.assert_almost_equal(gum_pdf, pdf)
         assert isinstance(fig, Figure)
+        # test if you provide the pdf method with the data parameter
+        pdf, fig, ax = dist.pdf(data=time_series2, plot_figure=True)
+        assert isinstance(pdf, np.ndarray)
+        np.testing.assert_almost_equal(gum_pdf, pdf)
 
     def test_cdf(
         self,
@@ -155,6 +159,9 @@ class TestGumbel:
         assert isinstance(cdf, np.ndarray)
         np.testing.assert_almost_equal(gum_cdf, cdf)
         assert isinstance(fig, Figure)
+        # test if you provide the cdf method with the data parameter
+        cdf, fig, ax = dist.cdf(data=time_series2, plot_figure=True)
+        assert isinstance(cdf, np.ndarray)
 
     def test_inverse_cdf(
         self,
@@ -267,6 +274,9 @@ class TestGEV:
         assert isinstance(pdf, np.ndarray)
         np.testing.assert_almost_equal(gev_pdf, pdf)
         assert isinstance(fig, Figure)
+        # test if you provide the pdf method with the data parameter
+        pdf, fig, ax = dist.pdf(data=time_series1, plot_figure=True)
+        assert isinstance(pdf, np.ndarray)
 
     def test_gev_cdf(
         self,
@@ -281,6 +291,9 @@ class TestGEV:
         assert isinstance(cdf, np.ndarray)
         np.testing.assert_almost_equal(gev_cdf, cdf)
         assert isinstance(fig, Figure)
+        # test if you provide the cdf method with the data parameter
+        cdf, fig, ax = dist.cdf(data=time_series1, plot_figure=True)
+        assert isinstance(cdf, np.ndarray)
 
     def test_gev_inverse_cdf(
         self,
@@ -397,6 +410,9 @@ class TestExponential:
         assert isinstance(pdf, np.ndarray)
         np.testing.assert_almost_equal(exp_pdf, pdf)
         assert isinstance(fig, Figure)
+        # test if you provide the pdf method with the data parameter
+        pdf, fig, ax = expo_dist.pdf(data=time_series2, plot_figure=True)
+        assert isinstance(pdf, np.ndarray)
 
     def test_cdf(
         self,
@@ -411,6 +427,9 @@ class TestExponential:
         assert isinstance(cdf, np.ndarray)
         np.testing.assert_almost_equal(exp_cdf, cdf)
         assert isinstance(fig, Figure)
+        # test if you provide the cdf method with the data parameter
+        cdf, fig, ax = expo_dist.cdf(data=time_series2, plot_figure=True)
+        assert isinstance(cdf, np.ndarray)
 
     def test_inverse_cdf(
         self,
@@ -464,6 +483,9 @@ class TestNormal:
         assert isinstance(pdf, np.ndarray)
         np.testing.assert_almost_equal(normal_pdf, pdf)
         assert isinstance(fig, Figure)
+        # test if you provide the pdf method with the data parameter
+        pdf, fig, ax = norm_dist.pdf(data=time_series2, plot_figure=True)
+        assert isinstance(pdf, np.ndarray)
 
     def test_cdf(
         self,
@@ -478,6 +500,9 @@ class TestNormal:
         assert isinstance(cdf, np.ndarray)
         np.testing.assert_almost_equal(normal_cdf, cdf)
         assert isinstance(fig, Figure)
+        # test if you provide the cdf method with the data parameter
+        cdf, fig, ax = norm_dist.cdf(data=time_series2, plot_figure=True)
+        assert isinstance(cdf, np.ndarray)
 
     def test_inverse_cdf(
         self,
