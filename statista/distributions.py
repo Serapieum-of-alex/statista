@@ -1271,10 +1271,9 @@ class GEV(AbstractDistribution):
         results in a wider distribution, while a smaller scale parameter results in a narrower distribution. It must
         always be positive.
     - The shape parameter :math:`\\xi` (xi) determines the shape of the distribution. The shape parameter can be positive,
-        negative, or zero. The shape parameter is used to classify the GEV distribution into three types: Gumbel (Type I),
-        Fréchet (Type II), and Weibull (Type III). The shape parameter determines the tail behavior of the distribution.
-        The shape parameter ranges from negative infinity to positive infinity.
-
+        negative, or zero. The shape parameter is used to classify the GEV distribution into three types: :math:`\\xi = 0`
+        Gumbel (Type I), :math:`\\xi > 0` Fréchet (Type II), and :math:`\\xi < 0` Weibull (Type III). The shape
+        parameter determines the tail behavior of the distribution.
 
         In hydrology, the distribution is reparametrized with :math:`k=-\\xi` (xi) (El Adlouni et al., 2008)
         The cumulative distribution functions.
