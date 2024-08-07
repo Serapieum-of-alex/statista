@@ -129,17 +129,15 @@ class AbstractDistribution(ABC):
             - scale: [numeric]
                 scale parameter
         """
+        if data is None and parameters is None:
+            raise ValueError("Either data or parameters must be provided")
+
         if isinstance(data, list) or isinstance(data, np.ndarray):
             self._data = np.array(data)
+        else:
+            self._data = data
 
         self._parameters = parameters
-
-        self.Dstatic = None
-        self.KS_Pvalue = None
-        self.chistatic = None
-        self.chi_Pvalue = None
-
-        pass
 
     @property
     def parameters(self) -> Dict[str, float]:
@@ -302,7 +300,7 @@ class AbstractDistribution(ABC):
         else:
             ts = data
 
-        # if no parameter are provided take the parameters provided in the class initialization.
+        # if no parameters are provided take the parameters provided in the class initialization.
         if parameters is None:
             parameters = self.parameters
 
@@ -413,14 +411,14 @@ class AbstractDistribution(ABC):
         """Kolmogorov-Smirnov (KS) test.
 
         The smaller the D static, the more likely that the two samples are drawn from the same distribution
-        IF Pvalue < signeficance level ------ reject
+        IF Pvalue < significance level ------ reject
 
         returns
         -------
         Dstatic: [numeric]
             The smaller the D static the more likely that the two samples are drawn from the same distribution
         Pvalue : [numeric]
-            IF Pvalue < signeficance level ------ reject the null hypothesis.
+            IF Pvalue < significance level ------ reject the null hypothesis.
         """
         if self.parameters is None:
             raise ValueError(
@@ -429,12 +427,10 @@ class AbstractDistribution(ABC):
         qth = self.inverse_cdf(self.cdf_weibul, self.parameters)
 
         test = ks_2samp(self.data, qth)
-        self.Dstatic = test.statistic
-        self.KS_Pvalue = test.pvalue
 
         print("-----KS Test--------")
         print(f"Statistic = {test.statistic}")
-        if self.Dstatic < self.kstable:
+        if test.statistic < self.kstable:
             print("Accept Hypothesis")
         else:
             print("reject Hypothesis")
@@ -454,15 +450,12 @@ class AbstractDistribution(ABC):
         qth = self.inverse_cdf(self.cdf_weibul, self.parameters)
         try:
             test = chisquare(st.standardize(qth), st.standardize(self.data))
-            self.chistatic = test.statistic
-            self.chi_Pvalue = test.pvalue
             print("-----chisquare Test-----")
             print("Statistic = " + str(test.statistic))
             print("P value = " + str(test.pvalue))
             return test.statistic, test.pvalue
         except Exception as e:
             print(e)
-            return
 
     def confidence_interval(
         self,
@@ -555,9 +548,10 @@ class AbstractDistribution(ABC):
 
 
 class Gumbel(AbstractDistribution):
-    """Gumbel distribution.
+    """Gumbel distribution (Maximum - Right Skewed).
 
-    The Gumbel distribution is used to model the distribution of the maximum (or the minimum) of a number of samples of various distributions.
+    The Gumbel distribution is used to model the distribution of the maximum (or the minimum) of a number of samples of
+    various distributions.
 
     - The probability density function (PDF) of the Gumbel distribution (Type I) is:
 
@@ -568,7 +562,14 @@ class Gumbel(AbstractDistribution):
 
         where :math:`\\zeta` (zeta) is the location parameter, and :math:`\\delta`  (delta) is the scale parameter.
 
-        The probability density function above is defined in the “un-standardized” form.
+    - The location parameter :math:`\\zeta` shifts the distribution along the x-axis. It essentially determines the mode
+        (peak) of the distribution and its location. Changing the location parameter moves the distribution left or
+        right without altering its shape. The location parameter ranges from negative infinity to positive infinity.
+    -  The scale parameter :math:`\\delta` controls the spread or dispersion of the distribution. A larger scale parameter
+        results in a wider distribution, while a smaller scale parameter results in a narrower distribution. It must
+        always be positive.
+
+    - The probability density function above is defined in the “un-standardized” form.
 
     The Gumbel distribution is a special case of the Generalized Extreme Value (GEV) distribution for a particular
     choice of the shape parameter, :math:`\\xi = 0` (xi).
@@ -774,29 +775,42 @@ class Gumbel(AbstractDistribution):
         )
         return result
 
-    def get_rp(self, loc, scale, data):
-        """getRP.
+    def return_period(
+        self,
+        data: Union[bool, List[float]] = None,
+        parameters: Dict[str, Union[float, Any]] = None,
+    ):
+        """Calculate return period.
 
-            getRP calculates the return period for a list/array of values or a single value.
+            return_period calculates the return period for a list/array of values or a single value.
 
         Parameters
         ----------
         data:[list/array/float]
             value you want the corresponding return value for
-        loc: [float]
-            location parameter
-        scale: [float]
-            scale parameter
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val}
+
+            - loc: [numeric]
+                location parameter of the gumbel distribution.
+            - scale: [numeric]
+                scale parameter of the gumbel distribution.
 
         Returns
         -------
         float:
             return period
         """
-        # if isinstance(data, list) or isinstance(data, np.ndarray):
-        cdf = self.cdf(loc, scale, actual_data=data)
-        # else:
-        #     cdf = gumbel_r.cdf(data, loc, scale)
+        if data is None:
+            ts = self.data
+        else:
+            ts = data
+
+        # if no parameters are provided, take the parameters provided in the class initialization.
+        if parameters is None:
+            parameters = self.parameters
+
+        cdf: np.ndarray = self.cdf(parameters, data=ts)
 
         rp = 1 / (1 - cdf)
 
@@ -2695,14 +2709,14 @@ class Normal(AbstractDistribution):
         """Kolmogorov-Smirnov (KS) test.
 
         The smaller the D static, the more likely that the two samples are drawn from the same distribution
-        IF Pvalue < signeficance level ------ reject
+        IF Pvalue < significance level ------ reject
 
         Returns
         -------
         Dstatic: [numeric]
             The smaller the D static the more likely that the two samples are drawn from the same distribution
         Pvalue: [numeric]
-            IF Pvalue < signeficance level ------ reject the null hypothesis
+            IF Pvalue < significance level ------ reject the null hypothesis
         """
         return super().ks()
 
