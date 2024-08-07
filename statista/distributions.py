@@ -727,13 +727,23 @@ class Gumbel(AbstractDistribution):
 
         Examples
         --------
-        >>> parameters = {'loc': 0, 'scale': 1}
-        >>> gumbel_dist = Gumbel(parameters=parameters)
-        >>> random_data = gumbel_dist.random(10)
-        >>> gumbel_dist.pdf(data=random_data, plot_figure=True)
+        - To generate a random sample that follow the gumbel distribution with the parameters loc=0 and scale=1.
 
-        .. image:: /_images/gumbel-pdf.png
-            :align: center
+            >>> parameters = {'loc': 0, 'scale': 1}
+            >>> gumbel_dist = Gumbel(parameters=parameters)
+            >>> random_data = gumbel_dist.random(100)
+
+        - then we can use the `pdf` method to plot the pdf of the random data.
+
+            >>> gumbel_dist.pdf(data=random_data, plot_figure=True, xlabel="Random data")
+
+            .. image:: /_images/gumbel-random-pdf.png
+                :align: center
+
+            >>> gumbel_dist.cdf(data=random_data, plot_figure=True, xlabel="Random data")
+
+            .. image:: /_images/gumbel-random-cdf.png
+                :align: center
         """
         # if no parameters are provided, take the parameters provided in the class initialization.
         if parameters is None:
