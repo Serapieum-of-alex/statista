@@ -17,6 +17,7 @@ from statista.distributions import (
     Normal,
     Distributions,
 )
+import pytest
 
 
 class TestPlottingPosition:
@@ -47,6 +48,16 @@ class TestGumbel:
         assert isinstance(dist.data, np.ndarray)
         assert isinstance(dist.data_sorted, np.ndarray)
         assert dist.parameters is None
+
+    def test_create_instance_with_wrong_data_type(self):
+        data = {"key": "value"}
+        with pytest.raises(TypeError):
+            dist = Gumbel(data=data)
+
+    def test_create_instance_with_wrong_parameter_type(self):
+        parameters = [1, 2, 3]
+        with pytest.raises(TypeError):
+            dist = Gumbel(parameters=parameters)
 
     def test_fit_model(
         self,

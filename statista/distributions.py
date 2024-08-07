@@ -134,10 +134,15 @@ class AbstractDistribution(ABC):
 
         if isinstance(data, list) or isinstance(data, np.ndarray):
             self._data = np.array(data)
-        else:
+        elif data is None:
             self._data = data
+        else:
+            raise TypeError("The `data` argument should be list or numpy array")
 
-        self._parameters = parameters
+        if isinstance(parameters, dict) or parameters is None:
+            self._parameters = parameters
+        else:
+            raise TypeError("The `parameters` argument should be dictionary")
 
     @property
     def parameters(self) -> Dict[str, float]:
