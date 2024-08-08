@@ -608,7 +608,7 @@ class Gumbel(AbstractDistribution):
         --------
         - First load a sample data.
 
-            >>> data = np.loadtxt("examples/data/time_series1.txt")
+            >>> data = np.loadtxt("examples/data/gumbel.txt")
 
         - I nstantiate the Gumbel class only with the data.
 
@@ -618,7 +618,7 @@ class Gumbel(AbstractDistribution):
 
         - You can also instantiate the Gumbel class with the data and the parameters if you already have them.
 
-            >>> parameters = {"loc": 463.8040433832974, "scale": 220.0724922663106}
+            >>> parameters = {"loc": 0, "scale": 1}
             >>> gumbel_dist = Gumbel(data, parameters)
             >>> print(gumbel_dist) # doctest: +SKIP
             <statista.distributions.Gumbel object at 0x000001CDDEB32C00>
@@ -682,12 +682,12 @@ class Gumbel(AbstractDistribution):
 
         Examples
         --------
-        >>> data = np.loadtxt("examples/data/time_series1.txt")
-        >>> parameters = {'loc': 16.44841695242862, 'scale': 0.8328854157603985}
+        >>> data = np.loadtxt("examples/data/gumbel.txt")
+        >>> parameters = {'loc': 0, 'scale': 1}
         >>> gumbel_dist = Gumbel(data, parameters)
         >>> gumbel_dist.pdf(plot_figure=True)
 
-        .. image:: /_images/gumbel-pdf.png
+        .. image:: /_images/gumbel-random-pdf.png
             :align: center
         """
         result = super().pdf(
@@ -729,7 +729,7 @@ class Gumbel(AbstractDistribution):
 
             >>> parameters = {'loc': 0, 'scale': 1}
             >>> gumbel_dist = Gumbel(parameters=parameters)
-            >>> random_data = gumbel_dist.random(100)
+            >>> random_data = gumbel_dist.random(1000)
 
         - then we can use the `pdf` method to plot the pdf of the random data.
 
@@ -815,12 +815,12 @@ class Gumbel(AbstractDistribution):
 
         Examples
         --------
-        >>> data = np.loadtxt("examples/data/time_series1.txt")
-        >>> parameters = {'loc': 16.44841695242862, 'scale': 0.8328854157603985}
+        >>> data = np.loadtxt("examples/data/gumbel.txt")
+        >>> parameters = {'loc': 0, 'scale': 1}
         >>> gumbel_dist = Gumbel(data, parameters)
         >>> gumbel_dist.cdf(plot_figure=True)  # doctest: +SKIP
 
-        .. image:: /_images/gumbel-cdf.png
+        .. image:: /_images/gumbel-random-cdf.png
             :align: center
         """
         result = super().cdf(
@@ -947,7 +947,7 @@ class Gumbel(AbstractDistribution):
         --------
         - Instantiate the Gumbel class only with the data.
 
-            >>> data = np.loadtxt("examples/data/time_series1.txt")
+            >>> data = np.loadtxt("examples/data/gumbel.txt")
             >>> gumbel_dist = Gumbel(data)
 
         - Then use the `fit_model` method to estimate the distribution parameters. the method takes the method as
@@ -956,35 +956,40 @@ class Gumbel(AbstractDistribution):
 
             >>> parameters = gumbel_dist.fit_model(method="mle", test=True)
             -----KS Test--------
-            Statistic = 0.18518518518518517
+            Statistic = 0.019
             Accept Hypothesis
-            P value = 0.7536974563793281
+            P value = 0.9937026761524456
             >>> print(parameters)
-            {'loc': 16.470245610977667, 'scale': 0.7244863131189487}
+            {'loc': 0.010101355750222706, 'scale': 1.0313042643102108}
 
         - You can also use the `lmoments` method to estimate the distribution parameters.
 
             >>> parameters = gumbel_dist.fit_model(method="lmoments", test=True)
             -----KS Test--------
-            Statistic = 0.14814814814814814
+            Statistic = 0.019
             Accept Hypothesis
-            P value = 0.9356622290518453
+            P value = 0.9937026761524456
             >>> print(parameters)
-            {'loc': 16.44841695242862, 'scale': 0.8328854157603974}
+            {'loc': 0.006700226367219564, 'scale': 1.0531061622114444}
 
         - You can also use the `fit_model` method to estimate the distribution parameters using the 'optimization'
             method. the optimization method requires the `obj_func` and `threshold` parameter. the method
-            will take the `threshold` number and try to fit the data values that are breater than the threshold.
-
-            >>> parameters = gumbel_dist.fit_model(method="optimization", obj_func=Gumbel.objective_fn, threshold=17)
+            will take the `threshold` number and try to fit the data values that are greater than the threshold.
+            >>> threshold = np.quantile(data, 0.80)
+            >>> print(threshold)
+            1.5717000000000005
+            >>> parameters = gumbel_dist.fit_model(method="optimization", obj_func=Gumbel.objective_fn, threshold=threshold)
             Optimization terminated successfully.
-                         Current function value: 0.000000
-                         Iterations: 25
-                         Function evaluations: 94
-                -----KS Test--------
-                Statistic = 0.25925925925925924
-                reject Hypothesis
-                P value = 0.3290078898658627
+                     Current function value: 0.000000
+                     Iterations: 39
+                     Function evaluations: 116
+            -----KS Test--------
+            Statistic = 0.107
+            reject Hypothesis
+            P value = 2.0977827855404345e-05
+
+            - As you see, the P value is less than the significance level, so we reject the null hypothesis,
+            but we are trying to fit the distribution to part of the data, not the whole data.
         """
         # obj_func = lambda p, x: (-np.log(Gumbel.pdf(x, p[0], p[1]))).sum()
         # #first we make a simple Gumbel fit
@@ -1053,8 +1058,8 @@ class Gumbel(AbstractDistribution):
         --------
         - Instantiate the Gumbel class only with the data.
 
-            >>> data = np.loadtxt("examples/data/time_series1.txt")
-            >>> parameters = {'loc': 16.44841695242862, 'scale': 0.8328854157603974}
+            >>> data = np.loadtxt("examples/data/gumbel.txt")
+            >>> parameters = {'loc': 0, 'scale': 1}
             >>> gumbel_dist = Gumbel(data, parameters)
 
         - We will generate a random numbers between 0 and 1 and pass it to the inverse_cdf method as a probabilities
@@ -1063,7 +1068,7 @@ class Gumbel(AbstractDistribution):
             >>> cdf = [0.1, 0.2, 0.4, 0.6, 0.8, 0.9]
             >>> data_values = gumbel_dist.inverse_cdf(cdf)
             >>> print(data_values)
-            [15.75376349 16.05205928 16.5212291  17.00788857 17.69769509 18.32271508]
+            [-0.83403245 -0.475885    0.08742157  0.67172699  1.49993999  2.25036733]
         """
         if parameters is None:
             parameters = self.parameters
@@ -1098,9 +1103,15 @@ class Gumbel(AbstractDistribution):
         Returns
         -------
         Dstatic: [numeric]
-            The smaller the D static the more likely that the two samples are drawn from the same distribution
+            The smaller the D static the more likely that the two samples are drawn from the same distribution.
+            - The KS test statistic measures the maximum distance between the empirical cumulative distribution function
+                (ECDF) of the sample (like Weibul plotting position) and the cumulative distribution function (CDF) of
+                the reference distribution.
+            - A smaller KS statistic indicates a smaller difference between the sample distribution and the reference
+                distribution.
         P value: [numeric]
-            IF P value < significance level ------ reject the null hypothesis
+            A high p-value (close to 1) suggests that there is a high probability that the sample comes from the
+            specified distribution. IF P value < significance level ------ reject the null hypothesis
         """
         return super().ks()
 
