@@ -2237,25 +2237,37 @@ class GEV(AbstractDistribution):
 class Exponential(AbstractDistribution):
     """Exponential distribution.
 
+    - The exponential distribution assumes that small values occur more frequently than large values.
+
     - The probability density function (PDF) of the Exponential distribution is:
 
         .. math::
-            f(x; \\beta, \\delta) =
+            f(x; \\delta, \\beta) =
             \\begin{cases}
-                f(x; \\beta, \\delta) = \\frac{1}{\\delta} e^{-\\frac{x - \\beta}{\\delta}} & \\quad x \\geq 0 \\\\
+                f(x; \\delta, \\beta) = \\frac{1}{\\beta} e^{-\\frac{x - \\delta}{\\beta}} & \\quad x \\geq 0 \\\\
                 0 & \\quad x < 0
             \\end{cases}
           :label: exp-equation
 
+    - The probability density function above uses the location parameter :math:`\\delta` and the scale parameter
+        :math:`\\beta` to define the distribution in a standardized form.
+    - A common parameterization for the exponential distribution is in terms of the rate parameter :math:`\\lambda`,
+        such that :math:`\\lambda = 1 / \\beta`.
+    - The Location Parameter (:math:`\\delta`): This shifts the starting point of the distribution. The distribution is
+        defined for :math:`x \\geq \\delta`.
+    - Scale Parameter (:math:`\\beta`): This determines the spread of the distribution. The rate parameter
+        :math:`\\lambda` is the inverse of the scale parameter, so :math:`\\lambda = \\frac{1}{\\beta}`.
+
     - The cumulative distribution functions.
 
         .. math::
-            F(x; \\beta, \\delta) =
+            F(x; \\delta, \\beta) =
             \\begin{cases}
-                F(x; \\beta, \\delta) = 1 - e^{-\\frac{x - \\beta}{\\delta}} & \\quad x \\geq 0 \\\\
+                F(x; \\delta, \\beta) = 1 - e^{-\\frac{x - \\delta}{\\beta}} & \\quad x \\geq 0 \\\\
                 0 & \\quad x < 0
             \\end{cases}
           :label: exp-cdf
+
     """
 
     def __init__(
@@ -2344,6 +2356,16 @@ class Exponential(AbstractDistribution):
         -------
         pdf: [array]
             probability density function pdf.
+
+        Examples
+        --------
+        >>> data = np.loadtxt("examples/data/expo.txt")
+        >>> parameters = {'loc': 0, 'scale': 2}
+        >>> expo_dist = Exponential(data, parameters)
+        >>> expo_dist.pdf(plot_figure=True)
+
+        .. image:: /_images/expo-random-pdf.png
+            :align: center
         """
         result = super().pdf(
             parameters=parameters,
@@ -2355,6 +2377,62 @@ class Exponential(AbstractDistribution):
 
         return result
 
+    def random(
+        self,
+        size: int,
+        parameters: Dict[str, Union[float, Any]] = None,
+    ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
+        """Generate Random Variable.
+
+        Parameters
+        ----------
+        size: int
+            size of the random generated sample.
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val}
+
+            - loc: [numeric]
+                location parameter of the gumbel distribution.
+            - scale: [numeric]
+                scale parameter of the gumbel distribution.
+
+        Returns
+        -------
+        data: [np.ndarray]
+            random generated data.
+
+        Examples
+        --------
+        - To generate a random sample that follow the gumbel distribution with the parameters loc=0 and scale=1.
+
+            >>> parameters = {'loc': 0, 'scale': 2}
+            >>> expon_dist = Exponential(parameters=parameters)
+            >>> random_data = expon_dist.random(1000)
+
+        - then we can use the `pdf` method to plot the pdf of the random data.
+
+            >>> expon_dist.pdf(data=random_data, plot_figure=True, xlabel="Random data")
+
+            .. image:: /_images/expo-random-pdf.png
+                :align: center
+
+            >>> expon_dist.cdf(data=random_data, plot_figure=True, xlabel="Random data")
+
+            .. image:: /_images/expo-random-cdf.png
+                :align: center
+        """
+        # if no parameters are provided, take the parameters provided in the class initialization.
+        if parameters is None:
+            parameters = self.parameters
+
+        loc = parameters.get("loc")
+        scale = parameters.get("scale")
+        if scale <= 0:
+            raise ValueError("Scale parameter is negative")
+
+        random_data = expon.rvs(loc=loc, scale=scale, size=size)
+        return random_data
+
     @staticmethod
     def _cdf_eq(
         data: Union[list, np.ndarray], parameters: Dict[str, Union[float, Any]]
@@ -2363,8 +2441,8 @@ class Exponential(AbstractDistribution):
         scale = parameters.get("scale")
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
-        if loc <= 0:
-            raise ValueError("Threshold parameter should be greater than zero")
+        # if loc <= 0:
+        #     raise ValueError("Threshold parameter should be greater than zero")
         # Y = (ts - loc) / scale
         # cdf = 1 - np.exp(-Y)
         #
@@ -2411,6 +2489,16 @@ class Exponential(AbstractDistribution):
                 Default is "cdf".
             fontsize: [int]
                 Default is 15.
+
+        Examples
+        --------
+        >>> data = np.loadtxt("examples/data/expo.txt")
+        >>> parameters = {'loc': 0, 'scale': 2}
+        >>> expo_dist = Exponential(data, parameters)
+        >>> expo_dist.cdf(plot_figure=True)  # doctest: +SKIP
+
+        .. image:: /_images/expo-random-cdf.png
+            :align: center
         """
         result = super().cdf(
             parameters=parameters,
@@ -2456,6 +2544,36 @@ class Exponential(AbstractDistribution):
         -------
         param : [list]
             shape, loc, scale parameter of the gumbel distribution in that order.
+
+        Examples
+        --------
+        - Instantiate the `Exponential` class only with the data.
+
+            >>> data = np.loadtxt("examples/data/expo.txt")
+            >>> expo_dist = Exponential(data)
+
+        - Then use the `fit_model` method to estimate the distribution parameters. the method takes the method as
+            parameter, the default is 'mle'. the `test` parameter is used to perform the Kolmogorov-Smirnov and chisquare
+            test.
+
+            >>> parameters = expo_dist.fit_model(method="mle", test=True)
+            -----KS Test--------
+            Statistic = 0.019
+            Accept Hypothesis
+            P value = 0.9937026761524456
+            Out[14]: {'loc': 0.0009, 'scale': 2.0498075}
+            >>> print(parameters)
+            {'loc': 0, 'scale': 2}
+
+        - You can also use the `lmoments` method to estimate the distribution parameters.
+
+            >>> parameters = expo_dist.fit_model(method="lmoments", test=True)
+            -----KS Test--------
+            Statistic = 0.021
+            Accept Hypothesis
+            P value = 0.9802627322900355
+            >>> print(parameters)
+            {'loc': -0.00805012182182141, 'scale': 2.0587576218218215}
         """
         # obj_func = lambda p, x: (-np.log(Gumbel.pdf(x, p[0], p[1]))).sum()
         # #first we make a simple Gumbel fit
@@ -2522,6 +2640,22 @@ class Exponential(AbstractDistribution):
         -------
         theoretical value: [numeric]
             Value based on the theoretical distribution
+
+        Examples
+        --------
+        - Instantiate the Exponential class only with the data.
+
+            >>> data = np.loadtxt("examples/data/expo.txt")
+            >>> parameters = {'loc': 0, 'scale': 2}
+            >>> expo_dist = Exponential(data, parameters)
+
+        - We will generate a random numbers between 0 and 1 and pass it to the inverse_cdf method as a probabilities
+            to get the data that coresponds to these probabilities based on the distribution.
+
+            >>> cdf = [0.1, 0.2, 0.4, 0.6, 0.8, 0.9]
+            >>> data_values = expo_dist.inverse_cdf(cdf)
+            >>> print(data_values)
+            [0.21072103 0.4462871  1.02165125 1.83258146 3.21887582 4.60517019]
         """
         if parameters is None:
             parameters = self.parameters
