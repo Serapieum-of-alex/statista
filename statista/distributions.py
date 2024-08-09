@@ -1323,6 +1323,24 @@ class GEV(AbstractDistribution):
             - shape: [numeric]
                 shape parameter of the GEV distribution.
 
+        Examples
+        --------
+        - First load the sample data.
+
+            >>> data = np.loadtxt("examples/data/gev.txt")
+
+        - I nstantiate the Gumbel class only with the data.
+
+            >>> gev_dist = GEV(data)
+            >>> print(gev_dist) # doctest: +SKIP
+            <statista.distributions.Gumbel object at 0x000001CDDE9563F0>
+
+        - You can also instantiate the Gumbel class with the data and the parameters if you already have them.
+
+            >>> parameters = {"loc": 0, "scale": 1, "shape": 0.1}
+            >>> gev_dist = GEV(data, parameters)
+            >>> print(gev_dist) # doctest: +SKIP
+            <statista.distributions.Gumbel object at 0x000001CDDEB32C00>
         """
         super().__init__(data, parameters)
         pass
@@ -1406,17 +1424,17 @@ class GEV(AbstractDistribution):
 
         Returns
         -------
-        TYPE
-            DESCRIPTION.
+        pdf: [np.ndarray]
+            probability density function pdf.
 
         Examples
         --------
-        >>> data = np.loadtxt("examples/data/time_series1.txt")
-        >>> parameters = {"loc": 16.303264414285966, "scale": 0.5411914328865949, "shape": -0.5013795739666272}
-        >>> gumbel_dist = GEV(data, parameters)
-        >>> gumbel_dist.pdf(plot_figure=True)
+        >>> data = np.loadtxt("examples/data/gev.txt")
+        >>> parameters = {"loc": 0, "scale": 1, "shape": 0.1}
+        >>> gev_dist = GEV(data, parameters)
+        >>> gev_dist.pdf(plot_figure=True)
 
-        .. image:: /_images/gev-pdf.png
+        .. image:: /_images/gev-random-pdf.png
             :align: center
         """
         result = super().pdf(
@@ -1564,12 +1582,12 @@ class GEV(AbstractDistribution):
 
         Examples
         --------
-        >>> data = np.loadtxt("examples/data/time_series1.txt")
-        >>> parameters = {"loc": 16.303264414285966, "scale": 0.5411914328865949, "shape": -0.5013795739666272}
-        >>> gumbel_dist = GEV(data, parameters)
-        >>> gumbel_dist.cdf(plot_figure=True)
+        >>> data = np.loadtxt("examples/data/gev.txt")
+        >>> parameters = {"loc": 0, "scale": 1, "shape": 0.1}
+        >>> gev_dist = GEV(data, parameters)
+        >>> gev_dist.cdf(plot_figure=True)
 
-        .. image:: /_images/gev-cdf.png
+        .. image:: /_images/gev-random-cdf.png
             :align: center
         """
         result = super().cdf(
@@ -1644,8 +1662,51 @@ class GEV(AbstractDistribution):
 
         Returns
         -------
-        Parameters: [list]
-            shape, loc, scale parameter of the gumbel distribution in that order.
+        Dict[str, str]:
+            {"loc": val, "scale": val}
+
+            - loc: [numeric]
+                location parameter of the GEV distribution.
+            - scale: [numeric]
+                scale parameter of the GEV distribution.
+            - shape: [numeric]
+                shape parameter of the GEV distribution.
+
+        Examples
+        --------
+        - Instantiate the Gumbel class only with the data.
+
+            >>> data = np.loadtxt("examples/data/gev.txt")
+            >>> gev_dist = GEV(data)
+
+        - Then use the `fit_model` method to estimate the distribution parameters. the method takes the method as
+            parameter, the default is 'mle'. the `test` parameter is used to perform the Kolmogorov-Smirnov and chisquare
+            test.
+
+            >>> parameters = gev_dist.fit_model(method="mle", test=True)
+            -----KS Test--------
+            Statistic = 0.06
+            Accept Hypothesis
+            P value = 0.9942356257694902
+            >>> print(parameters)
+            {'loc': -0.05962776672431072, 'scale': 0.9114319092295455, 'shape': 0.03492066094614391}
+
+        - You can also use the `lmoments` method to estimate the distribution parameters.
+
+            >>> parameters = gev_dist.fit_model(method="lmoments", test=True)
+            -----KS Test--------
+            Statistic = 0.05
+            Accept Hypothesis
+            P value = 0.9996892272702655
+            >>> print(parameters)
+            {'loc': -0.07182150513604696, 'scale': 0.9153288314267931, 'shape': 0.018944589308927475}
+
+        - You can also use the `fit_model` method to estimate the distribution parameters using the 'optimization'
+            method. the optimization method requires the `obj_func` and `threshold` parameter. the method
+            will take the `threshold` number and try to fit the data values that are greater than the threshold.
+            >>> threshold = np.quantile(data, 0.80)
+            >>> print(threshold)
+            1.39252
         """
         # obj_func = lambda p, x: (-np.log(Gumbel.pdf(x, p[0], p[1]))).sum()
         # #first we make a simple Gumbel fit
@@ -1707,6 +1768,22 @@ class GEV(AbstractDistribution):
         -------
         theoretical value: [numeric]
             Value based on the theoretical distribution
+
+        Examples
+        --------
+        - Instantiate the Gumbel class only with the data.
+
+            >>> data = np.loadtxt("examples/data/gev.txt")
+            >>> parameters = {'loc': 0, 'scale': 1, "shape": 0.1}
+            >>> gev_dist = GEV(data, parameters)
+
+        - We will generate a random numbers between 0 and 1 and pass it to the inverse_cdf method as a probabilities
+            to get the data that coresponds to these probabilities based on the distribution.
+
+            >>> cdf = [0.1, 0.2, 0.4, 0.6, 0.8, 0.9]
+            >>> data_values = gev_dist.inverse_cdf(cdf)
+            >>> print(data_values)
+            [-0.86980039 -0.4873901   0.08704056  0.64966292  1.39286858  2.01513112]
         """
         if parameters is None:
             parameters = self.parameters
