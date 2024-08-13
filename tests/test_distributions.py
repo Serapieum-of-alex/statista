@@ -184,11 +184,12 @@ class TestGumbel:
         confidence_interval_alpha: float,
         gum_dist_parameters: Dict[str, Dict[str, float]],
     ):
-        dist = Gumbel(time_series2)
-        cdf_weibul = PlottingPosition.weibul(time_series2)
         param = gum_dist_parameters[dist_estimation_parameters_ks]
+        dist = Gumbel(time_series2, param)
+        cdf_weibul = PlottingPosition.weibul(time_series2)
+
         upper, lower = dist.confidence_interval(
-            param, cdf_weibul, alpha=confidence_interval_alpha
+            cdf_weibul, alpha=confidence_interval_alpha
         )
         assert isinstance(upper, np.ndarray)
         assert isinstance(lower, np.ndarray)
@@ -327,14 +328,14 @@ class TestGEV:
         time_series1: list,
         dist_estimation_parameters_ks: str,
         confidence_interval_alpha: float,
+        gev_dist_parameters: Dict[str, Dict[str, float]],
     ):
-        dist = GEV(time_series1)
+        param = gev_dist_parameters[dist_estimation_parameters_ks]
+        dist = GEV(time_series1, param)
         cdf_weibul = PlottingPosition.weibul(time_series1)
-        param = dist.fit_model(method=dist_estimation_parameters_ks, test=False)
 
         func = GEV.ci_func
         upper, lower = dist.confidence_interval(
-            param,
             prob_non_exceed=cdf_weibul,
             alpha=confidence_interval_alpha,
             statfunction=func,

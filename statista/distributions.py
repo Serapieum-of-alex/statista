@@ -462,8 +462,8 @@ class AbstractDistribution(ABC):
 
     def confidence_interval(
         self,
-        parameters: Dict[str, Union[float, Any]],
         prob_non_exceed: np.ndarray,
+        parameters: Dict[str, Union[float, Any]] = None,
         alpha: float = 0.1,
     ) -> Tuple[np.ndarray, np.ndarray]:
         """confidence_interval.
@@ -1125,9 +1125,9 @@ class Gumbel(AbstractDistribution):
 
     def confidence_interval(
         self,
-        parameters: Dict[str, Union[float, Any]],
         prob_non_exceed: np.ndarray,
         alpha: float = 0.1,
+        parameters: Dict[str, Union[float, Any]] = None,
     ) -> Tuple[np.ndarray, np.ndarray]:
         """confidence_interval.
 
@@ -1152,6 +1152,10 @@ class Gumbel(AbstractDistribution):
         q_lower : [list]
             lower bound corresponding to the confidence interval.
         """
+        # if no parameters are provided, take the parameters provided in the class initialization.
+        if parameters is None:
+            parameters = self.parameters
+
         scale = parameters.get("scale")
 
         if scale <= 0:
@@ -1225,7 +1229,7 @@ class Gumbel(AbstractDistribution):
             raise ValueError("Scale parameter is negative")
 
         q_th = self._inv_cdf(cdf, parameters)
-        q_upper, q_lower = self.confidence_interval(parameters, cdf, alpha)
+        q_upper, q_lower = self.confidence_interval(cdf, alpha, parameters=parameters)
 
         q_x = np.linspace(
             float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
@@ -1860,12 +1864,12 @@ class GEV(AbstractDistribution):
 
     def confidence_interval(
         self,
-        parameters: Dict[str, Union[float, Any]],
         prob_non_exceed: np.ndarray,
         alpha: float = 0.1,
         statfunction=np.average,
         n_samples: int = 100,
         method: str = "lmoments",
+        parameters: Dict[str, Union[float, Any]] = None,
         **kwargs,
     ):  # pylint: disable=arguments-differ
         """confidence_interval.
@@ -1898,6 +1902,10 @@ class GEV(AbstractDistribution):
         q_lower: [list]
             lower-bound coresponding to the confidence interval.
         """
+        # if no parameters are provided, take the parameters provided in the class initialization.
+        if parameters is None:
+            parameters = self.parameters
+
         scale = parameters.get("scale")
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
