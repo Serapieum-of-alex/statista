@@ -1161,6 +1161,12 @@ class Gumbel(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
+        if len(prob_non_exceed) != len(self.data):
+            raise ValueError(
+                "Length of prob_non_exceed does not match the length of data, use the `PlottingPosition.weibul(data)` "
+                "to the get the non-exceedance probability"
+            )
+
         qth = self._inv_cdf(prob_non_exceed, parameters)
         y = [-np.log(-np.log(j)) for j in prob_non_exceed]
         std_error = [
