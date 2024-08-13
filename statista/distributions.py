@@ -1097,6 +1097,9 @@ class Gumbel(AbstractDistribution):
     def ks(self) -> tuple:
         """Kolmogorov-Smirnov (KS) test.
 
+        The two sample Kolmogorov-Smirnov test is a nonparametric test that compares the cumulative distributions of two
+        data sets.
+
         The smaller the D static, the more likely that the two samples are drawn from the same distribution
         IF P value < significance level ------ reject
 
@@ -1104,6 +1107,7 @@ class Gumbel(AbstractDistribution):
         -------
         Dstatic: [numeric]
             The smaller the D static the more likely that the two samples are drawn from the same distribution.
+
             - The KS test statistic measures the maximum distance between the empirical cumulative distribution function
                 (ECDF) of the sample (like Weibul plotting position) and the cumulative distribution function (CDF) of
                 the reference distribution.
@@ -1828,15 +1832,25 @@ class GEV(AbstractDistribution):
     def ks(self):
         """Kolmogorov-Smirnov (KS) test.
 
+        The two sample Kolmogorov-Smirnov test is a nonparametric test that compares the cumulative distributions of two
+        data sets.
+
         The smaller the D static, the more likely that the two samples are drawn from the same distribution
-        IF Pvalue < significance level ------ reject
+        IF P value < significance level ------ reject
 
         Returns
         -------
         Dstatic: [numeric]
-            The smaller the D static the more likely that the two samples are drawn from the same distribution
-        Pvalue : [numeric]
-            IF Pvalue < significance level ------ reject the null hypothesis
+            The smaller the D static the more likely that the two samples are drawn from the same distribution.
+
+            - The KS test statistic measures the maximum distance between the empirical cumulative distribution function
+                (ECDF) of the sample (like Weibul plotting position) and the cumulative distribution function (CDF) of
+                the reference distribution.
+            - A smaller KS statistic indicates a smaller difference between the sample distribution and the reference
+                distribution.
+        P value: [numeric]
+            A high p-value (close to 1) suggests that there is a high probability that the sample comes from the
+            specified distribution. IF P value < significance level ------ reject the null hypothesis
         """
         return super().ks()
 
@@ -2764,15 +2778,25 @@ class Exponential(AbstractDistribution):
     def ks(self):
         """Kolmogorov-Smirnov (KS) test.
 
+        The two sample Kolmogorov-Smirnov test is a nonparametric test that compares the cumulative distributions of two
+        data sets.
+
         The smaller the D static, the more likely that the two samples are drawn from the same distribution
-        IF Pvalue < significance level ------ reject
+        IF P value < significance level ------ reject
 
         Returns
         -------
-            Dstatic: [numeric]
-                The smaller the D static the more likely that the two samples are drawn from the same distribution
-            Pvalue : [numeric]
-                IF Pvalue < significance level ------ reject the null hypothesis
+        Dstatic: [numeric]
+            The smaller the D static the more likely that the two samples are drawn from the same distribution.
+
+            - The KS test statistic measures the maximum distance between the empirical cumulative distribution function
+                (ECDF) of the sample (like Weibul plotting position) and the cumulative distribution function (CDF) of
+                the reference distribution.
+            - A smaller KS statistic indicates a smaller difference between the sample distribution and the reference
+                distribution.
+        P value: [numeric]
+            A high p-value (close to 1) suggests that there is a high probability that the sample comes from the
+            specified distribution. IF P value < significance level ------ reject the null hypothesis
         """
         return super().ks()
 
@@ -3062,15 +3086,25 @@ class Normal(AbstractDistribution):
     def ks(self):
         """Kolmogorov-Smirnov (KS) test.
 
+        The two sample Kolmogorov-Smirnov test is a nonparametric test that compares the cumulative distributions of two
+        data sets.
+
         The smaller the D static, the more likely that the two samples are drawn from the same distribution
-        IF Pvalue < significance level ------ reject
+        IF P value < significance level ------ reject
 
         Returns
         -------
         Dstatic: [numeric]
-            The smaller the D static the more likely that the two samples are drawn from the same distribution
-        Pvalue: [numeric]
-            IF Pvalue < significance level ------ reject the null hypothesis
+            The smaller the D static the more likely that the two samples are drawn from the same distribution.
+
+            - The KS test statistic measures the maximum distance between the empirical cumulative distribution function
+                (ECDF) of the sample (like Weibul plotting position) and the cumulative distribution function (CDF) of
+                the reference distribution.
+            - A smaller KS statistic indicates a smaller difference between the sample distribution and the reference
+                distribution.
+        P value: [numeric]
+            A high p-value (close to 1) suggests that there is a high probability that the sample comes from the
+            specified distribution. IF P value < significance level ------ reject the null hypothesis
         """
         return super().ks()
 
