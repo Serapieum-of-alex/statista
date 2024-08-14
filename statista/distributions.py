@@ -1225,13 +1225,13 @@ class Gumbel(AbstractDistribution):
 
     def probability_plot(
         self,
-        cdf: Union[np.ndarray, list] = None,
         alpha: float = 0.1,
         fig1_size: Tuple[float, float] = (10, 5),
         fig2_size: Tuple[float, float] = (6, 6),
         xlabel: str = "Actual data",
         ylabel: str = "cdf",
         fontsize: int = 15,
+        cdf: Union[np.ndarray, list] = None,
         parameters: Dict[str, Union[float, Any]] = None,
     ) -> tuple[list[Figure], list[Axes]]:  # pylint: disable=arguments-differ
         """Probability plot.
@@ -1281,6 +1281,16 @@ class Gumbel(AbstractDistribution):
 
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
+
+        if cdf is None:
+            cdf = PlottingPosition.weibul(self.data)
+        else:
+            # if the cdf is given, check if the length is the same as the data
+            if len(cdf) != len(self.data):
+                raise ValueError(
+                    "Length of cdf does not match the length of data, use the `PlottingPosition.weibul(data)` "
+                    "to the get the non-exceedance probability"
+                )
 
         q_th = self._inv_cdf(cdf, parameters)
         q_upper, q_lower = self.confidence_interval(
@@ -2024,7 +2034,6 @@ class GEV(AbstractDistribution):
 
     def probability_plot(
         self,
-        cdf: Union[np.ndarray, list],
         alpha: Number = 0.1,
         func: Callable = None,
         method: str = "lmoments",
@@ -2034,8 +2043,9 @@ class GEV(AbstractDistribution):
         xlabel="Actual data",
         ylabel="cdf",
         fontsize=15,
+        cdf: Union[np.ndarray, list] = None,
         parameters: Dict[str, Union[float, Any]] = None,
-    ):
+    ) -> tuple[list[Figure], list[Axes]]:
         """Probability Plot.
 
         Probability Plot method calculates the theoretical values based on the Gumbel distribution
@@ -2083,6 +2093,16 @@ class GEV(AbstractDistribution):
 
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
+
+        if cdf is None:
+            cdf = PlottingPosition.weibul(self.data)
+        else:
+            # if the prob_non_exceed is given, check if the length is the same as the data
+            if len(cdf) != len(self.data):
+                raise ValueError(
+                    "Length of prob_non_exceed does not match the length of data, use the `PlottingPosition.weibul(data)` "
+                    "to the get the non-exceedance probability"
+                )
 
         q_th = self.inverse_cdf(cdf, parameters)
         if func is None:

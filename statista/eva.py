@@ -204,7 +204,7 @@ def ams_analysis(
         # parameters, theoretical cdf (or weibul), and calculate the confidence interval
         if save_plots:
             fig, _ = dist.probability_plot(
-                cdf_weibul,
+                cdf=cdf_weibul,
                 alpha=significance_level,
                 method=method,
                 parameters=param_dist,
