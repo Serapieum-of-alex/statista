@@ -1126,12 +1126,17 @@ class Gumbel(AbstractDistribution):
         prob_non_exceed: np.ndarray = None,
         alpha: float = 0.1,
         parameters: Dict[str, Union[float, Any]] = None,
-    ) -> Tuple[np.ndarray, np.ndarray]:
+        plot_figure: bool = False,
+        **kwargs,
+    ) -> Union[
+        Tuple[np.ndarray, np.ndarray], Tuple[np.ndarray, np.ndarray, Figure, Axes]
+    ]:
         """confidence_interval.
 
         Parameters
         ----------
-        parameters: Dict[str, str]
+        parameters: Dict[str, str], optional, default is None.
+            if not provided, the parameters provided in the class initialization will be used.
             {"loc": val, "scale": val}
 
             - loc: numeric
@@ -1142,6 +1147,13 @@ class Gumbel(AbstractDistribution):
             Non-Exceedance probability, if not given, the plotting position will be calculated using the weibul method.
         alpha: numeric, defualt is 0.1
             alpha or Significance level is a value of the confidence interval.
+        plot_figure: bool, optional, default is False.
+            to plot the confidence interval.
+        kwargs:
+            figsize: Tuple[float, float], optional, default=(6, 6)
+                Size of the second figure.
+            fontsize: int, optional, default=11
+                Font size.
 
         Returns
         -------
@@ -1149,6 +1161,30 @@ class Gumbel(AbstractDistribution):
             upper bound corresponding to the confidence interval.
         q_lower : [list]
             lower bound corresponding to the confidence interval.
+        fig: matplotlib.figure.Figure
+            Figure object.
+        ax: matplotlib.axes.Axes
+            Axes object.
+
+        Examples
+        --------
+        - Instantiate the Gumbel class with the data and the parameters.
+
+            >>> import matplotlib.pyplot as plt
+            >>> data = np.loadtxt("examples/data/time_series2.txt")
+            >>> parameters = {"loc": 463.8040, "scale": 220.0724}
+            >>> gumbel_dist = Gumbel(data, parameters)
+
+        - to calculate the confidence interval, we need to provide the confidence level (`alpha`).
+
+            >>> upper, lower = gumbel_dist.confidence_interval(alpha=0.1)
+
+        - You can also plot confidence intervals
+
+            >>> upper, lower, fig, ax = gumbel_dist.confidence_interval(alpha=0.1, plot_figure=True, marker_size=10)
+
+        .. image:: /_images/gumbel-confidence-interval.png
+            :align: center
         """
         # if no parameters are provided, take the parameters provided in the class initialization.
         if parameters is None:
@@ -1178,7 +1214,14 @@ class Gumbel(AbstractDistribution):
         v = norm.ppf(1 - alpha / 2)
         q_upper = np.array([qth[j] + v * std_error[j] for j in range(len(self.data))])
         q_lower = np.array([qth[j] - v * std_error[j] for j in range(len(self.data))])
-        return q_upper, q_lower
+
+        if plot_figure:
+            fig, ax = Plot.confidence_level(
+                qth, self.data, q_lower, q_upper, alpha=alpha, **kwargs
+            )
+            return q_upper, q_lower, fig, ax
+        else:
+            return q_upper, q_lower
 
     def probability_plot(
         self,

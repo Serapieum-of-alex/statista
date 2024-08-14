@@ -7,8 +7,8 @@ from typing import List, Dict
 
 import numpy as np
 from matplotlib.figure import Figure
+from matplotlib.axes import Axes
 
-from statista.confidence_interval import ConfidenceInterval
 from statista.distributions import (
     GEV,
     Gumbel,
@@ -197,6 +197,13 @@ class TestGumbel:
         upper, lower = dist.confidence_interval()
         assert isinstance(upper, np.ndarray)
         assert isinstance(lower, np.ndarray)
+
+        # test with plot_figure
+        upper, lower, fig, ax = dist.confidence_interval(plot_figure=True)
+        assert isinstance(upper, np.ndarray)
+        assert isinstance(lower, np.ndarray)
+        assert isinstance(fig, Figure)
+        assert isinstance(ax, Axes)
 
     def test_probability_plot(
         self,

@@ -193,6 +193,7 @@ class Plot:
         figsize: Tuple[float, float] = (6, 6),
         fontsize: int = 11,
         alpha: Number = None,
+        marker_size: int = 10,
     ) -> Tuple[Figure, Axes]:
         """details.
 
@@ -212,9 +213,15 @@ class Plot:
             Size of the second figure.
         fontsize: int, optional, default=11
             Font size.
+        marker_size: int, default is 10.
+            Size of the markers for the upper and lower bounds.
 
         Returns
         -------
+        Figure:
+            matplotlib figure object
+        Axes:
+            matplotlib plot axes
         """
         q_act.sort()
 
@@ -227,7 +234,7 @@ class Plot:
             q_lower,
             "*--",
             color="grey",
-            markersize=10,
+            markersize=marker_size,
             label=f"Lower limit ({int((1 - alpha) * 100)} % CI)",
         )
         ax.plot(
@@ -235,11 +242,16 @@ class Plot:
             q_upper,
             "*--",
             color="grey",
-            markersize=10,
+            markersize=marker_size,
             label=f"Upper limit ({int((1 - alpha) * 100)} % CI)",
         )
         ax.scatter(
-            qth, q_act, color="#DC143C", facecolors="none", label="Actual Data"
+            qth,
+            q_act,
+            color="#DC143C",
+            facecolors="none",
+            label="Actual Data",
+            zorder=10,
         )  # "d", markersize=12,
         ax.legend(fontsize=fontsize, framealpha=1)
         ax.set_xlabel("Theoretical Values", fontsize=fontsize)
