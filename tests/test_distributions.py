@@ -346,15 +346,23 @@ class TestGEV:
         dist = GEV(time_series1, param)
         cdf_weibul = PlottingPosition.weibul(time_series1)
 
-        func = GEV.ci_func
         upper, lower = dist.confidence_interval(
             prob_non_exceed=cdf_weibul,
             alpha=confidence_interval_alpha,
-            statfunction=func,
-            n_samples=len(time_series1),
+            n_samples=100,
         )
         assert isinstance(upper, np.ndarray)
         assert isinstance(lower, np.ndarray)
+        # test with plot_figure
+        upper, lower, fig, ax = dist.confidence_interval(
+            prob_non_exceed=cdf_weibul,
+            alpha=confidence_interval_alpha,
+            plot_figure=True,
+        )
+        assert isinstance(upper, np.ndarray)
+        assert isinstance(lower, np.ndarray)
+        assert isinstance(fig, Figure)
+        assert isinstance(ax, Axes)
 
     def test_gev_probability_plot(
         self,
