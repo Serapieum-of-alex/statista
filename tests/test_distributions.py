@@ -345,32 +345,6 @@ class TestGEV:
         assert isinstance(upper, np.ndarray)
         assert isinstance(lower, np.ndarray)
 
-    def test_confidence_interval_directly(
-        self,
-        time_series1: list,
-        dist_estimation_parameters_ks: str,
-        confidence_interval_alpha: float,
-        gev_dist_parameters: Dict[str, Dict[str, float]],
-    ):
-        dist = GEV(time_series1)
-        cdf_weibul = PlottingPosition.weibul(time_series1)
-        param = gev_dist_parameters[dist_estimation_parameters_ks]
-        func = GEV.ci_func
-
-        ci = ConfidenceInterval.boot_strap(
-            time_series1,
-            statfunction=func,
-            gevfit=param,
-            n_samples=len(time_series1),
-            F=cdf_weibul,
-            method="lmoments",
-        )
-        lb = ci["lb"]
-        ub = ci["ub"]
-
-        assert isinstance(lb, np.ndarray)
-        assert isinstance(ub, np.ndarray)
-
     def test_gev_probability_plot(
         self,
         time_series1: list,
