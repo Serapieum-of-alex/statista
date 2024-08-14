@@ -1869,7 +1869,7 @@ class GEV(AbstractDistribution):
 
     def confidence_interval(
         self,
-        prob_non_exceed: np.ndarray,
+        prob_non_exceed: np.ndarray = None,
         alpha: float = 0.1,
         statfunction=np.average,
         n_samples: int = 100,
@@ -1881,7 +1881,8 @@ class GEV(AbstractDistribution):
 
         Parameters
         ----------
-        parameters:
+        parameters: Dict[str, str], optional, default is None.
+            if not provided, the parameters provided in the class initialization will be used.
             {"loc": val, "scale": val, "shape": value}
 
             - loc: [numeric]
@@ -1914,6 +1915,16 @@ class GEV(AbstractDistribution):
         scale = parameters.get("scale")
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
+
+        if prob_non_exceed is None:
+            prob_non_exceed = PlottingPosition.weibul(self.data)
+        else:
+            # if the prob_non_exceed is given, check if the length is the same as the data
+            if len(prob_non_exceed) != len(self.data):
+                raise ValueError(
+                    "Length of prob_non_exceed does not match the length of data, use the `PlottingPosition.weibul(data)` "
+                    "to the get the non-exceedance probability"
+                )
 
         ci = ConfidenceInterval.boot_strap(
             self.data,
