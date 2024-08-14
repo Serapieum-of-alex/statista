@@ -1123,7 +1123,7 @@ class Gumbel(AbstractDistribution):
 
     def confidence_interval(
         self,
-        prob_non_exceed: np.ndarray,
+        prob_non_exceed: np.ndarray = None,
         alpha: float = 0.1,
         parameters: Dict[str, Union[float, Any]] = None,
     ) -> Tuple[np.ndarray, np.ndarray]:
@@ -1158,11 +1158,15 @@ class Gumbel(AbstractDistribution):
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
-        if len(prob_non_exceed) != len(self.data):
-            raise ValueError(
-                "Length of prob_non_exceed does not match the length of data, use the `PlottingPosition.weibul(data)` "
-                "to the get the non-exceedance probability"
-            )
+        if prob_non_exceed is None:
+            prob_non_exceed = PlottingPosition.weibul(self.data)
+        else:
+            # if the prob_non_exceed is given, check if the length is the same as the data
+            if len(prob_non_exceed) != len(self.data):
+                raise ValueError(
+                    "Length of prob_non_exceed does not match the length of data, use the `PlottingPosition.weibul(data)` "
+                    "to the get the non-exceedance probability"
+                )
 
         qth = self._inv_cdf(prob_non_exceed, parameters)
         y = [-np.log(-np.log(j)) for j in prob_non_exceed]
@@ -1236,7 +1240,9 @@ class Gumbel(AbstractDistribution):
             raise ValueError("Scale parameter is negative")
 
         q_th = self._inv_cdf(cdf, parameters)
-        q_upper, q_lower = self.confidence_interval(cdf, alpha, parameters=parameters)
+        q_upper, q_lower = self.confidence_interval(
+            prob_non_exceed=cdf, alpha=alpha, parameters=parameters
+        )
 
         q_x = np.linspace(
             float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
