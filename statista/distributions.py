@@ -272,7 +272,7 @@ class AbstractDistribution(ABC):
         ylabel: str = "cdf",
         fontsize: int = 15,
         data: Union[List[float], np.ndarray] = None,
-    ) -> Union[Tuple[np.ndarray, Figure, Axes], np.ndarray]:
+    ) -> Union[np.ndarray, Tuple[np.ndarray, Figure, Axes]]:
         """Cumulative distribution function.
 
         Parameters
@@ -653,7 +653,8 @@ class Gumbel(AbstractDistribution):
 
         Parameters
         ----------
-        parameters: Dict[str, str]
+        parameters: Dict[str, str], optional, default is None.
+            if not provided, the parameters provided in the class initialization will be used.
             {"loc": val, "scale": val}
 
             - loc: [numeric]
@@ -776,13 +777,14 @@ class Gumbel(AbstractDistribution):
         *args,
         **kwargs,
     ) -> Union[
-        Tuple[np.ndarray, Figure, Axes], np.ndarray
+        np.ndarray, Tuple[np.ndarray, Figure, Axes]
     ]:  # pylint: disable=arguments-differ
         """Cumulative distribution function.
 
         parameter
         ---------
-        parameters: Dict[str, str]
+        parameters: Dict[str, str], optional, default is None.
+            if not provided, the parameters provided in the class initialization will be used.
             {"loc": val, "scale": val}
 
             - loc: [numeric]
@@ -1097,9 +1099,6 @@ class Gumbel(AbstractDistribution):
     def ks(self) -> tuple:
         """Kolmogorov-Smirnov (KS) test.
 
-        The two sample Kolmogorov-Smirnov test is a nonparametric test that compares the cumulative distributions of two
-        data sets.
-
         The smaller the D static, the more likely that the two samples are drawn from the same distribution
         IF P value < significance level ------ reject
 
@@ -1107,7 +1106,6 @@ class Gumbel(AbstractDistribution):
         -------
         Dstatic: [numeric]
             The smaller the D static the more likely that the two samples are drawn from the same distribution.
-
             - The KS test statistic measures the maximum distance between the empirical cumulative distribution function
                 (ECDF) of the sample (like Weibul plotting position) and the cumulative distribution function (CDF) of
                 the reference distribution.
@@ -1136,14 +1134,14 @@ class Gumbel(AbstractDistribution):
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
 
-            - loc: [numeric]
+            - loc: numeric
                 location parameter of the gumbel distribution.
-            - scale: [numeric]
+            - scale: numeric
                 scale parameter of the gumbel distribution.
-        prob_non_exceed: [list]
-            Non Exceedance probability
-        alpha: [numeric]
-            alpha or SignificanceLevel is a value of the confidence interval.
+        prob_non_exceed: list, default is None.
+            Non-Exceedance probability, if not given, the plotting position will be calculated using the weibul method.
+        alpha: numeric, defualt is 0.1
+            alpha or Significance level is a value of the confidence interval.
 
         Returns
         -------
@@ -1157,7 +1155,6 @@ class Gumbel(AbstractDistribution):
             parameters = self.parameters
 
         scale = parameters.get("scale")
-
         if scale <= 0:
             raise ValueError("Scale parameter is negative")
 
@@ -1416,7 +1413,8 @@ class GEV(AbstractDistribution):
 
         Parameters
         ----------
-        parameters: Dict[str, float], default is None.
+        parameters: Dict[str, float], optional, default is None.
+            if not provided, the parameters provided in the class initialization will be used.
             {"loc": val, "scale": val, "shape": value}
 
             - loc: [numeric]
@@ -1567,7 +1565,8 @@ class GEV(AbstractDistribution):
 
         Parameters
         ----------
-        parameters: Dict[str, str]
+        parameters: Dict[str, str], optional, default is None.
+            if not provided, the parameters provided in the class initialization will be used.
             {"loc": val, "scale": val}
 
             - loc: [numeric]
@@ -1846,25 +1845,15 @@ class GEV(AbstractDistribution):
     def ks(self):
         """Kolmogorov-Smirnov (KS) test.
 
-        The two sample Kolmogorov-Smirnov test is a nonparametric test that compares the cumulative distributions of two
-        data sets.
-
         The smaller the D static, the more likely that the two samples are drawn from the same distribution
-        IF P value < significance level ------ reject
+        IF Pvalue < significance level ------ reject
 
         Returns
         -------
         Dstatic: [numeric]
-            The smaller the D static the more likely that the two samples are drawn from the same distribution.
-
-            - The KS test statistic measures the maximum distance between the empirical cumulative distribution function
-                (ECDF) of the sample (like Weibul plotting position) and the cumulative distribution function (CDF) of
-                the reference distribution.
-            - A smaller KS statistic indicates a smaller difference between the sample distribution and the reference
-                distribution.
-        P value: [numeric]
-            A high p-value (close to 1) suggests that there is a high probability that the sample comes from the
-            specified distribution. IF P value < significance level ------ reject the null hypothesis
+            The smaller the D static the more likely that the two samples are drawn from the same distribution
+        Pvalue : [numeric]
+            IF Pvalue < significance level ------ reject the null hypothesis
         """
         return super().ks()
 
@@ -2592,7 +2581,8 @@ class Exponential(AbstractDistribution):
 
         parameter:
         ----------
-        parameters: Dict[str, str]
+        parameters: Dict[str, str], optional, default is None.
+            if not provided, the parameters provided in the class initialization will be used.
             {"loc": val, "scale": val}
 
             - loc: [numeric]
@@ -2800,25 +2790,15 @@ class Exponential(AbstractDistribution):
     def ks(self):
         """Kolmogorov-Smirnov (KS) test.
 
-        The two sample Kolmogorov-Smirnov test is a nonparametric test that compares the cumulative distributions of two
-        data sets.
-
         The smaller the D static, the more likely that the two samples are drawn from the same distribution
-        IF P value < significance level ------ reject
+        IF Pvalue < significance level ------ reject
 
         Returns
         -------
-        Dstatic: [numeric]
-            The smaller the D static the more likely that the two samples are drawn from the same distribution.
-
-            - The KS test statistic measures the maximum distance between the empirical cumulative distribution function
-                (ECDF) of the sample (like Weibul plotting position) and the cumulative distribution function (CDF) of
-                the reference distribution.
-            - A smaller KS statistic indicates a smaller difference between the sample distribution and the reference
-                distribution.
-        P value: [numeric]
-            A high p-value (close to 1) suggests that there is a high probability that the sample comes from the
-            specified distribution. IF P value < significance level ------ reject the null hypothesis
+            Dstatic: [numeric]
+                The smaller the D static the more likely that the two samples are drawn from the same distribution
+            Pvalue : [numeric]
+                IF Pvalue < significance level ------ reject the null hypothesis
         """
         return super().ks()
 
@@ -2890,7 +2870,8 @@ class Normal(AbstractDistribution):
 
         Parameters
         -----------
-        parameters: Dict[str, str]
+        parameters: Dict[str, str], optional, default is None.
+            if not provided, the parameters provided in the class initialization will be used.
             {"loc": val, "scale": val, "shape": value}
 
             - loc: [numeric]
@@ -2956,7 +2937,8 @@ class Normal(AbstractDistribution):
 
         Parameters
         ----------
-        parameters: Dict[str, str]
+        parameters: Dict[str, str], optional, default is None.
+            if not provided, the parameters provided in the class initialization will be used.
             {"loc": val, "scale": val, "shape": value}
 
             - loc: [numeric]
@@ -3108,25 +3090,15 @@ class Normal(AbstractDistribution):
     def ks(self):
         """Kolmogorov-Smirnov (KS) test.
 
-        The two sample Kolmogorov-Smirnov test is a nonparametric test that compares the cumulative distributions of two
-        data sets.
-
         The smaller the D static, the more likely that the two samples are drawn from the same distribution
-        IF P value < significance level ------ reject
+        IF Pvalue < significance level ------ reject
 
         Returns
         -------
         Dstatic: [numeric]
-            The smaller the D static the more likely that the two samples are drawn from the same distribution.
-
-            - The KS test statistic measures the maximum distance between the empirical cumulative distribution function
-                (ECDF) of the sample (like Weibul plotting position) and the cumulative distribution function (CDF) of
-                the reference distribution.
-            - A smaller KS statistic indicates a smaller difference between the sample distribution and the reference
-                distribution.
-        P value: [numeric]
-            A high p-value (close to 1) suggests that there is a high probability that the sample comes from the
-            specified distribution. IF P value < significance level ------ reject the null hypothesis
+            The smaller the D static the more likely that the two samples are drawn from the same distribution
+        Pvalue: [numeric]
+            IF Pvalue < significance level ------ reject the null hypothesis
         """
         return super().ks()
 
