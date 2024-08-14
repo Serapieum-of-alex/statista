@@ -187,10 +187,14 @@ class TestGumbel:
         param = gum_dist_parameters[dist_estimation_parameters_ks]
         dist = Gumbel(time_series2, param)
         cdf_weibul = PlottingPosition.weibul(time_series2)
-
+        # test by providing the cdf function
         upper, lower = dist.confidence_interval(
             cdf_weibul, alpha=confidence_interval_alpha
         )
+        assert isinstance(upper, np.ndarray)
+        assert isinstance(lower, np.ndarray)
+        # test the default parameters
+        upper, lower = dist.confidence_interval()
         assert isinstance(upper, np.ndarray)
         assert isinstance(lower, np.ndarray)
 
