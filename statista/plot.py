@@ -1,6 +1,6 @@
 """Plotting functions for statista package."""
 
-from typing import Union, Tuple, List, Any
+from typing import Union, Tuple
 from numbers import Number
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
@@ -120,25 +120,38 @@ class Plot:
         xlabel: str = "Actual data",
         ylabel: str = "cdf",
         fontsize: int = 11,
-    ) -> Tuple[List[Figure], List[Any]]:
+    ) -> Tuple[Tuple[Figure, Figure], Tuple[Axes, Axes]]:
         """details.
 
         Parameters
         ----------
-        qx
-        qth
-        q_act
-        pdf
-        cdf_fitted
+        qx: [np.ndarray, list]
+            10,000 values generated between the minimum and maximum values of the actual data.
+        qth: [np.ndarray, list]
+            Theoretical quantiles (obtained using the inverse_cdf method).
+        q_act: [np.ndarray, list]
+            Actual data.
+        pdf: [np.ndarray, list]
+            Probability density function.
+        cdf_fitted: [np.ndarray, list]
+            Cumulative distribution function of the fitted distribution.
         cdf
-        q_lower
-        q_upper
-        alpha
-        fig1_size
-        fig2_size
-        xlabel
-        ylabel
-        fontsize
+        q_lower: [np.ndarray, list]
+            Lower limit of the confidence interval.
+        q_upper: [np.ndarray, list]
+            Upper limit of the confidence interval.
+        alpha: [float]
+            Significance level.
+        fig1_size:  Tuple[float, float], optional, default=(10, 5)
+            Size of the first figure.
+        fig2_size: Tuple[float, float], optional, default=(6, 6)
+            Size of the second figure.
+        xlabel: str, optional, default="Actual data"
+            Label for x-axis.
+        ylabel: str, optional, default="cdf"
+            Label for y-axis.
+        fontsize: int, optional, default=11
+            Font size.
 
         Returns
         -------
@@ -160,10 +173,56 @@ class Plot:
         ax2.set_xlabel(xlabel, fontsize=fontsize)
         ax2.set_ylabel(ylabel, fontsize=15)
 
-        fig2 = plt.figure(figsize=fig2_size)
-        plt.plot(qth, qth, "-.", color="#3D59AB", linewidth=2, label="Theoretical Data")
+        fig2, _ = Plot.confidence_level(
+            qth,
+            q_act,
+            q_lower,
+            q_upper,
+            alpha=alpha,
+            figsize=fig2_size,
+            fontsize=fontsize,
+        )
+        return [fig1, fig2], [ax1, ax2]
+
+    @staticmethod
+    def confidence_level(
+        qth: Union[np.ndarray, list],
+        q_act: Union[np.ndarray, list],
+        q_lower: Union[np.ndarray, list],
+        q_upper: Union[np.ndarray, list],
+        figsize: Tuple[float, float] = (6, 6),
+        fontsize: int = 11,
+        alpha: Number = None,
+    ) -> Tuple[Figure, Axes]:
+        """details.
+
+        Parameters
+        ----------
+        qth: [np.ndarray, list]
+            Theoretical quantiles (obtained using the inverse_cdf method).
+        q_act: [np.ndarray, list]
+            Actual data.
+        q_lower: [np.ndarray, list]
+            Lower limit of the confidence interval.
+        q_upper: [np.ndarray, list]
+            Upper limit of the confidence interval.
+        alpha: [float]
+            Significance level.
+        figsize: Tuple[float, float], optional, default=(6, 6)
+            Size of the second figure.
+        fontsize: int, optional, default=11
+            Font size.
+
+        Returns
+        -------
+        """
+        q_act.sort()
+
+        fig = plt.figure(figsize=figsize)
+        ax = fig.add_subplot()
+        ax.plot(qth, qth, "-.", color="#3D59AB", linewidth=2, label="Theoretical Data")
         # confidence interval
-        plt.plot(
+        ax.plot(
             qth,
             q_lower,
             "*--",
@@ -171,7 +230,7 @@ class Plot:
             markersize=10,
             label=f"Lower limit ({int((1 - alpha) * 100)} % CI)",
         )
-        plt.plot(
+        ax.plot(
             qth,
             q_upper,
             "*--",
@@ -179,11 +238,11 @@ class Plot:
             markersize=10,
             label=f"Upper limit ({int((1 - alpha) * 100)} % CI)",
         )
-        plt.scatter(
+        ax.scatter(
             qth, q_act, color="#DC143C", facecolors="none", label="Actual Data"
         )  # "d", markersize=12,
-        plt.legend(fontsize=fontsize, framealpha=1)
-        plt.xlabel("Theoretical Values", fontsize=fontsize)
-        plt.ylabel("Actual Values", fontsize=fontsize)
+        ax.legend(fontsize=fontsize, framealpha=1)
+        ax.set_xlabel("Theoretical Values", fontsize=fontsize)
+        ax.set_ylabel("Actual Values", fontsize=fontsize)
 
-        return [fig1, fig2], [ax1, ax2]
+        return fig, ax
