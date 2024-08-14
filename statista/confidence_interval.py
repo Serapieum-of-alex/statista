@@ -65,10 +65,10 @@ class ConfidenceInterval:
         alpha : [numeric]
                 alpha or SignificanceLevel is a value of the confidence interval.
         kwargs :
-            gevfit : [list]
+            gevfit: [list]
                 list of the three parameters of the GEV distribution [shape, loc, scale]
-            F : [list]
-                non exceedence probability/ cdf
+            F: [list]
+                non-exceedance probability/ cdf
             method: [str]
                 method used to fit the generated samples from the bootstrap method ["lmoments", "mle", "mm"]. Default is
                 "lmoments".
@@ -77,7 +77,7 @@ class ConfidenceInterval:
         tdata = (np.array(data),)
 
         # We don't need to generate actual samples; that would take more memory.
-        # Instead, we can generate just the indexes, and then apply the statfun
+        # Instead, we can generate just the indexes, and then apply the stat-fun
         # to those indexes.
         bootindexes = ConfidenceInterval.bs_indexes(tdata[0], n_samples)
         stat = np.array(
