@@ -194,7 +194,7 @@ def ams_analysis(
         # get the Discharge coresponding to the return periods
         q_rp = dist.inverse_cdf(non_exceed_prop, param_dist)
 
-        # to get the Non Exceedance probability for a specific Value
+        # to get the Non-Exceedance probability for a specific Value
         # sort the ams_df
         ams_df.sort()
         # calculate the F (Exceedance probability based on weibul)
@@ -204,10 +204,10 @@ def ams_analysis(
         # parameters, theoretical cdf (or weibul), and calculate the confidence interval
         if save_plots:
             fig, _ = dist.probability_plot(
-                param_dist,
                 cdf_weibul,
                 alpha=significance_level,
                 method=method,
+                parameters=param_dist,
             )
 
             fig[0].savefig(f"{save_to}/figures/{i}.png", format="png")

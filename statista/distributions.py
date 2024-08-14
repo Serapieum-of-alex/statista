@@ -1181,15 +1181,15 @@ class Gumbel(AbstractDistribution):
 
     def probability_plot(
         self,
-        parameters: Dict[str, Union[float, Any]],
-        cdf: Union[np.ndarray, list],
+        cdf: Union[np.ndarray, list] = None,
         alpha: float = 0.1,
         fig1_size: Tuple[float, float] = (10, 5),
         fig2_size: Tuple[float, float] = (6, 6),
         xlabel: str = "Actual data",
         ylabel: str = "cdf",
         fontsize: int = 15,
-    ) -> tuple[list[Figure], list[Any]]:  # pylint: disable=arguments-differ
+        parameters: Dict[str, Union[float, Any]] = None,
+    ) -> tuple[list[Figure], list[Axes]]:  # pylint: disable=arguments-differ
         """Probability plot.
 
         Probability Plot method calculates the theoretical values based on the Gumbel distribution
@@ -1197,13 +1197,6 @@ class Gumbel(AbstractDistribution):
 
         Parameters
         ----------
-        parameters: Dict[str, str]
-            {"loc": val, "scale": val}
-
-            - loc: [numeric]
-                location parameter of the gumbel distribution.
-            - scale: [numeric]
-                scale parameter of the gumbel distribution.
         cdf: [np.ndarray]
             theoretical cdf calculated using weibul or using the distribution cdf function.
         alpha: [float]
@@ -1218,6 +1211,13 @@ class Gumbel(AbstractDistribution):
             Default is "cdf"
         fontsize: [float]
             Default is 15.
+        parameters: Dict[str, str]
+            {"loc": val, "scale": val}
+
+            - loc: [numeric]
+                location parameter of the gumbel distribution.
+            - scale: [numeric]
+                scale parameter of the gumbel distribution.
 
         Returns
         -------
@@ -1229,6 +1229,10 @@ class Gumbel(AbstractDistribution):
         q_lower: [list]
             lower-bound coresponding to the confidence interval.
         """
+        # if no parameters are provided, take the parameters provided in the class initialization.
+        if parameters is None:
+            parameters = self.parameters
+
         scale = parameters.get("scale")
 
         if scale <= 0:
@@ -1933,7 +1937,6 @@ class GEV(AbstractDistribution):
 
     def probability_plot(
         self,
-        parameters: Dict[str, Union[float, Any]],
         cdf: Union[np.ndarray, list],
         alpha: Number = 0.1,
         func: Callable = None,
@@ -1944,6 +1947,7 @@ class GEV(AbstractDistribution):
         xlabel="Actual data",
         ylabel="cdf",
         fontsize=15,
+        parameters: Dict[str, Union[float, Any]] = None,
     ):
         """Probability Plot.
 
@@ -1985,6 +1989,9 @@ class GEV(AbstractDistribution):
         func: [function]
             function to be used in the confidence interval calculation.
         """
+        # if no parameters are provided, take the parameters provided in the class initialization.
+        if parameters is None:
+            parameters = self.parameters
         scale = parameters.get("scale")
 
         if scale <= 0:
@@ -2446,7 +2453,8 @@ class Exponential(AbstractDistribution):
 
         Parameters
         ----------
-        parameters: Dict[str, str]
+        parameters: Dict[str, str], optional, default is None.
+            if not provided, the parameters provided in the class initialization will be used.
             {"loc": val, "scale": val}
 
             - loc: [numeric]

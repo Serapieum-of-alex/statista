@@ -201,11 +201,12 @@ class TestGumbel:
         confidence_interval_alpha: float,
         gum_dist_parameters: Dict[str, Dict[str, float]],
     ):
-        dist = Gumbel(time_series2)
-        cdf_weibul = PlottingPosition.weibul(time_series2)
         param = gum_dist_parameters[dist_estimation_parameters_ks]
+        dist = Gumbel(time_series2, param)
+        cdf_weibul = PlottingPosition.weibul(time_series2)
+
         (fig1, fig2), (_, _) = dist.probability_plot(
-            param, cdf_weibul, alpha=confidence_interval_alpha
+            cdf_weibul, alpha=confidence_interval_alpha
         )
         assert isinstance(fig1, Figure)
         assert isinstance(fig2, Figure)
@@ -377,11 +378,12 @@ class TestGEV:
         confidence_interval_alpha: float,
         gev_dist_parameters: Dict[str, Dict[str, float]],
     ):
-        dist = GEV(time_series1)
-        cdf_weibul = PlottingPosition.weibul(time_series1)
         param = gev_dist_parameters[dist_estimation_parameters_ks]
+        dist = GEV(time_series1, param)
+        cdf_weibul = PlottingPosition.weibul(time_series1)
+
         (fig1, fig2), (_, _) = dist.probability_plot(
-            param, cdf_weibul, alpha=confidence_interval_alpha
+            cdf_weibul, alpha=confidence_interval_alpha
         )
         assert isinstance(fig1, Figure)
         assert isinstance(fig2, Figure)
