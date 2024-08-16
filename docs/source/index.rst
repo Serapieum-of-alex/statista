@@ -65,8 +65,20 @@ statista - statistics package
 
 Main Features
 -------------
--
--
+- Statistical Distributions
+    - GEV
+    - Gumbel
+    - Normal
+    - Exponential
+- Parameter estimation methods
+    - Lmoments
+    - ML
+    - MOM
+- One-at-time (O-A-T) Sensitivity analysis.
+- Sobol visualization
+- Statistical descriptors
+- Extreme value analysis
+
 
 .. digraph:: Linking
 
