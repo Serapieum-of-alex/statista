@@ -8,7 +8,7 @@ import pandas as pd
 from loguru import logger
 from pandas import DataFrame
 
-from statista.distributions import PlottingPosition, Distributions
+from statista.distributions import Distributions
 
 
 def ams_analysis(
@@ -140,7 +140,7 @@ def ams_analysis(
     return_period = np.array(return_period)
     # these values are the Non Exceedance probability (F) of the chosen
     # return periods non_exceed_prop = 1 - (1/return_period)
-    # Non Exceedance propabilities
+    # Non Exceedance probabilities
     # non_exceed_prop = [1/3, 0.5, 0.8, 0.9, 0.96, 0.98, 0.99, 0.995, 0.998]
     non_exceed_prop = 1 - (1 / return_period)
     save_to = Path(save_to)
@@ -194,26 +194,19 @@ def ams_analysis(
         # get the Discharge coresponding to the return periods
         q_rp = dist.inverse_cdf(non_exceed_prop, param_dist)
 
-        # to get the Non-Exceedance probability for a specific Value
-        # sort the ams_df
-        ams_df.sort()
-        # calculate the F (Exceedance probability based on weibul)
-        cdf_weibul = PlottingPosition.weibul(ams_df)
         # Gumbel.probability_plot method calculates the theoretical values
         # based on the Gumbel distribution
         # parameters, theoretical cdf (or weibul), and calculate the confidence interval
         if save_plots:
-            fig, _ = dist.probability_plot(
-                cdf=cdf_weibul,
-                alpha=significance_level,
-                method=method,
-                parameters=param_dist,
+            fig, _ = dist.probability_plot()
+            _, _, fig2, _ = dist.confidence_interval(
+                method=method, plot_figure=True, alpha=significance_level
             )
 
-            fig[0].savefig(f"{save_to}/figures/{i}.png", format="png")
+            fig.savefig(f"{save_to}/figures/{i}.png", format="png")
             plt.close()
 
-            fig[1].savefig(f"{save_to}/figures/f-{i}.png", format="png")
+            fig2.savefig(f"{save_to}/figures/f-{i}.png", format="png")
             plt.close()
 
         statistical_properties.loc[i, "mean"] = q_ts.mean()

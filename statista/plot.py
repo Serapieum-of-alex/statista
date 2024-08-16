@@ -109,28 +109,21 @@ class Plot:
     @staticmethod
     def details(
         qx: Union[np.ndarray, list],
-        qth: Union[np.ndarray, list],
         q_act: Union[np.ndarray, list],
         pdf: Union[np.ndarray, list],
         cdf_fitted: Union[np.ndarray, list],
         cdf: Union[np.ndarray, list],
-        q_lower: Union[np.ndarray, list],
-        q_upper: Union[np.ndarray, list],
-        alpha: Number,
         fig1_size: Tuple[float, float] = (10, 5),
-        fig2_size: Tuple[float, float] = (6, 6),
         xlabel: str = "Actual data",
         ylabel: str = "cdf",
         fontsize: int = 11,
-    ) -> Tuple[Tuple[Figure, Figure], Tuple[Axes, Axes]]:
+    ) -> Tuple[Figure, Tuple[Axes, Axes]]:
         """details.
 
         Parameters
         ----------
         qx: [np.ndarray, list]
             10,000 values generated between the minimum and maximum values of the actual data.
-        qth: [np.ndarray, list]
-            Theoretical quantiles (obtained using the inverse_cdf method).
         q_act: [np.ndarray, list]
             Actual data.
         pdf: [np.ndarray, list]
@@ -138,16 +131,8 @@ class Plot:
         cdf_fitted: [np.ndarray, list]
             Cumulative distribution function of the fitted distribution.
         cdf
-        q_lower: [np.ndarray, list]
-            Lower limit of the confidence interval.
-        q_upper: [np.ndarray, list]
-            Upper limit of the confidence interval.
-        alpha: [float]
-            Significance level.
         fig1_size:  Tuple[float, float], optional, default=(10, 5)
             Size of the first figure.
-        fig2_size: Tuple[float, float], optional, default=(6, 6)
-            Size of the second figure.
         xlabel: str, optional, default="Actual data"
             Label for x-axis.
         ylabel: str, optional, default="cdf"
@@ -157,6 +142,10 @@ class Plot:
 
         Returns
         -------
+        Figure:
+            matplotlib figure object
+        Tuple[Axes, Axes]:
+            matplotlib plot axes
         """
         fig1 = plt.figure(figsize=fig1_size)
         gs = gridspec.GridSpec(nrows=1, ncols=2, figure=fig1)
@@ -174,18 +163,8 @@ class Plot:
         ax2.scatter(q_act, cdf, color="#DC143C", facecolors="none")
         ax2.set_xlabel(xlabel, fontsize=fontsize)
         ax2.set_ylabel(ylabel, fontsize=15)
-
-        fig2, _ = Plot.confidence_level(
-            qth,
-            q_act,
-            q_lower,
-            q_upper,
-            alpha=alpha,
-            figsize=fig2_size,
-            fontsize=fontsize,
-        )
-        return [fig1, fig2], [ax1, ax2]
         plt.show()
+        return fig1, (ax1, ax2)
 
     @staticmethod
     def confidence_level(
@@ -205,7 +184,7 @@ class Plot:
         qth: [np.ndarray, list]
             Theoretical quantiles (obtained using the inverse_cdf method).
         q_act: [np.ndarray, list]
-            Actual data.
+            Actual data, unsorted.
         q_lower: [np.ndarray, list]
             Lower limit of the confidence interval.
         q_upper: [np.ndarray, list]

@@ -216,15 +216,13 @@ class TestGumbel:
         dist = Gumbel(time_series2, param)
         # test default parameters.
         fig, ax = dist.probability_plot()
-        assert isinstance(fig[0], Figure)
-        assert isinstance(fig[1], Figure)
+        assert isinstance(fig, Figure)
         assert isinstance(ax[0], Axes)
         assert isinstance(ax[1], Axes)
         # test with the cdf parameter
         cdf_weibul = PlottingPosition.weibul(time_series2)
-        fig, ax = dist.probability_plot(cdf=cdf_weibul, alpha=confidence_interval_alpha)
-        assert isinstance(fig[0], Figure)
-        assert isinstance(fig[1], Figure)
+        fig, ax = dist.probability_plot(cdf=cdf_weibul)
+        assert isinstance(fig, Figure)
         assert isinstance(ax[0], Axes)
         assert isinstance(ax[1], Axes)
 
@@ -381,15 +379,13 @@ class TestGEV:
         dist = GEV(time_series1, param)
         # test default parameters.
         fig, ax = dist.probability_plot()
-        assert isinstance(fig[0], Figure)
-        assert isinstance(fig[1], Figure)
+        assert isinstance(fig, Figure)
         assert isinstance(ax[0], Axes)
         assert isinstance(ax[1], Axes)
         # test with the cdf parameter
         cdf_weibul = PlottingPosition.weibul(time_series1)
-        fig, ax = dist.probability_plot(cdf=cdf_weibul, alpha=confidence_interval_alpha)
-        assert isinstance(fig[0], Figure)
-        assert isinstance(fig[1], Figure)
+        fig, ax = dist.probability_plot(cdf=cdf_weibul)
+        assert isinstance(fig, Figure)
         assert isinstance(ax[0], Axes)
         assert isinstance(ax[1], Axes)
 

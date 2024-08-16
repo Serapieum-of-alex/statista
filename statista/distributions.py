@@ -499,14 +499,12 @@ class AbstractDistribution(ABC):
 
     def probability_plot(
         self,
-        parameters: Dict[str, Union[float, Any]],
-        prob_non_exceed: np.ndarray,
-        alpha: float = 0.1,
         fig1size: tuple = (10, 5),
-        fig2size: tuple = (6, 6),
         xlabel: str = "Actual data",
         ylabel: str = "cdf",
         fontsize: int = 15,
+        parameters: Dict[str, Union[float, Any]] = None,
+        prob_non_exceed: np.ndarray = None,
     ) -> Tuple[List[Figure], list]:
         """Probability Plot.
 
@@ -528,8 +526,6 @@ class AbstractDistribution(ABC):
             value between 0 and 1.
         fig1size: [tuple]
             Default is (10, 5)
-        fig2size: [tuple]
-            Default is (6, 6)
         xlabel: [str]
             Default is "Actual data"
         ylabel: [str]
@@ -539,13 +535,7 @@ class AbstractDistribution(ABC):
 
         Returns
         -------
-        Qth: [list]
-            theoretical-generated values based on the theoretical cdf calculated from
-            weibul or the distribution parameters.
-        q_upper: [list]
-            upper-bound coresponding to the confidence interval.
-        q_lower: [list]
-            lower-bound coresponding to the confidence interval.
+
         """
         pass
 
@@ -1225,15 +1215,13 @@ class Gumbel(AbstractDistribution):
 
     def probability_plot(
         self,
-        alpha: float = 0.1,
         fig1_size: Tuple[float, float] = (10, 5),
-        fig2_size: Tuple[float, float] = (6, 6),
         xlabel: str = "Actual data",
         ylabel: str = "cdf",
         fontsize: int = 15,
         cdf: Union[np.ndarray, list] = None,
         parameters: Dict[str, Union[float, Any]] = None,
-    ) -> tuple[list[Figure], list[Axes]]:  # pylint: disable=arguments-differ
+    ) -> Tuple[Figure, Tuple[Axes, Axes]]:  # pylint: disable=arguments-differ
         """Probability plot.
 
         Probability Plot method calculates the theoretical values based on the Gumbel distribution
@@ -1243,12 +1231,8 @@ class Gumbel(AbstractDistribution):
         ----------
         cdf: [np.ndarray]
             theoretical cdf calculated using weibul or using the distribution cdf function.
-        alpha: [float]
-            value between 0 and 1.
         fig1_size: [tuple]
             Default is (10, 5)
-        fig2_size: [tuple]
-            Default is (6, 6)
         xlabel: [str]
             Default is "Actual data"
         ylabel: [str]
@@ -1292,11 +1276,6 @@ class Gumbel(AbstractDistribution):
                     "to the get the non-exceedance probability"
                 )
 
-        q_th = self._inv_cdf(cdf, parameters)
-        q_upper, q_lower = self.confidence_interval(
-            prob_non_exceed=cdf, alpha=alpha, parameters=parameters
-        )
-
         q_x = np.linspace(
             float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
         )
@@ -1305,16 +1284,11 @@ class Gumbel(AbstractDistribution):
 
         fig, ax = Plot.details(
             q_x,
-            q_th,
             self.data,
             pdf_fitted,
             cdf_fitted,
             cdf,
-            q_lower,
-            q_upper,
-            alpha,
             fig1_size=fig1_size,
-            fig2_size=fig2_size,
             xlabel=xlabel,
             ylabel=ylabel,
             fontsize=fontsize,
@@ -2034,41 +2008,31 @@ class GEV(AbstractDistribution):
 
     def probability_plot(
         self,
-        alpha: Number = 0.1,
-        func: Callable = None,
-        method: str = "lmoments",
-        n_samples=100,
         fig1_size=(10, 5),
-        fig2_size=(6, 6),
         xlabel="Actual data",
         ylabel="cdf",
         fontsize=15,
         cdf: Union[np.ndarray, list] = None,
         parameters: Dict[str, Union[float, Any]] = None,
-    ) -> tuple[list[Figure], list[Axes]]:
+    ) -> Tuple[Figure, Tuple[Axes, Axes]]:
         """Probability Plot.
 
         Probability Plot method calculates the theoretical values based on the Gumbel distribution
-        parameters, theoretical cdf (or weibul), and calculate the confidence interval.
+        parameters, theoretical cdf (or weibul), and calculates the confidence interval.
 
         Parameters
         ----------
         parameters: Dict[str, str]
             {"loc": val, "scale": val, shape: val}
 
-            - loc : [numeric]
+            - loc: [numeric]
                 Location parameter of the GEV distribution.
-            - scale : [numeric]
+            - scale: [numeric]
                 Scale parameter of the GEV distribution.
             - shape: [float, int]
                 Shape parameter for the GEV distribution.
         cdf: [list]
             Theoretical cdf calculated using weibul or using the distribution cdf function.
-        method: [str]
-            Method used to fit the generated samples from the bootstrap method ["lmoments", "mle", "mm"]. Default is
-            "lmoments".
-        alpha: [float]
-            Value between 0 and 1.
         fontsize: [numeric]
             Font size of the axis labels and legend
         ylabel: [string]
@@ -2077,14 +2041,13 @@ class GEV(AbstractDistribution):
             X label string
         fig1_size: [tuple]
             size of the pdf and cdf figure
-        fig2_size: [tuple]
-            size of the confidence interval figure
-        n_samples: [integer]
-            number of points in the confidence interval calculation
-        alpha: [numeric]
-            alpha or SignificanceLevel is a value of the confidence interval.
-        func: [function]
-            function to be used in the confidence interval calculation.
+
+        Returns
+        -------
+        Figure:
+            matplotlib figure object
+        Tuple[Axes, Axes]:
+            matplotlib plot axes
         """
         # if no parameters are provided, take the parameters provided in the class initialization.
         if parameters is None:
@@ -2104,21 +2067,6 @@ class GEV(AbstractDistribution):
                     "to the get the non-exceedance probability"
                 )
 
-        q_th = self.inverse_cdf(cdf, parameters)
-        if func is None:
-            func = GEV.ci_func
-
-        ci = ConfidenceInterval.boot_strap(
-            self.data,
-            statfunction=func,
-            gevfit=parameters,
-            n_samples=n_samples,
-            F=cdf,
-            method=method,
-        )
-        q_lower = ci["lb"]
-        q_upper = ci["ub"]
-
         q_x = np.linspace(
             float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
         )
@@ -2127,16 +2075,11 @@ class GEV(AbstractDistribution):
 
         fig, ax = Plot.details(
             q_x,
-            q_th,
             self.data,
             pdf_fitted,
             cdf_fitted,
             cdf,
-            q_lower,
-            q_upper,
-            alpha,
             fig1_size=fig1_size,
-            fig2_size=fig2_size,
             xlabel=xlabel,
             ylabel=ylabel,
             fontsize=fontsize,
