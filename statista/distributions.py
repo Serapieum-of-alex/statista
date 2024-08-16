@@ -191,7 +191,7 @@ class AbstractDistribution(ABC):
         fontsize: Union[float, int] = 15,
         data: Union[List[float], np.ndarray] = None,
         **kwargs,
-    ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
+    ) -> Union[np.ndarray, Tuple[np.ndarray, Figure, Axes]]:
         """pdf.
 
         Returns the value of Gumbel's pdf with parameters loc and scale at x.
@@ -223,6 +223,10 @@ class AbstractDistribution(ABC):
         -------
         pdf: [array]
             probability density function pdf.
+        fig: matplotlib.figure.Figure, if `plot_figure` is True.
+            Figure object.
+        ax: matplotlib.axes.Axes, if `plot_figure` is True.
+            Axes object.
         """
 
         if data is None:
@@ -636,7 +640,7 @@ class Gumbel(AbstractDistribution):
         data: Union[List[float], np.ndarray] = None,
         *args,
         **kwargs,
-    ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
+    ) -> Union[np.ndarray, Tuple[np.ndarray, Figure, Any]]:
         """pdf.
 
         Returns the value of Gumbel's pdf with parameters loc and scale at x.
@@ -670,6 +674,10 @@ class Gumbel(AbstractDistribution):
         -------
         pdf: [np.ndarray]
             probability density function pdf.
+        fig: matplotlib.figure.Figure, if `plot_figure` is True.
+            Figure object.
+        ax: matplotlib.axes.Axes, if `plot_figure` is True.
+            Axes object.
 
         Examples
         --------
@@ -800,9 +808,9 @@ class Gumbel(AbstractDistribution):
         -------
         cdf: [array]
             cumulative distribution function cdf.
-        fig: matplotlib.figure.Figure
+        fig: matplotlib.figure.Figure, if `plot_figure` is True.
             Figure object.
-        ax: matplotlib.axes.Axes
+        ax: matplotlib.axes.Axes, if `plot_figure` is True.
             Axes object.
 
         Examples
@@ -1475,6 +1483,10 @@ class GEV(AbstractDistribution):
         -------
         pdf: [np.ndarray]
             probability density function pdf.
+        fig: matplotlib.figure.Figure, if `plot_figure` is True.
+            Figure object.
+        ax: matplotlib.axes.Axes, if `plot_figure` is True.
+            Axes object.
 
         Examples
         --------
@@ -1625,9 +1637,9 @@ class GEV(AbstractDistribution):
         -------
         cdf: [array]
             cumulative distribution function cdf.
-        fig: matplotlib.figure.Figure
+        fig: matplotlib.figure.Figure, if `plot_figure` is True.
             Figure object.
-        ax: matplotlib.axes.Axes
+        ax: matplotlib.axes.Axes, if `plot_figure` is True.
             Axes object.
 
         Examples
@@ -2530,6 +2542,10 @@ class Exponential(AbstractDistribution):
         -------
         pdf: [array]
             probability density function pdf.
+        fig: matplotlib.figure.Figure, if `plot_figure` is True.
+            Figure object.
+        ax: matplotlib.axes.Axes, if `plot_figure` is True.
+            Axes object.
 
         Examples
         --------
@@ -2664,6 +2680,15 @@ class Exponential(AbstractDistribution):
                 Default is "cdf".
             fontsize: [int]
                 Default is 15.
+
+        Returns
+        -------
+        cdf: [array]
+            probability density function cdf.
+        fig: matplotlib.figure.Figure, if `plot_figure` is True.
+            Figure object.
+        ax: matplotlib.axes.Axes, if `plot_figure` is True.
+            Axes object.
 
         Examples
         --------
@@ -2958,6 +2983,10 @@ class Normal(AbstractDistribution):
         -------
         pdf: [array]
             probability density function pdf.
+        fig: matplotlib.figure.Figure, if `plot_figure` is True.
+            Figure object.
+        ax: matplotlib.axes.Axes, if `plot_figure` is True.
+            Axes object.
         """
         result = super().pdf(
             parameters=parameters,
@@ -3020,6 +3049,15 @@ class Normal(AbstractDistribution):
                 Default is "cdf".
             fontsize: [int]
                 Default is 15.
+
+        Returns
+        -------
+        cdf: [array]
+            probability density function cdf.
+        fig: matplotlib.figure.Figure, if `plot_figure` is True.
+            Figure object.
+        ax: matplotlib.axes.Axes, if `plot_figure` is True.
+            Axes object.
         """
         result = super().cdf(
             parameters=parameters,
