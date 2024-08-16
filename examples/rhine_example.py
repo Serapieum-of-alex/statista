@@ -33,22 +33,22 @@ dist_obj.chisquare()
 
 print(mle_param)
 # calculate and plot the pdf
-pdf, fig, ax = dist_obj.pdf(mle_param, plot_figure=True)
-cdf, _, _ = dist_obj.cdf(mle_param, plot_figure=True)
+pdf, fig, ax = dist_obj.pdf(plot_figure=True)
+cdf, _, _ = dist_obj.cdf(plot_figure=True)
 # %% exponential distribution (lmoments)
 dist_obj = Distributions("Exponential", cologne_gauge)
-# default parameter estimation method is maximum liklihood method
+# default parameter estimation method is maximum likelihood method
 mle_param = dist_obj.fit_model(method="lmoments")
 dist_obj.ks()
 dist_obj.chisquare()
 
 print(mle_param)
 # calculate and plot the pdf
-pdf, fig, ax = dist_obj.pdf(mle_param, plot_figure=True)
-cdf, _, _ = dist_obj.cdf(mle_param, plot_figure=True)
+pdf, fig, ax = dist_obj.pdf(plot_figure=True)
+cdf, _, _ = dist_obj.cdf(plot_figure=True)
 # %% GEV (mle)
 gev_cologne = Distributions("GEV", cologne_gauge)
-# default parameter estimation method is maximum liklihood method
+# default parameter estimation method is maximum likelihood method
 mle_param = gev_cologne.fit_model(method="mle")
 gev_cologne.ks()
 gev_cologne.chisquare()
@@ -56,11 +56,11 @@ gev_cologne.chisquare()
 print(mle_param)
 # shape = -1 * mle_param[0]
 # calculate and plot the pdf
-pdf, fig, ax = gev_cologne.pdf(mle_param, plot_figure=True)
-cdf, _, _ = gev_cologne.cdf(mle_param, plot_figure=True)
+pdf, fig, ax = gev_cologne.pdf(plot_figure=True)
+cdf, _, _ = gev_cologne.cdf(plot_figure=True)
 # %% cologne (lmoment)
 gev_cologne = Distributions("GEV", cologne_gauge)
-# default parameter estimation method is maximum liklihood method
+# default parameter estimation method is maximum likelihood method
 lmom_param = gev_cologne.fit_model(method="lmoments")
 gev_cologne.ks()
 gev_cologne.chisquare()
@@ -68,5 +68,5 @@ gev_cologne.chisquare()
 print(lmom_param)
 # shape = -1 * `lmom_param[0]
 # calculate and plot the pdf
-pdf, fig, ax = gev_cologne.pdf(lmom_param, plot_figure=True)
-cdf, _, _ = gev_cologne.cdf(lmom_param, plot_figure=True)
+pdf, fig, ax = gev_cologne.pdf(plot_figure=True)
+cdf, _, _ = gev_cologne.cdf(plot_figure=True)
