@@ -54,6 +54,7 @@ class Plot:
         )  # , alpha=0.2
         ax.set_xlabel(xlabel, fontsize=fontsize)
         ax.set_ylabel(ylabel, fontsize=fontsize)
+        plt.show()
         return fig, ax
 
     @staticmethod
@@ -102,6 +103,7 @@ class Plot:
         ax.set_xlabel(xlabel, fontsize=fontsize)
         ax.set_ylabel(ylabel, fontsize=fontsize)
         plt.legend(fontsize=fontsize, framealpha=1)
+        plt.show()
         return fig, ax
 
     @staticmethod
@@ -183,6 +185,7 @@ class Plot:
             fontsize=fontsize,
         )
         return [fig1, fig2], [ax1, ax2]
+        plt.show()
 
     @staticmethod
     def confidence_level(
@@ -256,5 +259,5 @@ class Plot:
         ax.legend(fontsize=fontsize, framealpha=1)
         ax.set_xlabel("Theoretical Values", fontsize=fontsize)
         ax.set_ylabel("Actual Values", fontsize=fontsize)
-
+        plt.show()
         return fig, ax
