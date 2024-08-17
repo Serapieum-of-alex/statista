@@ -266,7 +266,7 @@ class AbstractDistribution(ABC):
 
         if plot_figure:
             qx = np.linspace(float(data_sorted[0]), 1.5 * float(data_sorted[-1]), 10000)
-            pdf_fitted = self.pdf(parameters, data=qx)
+            pdf_fitted = self.pdf(parameters=parameters, data=qx)
 
             fig, ax = Plot.pdf(
                 qx,
@@ -339,7 +339,7 @@ class AbstractDistribution(ABC):
 
         if plot_figure:
             qx = np.linspace(float(data_sorted[0]), 1.5 * float(data_sorted[-1]), 10000)
-            cdf_fitted = self.cdf(parameters, data=qx)
+            cdf_fitted = self.cdf(parameters=parameters, data=qx)
 
             cdf_weibul = PlottingPosition.weibul(data_sorted)
 
@@ -548,8 +548,6 @@ class AbstractDistribution(ABC):
                 scale parameter of the gumbel distribution.
         prob_non_exceed : [np.ndarray]
             theoretical cdf calculated using weibul or using the distribution cdf function.
-        alpha : [float]
-            value between 0 and 1.
         fig1size: [tuple]
             Default is (10, 5)
         xlabel: [str]
@@ -657,8 +655,8 @@ class Gumbel(AbstractDistribution):
 
     def pdf(
         self,
-        parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
+        parameters: Dict[str, Union[float, Any]] = None,
         data: Union[List[float], np.ndarray] = None,
         *args,
         **kwargs,
@@ -791,8 +789,8 @@ class Gumbel(AbstractDistribution):
 
     def cdf(
         self,
-        parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
+        parameters: Dict[str, Union[float, Any]] = None,
         data: Union[List[float], np.ndarray] = None,
         *args,
         **kwargs,
@@ -1322,8 +1320,8 @@ class Gumbel(AbstractDistribution):
         q_x = np.linspace(
             float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
         )
-        pdf_fitted = self.pdf(parameters, data=q_x)
-        cdf_fitted = self.cdf(parameters, data=q_x)
+        pdf_fitted: np.ndarray = self.pdf(parameters=parameters, data=q_x)
+        cdf_fitted: np.ndarray = self.cdf(parameters=parameters, data=q_x)
 
         fig, ax = Plot.details(
             q_x,
@@ -1477,8 +1475,8 @@ class GEV(AbstractDistribution):
 
     def pdf(
         self,
-        parameters: Dict[str, float] = None,
         plot_figure: bool = False,
+        parameters: Dict[str, float] = None,
         data: Union[List[float], np.ndarray] = None,
         *args,
         **kwargs,
@@ -1631,8 +1629,8 @@ class GEV(AbstractDistribution):
 
     def cdf(
         self,
-        parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
+        parameters: Dict[str, Union[float, Any]] = None,
         data: Union[List[float], np.ndarray] = None,
         *args,
         **kwargs,
@@ -2117,8 +2115,8 @@ class GEV(AbstractDistribution):
         q_x = np.linspace(
             float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
         )
-        pdf_fitted = self.pdf(parameters, data=q_x)
-        cdf_fitted = self.cdf(parameters, data=q_x)
+        pdf_fitted = self.pdf(parameters=parameters, data=q_x)
+        cdf_fitted = self.cdf(parameters=parameters, data=q_x)
 
         fig, ax = Plot.details(
             q_x,
@@ -2538,8 +2536,8 @@ class Exponential(AbstractDistribution):
 
     def pdf(
         self,
-        parameters: Dict[str, float] = None,
         plot_figure: bool = False,
+        parameters: Dict[str, float] = None,
         data: Union[List[float], np.ndarray] = None,
         *args,
         **kwargs,
@@ -2679,8 +2677,8 @@ class Exponential(AbstractDistribution):
 
     def cdf(
         self,
-        parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
+        parameters: Dict[str, Union[float, Any]] = None,
         data: Union[List[float], np.ndarray] = None,
         *args,
         **kwargs,
@@ -2979,8 +2977,8 @@ class Normal(AbstractDistribution):
 
     def pdf(
         self,
-        parameters: Dict[str, float] = None,
         plot_figure: bool = False,
+        parameters: Dict[str, float] = None,
         data: Union[List[float], np.ndarray] = None,
         *args,
         **kwargs,
@@ -3050,8 +3048,8 @@ class Normal(AbstractDistribution):
 
     def cdf(
         self,
-        parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
+        parameters: Dict[str, Union[float, Any]] = None,
         data: Union[List[float], np.ndarray] = None,
         *args,
         **kwargs,
