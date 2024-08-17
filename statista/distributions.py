@@ -1294,8 +1294,12 @@ class Gumbel(AbstractDistribution):
         - to calculate the confidence interval, we need to provide the confidence level (`alpha`).
 
             >>> fig, ax = gumbel_dist.plot()
+            >>> print(fig)
+            Figure(1000x500)
+            >>> print(ax)
+            (<Axes: xlabel='Actual data', ylabel='pdf'>, <Axes: xlabel='Actual data', ylabel='cdf'>)
 
-        .. image:: /_images/gumbel-confidence-interval.png
+        .. image:: /_images/gumbel-plot.png
             :align: center
         """
         # if no parameters are provided, take the parameters provided in the class initialization.
