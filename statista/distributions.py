@@ -207,7 +207,7 @@ class AbstractDistribution(ABC):
         self,
         parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
-        figsize: tuple = (6, 5),
+        fig_size: tuple = (6, 5),
         xlabel: str = "Actual data",
         ylabel: str = "pdf",
         fontsize: Union[float, int] = 15,
@@ -232,7 +232,7 @@ class AbstractDistribution(ABC):
             method.
         plot_figure: [bool], Default is False.
             True to plot the figure.
-        figsize: [tuple]
+        fig_size: [tuple]
                 Default is (6, 5).
         xlabel: [str]
             Default is "Actual data".
@@ -272,7 +272,7 @@ class AbstractDistribution(ABC):
                 qx,
                 pdf_fitted,
                 data_sorted,
-                figsize=figsize,
+                fig_size=fig_size,
                 xlabel=xlabel,
                 ylabel=ylabel,
                 fontsize=fontsize,
@@ -293,7 +293,7 @@ class AbstractDistribution(ABC):
         self,
         parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
-        figsize: tuple = (6, 5),
+        fig_size: tuple = (6, 5),
         xlabel: str = "data",
         ylabel: str = "cdf",
         fontsize: int = 15,
@@ -315,7 +315,7 @@ class AbstractDistribution(ABC):
             method.
         plot_figure: [bool], Default is False.
             True to plot the figure.
-        figsize: [tuple]
+        fig_size: [tuple]
                 Default is (6, 5).
         xlabel: [str]
             Default is "Actual data".
@@ -348,7 +348,7 @@ class AbstractDistribution(ABC):
                 cdf_fitted,
                 data_sorted,
                 cdf_weibul,
-                figsize=figsize,
+                fig_size=fig_size,
                 xlabel=xlabel,
                 ylabel=ylabel,
                 fontsize=fontsize,
@@ -525,7 +525,7 @@ class AbstractDistribution(ABC):
 
     def plot(
         self,
-        fig1size: tuple = (10, 5),
+        fig_size: tuple = (10, 5),
         xlabel: str = "Actual data",
         ylabel: str = "cdf",
         fontsize: int = 15,
@@ -539,6 +539,14 @@ class AbstractDistribution(ABC):
 
         Parameters
         ----------
+        fig_size: tuple, Default is (10, 5).
+            Size of the figure.
+        xlabel: [str]
+            Default is "Actual data"
+        ylabel: [str]
+            Default is "cdf"
+        fontsize: [float]
+            Default is 15.
         parameters: Dict[str, str]
             {"loc": val, "scale": val}
 
@@ -546,16 +554,8 @@ class AbstractDistribution(ABC):
                 location parameter of the gumbel distribution.
             - scale: [numeric]
                 scale parameter of the gumbel distribution.
-        prob_non_exceed : [np.ndarray]
+        cdf: [np.ndarray]
             theoretical cdf calculated using weibul or using the distribution cdf function.
-        fig1size: [tuple]
-            Default is (10, 5)
-        xlabel: [str]
-            Default is "Actual data"
-        ylabel: [str]
-            Default is "cdf"
-        fontsize: [float]
-            Default is 15.
 
         Returns
         -------
@@ -681,7 +681,7 @@ class Gumbel(AbstractDistribution):
         plot_figure: [bool]
             Default is False.
         kwargs:
-            figsize: [tuple]
+            fig_size: [tuple]
                 Default is (6, 5).
             xlabel: [str]
                 Default is "Actual data".
@@ -815,7 +815,7 @@ class Gumbel(AbstractDistribution):
         plot_figure: [bool], Default is False.
             True to plot the figure.
         kwargs:
-            figsize: [tuple]
+            fig_size: [tuple]
                 Default is (6, 5).
             xlabel: [str]
                 Default is "Actual data".
@@ -1168,7 +1168,7 @@ class Gumbel(AbstractDistribution):
         plot_figure: bool, optional, default is False.
             to plot the confidence interval.
         kwargs:
-            figsize: Tuple[float, float], optional, default=(6, 6)
+            fig_size: Tuple[float, float], optional, default=(6, 6)
                 Size of the second figure.
             fontsize: int, optional, default=11
                 Font size.
@@ -1243,7 +1243,7 @@ class Gumbel(AbstractDistribution):
 
     def plot(
         self,
-        fig1_size: Tuple[float, float] = (10, 5),
+        fig_size: Tuple[float, float] = (10, 5),
         xlabel: str = "Actual data",
         ylabel: str = "cdf",
         fontsize: int = 15,
@@ -1257,9 +1257,11 @@ class Gumbel(AbstractDistribution):
 
         Parameters
         ----------
+        fig_size: tuple, Default is (10, 5).
+            Size of the figure.
         cdf: [np.ndarray]
             theoretical cdf calculated using weibul or using the distribution cdf function.
-        fig1_size: [tuple]
+        fig_size: [tuple]
             Default is (10, 5)
         xlabel: [str]
             Default is "Actual data"
@@ -1333,7 +1335,7 @@ class Gumbel(AbstractDistribution):
             pdf_fitted,
             cdf_fitted,
             cdf,
-            fig1_size=fig1_size,
+            fig_size=fig_size,
             xlabel=xlabel,
             ylabel=ylabel,
             fontsize=fontsize,
@@ -1507,7 +1509,7 @@ class GEV(AbstractDistribution):
         plot_figure: [bool]
             Default is False.
         kwargs:
-            figsize: [tuple]
+            fig_size: [tuple]
                 Default is (6, 5).
             xlabel: [str]
                 Default is "Actual data".
@@ -1661,7 +1663,7 @@ class GEV(AbstractDistribution):
         plot_figure: [bool]
             Default is False.
         kwargs:
-            figsize: [tuple]
+            fig_size: [tuple]
                 Default is (6, 5).
             xlabel: [str]
                 Default is "Actual data".
@@ -2057,7 +2059,7 @@ class GEV(AbstractDistribution):
 
     def plot(
         self,
-        fig1_size=(10, 5),
+        fig_size=(10, 5),
         xlabel="Actual data",
         ylabel="cdf",
         fontsize=15,
@@ -2088,7 +2090,7 @@ class GEV(AbstractDistribution):
             y label string
         xlabel: [string]
             X label string
-        fig1_size: [tuple]
+        fig_size: [tuple]
             size of the pdf and cdf figure
 
         Returns
@@ -2148,7 +2150,7 @@ class GEV(AbstractDistribution):
             pdf_fitted,
             cdf_fitted,
             cdf,
-            fig1_size=fig1_size,
+            fig_size=fig_size,
             xlabel=xlabel,
             ylabel=ylabel,
             fontsize=fontsize,
@@ -2240,7 +2242,7 @@ class GEV(AbstractDistribution):
 #         loc: Union[float, int],
 #         scale: Union[float, int],
 #         plot_figure: bool = False,
-#         figsize: tuple = (6, 5),
+#         fig_size: tuple = (6, 5),
 #         xlabel: str = "Actual data",
 #         ylabel: str = "pdf",
 #         fontsize: Union[float, int] = 15,
@@ -2293,7 +2295,7 @@ class GEV(AbstractDistribution):
 #                 q_x,
 #                 pdf_fitted,
 #                 self.data_sorted,
-#                 figsize=figsize,
+#                 fig_size=fig_size,
 #                 xlabel=xlabel,
 #                 ylabel=ylabel,
 #                 fontsize=fontsize,
@@ -2307,7 +2309,7 @@ class GEV(AbstractDistribution):
 #         loc: Union[float, int],
 #         scale: Union[float, int],
 #         plot_figure: bool = False,
-#         figsize: tuple = (6, 5),
+#         fig_size: tuple = (6, 5),
 #         xlabel: str = "data",
 #         ylabel: str = "cdf",
 #         fontsize: int = 15,
@@ -2355,7 +2357,7 @@ class GEV(AbstractDistribution):
 #                 cdf_fitted,
 #                 self.data_sorted,
 #                 cdf_Weibul,
-#                 figsize=figsize,
+#                 fig_size=fig_size,
 #                 xlabel=xlabel,
 #                 ylabel=ylabel,
 #                 fontsize=fontsize,
@@ -2586,7 +2588,7 @@ class Exponential(AbstractDistribution):
         plot_figure: [bool]
             Default is False.
         kwargs:
-            figsize: [tuple]
+            fig_size: [tuple]
                 Default is (6, 5).
             xlabel: [str]
                 Default is "Actual data".
@@ -2729,7 +2731,7 @@ class Exponential(AbstractDistribution):
         plot_figure: [bool]
             Default is False.
         kwargs:
-            figsize: [tuple]
+            fig_size: [tuple]
                 Default is (6, 5).
             xlabel: [str]
                 Default is "Actual data".
@@ -3027,7 +3029,7 @@ class Normal(AbstractDistribution):
         plot_figure: [bool]
             Default is False.
         kwargs:
-            figsize: [tuple]
+            fig_size: [tuple]
                 Default is (6, 5).
             xlabel: [str]
                 Default is "Actual data".
@@ -3098,7 +3100,7 @@ class Normal(AbstractDistribution):
         plot_figure: [bool]
             Default is False.
         kwargs:
-            figsize: [tuple]
+            fig_size: [tuple]
                 Default is (6, 5).
             xlabel: [str]
                 Default is "Actual data".

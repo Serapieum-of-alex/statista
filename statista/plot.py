@@ -20,7 +20,7 @@ class Plot:
         qx: np.ndarray,
         pdf_fitted,
         data_sorted: np.ndarray,
-        figsize: Tuple[float, float] = (6, 5),
+        fig_size: Tuple[float, float] = (6, 5),
         xlabel: str = "Actual data",
         ylabel: str = "pdf",
         fontsize: int = 11,
@@ -32,7 +32,7 @@ class Plot:
         qx
         pdf_fitted
         data_sorted
-        figsize
+        fig_size
         xlabel
         ylabel
         fontsize
@@ -44,7 +44,7 @@ class Plot:
         Axes:
             matplotlib plot axis
         """
-        fig = plt.figure(figsize=figsize)
+        fig = plt.figure(figsize=fig_size)
         # gs = gridspec.GridSpec(nrows=1, ncols=2, figure=fig)
         # Plot the histogram and the fitted distribution, save it for each gauge.
         ax = fig.add_subplot()
@@ -63,7 +63,7 @@ class Plot:
         cdf_fitted,
         data_sorted,
         cdf_weibul,
-        figsize=(6, 5),
+        fig_size=(6, 5),
         xlabel="Actual data",
         ylabel="cdf",
         fontsize=11,
@@ -76,7 +76,7 @@ class Plot:
         cdf_fitted
         data_sorted
         cdf_weibul
-        figsize
+        fig_size
         xlabel
         ylabel
         fontsize
@@ -88,7 +88,7 @@ class Plot:
         Axis:
             matplotlib plot axis
         """
-        fig = plt.figure(figsize=figsize)
+        fig = plt.figure(figsize=fig_size)
         ax = fig.add_subplot()
         ax.plot(
             qx, cdf_fitted, "-", label="Estimated CDF", color="#27408B", linewidth=2
@@ -113,7 +113,7 @@ class Plot:
         pdf: Union[np.ndarray, list],
         cdf_fitted: Union[np.ndarray, list],
         cdf: Union[np.ndarray, list],
-        fig1_size: Tuple[float, float] = (10, 5),
+        fig_size: Tuple[float, float] = (10, 5),
         xlabel: str = "Actual data",
         ylabel: str = "cdf",
         fontsize: int = 11,
@@ -131,7 +131,7 @@ class Plot:
         cdf_fitted: [np.ndarray, list]
             Cumulative distribution function of the fitted distribution.
         cdf
-        fig1_size:  Tuple[float, float], optional, default=(10, 5)
+        fig_size:  Tuple[float, float], optional, default=(10, 5)
             Size of the first figure.
         xlabel: str, optional, default="Actual data"
             Label for x-axis.
@@ -147,16 +147,16 @@ class Plot:
         Tuple[Axes, Axes]:
             matplotlib plot axes
         """
-        fig1 = plt.figure(figsize=fig1_size)
-        gs = gridspec.GridSpec(nrows=1, ncols=2, figure=fig1)
+        fig = plt.figure(figsize=fig_size)
+        gs = gridspec.GridSpec(nrows=1, ncols=2, figure=fig)
         # Plot the histogram and the fitted distribution, save it for each gauge.
-        ax1 = fig1.add_subplot(gs[0, 0])
+        ax1 = fig.add_subplot(gs[0, 0])
         ax1.plot(qx, pdf, "-", color="#27408B", linewidth=2)
         ax1.hist(q_act, density=True, histtype="stepfilled", color="#DC143C")
         ax1.set_xlabel(xlabel, fontsize=fontsize)
         ax1.set_ylabel("pdf", fontsize=fontsize)
 
-        ax2 = fig1.add_subplot(gs[0, 1])
+        ax2 = fig.add_subplot(gs[0, 1])
         ax2.plot(qx, cdf_fitted, "-", color="#27408B", linewidth=2)
 
         q_act.sort()
@@ -164,7 +164,7 @@ class Plot:
         ax2.set_xlabel(xlabel, fontsize=fontsize)
         ax2.set_ylabel(ylabel, fontsize=15)
         plt.show()
-        return fig1, (ax1, ax2)
+        return fig, (ax1, ax2)
 
     @staticmethod
     def confidence_level(
@@ -172,7 +172,7 @@ class Plot:
         q_act: Union[np.ndarray, list],
         q_lower: Union[np.ndarray, list],
         q_upper: Union[np.ndarray, list],
-        figsize: Tuple[float, float] = (6, 6),
+        fig_size: Tuple[float, float] = (6, 6),
         fontsize: int = 11,
         alpha: Number = None,
         marker_size: int = 10,
@@ -191,7 +191,7 @@ class Plot:
             Upper limit of the confidence interval.
         alpha: [float]
             Significance level.
-        figsize: Tuple[float, float], optional, default=(6, 6)
+        fig_size: Tuple[float, float], optional, default=(6, 6)
             Size of the second figure.
         fontsize: int, optional, default=11
             Font size.
@@ -207,7 +207,7 @@ class Plot:
         """
         q_act.sort()
 
-        fig = plt.figure(figsize=figsize)
+        fig = plt.figure(figsize=fig_size)
         ax = fig.add_subplot()
         ax.plot(qth, qth, "-.", color="#3D59AB", linewidth=2, label="Theoretical Data")
         # confidence interval
