@@ -2,7 +2,7 @@
 
 import matplotlib
 
-matplotlib.use("Agg")
+matplotlib.use("TkAgg")
 from typing import List, Dict
 
 import numpy as np
@@ -223,7 +223,7 @@ class TestGumbel:
         assert isinstance(fig, Figure)
         assert isinstance(ax, Axes)
 
-    def test_probability_plot(
+    def test_plot(
         self,
         time_series2: list,
         dist_estimation_parameters_ks: str,
@@ -233,13 +233,13 @@ class TestGumbel:
         param = gum_dist_parameters[dist_estimation_parameters_ks]
         dist = Gumbel(time_series2, param)
         # test default parameters.
-        fig, ax = dist.probability_plot()
+        fig, ax = dist.plot()
         assert isinstance(fig, Figure)
         assert isinstance(ax[0], Axes)
         assert isinstance(ax[1], Axes)
         # test with the cdf parameter
         cdf_weibul = PlottingPosition.weibul(time_series2)
-        fig, ax = dist.probability_plot(cdf=cdf_weibul)
+        fig, ax = dist.plot(cdf=cdf_weibul)
         assert isinstance(fig, Figure)
         assert isinstance(ax[0], Axes)
         assert isinstance(ax[1], Axes)
@@ -386,7 +386,7 @@ class TestGEV:
         assert isinstance(fig, Figure)
         assert isinstance(ax, Axes)
 
-    def test_gev_probability_plot(
+    def test_gev_plot(
         self,
         time_series1: list,
         dist_estimation_parameters_ks: str,
@@ -396,13 +396,13 @@ class TestGEV:
         param = gev_dist_parameters[dist_estimation_parameters_ks]
         dist = GEV(time_series1, param)
         # test default parameters.
-        fig, ax = dist.probability_plot()
+        fig, ax = dist.plot()
         assert isinstance(fig, Figure)
         assert isinstance(ax[0], Axes)
         assert isinstance(ax[1], Axes)
         # test with the cdf parameter
         cdf_weibul = PlottingPosition.weibul(time_series1)
-        fig, ax = dist.probability_plot(cdf=cdf_weibul)
+        fig, ax = dist.plot(cdf=cdf_weibul)
         assert isinstance(fig, Figure)
         assert isinstance(ax[0], Axes)
         assert isinstance(ax[1], Axes)

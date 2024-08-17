@@ -523,7 +523,7 @@ class AbstractDistribution(ABC):
         """
         pass
 
-    def probability_plot(
+    def plot(
         self,
         fig1size: tuple = (10, 5),
         xlabel: str = "Actual data",
@@ -1243,7 +1243,7 @@ class Gumbel(AbstractDistribution):
         else:
             return q_upper, q_lower
 
-    def probability_plot(
+    def plot(
         self,
         fig1_size: Tuple[float, float] = (10, 5),
         xlabel: str = "Actual data",
@@ -1279,13 +1279,26 @@ class Gumbel(AbstractDistribution):
 
         Returns
         -------
-        Qth: [list]
-            theoretical-generated values based on the theoretical cdf calculated from
-            weibul or the distribution parameters.
-        q_upper: [list]
-            upper-bound coresponding to the confidence interval.
-        q_lower: [list]
-            lower-bound coresponding to the confidence interval.
+        Figure:
+            matplotlib figure object
+        Tuple[Axes, Axes]:
+            matplotlib plot axes
+
+        Examples
+        --------
+        - Instantiate the Gumbel class with the data and the parameters.
+
+            >>> import matplotlib.pyplot as plt
+            >>> data = np.loadtxt("examples/data/time_series2.txt")
+            >>> parameters = {"loc": 463.8040, "scale": 220.0724}
+            >>> gumbel_dist = Gumbel(data, parameters)
+
+        - to calculate the confidence interval, we need to provide the confidence level (`alpha`).
+
+            >>> fig, ax = gumbel_dist.plot()
+
+        .. image:: /_images/gumbel-confidence-interval.png
+            :align: center
         """
         # if no parameters are provided, take the parameters provided in the class initialization.
         if parameters is None:
@@ -2040,7 +2053,7 @@ class GEV(AbstractDistribution):
         else:
             return q_upper, q_lower
 
-    def probability_plot(
+    def plot(
         self,
         fig1_size=(10, 5),
         xlabel="Actual data",
@@ -3251,7 +3264,7 @@ class Distributions:
 
     def __getattr__(self, name: str):
         """Delegate method calls to the subclass"""
-        # Retrieve the attribute or method from the animal object
+        # Retrieve the attribute or method from the distribution object
         try:
             # Retrieve the attribute or method from the subclasses
             attribute = getattr(self.distribution, name)

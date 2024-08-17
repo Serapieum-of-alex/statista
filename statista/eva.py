@@ -194,11 +194,11 @@ def ams_analysis(
         # get the Discharge coresponding to the return periods
         q_rp = dist.inverse_cdf(non_exceed_prop, param_dist)
 
-        # Gumbel.probability_plot method calculates the theoretical values
+        # Gumbel.plot method calculates the theoretical values
         # based on the Gumbel distribution
         # parameters, theoretical cdf (or weibul), and calculate the confidence interval
         if save_plots:
-            fig, _ = dist.probability_plot()
+            fig, _ = dist.plot()
             _, _, fig2, _ = dist.confidence_interval(
                 method=method, plot_figure=True, alpha=significance_level
             )
