@@ -2097,6 +2097,26 @@ class GEV(AbstractDistribution):
             matplotlib figure object
         Tuple[Axes, Axes]:
             matplotlib plot axes
+
+        Examples
+        --------
+        - Instantiate the Gumbel class with the data and the parameters.
+
+            >>> import numpy as np
+            >>> data = np.loadtxt("examples/data/time_series1.txt")
+            >>> parameters = {"loc": 16.3928, "scale": 0.70054, "shape": -0.1614793,}
+            >>> gev_dist = GEV(data, parameters)
+
+        - to calculate the confidence interval, we need to provide the confidence level (`alpha`).
+
+            >>> fig, ax = gumbel_dist.plot()
+            >>> print(fig)
+            Figure(1000x500)
+            >>> print(ax)
+            (<Axes: xlabel='Actual data', ylabel='pdf'>, <Axes: xlabel='Actual data', ylabel='cdf'>)
+
+        .. image:: /_images/gev-plot.png
+            :align: center
         """
         # if no parameters are provided, take the parameters provided in the class initialization.
         if parameters is None:
