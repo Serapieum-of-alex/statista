@@ -2,7 +2,7 @@
 
 import matplotlib
 
-matplotlib.use("TkAgg")
+matplotlib.use("Agg")
 from typing import List, Dict
 
 import numpy as np
