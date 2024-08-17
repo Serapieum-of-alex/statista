@@ -530,7 +530,7 @@ class AbstractDistribution(ABC):
         ylabel: str = "cdf",
         fontsize: int = 15,
         parameters: Dict[str, Union[float, Any]] = None,
-        prob_non_exceed: np.ndarray = None,
+        cdf: np.ndarray = None,
     ) -> Tuple[List[Figure], list]:
         """Probability Plot.
 
@@ -559,7 +559,10 @@ class AbstractDistribution(ABC):
 
         Returns
         -------
-
+        Figure:
+            matplotlib figure object
+        Tuple[Axes, Axes]:
+            matplotlib plot axes
         """
         pass
 
