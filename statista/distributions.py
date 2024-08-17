@@ -4,6 +4,7 @@ from numbers import Number
 from typing import Any, List, Tuple, Union, Dict, Callable
 from abc import ABC, abstractmethod
 import numpy as np
+from statistics import mode
 import scipy.optimize as so
 from matplotlib.figure import Figure
 from matplotlib.axes import Axes
@@ -143,6 +144,27 @@ class AbstractDistribution(ABC):
             self._parameters = parameters
         else:
             raise TypeError("The `parameters` argument should be dictionary")
+
+    def __str__(self) -> str:
+        message = ""
+        if self.data is not None:
+            message += f"""
+                    Dataset of {len(self.data)} value
+                    min: {np.min(self.data)}
+                    max: {np.max(self.data)}
+                    mean: {np.mean(self.data)}
+                    median: {np.median(self.data)}
+                    mode: {mode(self.data)}
+                    std: {np.std(self.data)}
+                    Distribution : {self.__class__.__name__}
+                    parameters: {self.parameters}
+                    """
+        if self.parameters is not None:
+            message += f"""
+                Distribution : {self.__class__.__name__}
+                parameters: {self.parameters}
+                """
+        return message
 
     @property
     def parameters(self) -> Dict[str, float]:

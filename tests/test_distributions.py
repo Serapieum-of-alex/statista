@@ -39,6 +39,24 @@ class TestPlottingPosition:
         assert isinstance(rp, np.ndarray)
 
 
+class TestAbstractDistribution:
+    def test_abstract_distribution(self, time_series1: list, gev_dist_parameters):
+        text_1 = "\n                    Dataset of 27 value\n                    min: 15.790480003140171\n                    max: 19.39645340792385\n                    mean: 16.929171461473548\n                    median: 16.626465201654593\n                    mode: 15.999737471905252\n                    std: 1.0211514099144634\n                    Distribution : Gumbel\n                    parameters: None\n                    "
+        parameters = gev_dist_parameters["lmoments"]
+        dist = Gumbel(time_series1)
+        assert str(dist) == text_1
+
+        text_2 = (
+            "\n                Distribution : Gumbel\n                parameters: {'loc': 16.392889171307772, "
+            "'scale': 0.7005442761744839, 'shape': -0.1614793298009645}\n                "
+        )
+        dist = Gumbel(parameters=parameters)
+        assert str(dist) == text_2
+        dist = Gumbel(data=time_series1, parameters=parameters)
+        text_3 = "\n                    Dataset of 27 value\n                    min: 15.790480003140171\n                    max: 19.39645340792385\n                    mean: 16.929171461473548\n                    median: 16.626465201654593\n                    mode: 15.999737471905252\n                    std: 1.0211514099144634\n                    Distribution : Gumbel\n                    parameters: {'loc': 16.392889171307772, 'scale': 0.7005442761744839, 'shape': -0.1614793298009645}\n                    \n                Distribution : Gumbel\n                parameters: {'loc': 16.392889171307772, 'scale': 0.7005442761744839, 'shape': -0.1614793298009645}\n                "
+        assert str(dist) == text_3
+
+
 class TestGumbel:
     def test_create_instance(
         self,
