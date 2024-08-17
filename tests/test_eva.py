@@ -33,7 +33,7 @@ def test_eva(
         save_to=save_to,
         filter_out=-9,
         method=method,
-        significance_level=0.05,
+        alpha=0.05,
     )
     statistical_properties.drop(columns=["nyr"], inplace=True)
     gauges_statistical_properties.drop(columns=["nyr"], inplace=True)

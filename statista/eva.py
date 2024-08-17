@@ -22,7 +22,7 @@ def ams_analysis(
     method: str = "lmoments",
     obj_func: callable = None,
     quartile: float = 0,
-    significance_level: float = 0.1,
+    alpha: float = 0.1,
 ) -> Tuple[DataFrame, DataFrame]:
     """Annual Maximum Series analysis.
 
@@ -56,8 +56,8 @@ def ams_analysis(
     quartile: [float]
         the quartile is only used when estimating the distribution parameters based on optimization and a threshould
         value, the threshold value will be calculated as the quartile coresponding to the value of this parameter.
-    significance_level:
-        Default is [0.1].
+    alpha: float, optional, Default is [0.1].
+        alpha or Significance level is a value of the confidence interval.
 
     Returns
     -------
@@ -200,7 +200,7 @@ def ams_analysis(
         if save_plots:
             fig, _ = dist.plot()
             _, _, fig2, _ = dist.confidence_interval(
-                method=method, plot_figure=True, alpha=significance_level
+                method=method, plot_figure=True, alpha=alpha
             )
 
             fig.savefig(f"{save_to}/figures/{i}.png", format="png")
