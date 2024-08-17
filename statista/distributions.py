@@ -529,8 +529,8 @@ class AbstractDistribution(ABC):
         xlabel: str = "Actual data",
         ylabel: str = "cdf",
         fontsize: int = 15,
-        parameters: Dict[str, Union[float, Any]] = None,
         cdf: np.ndarray = None,
+        parameters: Dict[str, Union[float, Any]] = None,
     ) -> Tuple[List[Figure], list]:
         """Probability Plot.
 
