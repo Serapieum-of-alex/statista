@@ -488,38 +488,47 @@ class AbstractDistribution(ABC):
 
     def confidence_interval(
         self,
-        prob_non_exceed: np.ndarray,
-        parameters: Dict[str, Union[float, Any]] = None,
         alpha: float = 0.1,
-    ) -> Tuple[np.ndarray, np.ndarray]:
+        plot_figure: bool = False,
+        prob_non_exceed: np.ndarray = None,
+        parameters: Dict[str, Union[float, Any]] = None,
+    ) -> Union[
+        Tuple[np.ndarray, np.ndarray], Tuple[np.ndarray, np.ndarray, Figure, Axes]
+    ]:
         """confidence_interval.
 
         Parameters
         ----------
-        parameters: Dict[str, str]
+        alpha: numeric, default is 0.1
+            alpha or Significance level is a value of the confidence interval.
+        plot_figure: bool, optional, default is False.
+            to plot the confidence interval.
+        parameters: Dict[str, str], optional, default is None.
+            if not provided, the parameters provided in the class initialization will be used.
             {"loc": val, "scale": val}
 
-            - loc: [numeric]
+            - loc: numeric
                 location parameter of the gumbel distribution.
-            - scale: [numeric]
+            - scale: numeric
                 scale parameter of the gumbel distribution.
-        prob_non_exceed : [list]
-            Non-Exceedance probability
-        alpha : [numeric]
-            alpha or SignificanceLevel is a value of the confidence interval.
+        prob_non_exceed: list, default is None.
+            Non-Exceedance probability, if not given, the plotting position will be calculated using the weibul method.
+        kwargs:
+            fig_size: Tuple[float, float], optional, default=(6, 6)
+                Size of the second figure.
+            fontsize: int, optional, default=11
+                Font size.
 
         Returns
         -------
-        parameters: Dict[str, str]
-            {"loc": val, "scale": val, "shape": value}
-            loc: [numeric]
-                location parameter
-            scale: [numeric]
-                scale parameter
         q_upper: [list]
             upper-bound coresponding to the confidence interval.
         q_lower: [list]
             lower bound coresponding to the confidence interval.
+        fig: matplotlib.figure.Figure
+            Figure object.
+        ax: matplotlib.axes.Axes
+            Axes object.
         """
         pass
 
@@ -1144,8 +1153,8 @@ class Gumbel(AbstractDistribution):
 
     def confidence_interval(
         self,
-        prob_non_exceed: np.ndarray = None,
         alpha: float = 0.1,
+        prob_non_exceed: np.ndarray = None,
         parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
         **kwargs,
@@ -1156,6 +1165,10 @@ class Gumbel(AbstractDistribution):
 
         Parameters
         ----------
+        alpha: numeric, default is 0.1
+            alpha or Significance level is a value of the confidence interval.
+        plot_figure: bool, optional, default is False.
+            to plot the confidence interval.
         parameters: Dict[str, str], optional, default is None.
             if not provided, the parameters provided in the class initialization will be used.
             {"loc": val, "scale": val}
@@ -1166,10 +1179,6 @@ class Gumbel(AbstractDistribution):
                 scale parameter of the gumbel distribution.
         prob_non_exceed: list, default is None.
             Non-Exceedance probability, if not given, the plotting position will be calculated using the weibul method.
-        alpha: numeric, defualt is 0.1
-            alpha or Significance level is a value of the confidence interval.
-        plot_figure: bool, optional, default is False.
-            to plot the confidence interval.
         kwargs:
             fig_size: Tuple[float, float], optional, default=(6, 6)
                 Size of the second figure.
@@ -1950,13 +1959,13 @@ class GEV(AbstractDistribution):
 
     def confidence_interval(
         self,
-        prob_non_exceed: np.ndarray = None,
         alpha: float = 0.1,
+        plot_figure: bool = False,
+        prob_non_exceed: np.ndarray = None,
+        parameters: Dict[str, Union[float, Any]] = None,
         state_function: callable = None,
         n_samples: int = 100,
         method: str = "lmoments",
-        parameters: Dict[str, Union[float, Any]] = None,
-        plot_figure: bool = False,
         **kwargs,
     ) -> Union[
         Tuple[np.ndarray, np.ndarray], Tuple[np.ndarray, np.ndarray, Figure, Axes]

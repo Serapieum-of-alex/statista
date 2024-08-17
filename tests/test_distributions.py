@@ -207,7 +207,7 @@ class TestGumbel:
         cdf_weibul = PlottingPosition.weibul(time_series2)
         # test by providing the cdf function
         upper, lower = dist.confidence_interval(
-            cdf_weibul, alpha=confidence_interval_alpha
+            prob_non_exceed=cdf_weibul, alpha=confidence_interval_alpha
         )
         assert isinstance(upper, np.ndarray)
         assert isinstance(lower, np.ndarray)
