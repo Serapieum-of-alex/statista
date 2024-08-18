@@ -25,7 +25,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-            pip install -r requirements.txt -r requirements-dev.txt
             pip install .[dev]
 
       - name: Generate coverage report
