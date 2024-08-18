@@ -114,7 +114,7 @@ class TestGumbel:
         dist = Gumbel(time_series2)
         param = dist.fit_model(
             method="optimization",
-            obj_func=Gumbel.objective_fn,
+            obj_func=Gumbel.truncated_distribution,
             threshold=parameter_estimation_optimization_threshold,
         )
         assert isinstance(param, dict)

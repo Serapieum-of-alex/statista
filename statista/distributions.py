@@ -906,8 +906,8 @@ class Gumbel(AbstractDistribution):
         return rp
 
     @staticmethod
-    def objective_fn(p, x):
-        """ObjectiveFn.
+    def truncated_distribution(p, x):
+        """function to estimate the parameters of a truncated Gumbel distribution.
 
         Link :
         https://stackoverflow.com/questions/23217484/how-to-find-parameters-of-gumbels-distribution-using-scipy-optimize
@@ -1010,7 +1010,7 @@ class Gumbel(AbstractDistribution):
             >>> threshold = np.quantile(data, 0.80)
             >>> print(threshold)
             1.5717000000000005
-            >>> parameters = gumbel_dist.fit_model(method="optimization", obj_func=Gumbel.objective_fn, threshold=threshold)
+            >>> parameters = gumbel_dist.fit_model(method="optimization", obj_func=Gumbel.truncated_distribution, threshold=threshold)
             Optimization terminated successfully.
                      Current function value: 0.000000
                      Iterations: 39

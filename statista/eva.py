@@ -83,7 +83,7 @@ def ams_analysis(
         available methods are 'mle', 'mm', 'lmoments', 'optimization'.
     obj_func: callable
         objective function to be used in the optimization method, default is None. for Gumbel distribution there is the
-        `Gumbel.objective_fn` and similarly for the GEV distribution there is the GEV.objective_fn.
+        `Gumbel.truncated_distribution` and similarly for the GEV distribution there is the GEV.truncated_distribution.
     quartile: float
         the quartile is only used when estimating the distribution parameters based on optimization and a threshould
         value, the threshold value will be calculated as the quartile coresponding to the value of this parameter.
