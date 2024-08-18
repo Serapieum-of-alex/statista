@@ -617,6 +617,7 @@ def ams_gauges() -> DataFrame:
     """AMS gauges"""
     ams = pd.read_csv(f"tests/data/ams-gauges.csv")
     ams.index = ams["date"]
+    ams.drop("date", axis=1, inplace=True)
     return ams
 
 

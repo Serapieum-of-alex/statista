@@ -1,6 +1,7 @@
 """ Tests for the eva module. """
 
 import matplotlib
+import pandas as pd
 
 matplotlib.use("Agg")
 import numpy as np
@@ -37,19 +38,11 @@ def test_eva(
     )
     statistical_properties.drop(columns=["nyr"], inplace=True)
     gauges_statistical_properties.drop(columns=["nyr"], inplace=True)
-    assert (
-        np.isclose(
-            statistical_properties.values,
-            gauges_statistical_properties.values,
-            atol=0.01,
-        )
-    ).all()
-    assert (
-        np.isclose(
-            distribution_properties.values,
-            gauges_distribution_properties.values,
-            atol=0.01,
-        )
-    ).all()
+    pd.testing.assert_frame_equal(
+        statistical_properties, gauges_statistical_properties, rtol=1e-4
+    )
+    pd.testing.assert_frame_equal(
+        distribution_properties, gauges_distribution_properties, rtol=1e-4
+    )
     # try:
     shutil.rmtree(path)
