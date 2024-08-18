@@ -12,7 +12,7 @@ requirements_docs = [line.strip() for line in open("docs/requirements.txt").read
 
 setup(
     name="statista",
-    version="0.5.0",
+    version="0.6.0",
     description="statistics package",
     author="Mostafa Farrag",
     author_email="moah.farag@gmail.come",

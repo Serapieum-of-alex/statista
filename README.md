@@ -28,7 +28,7 @@ Main Features
 -------------
   - Statistical Distributions
     - GEV
-    - GUMBL
+    - GUMBEL
     - Normal
     - Exponential
   - Parameter estimation methods
@@ -40,6 +40,7 @@ Main Features
   - Statistical descriptors
   - Extreme value analysis
 
+For the full documentation, please visit [statista documentation](https://statista.readthedocs.io/en/latest/?badge=latest)
 
 Installing statista
 ===============
@@ -50,22 +51,22 @@ Installing `statista` from the `conda-forge` channel can be achieved by:
 conda install -c conda-forge statista
 ```
 
-It is possible to list all of the versions of `statista` available on your platform with:
+It is possible to list all the versions of `statista` available on your platform with:
 
 ```
 conda search statista --channel conda-forge
 ```
 
-## Install from Github
-to install the last development to time you can install the library from github
+## Install from GitHub
+to install the last development to time, you can install the library from GitHub
 ```
 pip install git+https://github.com/MAfarrag/statista
 ```
 
 ## pip
-to install the last release you can easly use pip
+to install the last release, you can use pip
 ```
-pip install statista==0.5.0
+pip install statista==0.6.0
 ```
 
 Quick start
