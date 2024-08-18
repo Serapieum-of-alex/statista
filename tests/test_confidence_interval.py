@@ -17,7 +17,7 @@ def test_boot_strap(
     """
     ci = ConfidenceInterval.boot_strap(
         time_series1,
-        statfunction=GEV.ci_func,
+        state_function=GEV.ci_func,
         gevfit=ci_param,
         n_samples=len(time_series1),
         F=ci_cdf,

@@ -2068,7 +2068,7 @@ class GEV(AbstractDistribution):
 
         ci = ConfidenceInterval.boot_strap(
             self.data,
-            statfunction=state_function,
+            state_function=state_function,
             gevfit=parameters,
             F=prob_non_exceed,
             alpha=alpha,
