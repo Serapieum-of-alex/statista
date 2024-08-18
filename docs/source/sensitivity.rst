@@ -1,6 +1,6 @@
-******************************
-Sensetivity Analysis (OAT)
-******************************
+**************************
+Sensitivity Analysis (OAT)
+**************************
 OAT sensitivity analysis is a tool that is based
 
 One of the simplest and most common approaches of sensitivity analysis is that of changing one-factor-at-a-time (OAT), to see what effect this produces on the output.
@@ -31,8 +31,7 @@ Steps:
 Run the model
 --------------
 
-.. code-block:: py
-    :linenos:
+.. code:: py
 
     import pandas as pd
 
@@ -132,8 +131,7 @@ to define the argument of the "wrapper" function
 There are two types of wrappers
 - The first one returns one value (performance metric)
 
-.. code-block:: py
-    :linenos:
+.. code:: py
 
     # For Type 1
     def WrapperType1(Randpar,Route, RoutingFn, Qobs):
@@ -149,11 +147,9 @@ There are two types of wrappers
 Instantiate the SensitivityAnalysis object
 -------------------------------------------
 
-.. code-block:: py
-    :linenos:
+.. code:: py
 
     fn = WrapperType2
-
     Positions = [10]
 
     Sen = SA(parameters,Coello.LB, Coello.UB, fn, Positions, 5, Type=Type)
@@ -163,8 +159,8 @@ Instantiate the SensitivityAnalysis object
 Run the OAT method
 -------------------
 
-.. code-block:: py
-    :linenos:
+.. code:: py
+
     Sen.OAT(Route, RoutingFn, Qobs)
 
 .. _5:
@@ -172,25 +168,25 @@ Run the OAT method
 Display the result with the SOBOL plot
 ---------------------------------------
 
-.. code-block:: py
-    :linenos:
+.. code:: py
 
     From = ''
     To = ''
 
-        fig, ax1 = Sen.Sobol(RealValues=False, Title="Sensitivity Analysis of the RMSE to models parameters",
-                  xlabel = "Maxbas Values", ylabel="RMSE", From=From, To=To,xlabel2='Time',
-                  ylabel2='Discharge m3/s', spaces=[None,None,None,None,None,None])
+    fig, ax1 = Sen.Sobol(RealValues=False, Title="Sensitivity Analysis of the RMSE to models parameters",
+              xlabel = "Maxbas Values", ylabel="RMSE", From=From, To=To,xlabel2='Time',
+              ylabel2='Discharge m3/s', spaces=[None,None,None,None,None,None])
 
 
 - Type 1 with one parameter
 
-.. image:: images/sensitivityAnalysis1.png
+.. image:: _images/sensitivityAnalysis1.png
     :width: 400pt
     :align: center
 
 - Type 1 with all parameters
-.. image:: images/sensitivityAnalysis3.png
+
+.. image:: _images/sensitivityAnalysis3.png
     :width: 400pt
     :align: center
 
@@ -199,8 +195,7 @@ The second type
 
 - The second wrapper returns two values (the performance metric and the calculated output from the model)
 
-.. code-block:: py
-    :linenos:
+.. code:: py
 
     # For Type 2
     def WrapperType2(Randpar,Route, RoutingFn, Qobs):
@@ -220,6 +215,6 @@ The second type
 
 - Type 2
 
-.. image:: images/sensitivityAnalysis2.png
+.. image:: _images/sensitivityAnalysis2.png
     :width: 400pt
     :align: center

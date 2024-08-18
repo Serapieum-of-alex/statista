@@ -50,3 +50,27 @@ History
 * Use factory design pattern to create the distributions.
 * add tests for the eva module.
 * use snake_case for the methods and variables.
+
+0.6.0 (2024-08-18)
+------------------
+
+dev
+"""
+* Add documentations for the `distributions`, and `eva` modules.
+* Add autodoc for all modules.
+* Test docstrings as part of CI and pre-commit hooks.
+* Test notebooks as part of CI.
+* Simplify test for the distributions module
+
+distributions
+"""""""""""""
+* move the `cdf` and `parameters` for all the methods to be optional parameters.
+* rename `theoretical_estimate` method to `inverse_cdf`.
+* All distributions can be instantiated with the parameters and/or data.
+* rename the `probability_plot` method to `plot`.
+* move the `confidence_interval` plot from the `probability_plot/plot` to the method `confidence_interval` and can be
+    called by activating the `plot_figure=True`.
+
+descriptors
+"""""""""""
+* rename the `metrics` module to `descriptors`.

@@ -1,4 +1,5 @@
-""" Performance Metrics """
+"""Statistical descriptors. """
+
 from numbers import Number
 from typing import Union
 
@@ -7,7 +8,7 @@ from sklearn.metrics import r2_score
 
 
 def rmse(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
-    """Root Mean Squared Error. Metric for the estimation of performance of the hydrological model.
+    """Root Mean Squared Error.
 
     Parameters
     ----------
@@ -200,10 +201,9 @@ def rmse_lf(
     return error
 
 
-def kge(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
-    """kge.
+def kge(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
+    """kling–Gupta efficiency.
 
-    ling–Gupta efficiency
     (Gupta et al. 2009) have showed the limitation of using a single error function to measure the efficiency of
     calculated flow and showed that Nash-Sutcliff efficiency (NSE) or RMSE can be decomposed into three component
     correlation, variability and bias.
@@ -232,34 +232,36 @@ def kge(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     return kge
 
 
-def wb(obs, qsim):
-    """wb.
-    Water balance error.
-    The mean cumulative error measures how much the model succeed to reproduce the stream flow volume correctly.
-    This error allows error compensation from time step to another and it is not an indication on how accurate is the
+def wb(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
+    """Water balance error.
+
+    The mean cumulative error measures how much the model succeeds to reproduce the stream flow volume correctly.
+    This error allows error compensation from time step to another, and it is not an indication on how accurate is the
     model in the simulated flow. the naive model of Nash-Sutcliffe (simulated flow is as accurate as average observed
     flow) will result in WB error equals to 100 %. (Oudin et al. 2006)
 
-     inputs:
-     ----------
+    Parameters
+    ----------
     obs: [list/array]
-         observed flow
-     sim: [list/array]
-         simulated flow
+        observed flow
+    sim: [list/array]
+        simulated flow
 
      Returns
      -------
      error values
     """
     qobs_sum = np.sum(obs)
-    qsim_sum = np.sum(qsim)
+    qsim_sum = np.sum(sim)
     wb = 100 * (1 - np.abs(1 - (qsim_sum / qobs_sum)))
 
     return wb
 
 
-def nse(obs: np.ndarray, sim: np.ndarray):
-    """Nash-Sutcliffe efficiency. Metric for the estimation of performance of the hydrological model.
+def nse(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
+    """Nash-Sutcliffe efficiency.
+
+        Metric for the estimation of performance of the hydrological model.
 
     Parameters
     ----------
@@ -284,11 +286,10 @@ def nse(obs: np.ndarray, sim: np.ndarray):
     return e
 
 
-def nse_hf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
-    """NSEHF.
+def nse_hf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
+    """Modified Nash-Sutcliffe efficiency.
 
-    Modified Nash-Sutcliffe efficiency. Metric for the estimation of performance of the
-    hydrological model
+    Metric for the estimation of performance of the hydrological model.
 
     reference:
     Hundecha Y. & Bárdossy A. Modeling of the effect of land use
@@ -396,7 +397,9 @@ def mae(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     return np.abs(np.array(obs) - np.array(sim)).mean()
 
 
-def pearson_corre(x: Union[list, np.ndarray], y: Union[list, np.ndarray]) -> Number:
+def pearson_corr_coeff(
+    x: Union[list, np.ndarray], y: Union[list, np.ndarray]
+) -> Number:
     """Pearson correlation coefficient.
 
         - Pearson correlation coefficient is independent of the magnitude of the numbers.
@@ -426,17 +429,17 @@ def pearson_corre(x: Union[list, np.ndarray], y: Union[list, np.ndarray]) -> Num
 def r2(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]):
     """R2.
 
-        the coefficient of determination measures how well the predicted
-        values match (and not just follow) the observed values.
-        It depends on the distance between the points and the 1:1 line
-        (and not the best-fit line)
-        Closer the data to the 1:1 line, higher the coefficient of determination.
-        The coefficient of determination is often denoted by R². However,
-        it is not the square of anything. It can range from any negative number to +1
-        - R² = +1 indicates that the predictions match the observations perfectly
-        - R² = 0 indicates that the predictions are as good as random guesses around
-            the mean of the observed values
-        - Negative R² indicates that the predictions are worse than random
+    the coefficient of determination measures how well the predicted
+    values match (and not just follow) the observed values.
+    It depends on the distance between the points and the 1:1 line
+    (and not the best-fit line)
+    Closer the data to the 1:1 line, higher the coefficient of determination.
+    The coefficient of determination is often denoted by R². However,
+    it is not the square of anything. It can range from any negative number to +1
+    - R² = +1 indicates that the predictions match the observations perfectly
+    - R² = 0 indicates that the predictions are as good as random guesses around
+        the mean of the observed values
+    - Negative R² indicates that the predictions are worse than random
 
     Since R² indicates the distance of points from the 1:1 line, it does depend
     on the magnitude of the numbers (unlike r² peason correlation coefficient).

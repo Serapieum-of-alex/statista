@@ -65,13 +65,25 @@ statista - statistics package
 
 Main Features
 -------------
--
--
+- Statistical Distributions
+    - GEV
+    - Gumbel
+    - Normal
+    - Exponential
+- Parameter estimation methods
+    - Lmoments
+    - ML
+    - MOM
+- One-at-time (O-A-T) Sensitivity analysis.
+- Sobol visualization
+- Statistical descriptors
+- Extreme value analysis
+
 
 .. digraph:: Linking
 
     statista -> distributions;
-    statista -> metrics;
+    statista -> descriptors;
     statista -> parameters;
     statista -> sensitivity;
     statista -> tools;
@@ -82,5 +94,17 @@ Main Features
    :maxdepth: 1
 
    Installation <installation.rst>
-   Distributions <distributions.rst>
-   Sensitivity analysis <sensitivity_analysis.rst>
+   Distributions <distributions-tree.rst>
+   Sensitivity analysis <sensitivity-tree.rst>
+   Extreme Value Analysis <eva-class.rst>
+   Metrics <descriptors-module.rst>
+   Tools <tools-module.rst>
+   Plot <plot-class.rst>
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

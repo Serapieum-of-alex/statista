@@ -1,8 +1,6 @@
-"""Created on Thu May 17 04:26:42 2018.
+""""Statistical tools"""
 
-@author: Mostafa
-"""
-
+from typing import List, Union
 import numpy as np
 
 
@@ -16,30 +14,28 @@ class Tools:
         pass
 
     @staticmethod
-    def normalize(x):
+    def normalize(x: Union[List[float], np.ndarray]) -> np.ndarray:
         """Normalizer.
 
         to normalize values between 0 and 1
 
         Parameters
         ----------
-        x : [List]
+        x: List[float], np.ndarray
             list of values
 
         Returns
         -------
-        normalized numbers : [List]
+        normalized numbers: [List]
             list of normalized values
         """
         x = np.array(x)
-        DataMax = max(x)
-        DataMin = min(x)
-        N = (x - DataMin) / (DataMax - DataMin)
-        # [i - DataMin / (DataMax - DataMin) for i in x]
-        return N
+        data_max = max(x)
+        data_min = min(x)
+        return (x - data_min) / (data_max - data_min)
 
     @staticmethod
-    def standardize(x):
+    def standardize(x: Union[List[float], np.ndarray]) -> np.ndarray:
         """Standardize.
 
         to standardize (make the average equals 1 and the standard deviation
@@ -47,12 +43,12 @@ class Tools:
 
         Parameters
         ----------
-        x: [List]
+        x: List[float], np.ndarray
             list of values
 
         Returns
         -------
-        Standardized values: [List]
+        Standardized values: np.ndarray
             list of normalized values
         """
         x = np.array(x)
@@ -60,46 +56,45 @@ class Tools:
         mean = np.mean(x)
         std = np.std(x)
         s = (x - mean) / std
-        # [i - mean / (std) for i in x]
         return s
 
     @staticmethod
-    def rescale(OldValue, OldMin, OldMax, NewMin, NewMax):
+    def rescale(old_value, old_min, old_max, new_min, new_max):
         """Rescale.
 
-        Rescale nethod rescales a value between two boundaries to a new value
-        bewteen two other boundaries
+        Rescale method rescales a value between two boundaries to a new value bewteen two other boundaries.
 
         Parameters
         ----------
-        OldValue: [float]
-            value need to transformed
-        OldMin: [float]
+        old_value: [float]
+            The old value you want to transform
+        old_min: [float]
             min old value
-        OldMax: [float]
+        old_max: [float]
             max old value
-        NewMin: [float]
+        new_min: [float]
             min new value
-        NewMax: [float]
+        new_max: [float]
             max new value
 
         Returns
         -------
-        NewValue: [float]
+        float:
             transformed new value
         """
-        OldRange = OldMax - OldMin
-        NewRange = NewMax - NewMin
-        NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin
+        old_range = old_max - old_min
+        new_range = new_max - new_min
+        new_value = (((old_value - old_min) * new_range) / old_range) + new_min
 
-        return NewValue
+        return new_value
 
     @staticmethod
-    def logarithmicRescale(x, min_old, max_old, min_new, max_new):
-        """LogarithmicRescale.
+    def log_rescale(x, min_old, max_old, min_new, max_new):
+        """Logarithmic Rescale.
 
-        this function transform the value between two normal values to a logarithmic scale
-        between logarithmic value of both boundaries
+        log_rescale transforms the value between two normal values to a logarithmic scale between logarithmic value
+        of both boundaries
+
             np.log(base)(number) = power
             the inverse of logarithmic is base**power = number
 
@@ -141,16 +136,18 @@ class Tools:
         return y
 
     @staticmethod
-    def invLogarithmicRescale(x, min_old, max_old, min_new, max_new, base=np.e):
-        """LogarithmicRescale.
+    def inv_log_rescale(x, min_old, max_old, min_new, max_new, base=np.e):
+        """Inverse Logarithmic Rescale.
 
-        this function transform the value between two normal values to a logarithmic scale
-        between logarithmic value of both boundaries
+        inv_log_rescale transforms the value between two normal values to a logarithmic scale between logarithmic
+        value of both boundaries.
+
             np.log(base)(number) = power
             the inverse of logarithmic is base**power = number
 
         Parameters
         ----------
+        base
         x: [float]
             new value needed to be transformed to a logarithmic scale
         min_old: [float]
@@ -181,5 +178,19 @@ class Tools:
         return y
 
     @staticmethod
-    def round(number, roundto):
-        return round(number / roundto) * roundto
+    def round(number: float, precision: int) -> float:
+        """round
+
+        Parameters
+        ----------
+        number: float
+            number to be rounded.
+        precision: int
+            precision of the rounding.
+
+        Returns
+        -------
+        float:
+            rounded number
+        """
+        return round(number / precision) * precision

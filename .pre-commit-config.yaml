@@ -1,7 +1,7 @@
 fail_fast: true
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
       - id: end-of-file-fixer
         name: "[py -  check] validate yaml"
@@ -58,7 +58,7 @@ repos:
         files: ^Hapi/
 
   - repo: https://github.com/pycqa/flake8
-    rev: 6.1.0
+    rev: 7.1.0
     hooks:
       - id: flake8
         name: "[py   - check] flake8"
@@ -70,7 +70,7 @@ repos:
   #  hooks:
   #    - id: black
   - repo: https://github.com/ambv/black
-    rev: 22.8.0
+    rev: 24.8.0
     hooks:
       - id: black
         name: "[py   - format] black"
@@ -112,3 +112,19 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
+
+  - repo: local
+    hooks:
+      - id: examples-notebook-check
+        name: nbval
+        entry: pytest --nbval
+        language: system
+        files: \.ipynb$
+
+  - repo: local
+    hooks:
+      - id: doctest
+        name: doctest
+        entry: pytest --doctest-modules
+        language: system
+        files: statista\.py$

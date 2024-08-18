@@ -1,5 +1,9 @@
 """ Tests for the eva module. """
-import numpy as np
+
+import matplotlib
+import pandas as pd
+
+matplotlib.use("Agg")
 from pandas import DataFrame
 import shutil
 from pathlib import Path
@@ -29,23 +33,15 @@ def test_eva(
         save_to=save_to,
         filter_out=-9,
         method=method,
-        significance_level=0.05,
+        alpha=0.05,
     )
     statistical_properties.drop(columns=["nyr"], inplace=True)
     gauges_statistical_properties.drop(columns=["nyr"], inplace=True)
-    assert (
-        np.isclose(
-            statistical_properties.values,
-            gauges_statistical_properties.values,
-            atol=0.01,
-        )
-    ).all()
-    assert (
-        np.isclose(
-            distribution_properties.values,
-            gauges_distribution_properties.values,
-            atol=0.01,
-        )
-    ).all()
+    pd.testing.assert_frame_equal(
+        statistical_properties, gauges_statistical_properties, rtol=1e-4
+    )
+    pd.testing.assert_frame_equal(
+        distribution_properties, gauges_distribution_properties, rtol=1e-4
+    )
     # try:
     shutil.rmtree(path)
