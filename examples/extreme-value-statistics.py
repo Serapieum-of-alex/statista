@@ -30,16 +30,12 @@ pdf = gumbel_series_1.pdf(plot_figure=True)
 cdf, _, _ = gumbel_series_1.cdf(plot_figure=True)
 # %%
 # calculate the CDF(Non Exceedance probability) using weibul plotting position
-time_series1.sort()
-# calculate the F (Non-Exceedance probability based on weibul)
 cdf_weibul = PlottingPosition.weibul(time_series1)
-# inverse_cdf method calculates the theoretical values based on the Gumbel distribution
-Qth = gumbel_series_1.inverse_cdf(cdf_weibul)
 # test = stats.chisquare(st.Standardize(Qth), st.Standardize(time_series1),ddof=5)
 # calculate the confidence interval
-upper, lower = gumbel_series_1.confidence_interval(cdf_weibul, alpha=0.1)
+upper, lower = gumbel_series_1.confidence_interval(alpha=0.1)
 # probability_plot can estimate the Qth and the lower and upper confidence interval in the process of plotting
-fig, ax = gumbel_series_1.probability_plot(cdf_weibul, alpha=0.1)
+fig, ax = gumbel_series_1.plot()
 # %%
 """
 if you want to focus only on high values, you can use a threshold to make the code focus on what is higher
@@ -47,20 +43,20 @@ this threshold.
 """
 threshold = 17
 param_dist = gumbel_series_1.fit_model(
-    method="optimization", obj_func=Gumbel.objective_fn, threshold=threshold
+    method="optimization", obj_func=Gumbel.truncated_distribution, threshold=threshold
 )
 print(param_dist)
-gumbel_series_1.probability_plot(param_dist, cdf_weibul, alpha=0.1)
+gumbel_series_1.plot(parameters=param_dist)
 # %%
 threshold = 18
 param_dist = gumbel_series_1.fit_model(
-    method="optimization", obj_func=Gumbel.objective_fn, threshold=threshold
+    method="optimization", obj_func=Gumbel.truncated_distribution, threshold=threshold
 )
 print(param_dist)
-gumbel_series_1.probability_plot(param_dist, cdf_weibul, alpha=0.1)
+gumbel_series_1.plot(parameters=param_dist)
 # %% Generalized Extreme Value (GEV)
 gev_series_2 = Distributions("GEV", time_series2)
-# default parameter estimation method is maximum liklihood method
+# default parameter estimation method is maximum likelihood method
 gev_mle_param = gev_series_2.fit_model(method="mle")
 gev_series_2.ks()
 gev_series_2.chisquare()
@@ -76,10 +72,9 @@ print(gev_lmom_param)
 pdf, fig, ax = gev_series_2.pdf(plot_figure=True)
 cdf, _, _ = gev_series_2.cdf(plot_figure=True)
 # %%
-time_series1.sort()
+
 # calculate the F (Non-Exceedance probability based on weibul)
 cdf_weibul = PlottingPosition.weibul(time_series2)
-T = PlottingPosition.weibul(time_series2, return_period=True)
 # inverse_cdf method calculates the theoretical values based on the Gumbel distribution
 Qth = gev_series_2.inverse_cdf(cdf_weibul)
 
@@ -87,7 +82,7 @@ func = GEV.ci_func
 upper, lower = gev_series_2.confidence_interval(
     prob_non_exceed=cdf_weibul,
     alpha=0.1,
-    statfunction=func,
+    state_function=func,
     n_samples=len(time_series1),
     method="lmoments",
 )
@@ -97,15 +92,14 @@ calculate the confidence interval using the bootstrap method directly
 """
 CI = ConfidenceInterval.boot_strap(
     time_series2,
-    statfunction=func,
+    state_function=func,
     gevfit=gev_lmom_param,
     n_samples=100,
     F=cdf_weibul,
     method="lmoments",
 )
-LB = CI["lb"]
-UB = CI["ub"]
+lower_bound = CI["lb"]
+upper_bound = CI["ub"]
 # %%
-fig, ax = gev_series_2.probability_plot(
-    gev_lmom_param, cdf_weibul, func=func, n_samples=100
-)
+fig, ax = gev_series_2.plot()
+lower_bound, upper_bound, fig, ax = gev_series_2.confidence_interval(plot_figure=True)
