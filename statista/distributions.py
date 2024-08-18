@@ -906,31 +906,50 @@ class Gumbel(AbstractDistribution):
         return rp
 
     @staticmethod
-    def truncated_distribution(p, x):
+    def truncated_distribution(opt_parameters: list[float], data: list[float]):
         """function to estimate the parameters of a truncated Gumbel distribution.
 
         Link :
         https://stackoverflow.com/questions/23217484/how-to-find-parameters-of-gumbels-distribution-using-scipy-optimize
 
+        function calculates the negative log-likelihood of a Gumbel distribution that is truncated(i.e., the data only
+        includes values above a certain threshold)
+
+        the function calculates the negative log-likelihood, effectively fitting the truncated Gumbel distribution
+        to the data.
+
+        This approach is useful when the dataset is incomplete or when data is only available above a certain threshold,
+        a common scenario in environmental sciences, finance, and other fields dealing with extremes.
+
         Parameters
         ----------
-        p:
-        x:
+        opt_parameters:
+        data: list
+            data
         """
-        threshold = p[0]
-        loc = p[1]
-        scale = p[2]
+        threshold = opt_parameters[0]
+        loc = opt_parameters[1]
+        scale = opt_parameters[2]
 
-        x1 = x[x < threshold]
-        nx2 = len(x[x >= threshold])
+        non_truncated_data = data[data < threshold]
+        nx2 = len(data[data >= threshold])
         # pdf with a scaled pdf
         # L1 is pdf based
         parameters = {"loc": loc, "scale": scale}
-        pdf = Gumbel._pdf_eq(x1, parameters)
-        cdf = Gumbel._cdf_eq(threshold, parameters)
+        pdf = Gumbel._pdf_eq(non_truncated_data, parameters)
+        #  the CDF at the threshold is used because the data is assumed to be truncated, meaning that observations below
+        #  this threshold are not included in the dataset. When dealing with truncated data, it's essential to adjust
+        #  the likelihood calculation to account for the fact that only values above the threshold are observed. The
+        #  CDF at the threshold effectively normalizes the distribution, ensuring that the probabilities sum to 1 over
+        #  the range of the observed data.
+        cdf_at_threshold = 1 - Gumbel._cdf_eq(threshold, parameters)
+        # calculates the negative log-likelihood of a Gumbel distribution
+        # Adjust the likelihood for the truncation
+        # likelihood = pdf / (1 - adjusted_cdf)
+
         l1 = (-np.log((pdf / scale))).sum()
         # L2 is cdf based
-        l2 = (-np.log(1 - cdf)) * nx2
+        l2 = (-np.log(cdf_at_threshold)) * nx2
         # print x1, nx2, L1, L2
         return l1 + l2
 
