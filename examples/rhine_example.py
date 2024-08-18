@@ -7,12 +7,7 @@ import numpy as np
 import pandas as pd
 from statista.distributions import (
     Distributions,
-    GEV,
-    Exponential,
-    Gumbel,
-    PlottingPosition,
 )
-from statista.confidence_interval import ConfidenceInterval
 
 # %%
 ams = pd.read_csv("examples/data/rhine.csv")
@@ -70,3 +65,5 @@ print(lmom_param)
 # calculate and plot the pdf
 pdf, fig, ax = gev_cologne.pdf(plot_figure=True)
 cdf, _, _ = gev_cologne.cdf(plot_figure=True)
+
+# %%
