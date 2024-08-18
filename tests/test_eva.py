@@ -4,7 +4,6 @@ import matplotlib
 import pandas as pd
 
 matplotlib.use("Agg")
-import numpy as np
 from pandas import DataFrame
 import shutil
 from pathlib import Path

@@ -222,6 +222,17 @@ def ams_analysis(
         Andernach  0.321513  5649.076008  2084.383132  0.074074  0.998738
         Cologne    0.306146  5783.017454  2090.224037  0.074074  0.998738
         Rees       0.284227  5960.022503  2107.197210  0.074074  0.998738
+
+    - Since we have set `save_plots=True`, the function will save the plots in the directory we have provided in `save_to`.
+        For example, the plot of Frankfurt's time series data is saved as "Frankfurt.png" for the `pdf` and `cdf` and
+        "f-Frankfurt.png" for the confidince interval plot in the specified directory.'
+
+        .. image:: /_images/Frankfurt.png
+            :align: center
+
+        .. image:: /_images/f-Frankfurt.png
+            :align: center
+
     """
     gauges = time_series_df.columns.tolist()
     # List of the table output, including some general data and the return periods.
