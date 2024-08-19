@@ -21,4 +21,5 @@ python:
           - docs
 
 # Optionally build your docs in additional formats such as PDF and ePub
-formats: htmlzip
+formats:
+    - htmlzip
