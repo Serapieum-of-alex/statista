@@ -1,6 +1,9 @@
-from typing import Union, List
+from typing import Union, List, Tuple
 from pandas import DataFrame
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from matplotlib.axes import Axes
 
 
 class TimeSeries(DataFrame):
@@ -98,3 +101,93 @@ class TimeSeries(DataFrame):
         >>> ts.stats
         """
         return self.describe()
+
+    @staticmethod
+    def _get_ax_fig(fig=None, ax=None, n_subplots=1):
+        if ax is None and fig is None:
+            fig, ax = plt.subplots(n_subplots, figsize=(8, 6))
+        elif ax is None:
+            ax = fig.add_subplot(111)
+        elif fig is None:
+            fig = ax.figure
+        return fig, ax
+
+    def plot_box(
+        self,
+        title="Box Plot",
+        xlabel="Index",
+        ylabel="Value",
+        color=None,
+        grid=True,
+        fig: Figure = None,
+        ax: Axes = None,
+    ) -> Tuple[Figure, Axes]:
+        """
+        Plots a box plot of the time series data.
+
+        The box plot can give the following insights:
+            - Summary of Distribution: A box plot provides a graphical summary of the distribution of data based on five
+                summary statistics: the minimum, first quartile (Q1), median, third quartile (Q3), and maximum.
+            - Outliers: It highlights outliers, which are data points that fall significantly above or below the rest of
+                the data. Outliers are typically shown as individual points beyond the "whiskers" of the box plot.
+            - Central Tendency: The line inside the box indicates the median (50th percentile), giving insight into the
+                central tendency of the data.
+            - Spread and Skewness: The length of the box (interquartile range, IQR) shows the spread of the middle 50% of
+                the data, while the position of the median line within the box can suggest skewness.
+
+        Use Case:
+            - Useful for quickly comparing the distribution of the time series data and identifying any anomalies or
+                outliers.
+
+        Parameters
+        ----------
+        title: str, optional
+            Title of the plot. Default is 'Box Plot'.
+        xlabel: str, optional
+            Label for the x-axis. Default is 'Index'.
+        ylabel: str, optional
+            Label for the y-axis. Default is 'Value'.
+        color: dict or None, optional
+            Colors to use for the plot elements. Default is None.
+        grid: bool, optional
+            Whether to show grid lines. Default is True.
+        fig: matplotlib.figure.Figure, optional
+            Existing figure to plot on. If None, a new figure is created.
+        ax: matplotlib.axes.Axes, optional
+            Existing axes to plot on. If None, a new axes is created.
+
+        Returns
+        -------
+        fig: matplotlib.figure.Figure
+            The figure object containing the plot.
+        ax: matplotlib.axes.Axes
+            The axes object containing the plot.
+
+        Examples
+        --------
+        -
+        >>> ts = TimeSeries(np.random.randn(100))
+        >>> fig, ax = ts.plot_box()
+
+        >>> data_2d = np.random.randn(100, 3)
+        >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C'])
+        >>> fig, ax = ts_2d.plot_box()
+        """
+        fig, ax = self._get_ax_fig(fig, ax)
+        # self.boxplot(ax=ax, color=color, grid=grid)
+        ax.boxplot(
+            [self[col].dropna() for col in self.columns],
+            patch_artist=True,
+            boxprops=dict(
+                facecolor=(
+                    "lightblue" if color is None else color.get("boxes", "lightblue")
+                )
+            ),
+        )
+        ax.set_xticklabels(self.columns)
+        ax.set_title(title)
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+        ax.grid(grid)
+        plt.show()
+        return fig, ax
