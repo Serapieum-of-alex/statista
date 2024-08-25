@@ -197,7 +197,7 @@ class TimeSeries(DataFrame):
             .. image:: /_images/box_plot_1d.png
                 :align: center
 
-        - Plot the box plot for a 1D time series:
+        - Plot the box plot for a multiple time series:
 
             >>> data_2d = np.random.randn(100, 4)
             >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
@@ -208,17 +208,17 @@ class TimeSeries(DataFrame):
 
             >>> fig, ax = ts_2d.box_plot(grid=True, mean=True, color={"boxes": "#DC143C"})
 
-            .. image:: /_images/box_plot_color.png
+            .. image:: /_images/times_series/box_plot_color.png
                 :align: center
 
             >>> fig, ax = ts_2d.box_plot(xlabel='Custom X', ylabel='Custom Y', title='Custom Box Plot')
 
-            .. image:: /_images/box_plot_axes-label.png
+            .. image:: /_images/times_series/box_plot_axes-label.png
                 :align: center
 
             >>> fig, ax = ts_2d.box_plot(notch=True)
 
-            .. image:: /_images/box_plot_notch.png
+            .. image:: /_images/times_series/box_plot_notch.png
                 :align: center
         """
         fig, ax = self._get_ax_fig(fig=kwargs.get("fig"), ax=kwargs.get("ax"))
@@ -358,7 +358,14 @@ class TimeSeries(DataFrame):
 
             >>> fig, ax = ts_2d.violin(mean=True, median=True, extrema=True)
 
-            .. image:: /_images/violin_means_medians_extrena.png
+            .. image:: /_images/times_series/violin_means_medians_extrena.png
+                :align: center
+
+        - You can display the violins on the low side only using the `side` parameter:
+
+            >>> fig, ax = ts_2d.violin(side='low')
+
+            .. image:: /_images/times_series/violin_low_side.png
                 :align: center
         """
         fig, ax = self._get_ax_fig(fig=kwargs.get("fig"), ax=kwargs.get("ax"))
