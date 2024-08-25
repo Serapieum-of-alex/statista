@@ -6,6 +6,9 @@ from matplotlib.figure import Figure
 from matplotlib.axes import Axes
 
 
+MEAN_PROP = dict(marker="x", markeredgecolor="w", markerfacecolor="firebrick")
+
+
 class TimeSeries(DataFrame):
     """
     A class to represent and analyze time series data using pandas DataFrame.
@@ -103,7 +106,9 @@ class TimeSeries(DataFrame):
         return self.describe()
 
     @staticmethod
-    def _get_ax_fig(fig=None, ax=None, n_subplots=1):
+    def _get_ax_fig(
+        fig: Figure = None, ax: Axes = None, n_subplots: int = 1
+    ) -> Tuple[Figure, Axes]:
         if ax is None and fig is None:
             fig, ax = plt.subplots(n_subplots, figsize=(8, 6))
         elif ax is None:
@@ -112,18 +117,15 @@ class TimeSeries(DataFrame):
             fig = ax.figure
         return fig, ax
 
-    def plot_box(
-        self,
-        title="Box Plot",
-        xlabel="Index",
-        ylabel="Value",
-        color=None,
-        grid=True,
-        fig: Figure = None,
-        ax: Axes = None,
+    def box_plot(
+        self, mean: bool = False, notch: bool = False, **kwargs
     ) -> Tuple[Figure, Axes]:
-        """
-        Plots a box plot of the time series data.
+        """a box and whisker plot.
+
+        The box extends from the first quartile (Q1) to the third quartile (Q3) of the data, with a line at the median.
+        The whiskers extend from the box to the farthest data point lying within 1.5x the inter-quartile range (IQR)
+        from the box.
+        Flier points are those past the end of the whiskers. See https://en.wikipedia.org/wiki/Box_plot for reference.
 
         The box plot can give the following insights:
             - Summary of Distribution: A box plot provides a graphical summary of the distribution of data based on five
@@ -135,26 +137,47 @@ class TimeSeries(DataFrame):
             - Spread and Skewness: The length of the box (interquartile range, IQR) shows the spread of the middle 50% of
                 the data, while the position of the median line within the box can suggest skewness.
 
+            .. code-block:: none
+
+                      Q1-1.5IQR   Q1   median  Q3   Q3+1.5IQR
+                                   |-----:-----|
+                   o      |--------|     :     |--------|    o  o
+                                   |-----:-----|
+                 flier             <----------->            fliers
+                                        IQR
+
         Use Case:
             - Useful for quickly comparing the distribution of the time series data and identifying any anomalies or
                 outliers.
 
         Parameters
         ----------
-        title: str, optional
-            Title of the plot. Default is 'Box Plot'.
-        xlabel: str, optional
-            Label for the x-axis. Default is 'Index'.
-        ylabel: str, optional
-            Label for the y-axis. Default is 'Value'.
-        color: dict or None, optional
-            Colors to use for the plot elements. Default is None.
-        grid: bool, optional
-            Whether to show grid lines. Default is True.
-        fig: matplotlib.figure.Figure, optional
-            Existing figure to plot on. If None, a new figure is created.
-        ax: matplotlib.axes.Axes, optional
-            Existing axes to plot on. If None, a new axes is created.
+        mean: bool, optional, default is False.
+            Whether to show the mean value in the box plot.
+        notch: bool, optional, default is False.
+                Whether to draw a notched boxplot (`True`), or a rectangular
+                boxplot (`False`).  The notches represent the confidence interval
+                (CI) around the median.  The documentation for *bootstrap*
+                describes how the locations of the notches are computed by
+                default, but their locations may also be overridden by setting the
+                *conf_intervals* parameter.
+        **kwargs: dict, optional
+            fig: matplotlib.figure.Figure, optional
+                Existing figure to plot on. If None, a new figure is created.
+            ax: matplotlib.axes.Axes, optional
+                Existing axes to plot on. If None, a new axes is created.
+            grid: bool, optional
+                Whether to show grid lines. Default is True.
+            color: dict, optional, default is None.
+                Colors to use for the plot elements. Default is None.
+                >>> color = {"boxes", "#27408B"}
+            title: str, optional
+                Title of the plot. Default is 'Box Plot'.
+            xlabel: str, optional
+                Label for the x-axis. Default is 'Index'.
+            ylabel: str, optional
+                Label for the y-axis. Default is 'Value'.
+
 
         Returns
         -------
@@ -165,29 +188,58 @@ class TimeSeries(DataFrame):
 
         Examples
         --------
-        -
-        >>> ts = TimeSeries(np.random.randn(100))
-        >>> fig, ax = ts.plot_box()
+        - Plot the box plot for a 1D time series:
 
-        >>> data_2d = np.random.randn(100, 3)
-        >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C'])
-        >>> fig, ax = ts_2d.plot_box()
+            >>> ts = TimeSeries(np.random.randn(100))
+            >>> fig, ax = ts.box_plot()
+
+            .. image:: /_images/box_plot_1d.png
+                :align: center
+
+        - Plot the box plot for a 1D time series:
+
+            >>> data_2d = np.random.randn(100, 4)
+            >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
+            >>> fig, ax = ts_2d.box_plot(grid=True, mean=True)
+
+            .. image:: /_images/times_series/box_plot_2d.png
+                :align: center
+
+            >>> fig, ax = ts_2d.box_plot(grid=True, mean=True, color={"boxes": "#DC143C"})
+
+            .. image:: /_images/box_plot_color.png
+                :align: center
+
+            >>> fig, ax = ts_2d.box_plot(xlabel='Custom X', ylabel='Custom Y', title='Custom Box Plot')
+
+            .. image:: /_images/box_plot_axes-label.png
+                :align: center
+
+            >>> fig, ax = ts_2d.box_plot(notch=True)
+
+            .. image:: /_images/box_plot_notch.png
+                :align: center
         """
-        fig, ax = self._get_ax_fig(fig, ax)
-        # self.boxplot(ax=ax, color=color, grid=grid)
+        fig, ax = self._get_ax_fig(fig=kwargs.get("fig"), ax=kwargs.get("ax"))
+        color = kwargs.get("color", None)
+        data = [self[col].dropna() for col in self.columns]
         ax.boxplot(
-            [self[col].dropna() for col in self.columns],
+            data,
+            notch=notch,
             patch_artist=True,
+            showmeans=mean,
+            meanprops=MEAN_PROP,
             boxprops=dict(
                 facecolor=(
-                    "lightblue" if color is None else color.get("boxes", "lightblue")
+                    "#27408B" if color is None else color.get("boxes", "#27408B")
                 )
             ),
         )
         ax.set_xticklabels(self.columns)
-        ax.set_title(title)
-        ax.set_xlabel(xlabel)
-        ax.set_ylabel(ylabel)
-        ax.grid(grid)
+        ax.set_title(kwargs.get("title"))
+        ax.set_xlabel(kwargs.get("xlabel"))
+        ax.set_ylabel(kwargs.get("ylabel"))
+
+        ax.grid(kwargs.get("grid"), axis="both", linestyle="-.", linewidth=0.3)
         plt.show()
         return fig, ax

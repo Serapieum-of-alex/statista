@@ -47,14 +47,14 @@ class TestBoxPlot:
     def test_plot_box(self, ts: TimeSeries, request):
         """Test the plot_box method."""
         ts = request.getfixturevalue(ts)
-        fig, ax = ts.plot_box()
+        fig, ax = ts.box_plot()
         assert isinstance(
             fig, plt.Figure
         ), "plot_box should return a matplotlib Figure."
         assert isinstance(ax, plt.Axes), "plot_box should return a matplotlib Axes."
 
         fig, ax = plt.subplots()
-        fig2, ax2 = ts.plot_box(fig=fig, ax=ax)
+        fig2, ax2 = ts.box_plot(fig=fig, ax=ax)
         assert fig2 is fig, "If fig is provided, plot_box should use it."
         assert ax2 is ax, "If ax is provided, plot_box should use it."
         if ts.shape[1] > 1:
