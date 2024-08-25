@@ -1,5 +1,8 @@
 import pytest
 import numpy as np
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from statista.time_series import TimeSeries
 
@@ -59,3 +62,12 @@ class TestBoxPlot:
         assert ax2 is ax, "If ax is provided, plot_box should use it."
         if ts.shape[1] > 1:
             assert len(ax.get_xticklabels()) == 3
+
+    def test_calculate_wiskers(self):
+        data = list(range(100))
+        # ts = TimeSeries(data)
+        quartile1, medians, quartile3 = np.percentile(data, [25, 50, 75], axis=0)
+        whiskers = TimeSeries.calculate_whiskers(data, quartile1, quartile3)
+        assert isinstance(whiskers, tuple)
+        assert whiskers[0] == 0
+        assert whiskers[1] == 99

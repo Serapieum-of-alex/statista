@@ -243,3 +243,31 @@ class TimeSeries(DataFrame):
         ax.grid(kwargs.get("grid"), axis="both", linestyle="-.", linewidth=0.3)
         plt.show()
         return fig, ax
+
+    @staticmethod
+    def calculate_whiskers(data: Union[np.ndarray, list], q1: float, q3: float):
+        """Calculate the upper and lower whiskers for a box plot.
+
+        Parameters
+        ----------
+        data: np.ndarray
+            Input array of data.
+        q1: float
+            first quartile
+        q3: float
+            third quartile
+
+        Returns
+        -------
+        lower_wisker: float
+            Lower whisker value.
+        upper_wisker: float
+            Upper whisker value.
+        """
+        inter_quartile = q3 - q1
+        upper_whisker = q3 + inter_quartile * 1.5
+        upper_whisker = np.clip(upper_whisker, q3, data[-1])
+
+        lower_whisker = q1 - inter_quartile * 1.5
+        lower_whisker = np.clip(lower_whisker, data[0], q1)
+        return lower_whisker, upper_whisker
