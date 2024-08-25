@@ -1,4 +1,4 @@
-from typing import Union, List, Tuple
+from typing import Union, List, Tuple, Literal
 from pandas import DataFrame
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,6 +7,7 @@ from matplotlib.axes import Axes
 
 
 MEAN_PROP = dict(marker="x", markeredgecolor="w", markerfacecolor="firebrick")
+VIOLIN_PROP = dict(face="#27408B", edge="#DC143C", alpha=0.7)
 
 
 class TimeSeries(DataFrame):
@@ -271,3 +272,121 @@ class TimeSeries(DataFrame):
         lower_whisker = q1 - inter_quartile * 1.5
         lower_whisker = np.clip(lower_whisker, data[0], q1)
         return lower_whisker, upper_whisker
+
+    def violin(
+        self,
+        mean: bool = True,
+        median: bool = False,
+        extrema: bool = True,
+        side: Literal["both", "low", "high"] = "both",
+        spacing: int = 0,
+        **kwargs,
+    ) -> Tuple[Figure, Axes]:
+        """
+        Plots a violin plot of the time series data.
+
+        Parameters
+        ----------
+        mean: bool, optional, default is True.
+            Whether to show the mean in the violin plot.
+        median: bool, optional, default is False.
+            Whether to show the median in the violin plot.
+        extrema: bool, optional, default is False.
+            Whether to show the minima and maxima in the violin plot.
+        side: {'both', 'low', 'high'}, default: 'both'
+            'both' plots standard violins. 'low'/'high' only
+            plots the side below/above the positions value.
+        spacing: int, optional, default is 0.
+            The spacing (number of ticks) between the violins.
+        **kwargs: dict, optional
+            fig: matplotlib.figure.Figure, optional
+                Existing figure to plot on. If None, a new figure is created.
+            ax: matplotlib.axes.Axes, optional
+                Existing axes to plot on. If None, a new axes is created.
+            grid: bool, optional
+                Whether to show grid lines. Default is True.
+            color: dict, optional, default is None.
+                Colors to use for the plot elements. Default is None.
+                >>> color = {"face", "#27408B", "edge", "#DC143C", "alpha", 0.7}
+            title: str, optional
+                Title of the plot. Default is 'Box Plot'.
+            xlabel: str, optional
+                Label for the x-axis. Default is 'Index'.
+            ylabel: str, optional
+                Label for the y-axis. Default is 'Value'.
+
+        Returns
+        -------
+        fig: matplotlib.figure.Figure
+            The figure object containing the plot.
+        ax: matplotlib.axes.Axes
+            The axes object containing the plot.
+
+        Examples
+        --------
+        - Plot the box plot for a 1D time series:
+
+            >>> ts = TimeSeries(np.random.randn(100))
+            >>> fig, ax = ts.violin()
+
+            .. image:: /_images/violin_1d.png
+                :align: center
+
+        - Plot the box plot for a multiple time series:
+
+            >>> data_2d = np.random.randn(100, 4)
+            >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
+            >>> fig, ax = ts_2d.violin()
+
+            .. image:: /_images/times_series/violin_2d.png
+                :align: center
+
+        - you can control the spacing between the violins using the `spacing` parameter:
+
+            >>> fig, ax = ts_2d.violin(spacing=2)
+
+            .. image:: /_images/times_series/violin_2d_spacing.png
+                :align: center
+
+        - You can change the title, xlabel, and ylabel using the respective parameters:
+
+            >>> fig, ax = ts_2d.violin(xlabel='Random Data', ylabel='Custom Y', title='Custom Box Plot')
+
+            .. image:: /_images/times_series/violin_labels_titles.png
+                :align: center
+        - You can display the means, medians, and extrema using the respective parameters:
+
+            >>> fig, ax = ts_2d.violin(mean=True, median=True, extrema=True)
+
+            .. image:: /_images/violin_means_medians_extrena.png
+                :align: center
+        """
+        fig, ax = self._get_ax_fig(fig=kwargs.get("fig"), ax=kwargs.get("ax"))
+
+        # positions where violins are plotted (1, 3, 5, ...)ing labels
+        positions = np.arange(1, len(self.columns) * (spacing + 1) + 1, spacing + 1)
+
+        violin_parts = ax.violinplot(
+            self.values,
+            showmeans=mean,
+            showmedians=median,
+            showextrema=extrema,
+            side=side,
+            positions=positions,
+        )
+        color = kwargs.get("color") if "color" in kwargs else VIOLIN_PROP
+
+        for pc in violin_parts["bodies"]:
+            pc.set_facecolor(color.get("face"))
+            pc.set_edgecolor(color.get("edge"))
+            pc.set_alpha(color.get("alpha"))
+
+        ax.xaxis.set_ticks(positions)
+        ax.set_xticklabels(self.columns)
+        ax.set_title(kwargs.get("title"))
+        ax.set_xlabel(kwargs.get("xlabel"))
+        ax.set_ylabel(kwargs.get("ylabel"))
+
+        ax.grid(kwargs.get("grid"), axis="both", linestyle="-.", linewidth=0.3)
+        plt.show()
+        return fig, ax
