@@ -7,7 +7,7 @@ from matplotlib.figure import Figure
 from matplotlib.axes import Axes
 
 
-MEAN_PROP = dict(marker="x", markeredgecolor="w", markerfacecolor="firebrick")
+BOX_MEAN_PROP = dict(marker="x", markeredgecolor="w", markerfacecolor="firebrick")
 VIOLIN_PROP = dict(face="#27408B", edge="#DC143C", alpha=0.7)
 
 
@@ -241,7 +241,7 @@ class TimeSeries(DataFrame):
             notch=notch,
             patch_artist=True,
             showmeans=mean,
-            meanprops=MEAN_PROP,
+            meanprops=BOX_MEAN_PROP,
             boxprops=dict(
                 facecolor=(
                     "#27408B" if color is None else color.get("boxes", "#27408B")
