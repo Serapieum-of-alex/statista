@@ -8,7 +8,7 @@ from matplotlib.axes import Axes
 
 
 BOX_MEAN_PROP = dict(marker="x", markeredgecolor="w", markerfacecolor="firebrick")
-VIOLIN_PROP = dict(face="#27408B", edge="#DC143C", alpha=0.7)
+VIOLIN_PROP = dict(face="#27408B", edge="black", alpha=0.7)
 
 
 class TimeSeries(DataFrame):
@@ -586,5 +586,97 @@ class TimeSeries(DataFrame):
         # ax.yaxis.grid(True)
 
         # Display the plot
+        plt.show()
+        return fig, ax
+
+    def histogram(self, bins=10, **kwargs) -> Tuple[Figure, Axes]:
+        """
+        Plots a histogram of the time series data.
+
+        Parameters
+        ----------
+        bins : int, optional, default is 10.
+            Number of histogram bins.
+        **kwargs: dict, optional
+            fig: matplotlib.figure.Figure, optional
+                Existing figure to plot on. If None, a new figure is created.
+            ax: matplotlib.axes.Axes, optional
+                Existing axes to plot on. If None, a new axes is created.
+            grid: bool, optional
+                Whether to show grid lines. Default is True.
+            color: str, optional, default is None.
+                Colors to use for the plot elements.
+            title: str, optional
+                Title of the plot. Default is 'Box Plot'.
+            xlabel: str, optional
+                Label for the x-axis. Default is 'Index'.
+            ylabel: str, optional
+                Label for the y-axis. Default is 'Value'.
+            title_fontsize: int, optional
+                Font size of the title.
+            label_fontsize: int, optional
+                Font size of the title and labels.
+            tick_fontsize: int, optional
+                Font size of the tick labels.
+            legend: str, optional
+                Legend to display in the plot.
+            legend_fontsize: int, optional
+                Font size of the legend.
+
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+            The figure object containing the plot.
+        ax : matplotlib.axes.Axes
+            The axes object containing the plot.
+
+        Examples
+        --------
+        >>> ts = TimeSeries(np.random.randn(100))
+        >>> fig, ax = ts.histogram()
+        """
+        # plt.style.use('ggplot')
+
+        fig, ax = self._get_ax_fig(fig=kwargs.get("fig"), ax=kwargs.get("ax"))
+        color = kwargs.get("color") if "color" in kwargs else VIOLIN_PROP
+        ax.hist(
+            self.values,
+            bins=bins,
+            color=color.get("face"),
+            edgecolor=color.get("edge"),
+            alpha=color.get("alpha"),
+        )
+
+        # Set title and labels with larger font sizes
+        ax.set_title(
+            kwargs.get("title", "Histogram"),
+            fontsize=kwargs.get("title_fontsize", 18),
+            fontweight="bold",
+        )
+        ax.set_xlabel(
+            kwargs.get("xlabel", "X-axis Label"),
+            fontsize=kwargs.get("label_fontsize", 14),
+        )
+        ax.set_ylabel(
+            kwargs.get("ylabel", "Y-axis Label"),
+            fontsize=kwargs.get("label_fontsize", 14),
+        )
+
+        ax.grid(kwargs.get("grid"), axis="both", linestyle="-.", linewidth=0.3)
+
+        # Customize ticks and their labels
+        ax.tick_params(
+            axis="both", which="major", labelsize=kwargs.get("tick_fontsize", 12)
+        )
+
+        # Add a legend if needed
+        if "legend" in kwargs:
+            ax.legend(
+                [kwargs.get("legend")], fontsize=kwargs.get("legend_fontsize", 12)
+            )
+
+        # Adjust layout for better spacing
+        plt.tight_layout()
+
         plt.show()
         return fig, ax
