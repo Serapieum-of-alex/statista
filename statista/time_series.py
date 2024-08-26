@@ -289,14 +289,14 @@ class TimeSeries(DataFrame):
         Parameters
         ----------
         mean: bool, optional, default is True.
-            Whether to show the mean in the violin plot.
+            Whether to show the means in the violin plot.
         median: bool, optional, default is False.
             Whether to show the median in the violin plot.
         extrema: bool, optional, default is False.
             Whether to show the minima and maxima in the violin plot.
         side: {'both', 'low', 'high'}, default: 'both'
             'both' plots standard violins. 'low'/'high' only
-            plots the side below/above the positions value.
+            plots the side below/above the position value.
         spacing: int, optional, default is 0.
             The spacing (number of ticks) between the violins.
         **kwargs: dict, optional
@@ -466,12 +466,12 @@ class TimeSeries(DataFrame):
 
             >>> data_2d = np.random.randn(100, 4)
             >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
-            >>> fig, ax = ts_2d.box_plot(grid=True, mean=True)
+            >>> fig, ax = ts_2d.box_plot(mean=True, grid=True)
 
             .. image:: /_images/times_series/box_plot_2d.png
                 :align: center
 
-            >>> fig, ax = ts_2d.box_plot(grid=True, mean=True, color={"boxes": "#DC143C"})
+            >>> fig, ax = ts_2d.box_plot(mean=True, color={"boxes": "#DC143C"}, grid=True)
 
             .. image:: /_images/times_series/box_plot_color.png
                 :align: center
