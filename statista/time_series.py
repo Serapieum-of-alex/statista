@@ -119,6 +119,17 @@ class TimeSeries(DataFrame):
             fig = ax.figure
         return fig, ax
 
+    @staticmethod
+    def _adjust_axes_labels(
+        ax: Axes, tick_labels: List[str], title: str, xlabel: str, ylabel: str
+    ):
+        """Adjust the labels of the axes."""
+        ax.set_xticklabels(tick_labels)
+        ax.set_title(title)
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+        return ax
+
     def box_plot(
         self, mean: bool = False, notch: bool = False, **kwargs
     ) -> Tuple[Figure, Axes]:
@@ -237,10 +248,13 @@ class TimeSeries(DataFrame):
                 )
             ),
         )
-        ax.set_xticklabels(self.columns)
-        ax.set_title(kwargs.get("title"))
-        ax.set_xlabel(kwargs.get("xlabel"))
-        ax.set_ylabel(kwargs.get("ylabel"))
+        ax = self._adjust_axes_labels(
+            ax,
+            self.columns,
+            kwargs.get("title"),
+            kwargs.get("xlabel"),
+            kwargs.get("ylabel"),
+        )
 
         ax.grid(kwargs.get("grid"), axis="both", linestyle="-.", linewidth=0.3)
         plt.show()
@@ -391,10 +405,13 @@ class TimeSeries(DataFrame):
             pc.set_alpha(color.get("alpha"))
 
         ax.xaxis.set_ticks(positions)
-        ax.set_xticklabels(self.columns)
-        ax.set_title(kwargs.get("title"))
-        ax.set_xlabel(kwargs.get("xlabel"))
-        ax.set_ylabel(kwargs.get("ylabel"))
+        ax = self._adjust_axes_labels(
+            ax,
+            self.columns,
+            kwargs.get("title"),
+            kwargs.get("xlabel"),
+            kwargs.get("ylabel"),
+        )
 
         ax.grid(kwargs.get("grid"), axis="both", linestyle="-.", linewidth=0.3)
         plt.show()
@@ -555,10 +572,13 @@ class TimeSeries(DataFrame):
 
         # Set x-tick labels
         ax.set_xticks(positions)
-        ax.set_xticklabels(self.columns)
-        ax.set_title(kwargs.get("title"))
-        ax.set_xlabel(kwargs.get("xlabel"))
-        ax.set_ylabel(kwargs.get("ylabel"))
+        ax = self._adjust_axes_labels(
+            ax,
+            self.columns,
+            kwargs.get("title"),
+            kwargs.get("xlabel"),
+            kwargs.get("ylabel"),
+        )
 
         ax.grid(kwargs.get("grid"), axis="both", linestyle="-.", linewidth=0.3)
 
