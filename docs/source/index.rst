@@ -83,6 +83,7 @@ Main Features
 .. digraph:: Linking
 
     statista -> distributions;
+    statista -> timeseries;
     statista -> descriptors;
     statista -> parameters;
     statista -> sensitivity;
@@ -95,6 +96,7 @@ Main Features
 
    Installation <installation.rst>
    Distributions <distributions-tree.rst>
+   Time Series <timeseries-class.rst>
    Sensitivity analysis <sensitivity-tree.rst>
    Extreme Value Analysis <eva-class.rst>
    Metrics <descriptors-module.rst>
