@@ -232,22 +232,22 @@ class TimeSeries(DataFrame):
             >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
             >>> fig, ax = ts_2d.box_plot(mean=True, grid=True)
 
-            .. image:: /_images/times_series/box_plot_2d.png
+            .. image:: /_images/time_series/box_plot_2d.png
                 :align: center
 
             >>> fig, ax = ts_2d.box_plot(grid=True, mean=True, color={"boxes": "#DC143C"})
 
-            .. image:: /_images/times_series/box_plot_color.png
+            .. image:: /_images/time_series/box_plot_color.png
                 :align: center
 
             >>> fig, ax = ts_2d.box_plot(xlabel='Custom X', ylabel='Custom Y', title='Custom Box Plot')
 
-            .. image:: /_images/times_series/box_plot_axes-label.png
+            .. image:: /_images/time_series/box_plot_axes-label.png
                 :align: center
 
             >>> fig, ax = ts_2d.box_plot(notch=True)
 
-            .. image:: /_images/times_series/box_plot_notch.png
+            .. image:: /_images/time_series/box_plot_notch.png
                 :align: center
         """
         fig, ax = self._get_ax_fig(fig=kwargs.get("fig"), ax=kwargs.get("ax"))
@@ -361,7 +361,7 @@ class TimeSeries(DataFrame):
             >>> ts = TimeSeries(np.random.randn(100))
             >>> fig, ax = ts.violin()
 
-            .. image:: /_images/times_series/violin_1d.png
+            .. image:: /_images/time_series/violin_1d.png
                 :align: center
 
         - Plot the box plot for a multiple time series:
@@ -370,35 +370,35 @@ class TimeSeries(DataFrame):
             >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
             >>> fig, ax = ts_2d.violin()
 
-            .. image:: /_images/times_series/violin_2d.png
+            .. image:: /_images/time_series/violin_2d.png
                 :align: center
 
         - you can control the spacing between the violins using the `spacing` parameter:
 
             >>> fig, ax = ts_2d.violin(spacing=2)
 
-            .. image:: /_images/times_series/violin_2d_spacing.png
+            .. image:: /_images/time_series/violin_2d_spacing.png
                 :align: center
 
         - You can change the title, xlabel, and ylabel using the respective parameters:
 
             >>> fig, ax = ts_2d.violin(xlabel='Random Data', ylabel='Custom Y', title='Custom Box Plot')
 
-            .. image:: /_images/times_series/violin_labels_titles.png
+            .. image:: /_images/time_series/violin_labels_titles.png
                 :align: center
 
         - You can display the means, medians, and extrema using the respective parameters:
 
             >>> fig, ax = ts_2d.violin(mean=True, median=True, extrema=True)
 
-            .. image:: /_images/times_series/violin_means_medians_extrema.png
+            .. image:: /_images/time_series/violin_means_medians_extrema.png
                 :align: center
 
         - You can display the violins on the low side only using the `side` parameter:
 
             >>> fig, ax = ts_2d.violin(side='low')
 
-            .. image:: /_images/times_series/violin_low_side.png
+            .. image:: /_images/time_series/violin_low_side.png
                 :align: center
         """
         fig, ax = self._get_ax_fig(fig=kwargs.get("fig"), ax=kwargs.get("ax"))
