@@ -2,7 +2,7 @@
 Timeseries module
 #################
 
-.. automodule:: timeseries
+.. automodule:: time_series
    :members: TimeSeries
    :undoc-members:
    :show-inheritance:
