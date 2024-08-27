@@ -1,3 +1,20 @@
+"""
+Time Series Analysis and Visualization
+======================================
+This module provides a class to represent and analyze time series data using pandas DataFrame. It inherits from
+`pandas.DataFrame` and adds additional methods for statistical-analysis and visualization specific to time series data.
+
+Time Series Analysis
+--------------------
+- `stats`: Returns a detailed statistical summary of the time series.
+- `box_plot`: Plots a box plot of the time series data.
+- `violin`: Plots a violin plot of the time series data.
+- `raincloud`: Plots a raincloud plot of the time series data.
+- `histogram`: Plots a histogram of the time series data.
+
+https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.plot.html
+"""
+
 from typing import Union, List, Tuple, Literal
 from pandas import DataFrame
 from matplotlib.collections import PolyCollection
@@ -179,17 +196,17 @@ class TimeSeries(DataFrame):
                 Existing figure to plot on. If None, a new figure is created.
             ax: matplotlib.axes.Axes, optional
                 Existing axes to plot on. If None, a new axes is created.
-            grid: bool, optional
-                Whether to show grid lines. Default is True.
+            grid: bool, optional, Default is False.
+                Whether to show grid lines.
             color: dict, optional, default is None.
                 Colors to use for the plot elements. Default is None.
                 >>> color = {"boxes", "#27408B"}
             title: str, optional
-                Title of the plot. Default is 'Box Plot'.
+                Title of the plot.
             xlabel: str, optional
-                Label for the x-axis. Default is 'Index'.
+                Label for the x-axis.
             ylabel: str, optional
-                Label for the y-axis. Default is 'Value'.
+                Label for the y-axis.
 
 
         Returns
