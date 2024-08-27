@@ -493,32 +493,14 @@ class TimeSeries(DataFrame):
 
             >>> fig, ax = ts.raincloud(overlay=False)
 
-            .. image:: /_images/time_series/raincloud_1d.png
+            .. image:: /_images/time_series/raincloud-overlay-false.png
                 :align: center
 
         - Plot the box plot for a multiple time series:
 
             >>> data_2d = np.random.randn(100, 4)
             >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
-            >>> fig, ax = ts_2d.box_plot(mean=True, grid=True)
-
-            .. image:: /_images/times_series/box_plot_2d.png
-                :align: center
-
-            >>> fig, ax = ts_2d.box_plot(mean=True, color={"boxes": "#DC143C"}, grid=True)
-
-            .. image:: /_images/times_series/box_plot_color.png
-                :align: center
-
-            >>> fig, ax = ts_2d.box_plot(xlabel='Custom X', ylabel='Custom Y', title='Custom Box Plot')
-
-            .. image:: /_images/times_series/box_plot_axes-label.png
-                :align: center
-
-            >>> fig, ax = ts_2d.box_plot(notch=True)
-
-            .. image:: /_images/times_series/box_plot_notch.png
-                :align: center
+            >>> fig, ax = ts_2d.raincloud(mean=True, grid=True)
         """
         fig, ax = self._get_ax_fig(fig=kwargs.get("fig"), ax=kwargs.get("ax"))
         if order is None:
