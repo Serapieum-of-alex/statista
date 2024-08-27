@@ -391,7 +391,7 @@ class TimeSeries(DataFrame):
 
             >>> fig, ax = ts_2d.violin(mean=True, median=True, extrema=True)
 
-            .. image:: /_images/times_series/violin_means_medians_extrena.png
+            .. image:: /_images/times_series/violin_means_medians_extrema.png
                 :align: center
 
         - You can display the violins on the low side only using the `side` parameter:
