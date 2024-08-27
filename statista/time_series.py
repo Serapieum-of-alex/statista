@@ -361,7 +361,7 @@ class TimeSeries(DataFrame):
             >>> ts = TimeSeries(np.random.randn(100))
             >>> fig, ax = ts.violin()
 
-            .. image:: /_images/violin_1d.png
+            .. image:: /_images/times_series/violin_1d.png
                 :align: center
 
         - Plot the box plot for a multiple time series:
