@@ -137,14 +137,46 @@ class TimeSeries(DataFrame):
         return fig, ax
 
     @staticmethod
-    def _adjust_axes_labels(
-        ax: Axes, tick_labels: List[str], title: str, xlabel: str, ylabel: str
-    ):
+    def _adjust_axes_labels(ax: Axes, tick_labels: List[str] = None, **kwargs):
         """Adjust the labels of the axes."""
-        ax.set_xticklabels(tick_labels)
-        ax.set_title(title)
-        ax.set_xlabel(xlabel)
-        ax.set_ylabel(ylabel)
+        if tick_labels is not None:
+            ax.set_xticklabels(tick_labels)
+
+        ax.set_title(
+            kwargs.get("title"),
+            fontsize=kwargs.get("title_fontsize", 18),
+            fontweight="bold",
+        )
+        ax.set_xlabel(
+            kwargs.get("xlabel"),
+            fontsize=kwargs.get("xlabel_fontsize", 14),
+        )
+        ax.set_ylabel(
+            kwargs.get("ylabel"),
+            fontsize=kwargs.get("ylabel_fontsize", 14),
+        )
+
+        ax.grid(
+            kwargs.get("grid", True),
+            axis=kwargs.get("grid_axis", "both"),
+            linestyle=kwargs.get("grid_line_style", "-."),
+            linewidth=kwargs.get("grid_line_width", 0.3),
+        )
+
+        # Customize ticks and their labels
+        ax.tick_params(
+            axis="both", which="major", labelsize=kwargs.get("tick_fontsize", 12)
+        )
+
+        # Add a legend if needed
+        if "legend" in kwargs:
+            ax.legend(
+                [kwargs.get("legend")], fontsize=kwargs.get("legend_fontsize", 12)
+            )
+
+        # Adjust layout for better spacing
+        plt.tight_layout()
+
         return ax
 
     def box_plot(
@@ -251,6 +283,8 @@ class TimeSeries(DataFrame):
                 :align: center
         """
         fig, ax = self._get_ax_fig(fig=kwargs.get("fig"), ax=kwargs.get("ax"))
+        kwargs.pop("fig", None)
+        kwargs.pop("ax", None)
         color = kwargs.get("color", None)
         data = [self[col].dropna() for col in self.columns]
         ax.boxplot(
@@ -268,12 +302,9 @@ class TimeSeries(DataFrame):
         ax = self._adjust_axes_labels(
             ax,
             self.columns,
-            kwargs.get("title"),
-            kwargs.get("xlabel"),
-            kwargs.get("ylabel"),
+            **kwargs,
         )
 
-        ax.grid(kwargs.get("grid"), axis="both", linestyle="-.", linewidth=0.3)
         plt.show()
         return fig, ax
 
@@ -402,7 +433,8 @@ class TimeSeries(DataFrame):
                 :align: center
         """
         fig, ax = self._get_ax_fig(fig=kwargs.get("fig"), ax=kwargs.get("ax"))
-
+        kwargs.pop("fig", None)
+        kwargs.pop("ax", None)
         # positions where violins are plotted (1, 3, 5, ...)ing labels
         positions = np.arange(1, len(self.columns) * (spacing + 1) + 1, spacing + 1)
 
@@ -425,12 +457,9 @@ class TimeSeries(DataFrame):
         ax = self._adjust_axes_labels(
             ax,
             self.columns,
-            kwargs.get("title"),
-            kwargs.get("xlabel"),
-            kwargs.get("ylabel"),
+            **kwargs,
         )
 
-        ax.grid(kwargs.get("grid"), axis="both", linestyle="-.", linewidth=0.3)
         plt.show()
         return fig, ax
 
@@ -503,6 +532,8 @@ class TimeSeries(DataFrame):
             >>> fig, ax = ts_2d.raincloud(mean=True, grid=True)
         """
         fig, ax = self._get_ax_fig(fig=kwargs.get("fig"), ax=kwargs.get("ax"))
+        kwargs.pop("fig", None)
+        kwargs.pop("ax", None)
         if order is None:
             order = ["violin", "scatter", "box"]
 
@@ -574,12 +605,8 @@ class TimeSeries(DataFrame):
         ax = self._adjust_axes_labels(
             ax,
             self.columns,
-            kwargs.get("title"),
-            kwargs.get("xlabel"),
-            kwargs.get("ylabel"),
+            **kwargs,
         )
-
-        ax.grid(kwargs.get("grid"), axis="both", linestyle="-.", linewidth=0.3)
 
         # Add grid lines for better readability
         # ax.yaxis.grid(True)
@@ -637,6 +664,8 @@ class TimeSeries(DataFrame):
         # plt.style.use('ggplot')
 
         fig, ax = self._get_ax_fig(fig=kwargs.get("fig"), ax=kwargs.get("ax"))
+        kwargs.pop("fig", None)
+        kwargs.pop("ax", None)
         color = kwargs.get("color") if "color" in kwargs else VIOLIN_PROP
         ax.hist(
             self.values,
@@ -646,36 +675,11 @@ class TimeSeries(DataFrame):
             alpha=color.get("alpha"),
         )
 
-        # Set title and labels with larger font sizes
-        ax.set_title(
-            kwargs.get("title", "Histogram"),
-            fontsize=kwargs.get("title_fontsize", 18),
-            fontweight="bold",
+        ax = self._adjust_axes_labels(
+            ax,
+            self.columns,
+            **kwargs,
         )
-        ax.set_xlabel(
-            kwargs.get("xlabel", "X-axis Label"),
-            fontsize=kwargs.get("label_fontsize", 14),
-        )
-        ax.set_ylabel(
-            kwargs.get("ylabel", "Y-axis Label"),
-            fontsize=kwargs.get("label_fontsize", 14),
-        )
-
-        ax.grid(kwargs.get("grid"), axis="both", linestyle="-.", linewidth=0.3)
-
-        # Customize ticks and their labels
-        ax.tick_params(
-            axis="both", which="major", labelsize=kwargs.get("tick_fontsize", 12)
-        )
-
-        # Add a legend if needed
-        if "legend" in kwargs:
-            ax.legend(
-                [kwargs.get("legend")], fontsize=kwargs.get("legend_fontsize", 12)
-            )
-
-        # Adjust layout for better spacing
-        plt.tight_layout()
 
         plt.show()
         return fig, ax

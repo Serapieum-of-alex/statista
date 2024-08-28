@@ -119,9 +119,9 @@ class TestHistogram:
         # Test with default parameters
         ts = TimeSeries(np.array([1, 2, 2, 3, 3, 3, 4, 4, 4, 4]))
         fig, ax = ts.histogram()
-        assert ax.get_title() == "Histogram"
-        assert ax.get_xlabel() == "X-axis Label"
-        assert ax.get_ylabel() == "Y-axis Label"
+        assert ax.get_title() == ""
+        assert ax.get_xlabel() == ""
+        assert ax.get_ylabel() == ""
         plt.close()
 
     def test_custom_labels(self):
