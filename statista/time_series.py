@@ -125,9 +125,9 @@ class TimeSeries(DataFrame):
         return self.describe()
 
     @staticmethod
-    def _get_ax_fig(
-        fig: Figure = None, ax: Axes = None, n_subplots: int = 1
-    ) -> Tuple[Figure, Axes]:
+    def _get_ax_fig(n_subplots: int = 1, **kwargs) -> Tuple[Figure, Axes]:
+        fig = kwargs.get("fig")
+        ax = kwargs.get("ax")
         if ax is None and fig is None:
             fig, ax = plt.subplots(n_subplots, figsize=(8, 6))
         elif ax is None:
@@ -282,7 +282,7 @@ class TimeSeries(DataFrame):
             .. image:: /_images/time_series/box_plot_notch.png
                 :align: center
         """
-        fig, ax = self._get_ax_fig(fig=kwargs.get("fig"), ax=kwargs.get("ax"))
+        fig, ax = self._get_ax_fig(**kwargs)
         kwargs.pop("fig", None)
         kwargs.pop("ax", None)
         color = kwargs.get("color", None)
@@ -432,9 +432,9 @@ class TimeSeries(DataFrame):
             .. image:: /_images/time_series/violin_low_side.png
                 :align: center
         """
-        fig, ax = self._get_ax_fig(fig=kwargs.get("fig"), ax=kwargs.get("ax"))
-        kwargs.pop("fig", None)
-        kwargs.pop("ax", None)
+        fig, ax = self._get_ax_fig(**kwargs)
+        # kwargs.pop("fig", None)
+
         # positions where violins are plotted (1, 3, 5, ...)ing labels
         positions = np.arange(1, len(self.columns) * (spacing + 1) + 1, spacing + 1)
 
@@ -454,6 +454,8 @@ class TimeSeries(DataFrame):
             pc.set_alpha(color.get("alpha"))
 
         ax.xaxis.set_ticks(positions)
+        # remove the ax from the kwargs to avoid passing it to the adjust_axes_labels method twice
+        kwargs.pop("ax", None)
         ax = self._adjust_axes_labels(
             ax,
             self.columns,
@@ -531,7 +533,7 @@ class TimeSeries(DataFrame):
             >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
             >>> fig, ax = ts_2d.raincloud(mean=True, grid=True)
         """
-        fig, ax = self._get_ax_fig(fig=kwargs.get("fig"), ax=kwargs.get("ax"))
+        fig, ax = self._get_ax_fig(**kwargs)
         kwargs.pop("fig", None)
         kwargs.pop("ax", None)
         if order is None:
@@ -663,9 +665,8 @@ class TimeSeries(DataFrame):
         """
         # plt.style.use('ggplot')
 
-        fig, ax = self._get_ax_fig(fig=kwargs.get("fig"), ax=kwargs.get("ax"))
-        kwargs.pop("fig", None)
-        kwargs.pop("ax", None)
+        fig, ax = self._get_ax_fig(**kwargs)
+
         color = kwargs.get("color") if "color" in kwargs else VIOLIN_PROP
         ax.hist(
             self.values,
@@ -675,6 +676,14 @@ class TimeSeries(DataFrame):
             alpha=color.get("alpha"),
         )
 
+        kwargs.pop("ax", None)
+        ax = self._adjust_axes_labels(
+            ax,
+            self.columns,
+            **kwargs,
+        )
+
+        plt.show()
         ax = self._adjust_axes_labels(
             ax,
             self.columns,
