@@ -735,6 +735,47 @@ class TimeSeries(DataFrame):
 
         plt.show()
         return n_values, bin_edges, fig, ax
+
+    def density(self, **kwargs) -> Tuple[Figure, Axes]:
+        """
+        Plots a density plot of the time series data.
+
+        Parameters
+        ----------
+        color : str, optional
+            Color of the density line. Default is 'blue'.
+        **kwargs: dict, optional
+            fig: matplotlib.figure.Figure, optional
+                Existing figure to plot on. If None, a new figure is created.
+            ax: matplotlib.axes.Axes, optional
+                Existing axes to plot on. If None, a new axes is created.
+            grid: bool, optional, Default is False.
+                Whether to show grid lines.
+            color: dict, optional, default is None.
+                Colors to use for the plot elements. Default is None.
+                >>> color = {"boxes", "#27408B"}
+            title: str, optional
+                Title of the plot.
+            xlabel: str, optional
+                Label for the x-axis.
+            ylabel: str, optional
+                Label for the y-axis.
+
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+            The figure object containing the plot.
+        ax : matplotlib.axes.Axes
+            The axes object containing the plot.
+
+        Examples
+        --------
+        >>> ts = TimeSeries(np.random.randn(100))
+        >>> fig, ax = ts.plot_density()
+        """
+        fig, ax = self._get_ax_fig(**kwargs)
+        color = kwargs.get("color", None)
+        self[self.columns].plot(kind="density", ax=ax, color=color)
         ax = self._adjust_axes_labels(
             ax,
             self.columns,
