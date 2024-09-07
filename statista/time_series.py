@@ -618,7 +618,9 @@ class TimeSeries(DataFrame):
         plt.show()
         return fig, ax
 
-    def histogram(self, bins=10, **kwargs) -> Tuple[Figure, Axes]:
+    def histogram(
+        self, bins=10, **kwargs
+    ) -> Tuple[np.ndarray, np.ndarray, Figure, Axes]:
         """
         Plots a histogram of the time series data.
 
@@ -658,13 +660,24 @@ class TimeSeries(DataFrame):
             The figure object containing the plot.
         ax : matplotlib.axes.Axes
             The axes object containing the plot.
+        n_values : np.ndarray
+            The number of values in each histogram bin.
+        bin_edges : np.ndarray
+            The edges of the bins. Length nbins + 1 (nbins left edges and right
+            edge of last bin).  Always a single array even when multiple data
+            sets are passed in.
 
         Examples
         --------
         - Plot the box plot for a 1D time series:
 
             >>> ts = TimeSeries(np.random.randn(100))
-            >>> fig, ax = ts.histogram()
+            >>> n_values, bin_edges, fig, ax = ts.histogram()
+            >>> print(n_values)
+            [ 5.  8. 11. 12. 14. 17. 15.  9.  4.  5.]
+            >>> print(bin_edges)
+            [-2.41934673 -1.9628219  -1.50629707 -1.04977224 -0.5932474  -0.13672257
+              0.31980226  0.77632709  1.23285192  1.68937676  2.14590159]
 
             .. image:: /_images/time_series/histogram.png
                 :align: center
@@ -673,9 +686,17 @@ class TimeSeries(DataFrame):
 
             >>> data_2d = np.random.randn(100, 4)
             >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
-            >>> fig, ax = ts_2d.histogram(legend=['A', 'B', 'C', 'D'])
+            >>> n_values, bin_edges, fig, ax = ts_2d.histogram(legend=['A', 'B', 'C', 'D'])
+            >>> print(n_values)
+            [[ 0.  7.  9. 12. 20. 20. 19.  7.  5.  1.]
+             [ 1.  1.  9. 12. 20. 25. 13. 14.  5.  0.]
+             [ 5.  4. 11. 10. 18. 23. 13.  9.  4.  3.]
+             [ 1.  2. 11. 18. 16. 20. 13. 11.  6.  2.]]
+            >>> print(bin_edges)
+            [-2.76976813 -2.22944508 -1.68912202 -1.14879896 -0.6084759  -0.06815285
+              0.47217021  1.01249327  1.55281633  2.09313939  2.63346244]
 
-            .. image:: /_images/time_series/box_plot_2d.png
+            .. image:: /_images/time_series/histogram-2d.png
                 :align: center
 
         """
@@ -688,10 +709,10 @@ class TimeSeries(DataFrame):
             if not isinstance(color.get("face"), list):
                 color = None
                 warnings.warn(
-                    "Multiple columns detected. Please provide a list of colors for each column, Otherwise the given "
+                    "Multiple columns detected. Please provide a list of colors for each column, Otherwise the given"
                     "color will be ignored."
                 )
-        ax.hist(
+        n_values, bin_edges, _ = ax.hist(
             self.values,
             bins=bins,
             color=color.get("face") if color else None,
@@ -708,11 +729,12 @@ class TimeSeries(DataFrame):
 
         ax = self._adjust_axes_labels(
             ax,
-            self.columns,
+            kwargs.get("tick_labels"),
             **kwargs,
         )
 
         plt.show()
+        return n_values, bin_edges, fig, ax
         ax = self._adjust_axes_labels(
             ax,
             self.columns,

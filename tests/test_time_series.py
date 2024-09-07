@@ -118,7 +118,7 @@ class TestHistogram:
     def test_default(self):
         # Test with default parameters
         ts = TimeSeries(np.array([1, 2, 2, 3, 3, 3, 4, 4, 4, 4]))
-        fig, ax = ts.histogram()
+        n_values, bin_edges, fig, ax = ts.histogram()
         assert ax.get_title() == ""
         assert ax.get_xlabel() == ""
         assert ax.get_ylabel() == ""
@@ -128,7 +128,7 @@ class TestHistogram:
         # Test with default parameters
         arr = np.random.randn(100, 4)
         ts = TimeSeries(arr)
-        fig, ax = ts.histogram()
+        n_values, bin_edges, fig, ax = ts.histogram()
         assert ax.get_title() == ""
         assert ax.get_xlabel() == ""
         assert ax.get_ylabel() == ""
@@ -137,7 +137,7 @@ class TestHistogram:
     def test_custom_labels(self):
         # Test with custom title and labels
         ts = TimeSeries(np.array([1, 2, 3, 4, 5]))
-        fig, ax = ts.histogram(
+        n_values, bin_edges, fig, ax = ts.histogram(
             title="Custom Title", xlabel="Custom X", ylabel="Custom Y"
         )
 
@@ -149,7 +149,9 @@ class TestHistogram:
     def test_custom_colors(self):
         # Test with custom colors
         ts = TimeSeries(np.array([1, 2, 3, 4, 5]))
-        fig, ax = ts.histogram(color=dict(face="green", edge="red", alpha=0.5))
+        n_values, bin_edges, fig, ax = ts.histogram(
+            color=dict(face="green", edge="red", alpha=0.5)
+        )
 
         patches = ax.patches
         assert patches[0].get_facecolor() == (
@@ -165,11 +167,11 @@ class TestHistogram:
         # Test with a legend
         ts = TimeSeries(np.array([1, 2, 3, 4, 5]))
         # default legend
-        fig, ax = ts.histogram()
+        n_values, bin_edges, fig, ax = ts.histogram()
         legend = ax.get_legend()
         assert legend.get_texts()[0].get_text() == "Series1"
         # custom legend
-        fig, ax = ts.histogram(legend=["Sample Legend"])
+        n_values, bin_edges, fig, ax = ts.histogram(legend=["Sample Legend"])
 
         legend = ax.get_legend()
         assert legend is not None
@@ -179,7 +181,7 @@ class TestHistogram:
         data_2d = np.random.randn(100, 4)
         cols = ["A", "B", "C", "D"]
         ts_2d = TimeSeries(data_2d, columns=cols)
-        fig, ax = ts_2d.histogram(legend=cols)
+        n_values, bin_edges, fig, ax = ts_2d.histogram(legend=cols)
         legend = ax.get_legend()
         assert legend is not None
         legend_labels = [legend.get_texts()[i].get_text() for i in range(len(cols))]
@@ -190,7 +192,7 @@ class TestHistogram:
     def test_bins(self):
         # Test with different number of bins
         ts = TimeSeries(np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
-        fig, ax = ts.histogram(bins=5)
+        n_values, bin_edges, fig, ax = ts.histogram(bins=5)
 
         # Number of bars should match the number of bins
         assert len(ax.patches) == 5
@@ -199,7 +201,7 @@ class TestHistogram:
     def test_grid_and_ticks(self):
         # Test grid and tick customization
         ts = TimeSeries(np.array([1, 2, 3, 4, 5]))
-        fig, ax = ts.histogram(tick_fontsize=16)
+        n_values, bin_edges, fig, ax = ts.histogram(tick_fontsize=16)
 
         for tick in ax.get_xticklabels() + ax.get_yticklabels():
             assert tick.get_fontsize() == 16  # Check the fontsize of the ticks
