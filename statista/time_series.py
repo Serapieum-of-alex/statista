@@ -649,6 +649,8 @@ class TimeSeries(DataFrame):
                 Font size of the title and labels.
             tick_fontsize: int, optional
                 Font size of the tick labels.
+            xtick_labels: List[str], optional
+                Labels for the x-axis ticks.
             legend: List[str], optional
                 Legend to display in the plot.
             legend_fontsize: int, optional
@@ -729,7 +731,7 @@ class TimeSeries(DataFrame):
 
         ax = self._adjust_axes_labels(
             ax,
-            kwargs.get("tick_labels"),
+            kwargs.get("xtick_labels"),
             **kwargs,
         )
 
