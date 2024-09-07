@@ -474,7 +474,7 @@ class TimeSeries(DataFrame):
         boxplot_width: float = 0.1,
         order: List[str] = None,
         **kwargs,
-    ):
+    ) -> Tuple[Figure, Axes]:
         """RainCloud plot.
 
         Parameters
@@ -785,4 +785,5 @@ class TimeSeries(DataFrame):
         )
 
         plt.show()
+
         return fig, ax
