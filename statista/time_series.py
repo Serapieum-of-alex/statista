@@ -15,6 +15,7 @@ Time Series Analysis
 https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.plot.html
 """
 
+import warnings
 from typing import Union, List, Tuple, Literal
 from pandas import DataFrame
 from matplotlib.collections import PolyCollection
@@ -170,9 +171,9 @@ class TimeSeries(DataFrame):
 
         # Add a legend if needed
         if "legend" in kwargs:
-            ax.legend(
-                [kwargs.get("legend")], fontsize=kwargs.get("legend_fontsize", 12)
-            )
+            labels = kwargs.get("legend")
+
+            ax.legend(labels, fontsize=kwargs.get("legend_fontsize", 12))
 
         # Adjust layout for better spacing
         plt.tight_layout()
@@ -646,7 +647,7 @@ class TimeSeries(DataFrame):
                 Font size of the title and labels.
             tick_fontsize: int, optional
                 Font size of the tick labels.
-            legend: str, optional
+            legend: List[str], optional
                 Legend to display in the plot.
             legend_fontsize: int, optional
                 Font size of the legend.
@@ -660,23 +661,51 @@ class TimeSeries(DataFrame):
 
         Examples
         --------
-        >>> ts = TimeSeries(np.random.randn(100))
-        >>> fig, ax = ts.histogram()
+        - Plot the box plot for a 1D time series:
+
+            >>> ts = TimeSeries(np.random.randn(100))
+            >>> fig, ax = ts.histogram()
+
+            .. image:: /_images/time_series/histogram.png
+                :align: center
+
+        - Plot the box plot for a multiple time series:
+
+            >>> data_2d = np.random.randn(100, 4)
+            >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
+            >>> fig, ax = ts_2d.histogram(legend=['A', 'B', 'C', 'D'])
+
+            .. image:: /_images/time_series/box_plot_2d.png
+                :align: center
+
         """
         # plt.style.use('ggplot')
 
         fig, ax = self._get_ax_fig(**kwargs)
 
         color = kwargs.get("color") if "color" in kwargs else VIOLIN_PROP
+        if len(self.columns) > 1:
+            if not isinstance(color.get("face"), list):
+                color = None
+                warnings.warn(
+                    "Multiple columns detected. Please provide a list of colors for each column, Otherwise the given "
+                    "color will be ignored."
+                )
         ax.hist(
             self.values,
             bins=bins,
-            color=color.get("face"),
-            edgecolor=color.get("edge"),
-            alpha=color.get("alpha"),
+            color=color.get("face") if color else None,
+            edgecolor=color.get("edge") if color else None,
+            alpha=color.get("alpha") if color else None,
         )
 
         kwargs.pop("ax", None)
+        kwargs["legend"] = (
+            kwargs.get("legend")
+            if kwargs.get("legend") is not None
+            else self.columns.to_list()
+        )
+
         ax = self._adjust_axes_labels(
             ax,
             self.columns,

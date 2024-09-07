@@ -124,6 +124,16 @@ class TestHistogram:
         assert ax.get_ylabel() == ""
         plt.close()
 
+    def test_default_2d(self):
+        # Test with default parameters
+        arr = np.random.randn(100, 4)
+        ts = TimeSeries(arr)
+        fig, ax = ts.histogram()
+        assert ax.get_title() == ""
+        assert ax.get_xlabel() == ""
+        assert ax.get_ylabel() == ""
+        plt.close()
+
     def test_custom_labels(self):
         # Test with custom title and labels
         ts = TimeSeries(np.array([1, 2, 3, 4, 5]))
@@ -154,11 +164,27 @@ class TestHistogram:
     def test_legend(self):
         # Test with a legend
         ts = TimeSeries(np.array([1, 2, 3, 4, 5]))
-        fig, ax = ts.histogram(legend="Sample Legend")
+        # default legend
+        fig, ax = ts.histogram()
+        legend = ax.get_legend()
+        assert legend.get_texts()[0].get_text() == "Series1"
+        # custom legend
+        fig, ax = ts.histogram(legend=["Sample Legend"])
 
         legend = ax.get_legend()
         assert legend is not None
         assert legend.get_texts()[0].get_text() == "Sample Legend"
+        plt.close()
+        # 2D data
+        data_2d = np.random.randn(100, 4)
+        cols = ["A", "B", "C", "D"]
+        ts_2d = TimeSeries(data_2d, columns=cols)
+        fig, ax = ts_2d.histogram(legend=cols)
+        legend = ax.get_legend()
+        assert legend is not None
+        legend_labels = [legend.get_texts()[i].get_text() for i in range(len(cols))]
+        assert legend_labels == cols
+
         plt.close()
 
     def test_bins(self):
