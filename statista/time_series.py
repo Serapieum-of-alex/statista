@@ -777,15 +777,29 @@ class TimeSeries(DataFrame):
 
         Examples
         --------
-        >>> ts = TimeSeries(np.random.randn(100))
-        >>> fig, ax = ts.plot_density()
+        - Plot the KDE density plot for a 1D time series:
+
+            >>> ts = TimeSeries(np.random.randn(100))
+            >>> fig, ax = ts.density(title='Density Plot', xlabel='Random Values', ylabel='KDE density')
+
+            .. image:: /_images/time_series/density-1d.png
+                    :align: center
+
+        - Plot the KDE density plot for a 2D time series:
+
+            >>> ts = TimeSeries(np.random.randn(100, 4))
+            >>> fig, ax = ts.density(title='Density Plot', xlabel='Random Values', ylabel='KDE density')
+
+            .. image:: /_images/time_series/density-2d.png
+                    :align: center
         """
         fig, ax = self._get_ax_fig(**kwargs)
         color = kwargs.get("color", None)
-        self[self.columns].plot(kind="density", ax=ax, color=color)
+        self[self.columns.to_list()].plot(kind="density", ax=ax, color=color)
+        kwargs.pop("ax", None)
         ax = self._adjust_axes_labels(
             ax,
-            self.columns,
+            kwargs.get("xtick_labels"),
             **kwargs,
         )
 

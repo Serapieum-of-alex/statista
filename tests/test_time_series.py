@@ -226,3 +226,21 @@ class TestRollingStatistics:
         fig2, ax2 = ts.rolling_statistics(fig=fig, ax=ax)
         assert fig2 is fig, "If fig is provided, plot_rolling_statistics should use it."
         assert ax2 is ax, "If ax is provided, plot_rolling_statistics should use it."
+
+
+class TestDensity:
+
+    @pytest.mark.parametrize("ts", ["ts_1d", "ts_2d"])
+    def test_plot_density(self, ts: TimeSeries, request):
+        """Test the plot_density method."""
+        ts = request.getfixturevalue(ts)
+        fig, ax = ts.density()
+        assert isinstance(
+            fig, plt.Figure
+        ), "plot_density should return a matplotlib Figure."
+        assert isinstance(ax, plt.Axes), "plot_density should return a matplotlib Axes."
+
+        fig, ax = plt.subplots()
+        fig2, ax2 = ts.density(fig=fig, ax=ax)
+        assert fig2 is fig, "If fig is provided, plot_density should use it."
+        assert ax2 is ax, "If ax is provided, plot_density should use it."
