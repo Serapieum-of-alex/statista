@@ -206,3 +206,23 @@ class TestHistogram:
         for tick in ax.get_xticklabels() + ax.get_yticklabels():
             assert tick.get_fontsize() == 16  # Check the fontsize of the ticks
         plt.close()
+
+
+class TestRollingStatistics:
+
+    @pytest.mark.parametrize("ts", ["ts_1d", "ts_2d"])
+    def test_plot_rolling_statistics(self, ts: TimeSeries, request):
+        """Test the plot_rolling_statistics method."""
+        ts = request.getfixturevalue(ts)
+        fig, ax = ts.rolling_statistics()
+        assert isinstance(
+            fig, plt.Figure
+        ), "plot_rolling_statistics should return a matplotlib Figure."
+        assert isinstance(
+            ax, plt.Axes
+        ), "plot_rolling_statistics should return a matplotlib Axes."
+
+        fig, ax = plt.subplots()
+        fig2, ax2 = ts.rolling_statistics(fig=fig, ax=ax)
+        assert fig2 is fig, "If fig is provided, plot_rolling_statistics should use it."
+        assert ax2 is ax, "If ax is provided, plot_rolling_statistics should use it."

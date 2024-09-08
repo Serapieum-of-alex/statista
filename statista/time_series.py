@@ -787,3 +787,85 @@ class TimeSeries(DataFrame):
         plt.show()
 
         return fig, ax
+
+    def rolling_statistics(self, window=10, **kwargs) -> Tuple[Figure, Axes]:
+        """
+        Plots the rolling mean and standard deviation of the time series data.
+
+        Parameters
+        ----------
+        window : int, optional, default is 10.
+            The window size for the rolling statistics.
+        **kwargs: dict, optional
+            fig: matplotlib.figure.Figure, optional
+                Existing figure to plot on. If None, a new figure is created.
+            ax: matplotlib.axes.Axes, optional
+                Existing axes to plot on. If None, a new axes is created.
+            grid: bool, optional
+                Whether to show grid lines. Default is True.
+            color: str, optional, default is None.
+                Colors to use for the plot elements.
+            title: str, optional
+                Title of the plot. Default is 'Rolling Mean & Standard Deviation'.
+            xlabel: str, optional
+                Label for the x-axis. Default is 'Index'.
+            ylabel: str, optional
+                Label for the y-axis. Default is 'Value'.
+            title_fontsize: int, optional
+                Font size of the title.
+            label_fontsize: int, optional
+                Font size of the title and labels.
+            tick_fontsize: int, optional
+                Font size of the tick labels.
+            xtick_labels: List[str], optional
+                Labels for the x-axis ticks.
+            legend: List[str], optional
+                Legend to display in the plot.
+            legend_fontsize: int, optional
+                Font size of the legend.
+
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+            The figure object containing the plot.
+        ax : matplotlib.axes.Axes
+            The axes object containing the plot.
+
+        Examples
+        --------
+        - Plot the rolling average and standard deviation for a 1D time series:
+
+            >>> ts = TimeSeries(np.random.randn(100))
+            >>> fig, ax = ts.rolling_statistics(
+            ...    window=20, title='Rolling Statistics', xlabel='Random Values', ylabel='Random Y',
+            ...    legend=['Rolling Mean', 'Rolling Std']
+            ... )
+
+                .. image:: /_images/time_series/rolling-statistics.png
+                        :align: center
+
+        - Plot the rolling average and standard deviation for a 2D time series:
+
+            >>> ts = TimeSeries(np.random.randn(100, 3))
+            >>> fig, ax = ts.rolling_statistics(
+            ...    window=10, title='Rolling Statistics', xlabel='Random Values', ylabel='Random Y',
+            ... )
+
+                .. image:: /_images/time_series/rolling-statistics-2d.png
+                        :align: center
+        """
+        fig, ax = self._get_ax_fig(**kwargs)
+
+        rolling_mean = self[self.columns].rolling(window=window).mean()
+        rolling_std = self[self.columns].rolling(window=window).std()
+
+        ax.plot(self.index, rolling_mean, label="Rolling Mean", color="blue")
+        ax.plot(self.index, rolling_std, label="Rolling Std", color="red")
+        kwargs.pop("ax", None)
+        ax = self._adjust_axes_labels(
+            ax,
+            kwargs.get("xtick_labels"),
+            **kwargs,
+        )
+        plt.show()
+        return fig, ax
