@@ -1,0 +1,92 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "statista"
+version = "0.6.0"
+description = "statistics package"
+readme = "README.md"
+requires-python = ">=3.7"
+license = { file = "LICENSE.md" }
+authors = [{ name = "Mostafa Farrag", email = "moah.farag@gmail.come" }]
+keywords = [
+    "statistics",
+    "distributions",
+    "extreme-value-analysis",
+    "probability",
+    "sensitivity-analysis",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+]
+dependencies = [
+    "loguru>=0.7.2",
+    "matplotlib>=3.9.0",
+    "numpy>=2.0.1",
+    "pandas>=2.1.0",
+    "pip>=23.2.1",
+    "scikit-learn>=1.5.1",
+    "scipy>=1.14.0",
+]
+
+[project.optional-dependencies]
+# Development related packages
+dev = [
+    "black>=24.4.2",
+    "darglint>=1.8.1",
+    "flake8-bandit>=4.1.1",
+    "flake8-bugbear>=24.4.26",
+    "flake8-docstrings>=1.7.0",
+    "flake8-rst-docstrings>=0.3.0",
+    "nbval>=0.11.0",
+    "pep8-naming>=0.14.1",
+    "pre-commit>=3.7.1",
+    "pre-commit-hooks>=4.6.0",
+    "pytest>=8.2.2",
+    "pytest-cov>=5.0.0",
+    "reorder-python-imports>=3.13.0",
+]
+# Documentation building packages
+docs = [
+    "easydev",
+    "graphviz",
+    "matplotlib>=3.8.4",
+    "nbsphinx",
+    "numpy>=2.0.0",
+    "numpydoc==1.8.0",
+    "pandas",
+    "pip>=21.3.1",
+    "pydata_sphinx_theme>=0.15.2",
+    "sphinxcontrib-napoleon",
+    "typing-extensions==4.12.*",
+]
+
+[tool.setuptools]
+zip-safe = false
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["statista", "statista.*"]
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: mark test as slow.",
+    "fast: mark test as fast.",
+]
+
+[tool.flake8]
+ignore = ["E203", "E266", "E501", "W503", "E741"]
+max-line-length = 88
+max-complexity = 18
+select = ["B", "C", "E", "F", "W", "T4"]
