@@ -3,7 +3,7 @@ graphviz
 matplotlib >=3.8.4
 nbsphinx
 numpy >=2.0.0
-numpydoc==1.8.0
+numpydoc==1.9.0
 pandas
 pip >=21.3.1
 pydata_sphinx_theme>=0.15.2
