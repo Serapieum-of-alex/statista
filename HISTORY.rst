@@ -74,3 +74,9 @@ distributions
 descriptors
 """""""""""
 * rename the `metrics` module to `descriptors`.
+
+0.6.1 (2025-06-**)
+------------------
+Dev
+"""
+* replace the setup.py with pyproject.toml.

@@ -1,7 +1,0 @@
-loguru >=0.7.2
-matplotlib >=3.9.0
-numpy >=2.0.1
-pandas >=2.1.0
-pip >=23.2.1
-scikit-learn >=1.5.1
-scipy >=1.14.0
