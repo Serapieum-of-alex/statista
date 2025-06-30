@@ -64,7 +64,7 @@ plugins:
             show_source: true
             show_root_heading: true
             heading_level: 2
-            docstring_style: numpy
+            docstring_style: google
   - table-reader
   - tags
   - mike:
