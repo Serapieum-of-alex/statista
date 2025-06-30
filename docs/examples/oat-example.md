@@ -1,6 +1,4 @@
-**************************
-Sensitivity Analysis (OAT)
-**************************
+##### Sensitivity Analysis (OAT)
 OAT sensitivity analysis is a tool that is based
 
 One of the simplest and most common approaches of sensitivity analysis is that of changing one-factor-at-a-time (OAT), to see what effect this produces on the output.
@@ -19,17 +17,16 @@ First of all to run the HBV lumped model which we need to test its
 performance (based on RMSE error) based on a defined range for each parameter
 
 Steps:
-    * Run the model with the baseline parameter :ref:`1`
-    * Define wrapper function and type :ref:`2`
-    * Instantiate the SensitivityAnalysis object :ref:`3`
-    * Run the OAT method :ref:`4`
-    * Display the result with the SOBOL plot :ref:`5`
+    * Run the model with the baseline parameter `1`
+    * Define wrapper function and type `2`
+    * Instantiate the SensitivityAnalysis object `3`
+    * Run the OAT method `4`
+    * Display the result with the SOBOL plot `5`
 
 
 .. _1:
 
-Run the model
---------------
+## Run the model
 
 .. code:: py
 
@@ -110,8 +107,7 @@ Run the model
 
 .. _2:
 
-Define wrapper function and type
-----------------------------------------
+## Define wrapper function and type
 
 Define the wrapper function to the OAT method and put the parameters argument
 at the first position, and then list all the other arguments required for your function
@@ -144,8 +140,7 @@ There are two types of wrappers
 
 .. _3:
 
-Instantiate the SensitivityAnalysis object
--------------------------------------------
+## Instantiate the SensitivityAnalysis object
 
 .. code:: py
 
@@ -156,8 +151,7 @@ Instantiate the SensitivityAnalysis object
 
 .. _4:
 
-Run the OAT method
--------------------
+## Run the OAT method
 
 .. code:: py
 
@@ -165,8 +159,7 @@ Run the OAT method
 
 .. _5:
 
-Display the result with the SOBOL plot
----------------------------------------
+## Display the result with the SOBOL plot
 
 .. code:: py
 
@@ -180,18 +173,11 @@ Display the result with the SOBOL plot
 
 - Type 1 with one parameter
 
-.. image:: _images/sensitivityAnalysis1.png
-    :width: 400pt
-    :align: center
-
+![sensitivityAnalysis1.png](_images/sensitivityAnalysis1.png)
 - Type 1 with all parameters
 
-.. image:: _images/sensitivityAnalysis3.png
-    :width: 400pt
-    :align: center
-
-The second type
-----------------
+![sensitivityAnalysis3.png](_images/sensitivityAnalysis3.png)
+## The second type
 
 - The second wrapper returns two values (the performance metric and the calculated output from the model)
 
@@ -215,6 +201,4 @@ The second type
 
 - Type 2
 
-.. image:: _images/sensitivityAnalysis2.png
-    :width: 400pt
-    :align: center
+![sensitivityAnalysis2.png](_images/sensitivityAnalysis2.png)
