@@ -65,6 +65,7 @@ docs = [
 ]
 
 [tool.setuptools.packages.find]
+where = ["src"]
 include = ["statista", "statista.*"]
 
 
