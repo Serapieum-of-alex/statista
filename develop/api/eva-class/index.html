@@ -1288,23 +1288,22 @@ D-static and P-Value of the KS test.</p>
 <a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="n">Cologne</span>        <span class="mf">1951.0</span>    <span class="mf">2004.0</span>  <span class="mf">53.0</span>  <span class="mf">5583.579049</span>  <span class="mf">6507.694660</span>  <span class="o">...</span>  <span class="mf">10940.851299</span>  <span class="mf">11261.139356</span>  <span class="mf">11591.687060</span>
 <a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="n">Rees</span>           <span class="mf">1951.0</span>    <span class="mf">2004.0</span>  <span class="mf">53.0</span>  <span class="mf">5759.172691</span>  <span class="mf">6693.471602</span>  <span class="o">...</span>  <span class="mf">11368.384249</span>  <span class="mf">11728.167908</span>  <span class="mf">12106.027638</span>
 </code></pre></div></li>
-<li>
-<p>The other output is the distribution properties of the fitted distribution, which includes the shape, location, and
+<li>The other output is the distribution properties of the fitted distribution, which includes the shape, location, and
     scale parameters of the fitted distribution, plus the D-static and P-Value of the KS test.
-    ````python
-    &gt;&gt;&gt; print(distribution_properties) # doctest: +SKIP
-                      c          loc        scale  D-static   P-Value
-    id
-    Frankfurt  0.051852   718.720761   376.188608  0.073171  0.999943
-    Mainz      0.307295  3743.806013  1214.617042  0.055556  0.999998
-    Kaub       0.282580  3881.573477  1262.426086  0.055556  0.999998
-    Andernach  0.321513  5649.076008  2084.383132  0.074074  0.998738
-    Cologne    0.306146  5783.017454  2090.224037  0.074074  0.998738
-    Rees       0.284227  5960.022503  2107.197210  0.074074  0.998738</p>
-<p><code>``
-- Since we have set</code>save_plots=True<code>, the function will save the plots in the directory we have provided in</code>save_to<code>.
-For example, the plot of Frankfurt's time series data is saved as "Frankfurt.png" for the</code>pdf<code>and</code>cdf` and
-"f-Frankfurt.png" for the confidince interval plot in the specified directory.'</p>
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">distribution_properties</span><span class="p">)</span> <span class="c1"># doctest: +SKIP</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>                  <span class="n">c</span>          <span class="n">loc</span>        <span class="n">scale</span>  <span class="n">D</span><span class="o">-</span><span class="n">static</span>   <span class="n">P</span><span class="o">-</span><span class="n">Value</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="nb">id</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">Frankfurt</span>  <span class="mf">0.051852</span>   <span class="mf">718.720761</span>   <span class="mf">376.188608</span>  <span class="mf">0.073171</span>  <span class="mf">0.999943</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">Mainz</span>      <span class="mf">0.307295</span>  <span class="mf">3743.806013</span>  <span class="mf">1214.617042</span>  <span class="mf">0.055556</span>  <span class="mf">0.999998</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">Kaub</span>       <span class="mf">0.282580</span>  <span class="mf">3881.573477</span>  <span class="mf">1262.426086</span>  <span class="mf">0.055556</span>  <span class="mf">0.999998</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">Andernach</span>  <span class="mf">0.321513</span>  <span class="mf">5649.076008</span>  <span class="mf">2084.383132</span>  <span class="mf">0.074074</span>  <span class="mf">0.998738</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="n">Cologne</span>    <span class="mf">0.306146</span>  <span class="mf">5783.017454</span>  <span class="mf">2090.224037</span>  <span class="mf">0.074074</span>  <span class="mf">0.998738</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">Rees</span>       <span class="mf">0.284227</span>  <span class="mf">5960.022503</span>  <span class="mf">2107.197210</span>  <span class="mf">0.074074</span>  <span class="mf">0.998738</span>
+</code></pre></div></li>
+<li>
+<p>Since we have set <code>save_plots=True</code>, the function will save the plots in the directory we have provided in <code>save_to</code>.
+    For example, the plot of Frankfurt's time series data is saved as "Frankfurt.png" for the <code>pdf</code> and <code>cdf</code> and
+    "f-Frankfurt.png" for the confidince interval plot in the specified directory.'</p>
 <p><img alt="Frankfurt" src="../../_images/Frankfurt.png" /></p>
 <p><img alt="f-Frankfurt" src="../../_images/f-Frankfurt.png" /></p>
 </li>
@@ -1792,7 +1791,7 @@ For example, the plot of Frankfurt's time series data is saved as "Frankfurt.png
 <a id="__codelineno-0-194" name="__codelineno-0-194"></a><span class="sd">        ```</span>
 <a id="__codelineno-0-195" name="__codelineno-0-195"></a><span class="sd">    - The other output is the distribution properties of the fitted distribution, which includes the shape, location, and</span>
 <a id="__codelineno-0-196" name="__codelineno-0-196"></a><span class="sd">        scale parameters of the fitted distribution, plus the D-static and P-Value of the KS test.</span>
-<a id="__codelineno-0-197" name="__codelineno-0-197"></a><span class="sd">        ````python</span>
+<a id="__codelineno-0-197" name="__codelineno-0-197"></a><span class="sd">        ```python</span>
 <a id="__codelineno-0-198" name="__codelineno-0-198"></a><span class="sd">        &gt;&gt;&gt; print(distribution_properties) # doctest: +SKIP</span>
 <a id="__codelineno-0-199" name="__codelineno-0-199"></a><span class="sd">                          c          loc        scale  D-static   P-Value</span>
 <a id="__codelineno-0-200" name="__codelineno-0-200"></a><span class="sd">        id</span>
