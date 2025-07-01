@@ -38,33 +38,30 @@ class PlottingPosition:
 
     @staticmethod
     def return_period(prob_non_exceed: Union[list, np.ndarray]) -> np.ndarray:
-        """returnPeriod.
+        """Return Period.
 
-        Parameters
-        ----------
-        prob_non_exceed: [list/array]
-            non-exceedance probability.
+        Args:
+            prob_non_exceed(list/array):
+                non-exceedance probability.
 
-        Returns
-        -------
-        array:
-           return period.
+        Returns:
+            array:
+               return period.
 
-        Examples
-        --------
-        - First generate some random numbers between 0 and 1 as a non-exceedance probability. then use this non-exceedance
-            to calculate the return period.
-            ```python
-            >>> import numpy as np
-            >>> from statista.distributions import PlottingPosition
-            >>> data = np.random.random(15)
-            >>> rp = PlottingPosition.return_period(data)
-            >>> print(rp) # doctest: +SKIP
-            [ 1.33088992  4.75342173  2.46855419  1.42836548  2.75320582  2.2268505
-              8.06500888 10.56043917 18.28884687  1.10298241  1.2113997   1.40988022
-              1.02795867  1.01326322  1.05572108]
+        Examples:
+            - First generate some random numbers between 0 and 1 as a non-exceedance probability. then use this non-exceedance
+                to calculate the return period.
+                ```python
+                >>> import numpy as np
+                >>> from statista.distributions import PlottingPosition
+                >>> data = np.random.random(15)
+                >>> rp = PlottingPosition.return_period(data)
+                >>> print(rp) # doctest: +SKIP
+                [ 1.33088992  4.75342173  2.46855419  1.42836548  2.75320582  2.2268505
+                  8.06500888 10.56043917 18.28884687  1.10298241  1.2113997   1.40988022
+                  1.02795867  1.01326322  1.05572108]
 
-            ```
+                ```
         """
         if any(prob_non_exceed > 1):
             raise ValueError("Non-exceedance probability should be less than 1")
@@ -79,26 +76,26 @@ class PlottingPosition:
         Weibul method to calculate the cumulative distribution function cdf or
         return period.
 
-        Parameters
-        ----------
-        data : [list/array]
-            list/array of the data.
-        return_period : [bool]
-            False to calculate the cumulative distribution function cdf or
-            True to calculate the return period. Default=False
+        Args:
+            data(list/array):
+                list/array of the data.
+            return_period(bool):
+                False to calculate the cumulative distribution function cdf or
+                True to calculate the return period. Default=False
 
-        Returns
-        -------
-        cdf/T: [list]
-            list of cumulative distribution function or return period.
+        Returns:
+            cdf/T (list):
+                list of cumulative distribution function or return period.
 
-        Examples
-        --------
-        >>> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        >>> cdf = PlottingPosition.weibul(data)
-        >>> print(cdf)
-        [0.09090909 0.18181818 0.27272727 0.36363636 0.45454545 0.54545455
-         0.63636364 0.72727273 0.81818182 0.90909091]
+        Examples:
+            ```python
+            >>> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            >>> cdf = PlottingPosition.weibul(data)
+            >>> print(cdf)
+            [0.09090909 0.18181818 0.27272727 0.36363636 0.45454545 0.54545455
+             0.63636364 0.72727273 0.81818182 0.90909091]
+
+            ```
         """
         data = np.array(data)
         data.sort()
@@ -131,16 +128,20 @@ class AbstractDistribution(ABC):
         """Initialize the distribution with data or parameters.
 
         Args:
-            data: Data time series as a list or numpy array.
-            parameters: Dictionary of distribution parameters.
+            data:
+                Data time series as a list or numpy array.
+            parameters:
+                Dictionary of distribution parameters.
                 Example: {"loc": 0.0, "scale": 1.0, "shape": 0.0}
                 - loc: Location parameter
                 - scale: Scale parameter
                 - shape: Shape parameter (if applicable)
 
         Raises:
-            ValueError: If neither data nor parameters are provided.
-            TypeError: If data is not a list or numpy array, or if parameters is not a dictionary.
+            ValueError:
+                If neither data nor parameters are provided.
+            TypeError:
+                If data is not a list or numpy array, or if parameters is not a dictionary.
 
         Examples:
             ```python
@@ -1226,6 +1227,7 @@ class Gumbel(AbstractDistribution):
                 >>> import numpy as np
                 >>> from statista.distributions import Gumbel
                 >>> data = np.loadtxt("examples/data/gumbel.txt")
+
                 ```
             -  Calculate CDF values with default parameters:
                 ```python
@@ -1237,6 +1239,7 @@ class Gumbel(AbstractDistribution):
                 P value = 0.9937026761524456
                 {'loc': np.float64(0.010101355750222706), 'scale': 1.0313042643102108}
                 >>> cdf_values = gumbel_dist.cdf()
+
                 ```
             -  Generate a CDF plot:
                 ```python
@@ -1246,6 +1249,7 @@ class Gumbel(AbstractDistribution):
                 ...     ylabel="Probability",
                 ...     fig_size=(8, 6)
                 ... )
+
                 ```
                 ![gamma-cdf](./../_images/distributions/gamma-cdf-2.png)
 
@@ -1253,10 +1257,12 @@ class Gumbel(AbstractDistribution):
                 ```python
                 >>> parameters = {'loc': 0, 'scale': 1}
                 >>> cdf_custom = gumbel_dist.cdf(parameters=parameters)
+
                 ```
             -  Calculate exceedance probability (1-CDF):
                 ```python
                 >>> exceedance_prob = 1 - cdf_values
+
                 ```
             ```
         """
