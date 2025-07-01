@@ -194,7 +194,7 @@ def ams_analysis(
         ```
     - The other output is the distribution properties of the fitted distribution, which includes the shape, location, and
         scale parameters of the fitted distribution, plus the D-static and P-Value of the KS test.
-        ````python
+        ```python
         >>> print(distribution_properties) # doctest: +SKIP
                           c          loc        scale  D-static   P-Value
         id
