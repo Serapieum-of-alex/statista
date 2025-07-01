@@ -1,9 +1,7 @@
 try:
-    from importlib.metadata import PackageNotFoundError  # type: ignore
-    from importlib.metadata import version
+    from importlib.metadata import PackageNotFoundError, version  # type: ignore
 except ImportError:  # pragma: no cover
-    from importlib_metadata import PackageNotFoundError  # type: ignore
-    from importlib_metadata import version
+    from importlib_metadata import PackageNotFoundError, version  # type: ignore
 
 
 try:
@@ -16,19 +14,13 @@ __author__ = "Mostafa Farrag"
 __email__ = "moah.farag@gmail.com"
 __docformat__ = "restructuredtext"
 
-# Let users know if they're missing any of our hard dependencies
-hard_dependencies = ()  # ("numpy", "pandas", "gdal")
-missing_dependencies = []
+__metadata__ = {
+    "author": __author__,
+    "email": __email__,
+    "version": __version__,
+    "docformat": __docformat__,
+}
 
-for dependency in hard_dependencies:
-    try:
-        __import__(dependency)
-    except ImportError as e:
-        missing_dependencies.append(dependency)
-        print(e)
-
-if missing_dependencies:
-    raise ImportError("Missing required dependencies {0}".format(missing_dependencies))
 
 __doc__ = """
 statista - statistics package
