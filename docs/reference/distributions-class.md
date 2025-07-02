@@ -5,6 +5,7 @@
         show_root_heading: true
         show_source: true
         heading_level: 3
+        members_order: source
 
 
 ::: statista.distributions.PlottingPosition
@@ -12,6 +13,7 @@
         show_root_heading: true
         show_source: true
         heading_level: 3
+        members_order: source
 
 
 ::: statista.distributions.Gumbel
@@ -19,6 +21,7 @@
         show_root_heading: true
         show_source: true
         heading_level: 3
+        members_order: source
 
 
 ::: statista.distributions.GEV
@@ -26,6 +29,7 @@
         show_root_heading: true
         show_source: true
         heading_level: 3
+        members_order: source
 
 
 ::: statista.distributions.Exponential
@@ -33,6 +37,7 @@
         show_root_heading: true
         show_source: true
         heading_level: 3
+        members_order: source
 
 
 ::: statista.distributions.Normal
@@ -40,3 +45,4 @@
         show_root_heading: true
         show_source: true
         heading_level: 3
+        members_order: source   
