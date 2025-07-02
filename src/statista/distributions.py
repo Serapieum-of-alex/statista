@@ -142,20 +142,6 @@ class AbstractDistribution(ABC):
                 If neither data nor parameters are provided.
             TypeError:
                 If data is not a list or numpy array, or if parameters is not a dictionary.
-
-        Examples:
-            ```python
-            >>> import numpy as np
-            >>> from statista.distributions import AbstractDistribution
-
-            # Initialize with data
-            >>> data = [1.2, 2.3, 3.4, 4.5, 5.6]
-            >>> dist = AbstractDistribution(data=data)
-
-            # Initialize with parameters
-            >>> parameters = {"loc": 0.0, "scale": 1.0}
-            >>> dist = AbstractDistribution(parameters=parameters)
-            ```
         """
         if data is None and parameters is None:
             raise ValueError("Either data or parameters must be provided")
@@ -199,14 +185,6 @@ class AbstractDistribution(ABC):
 
         Returns:
             Dictionary of distribution parameters (e.g., {"loc": 0.0, "scale": 1.0}).
-
-        Examples:
-            ```python
-            dist = AbstractDistribution(data=[1.2, 2.3, 3.4, 4.5, 5.6])
-            dist.fit_model()
-            params = dist.parameters
-            print(params)  # {"loc": 3.4, "scale": 1.7}
-            ```
         """
         return self._parameters
 
@@ -226,13 +204,6 @@ class AbstractDistribution(ABC):
 
         Returns:
             Numpy array containing the data used for distribution calculations.
-
-        Examples:
-            ```python
-            dist = AbstractDistribution(data=[1.2, 2.3, 3.4, 4.5, 5.6])
-            data_array = dist.data
-            print(data_array)  # [1.2 2.3 3.4 4.5 5.6]
-            ```
         """
         return self._data
 
@@ -242,13 +213,6 @@ class AbstractDistribution(ABC):
 
         Returns:
             Numpy array containing the sorted data.
-
-        Examples:
-            ```python
-            dist = AbstractDistribution(data=[5.6, 3.4, 1.2, 4.5, 2.3])
-            sorted_data = dist.data_sorted
-            print(sorted_data)  # [1.2 2.3 3.4 4.5 5.6]
-            ```
         """
         return np.sort(self.data)
 
@@ -258,13 +222,6 @@ class AbstractDistribution(ABC):
 
         Returns:
             Critical value for the Kolmogorov-Smirnov test (1.22/sqrt(n)).
-
-        Examples:
-            ```python
-            dist = AbstractDistribution(data=[1.2, 2.3, 3.4, 4.5, 5.6])
-            ks_critical = dist.kstable
-            print(ks_critical)  # 0.5455447255899809
-            ```
         """
         return 1.22 / np.sqrt(len(self.data))
 
@@ -274,13 +231,6 @@ class AbstractDistribution(ABC):
 
         Returns:
             Numpy array containing the empirical CDF values.
-
-        Examples:
-            ```python
-            dist = AbstractDistribution(data=[1.2, 2.3, 3.4, 4.5, 5.6])
-            empirical_cdf = dist.cdf_weibul
-            print(empirical_cdf)  # [0.16666667 0.33333333 0.5 0.66666667 0.83333333]
-            ```
         """
         return PlottingPosition.weibul(self.data)
 
@@ -346,25 +296,6 @@ class AbstractDistribution(ABC):
                 - Numpy array of PDF values
                 - Figure object
                 - Axes object
-
-        Examples:
-            ```python
-            import numpy as np
-            from statista.distributions import Gumbel
-
-            # Calculate PDF values
-            data = [1.2, 2.3, 3.4, 4.5, 5.6]
-            dist = Gumbel(data=data)
-            dist.fit_model()
-            pdf_values = dist.pdf()
-
-            # Generate a PDF plot
-            pdf_values, fig, ax = dist.pdf(plot_figure=True, xlabel="Values", ylabel="Density")
-
-            # Calculate PDF for different data
-            new_data = np.linspace(0, 10, 100)
-            pdf_new = dist.pdf(data=new_data)
-            ```
         """
 
         if data is None:
@@ -457,25 +388,6 @@ class AbstractDistribution(ABC):
                 - Numpy array of CDF values
                 - Figure object
                 - Axes object
-
-        Examples:
-            ```python
-            import numpy as np
-            from statista.distributions import Gumbel
-
-            # Calculate CDF values
-            data = [1.2, 2.3, 3.4, 4.5, 5.6]
-            dist = Gumbel(data=data)
-            dist.fit_model()
-            cdf_values = dist.cdf()
-
-            # Generate a CDF plot
-            cdf_values, fig, ax = dist.cdf(plot_figure=True, xlabel="Values", ylabel="Probability")
-
-            # Calculate CDF for different data
-            new_data = np.linspace(0, 10, 100)
-            cdf_new = dist.cdf(data=new_data)
-            ```
         """
         if data is None:
             ts = self.data
@@ -552,24 +464,6 @@ class AbstractDistribution(ABC):
 
         Raises:
             ValueError: If the data is not sufficient for parameter estimation.
-
-        Examples:
-            ```python
-            import numpy as np
-            from statista.distributions import Gumbel
-
-            # Fit using Maximum Likelihood Estimation (default)
-            data = [1.2, 2.3, 3.4, 4.5, 5.6]
-            dist = Gumbel(data=data)
-            params = dist.fit_model()
-            print(params)  # {"loc": 3.4, "scale": 1.7}
-
-            # Fit using L-moments
-            params = dist.fit_model(method="lmoments")
-
-            # Fit using a threshold
-            params = dist.fit_model(threshold=3.0)
-            ```
         """
         method = method.lower()
         if method not in ["mle", "mm", "lmoments", "optimization"]:
@@ -597,24 +491,6 @@ class AbstractDistribution(ABC):
 
         Returns:
             Numpy array containing the quantile values corresponding to the given CDF values.
-
-        Examples:
-            ```python
-            import numpy as np
-            from statista.distributions import Gumbel
-
-            # Calculate quantiles for specific probabilities
-            dist = Gumbel(parameters={"loc": 0.0, "scale": 1.0})
-            probs = [0.1, 0.5, 0.9, 0.95, 0.99]
-            quantiles = dist.inverse_cdf(cdf=probs, parameters={"loc": 0.0, "scale": 1.0})
-            print(quantiles)
-
-            # Calculate return levels for specific return periods
-            return_periods = [10, 50, 100]
-            probs = 1 - 1/np.array(return_periods)
-            return_levels = dist.inverse_cdf(cdf=probs, parameters={"loc": 0.0, "scale": 1.0})
-            print(return_levels)
-            ```
         """
         pass
 
@@ -636,27 +512,6 @@ class AbstractDistribution(ABC):
 
         Raises:
             ValueError: If the distribution parameters have not been estimated.
-
-        Examples:
-            ```python
-            import numpy as np
-            from statista.distributions import Gumbel
-
-            # Perform KS test
-            data = [1.2, 2.3, 3.4, 4.5, 5.6]
-            dist = Gumbel(data=data)
-            dist.fit_model()
-            d_stat, p_value = dist.ks()
-
-            # Interpret the results
-            alpha = 0.05
-            if p_value < alpha:
-                print(f"Reject the null hypothesis (p-value: {p_value:.4f} < {alpha})")
-                print("The data does not follow the fitted distribution.")
-            else:
-                print(f"Cannot reject the null hypothesis (p-value: {p_value:.4f} >= {alpha})")
-                print("The data may follow the fitted distribution.")
-            ```
         """
         if self.parameters is None:
             raise ValueError(
@@ -694,27 +549,6 @@ class AbstractDistribution(ABC):
 
         Raises:
             ValueError: If the distribution parameters have not been estimated.
-
-        Examples:
-            ```python
-            import numpy as np
-            from statista.distributions import Gumbel
-
-            # Perform Chi-square test
-            data = [1.2, 2.3, 3.4, 4.5, 5.6]
-            dist = Gumbel(data=data)
-            dist.fit_model()
-            chi2_stat, p_value = dist.chisquare()
-
-            # Interpret the results
-            alpha = 0.05
-            if p_value < alpha:
-                print(f"Reject the null hypothesis (p-value: {p_value:.4f} < {alpha})")
-                print("The data does not follow the fitted distribution.")
-            else:
-                print(f"Cannot reject the null hypothesis (p-value: {p_value:.4f} >= {alpha})")
-                print("The data may follow the fitted distribution.")
-            ```
         """
         if self.parameters is None:
             raise ValueError(
@@ -773,30 +607,6 @@ class AbstractDistribution(ABC):
                 - Numpy array of lower bound values
                 - Figure object
                 - Axes object
-
-        Examples:
-            ```python
-            import numpy as np
-            from statista.distributions import Gumbel
-
-            # Calculate confidence intervals
-            data = [1.2, 2.3, 3.4, 4.5, 5.6]
-            dist = Gumbel(data=data)
-            dist.fit_model()
-            upper, lower = dist.confidence_interval(alpha=0.05)
-
-            # Generate a confidence interval plot
-            upper, lower, fig, ax = dist.confidence_interval(
-                alpha=0.05, 
-                plot_figure=True, 
-                fig_size=(8, 6),
-                fontsize=12
-            )
-
-            # Calculate confidence intervals for specific probabilities
-            probs = np.array([0.5, 0.9, 0.95, 0.99])
-            upper, lower = dist.confidence_interval(alpha=0.05, prob_non_exceed=probs)
-            ```
         """
         pass
 
@@ -834,26 +644,6 @@ class AbstractDistribution(ABC):
             Tuple containing:
             - List of Figure objects
             - List of Axes objects
-
-        Examples:
-            ```python
-            import numpy as np
-            from statista.distributions import Gumbel
-
-            # Generate probability plots
-            data = [1.2, 2.3, 3.4, 4.5, 5.6]
-            dist = Gumbel(data=data)
-            dist.fit_model()
-            figs, axes = dist.plot(
-                fig_size=(12, 6),
-                xlabel="Return Period (years)",
-                ylabel="Discharge (m³/s)"
-            )
-
-            # Generate plots with custom parameters
-            params = {"loc": 0.0, "scale": 1.0}
-            figs, axes = dist.plot(parameters=params)
-            ```
         """
         pass
 
