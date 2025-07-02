@@ -105,16 +105,20 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Installation: installation.md
-  - API Documentation:
-    - Distributions: api/distributions-class.md
-    - Extreme Value Analysis: api/eva-class.md
-    - Descriptors: api/descriptors-module.md
-    - Plot: api/plot-class.md
-    - Sensitivity Analysis: api/sensitivity-class.md
-    - Tools: api/tools-module.md
+  - Reference:
+    - Distributions: reference/distributions-class.md
+    - Extreme Value Analysis: reference/eva-class.md
+    - Descriptors: reference/descriptors-module.md
+    - Plot: reference/plot-class.md
+    - Sensitivity Analysis: reference/sensitivity-class.md
+    - Tools: reference/tools-module.md
   - Examples:
     - Sensitivity Analysis (OAT): examples/oat-example.md
-  - Change-log: change-log.md
+  - About:
+    - Change-log: change-log.md
+    - Code of Conduct: CODE_OF_CONDUCT.md
+    - Contributing: contributing.md
+    - License: LICENSE.md
 
 extra:
   social:
