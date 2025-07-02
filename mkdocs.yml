@@ -111,8 +111,6 @@ nav:
     - Plot: reference/plot-class.md
     - Sensitivity Analysis: reference/sensitivity-class.md
     - Tools: reference/tools-module.md
-  - Examples:
-    - Sensitivity Analysis (OAT): examples/oat-example.md
   - About:
     - Change-log: change-log.md
     - Code of Conduct: CODE_OF_CONDUCT.md
