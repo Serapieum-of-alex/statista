@@ -18,10 +18,9 @@ theme:
     - navigation.tabs.sticky
     - navigation.top
     - content.code.copy
+    - content.code.annotate
     - content.action.edit
     - content.action.view
-    - content.code.annotate
-    - content.code.copy
     - content.tooltips
     - search.highlight
     - search.suggest
