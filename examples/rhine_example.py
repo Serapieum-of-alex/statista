@@ -65,5 +65,3 @@ print(lmom_param)
 # calculate and plot the pdf
 pdf, fig, ax = gev_cologne.pdf(plot_figure=True)
 cdf, _, _ = gev_cologne.cdf(plot_figure=True)
-
-# %%
