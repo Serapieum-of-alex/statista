@@ -4,7 +4,7 @@
 [![PyPI version](https://badge.fury.io/py/statista.svg)](https://badge.fury.io/py/statista)
 [![Conda Version](https://img.shields.io/conda/vn/conda-forge/statista.svg)](https://anaconda.org/conda-forge/statista)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Documentation Status](https://readthedocs.org/projects/statista/badge/?version=latest)](https://statista.readthedocs.io/en/latest/?badge=latest)
+[![GitHub Pages](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://serapieum-of-alex.github.io/statista)
 [![codecov](https://codecov.io/gh/Serapieum-of-alex/statista/branch/main/graph/badge.svg?token=GQKhcj2pFK)](https://codecov.io/gh/Serapieum-of-alex/statista)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![GitHub last commit](https://img.shields.io/github/last-commit/Serapieum-of-alex/statista)](https://github.com/Serapieum-of-alex/statista/commits/main)
