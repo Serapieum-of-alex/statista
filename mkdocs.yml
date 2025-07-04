@@ -114,6 +114,8 @@ nav:
   - Examples:
     - sensitivity-analysis:
       - Sensitivity Analysis: notebook/sensitivity-analysis/scs-cn.ipynb
+    - Extreme Value Analysis:
+      - Extreme Value Analysis: notebook/extreme-value-analysis/extreme-value-analysis.ipynb
   - About:
     - Change-log: change-log.md
     - Code of Conduct: CODE_OF_CONDUCT.md
