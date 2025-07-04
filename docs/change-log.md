@@ -3,6 +3,9 @@
 ## 0.6.1 (2025-06-**)
 ##### Dev
 * replace the setup.py with pyproject.toml.
+* migrate the documentation to use mkdocs-material.
+* add complete documentation for all modules.
+
 
 ## 0.6.0 (2024-08-18)
 
