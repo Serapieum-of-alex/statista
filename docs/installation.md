@@ -1,151 +1,180 @@
 # Installation
 
-
-##### dependencies
-
-# Required dependencies
+## Required Dependencies
 
 - Python (3.11 or later)
-- `numpy <https://www.numpy.org/>`__ (2 or later)
-- `pandas <https://pandas.pydata.org/>`__ (2 or later)
-- `SciPy <https://scipy.org/>`__ (1.14 or later)
-- `scikit-learn <https://scikit-learn.org/>`__ (1.5 or later)
-- `matplotlib <https://matplotlib.org//>`__ (1.5 or later)
+- [numpy](https://www.numpy.org/) (2.0.0 or later)
+- [pandas](https://pandas.pydata.org/) (2.1.0 or later)
+- [SciPy](https://scipy.org/) (1.14.0 or later)
+- [scikit-learn](https://scikit-learn.org/) (1.5.1 or later)
+- [matplotlib](https://matplotlib.org/) (3.9.0 or later)
+- [loguru](https://github.com/Delgan/loguru) (0.7.2 or later)
+- [notebook](https://jupyter-notebook.readthedocs.io/) (7.4.4 or later)
 
-##### Stable release
-Please install ``statista`` in a Virtual environment so that its requirements don't tamper with your system's python.
+## Installation Methods
 
-## conda
-the easiest way to install ``statista`` is using ``conda`` package manager. ``statista`` is available in the
-`conda-forge <https://conda-forge.org/>`_ channel. To install
-you can use the following command:
+It's recommended to install ``statista`` in a virtual environment to avoid conflicts with your system's Python packages.
 
-+ ``conda install -c conda-forge statista``
+### Conda
 
-If this works it will install `statista` with all dependencies including Python and numpy, scipy and scikit-learn
-and you skip the rest of the installation instructions.
+The easiest way to install ``statista`` is using the ``conda`` package manager. ``statista`` is available in the
+[conda-forge](https://conda-forge.org/) channel. To install, use the following command:
+
+```bash
+conda install -c conda-forge statista
+```
+
+This will install `statista` with all dependencies including Python, numpy, scipy, scikit-learn, and other required packages.
+If this works, you can skip the rest of the installation instructions.
 
 
-## Installing Python and gdal dependencies
+### Installing Python
 
-The main dependencies for statista are an installation of Python 3.9+, and scipy
+The main dependencies for statista are Python 3.11+ and the scientific Python stack.
 
-## Installing Python
-
-For Python we recommend using the Anaconda Distribution for Python 3, which is available
-for download from https://www.anaconda.com/download/. The installer gives the option to
-add ``python`` to your ``PATH`` environment variable. We will assume in the instructions
-below that it is available in the path, such that ``python``, ``pip``, and ``conda`` are
+For Python, we recommend using the Anaconda Distribution for Python 3, which is available
+for download from [https://www.anaconda.com/download/](https://www.anaconda.com/download/). The installer gives the option to
+add `python` to your `PATH` environment variable. We will assume in the instructions
+below that it is available in the path, such that `python`, `pip`, and `conda` are
 all available from the command line.
 
-Note that there is no hard requirement specifically for Anaconda's Python, but often it
+Note that there is no hard requirement specifically for Anaconda's Python, but it
 makes installation of required dependencies easier using the conda package manager.
 
-## Install as a conda environment
+### Install in a New Conda Environment
 
 The easiest and most robust way to install statista is by installing it in a separate
-conda environment. In the root repository directory there is an ``environment.yml`` file.
-This file lists all dependencies. Either use the ``environment.yml`` file from the main branch
-(please note that the main branch can change rapidly and break functionality without warning),
-or from one of the releases {release}.
+conda environment. You can create a new environment with the required dependencies and then install statista.
 
-Run this command to start installing all statista dependencies:
+Run these commands to create a new environment with the necessary dependencies:
 
-+ ``conda env create -f environment.yml``
+```bash
+conda create -n statista python=3.11
+conda activate statista
+conda install -c conda-forge numpy pandas scipy scikit-learn matplotlib loguru
+```
 
-This creates a new environment with the name ``statista``. To activate this environment in
-a session, run:
+This creates a new environment with the name `statista` and installs the required dependencies.
+To activate this environment in a session, run:
 
-+ ``conda activate statista``
+```bash
+conda activate statista
+```
 
 For the installation of statista there are two options (from the Python Package Index (PyPI)
-or from Github). To install a release of statista from the PyPI (available from release 2018.1):
+or from GitHub):
 
-+ ``pip install statista=={release}``
+1. To install the latest release of statista from PyPI:
+
+```bash
+pip install statista
+```
+
+2. To install a specific version (e.g., 0.6.1):
+
+```bash
+pip install statista==0.6.1
+```
 
 
-## From sources
+### From Sources
 
-
-The sources for statista can be downloaded from the `Github repo`_.
+The sources for statista can be downloaded from the [GitHub repository](https://github.com/Serapieum-of-alex/statista).
 
 You can either clone the public repository:
 
-```console
-
-$ git clone git://github.com/Serapieum-of-alex/statista
-
+```bash
+git clone https://github.com/Serapieum-of-alex/statista.git
 ```
-Or download the `tarball`_:
 
-```console
+Or download the [tarball](https://github.com/Serapieum-of-alex/statista/tarball/main):
 
-$ curl -OJL https://github.com/Serapieum-of-alex/statista/tarball/main
-
+```bash
+curl -OJL https://github.com/Serapieum-of-alex/statista/tarball/main
 ```
+
 Once you have a copy of the source, you can install it with:
 
-```console
-
-$ python -m pip install .
-
-
+```bash
+python -m pip install .
 ```
-.. _Github repo: https://github.com/Serapieum-of-alex/statista
-.. _tarball: https://github.com/Serapieum-of-alex/statista/tarball/main
-
 
 To install directly from GitHub (from the HEAD of the main branch):
 
-+ ``pip install git+https://github.com/Serapieum-of-alex/statista.git``
+```bash
+pip install git+https://github.com/Serapieum-of-alex/statista.git
+```
 
-or from Github from a specific release:
+Or from GitHub for a specific release (e.g., 0.6.1):
 
-+ ``pip install git+https://github.com/Serapieum-of-alex/statista.git@{release}``
+```bash
+pip install git+https://github.com/Serapieum-of-alex/statista.git@0.6.1
+```
 
-Now you should be able to start this environment's Python with ``python``, try
-``import statista`` to see if the package is installed.
+Now you should be able to start this environment's Python with `python` and try
+`import statista` to see if the package is installed.
 
+More details on how to work with conda environments can be found in the [Conda documentation](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
 
-More details on how to work with conda environments can be found here:
-https://conda.io/docs/user-guide/tasks/manage-environments.html
-
+### Development Installation
 
 If you are planning to make changes and contribute to the development of statista, it is
-best to make a git clone of the repository, and do a editable install in the location
-of you clone. This will not move a copy to your Python installation directory, but
+best to make a git clone of the repository and do an editable install. This will not move a copy to your Python installation directory, but
 instead create a link in your Python installation pointing to the folder you installed
-it from, such that any changes you make there are directly reflected in your install.
+it from, so any changes you make there are directly reflected in your install.
 
-+ ``git clone https://github.com/Serapieum-of-alex/statista.git``
-+ ``cd statista``
-+ ``activate statista``
-+ ``pip install -e .``
+```bash
+git clone https://github.com/Serapieum-of-alex/statista.git
+cd statista
+conda activate statista  # or your preferred environment
+pip install -e .
+```
 
-Alternatively, if you want to avoid using ``git`` and simply want to test the latest
-version from the ``main`` branch, you can replace the first line with downloading
-a zip archive from GitHub: https://github.com/Serapieum-of-alex/statista/archive/main.zip
-`libraries.io <https://libraries.io/github/Serapieum-of-alex/statista>`_.
+For development, you might also want to install the development dependencies:
 
-## Install using pip
+```bash
+pip install -e ".[dev]"
+```
+
+Alternatively, if you want to avoid using `git` and simply want to test the latest
+version from the `main` branch, you can download a
+[zip archive from GitHub](https://github.com/Serapieum-of-alex/statista/archive/main.zip).
+
+### Install Using Pip
 
 Besides the recommended conda environment setup described above, you can also install
-statista with ``pip``. For the more difficult to install Python dependencies, it is best to
-use the conda package manager:
+statista with `pip`. For the scientific Python dependencies, you might want to use the conda package manager first:
 
-+ ``conda install numpy scipy scikit-learn matplotlib pandas loguru``
+```bash
+conda install numpy scipy scikit-learn matplotlib pandas
+pip install loguru notebook
+```
 
+Then install statista with pip:
 
-you can check `libraries.io <https://libraries.io/github/Serapieum-of-alex/statista>`_. to check versions of the libraries
+```bash
+pip install statista
+```
 
+Or install a specific version (e.g., 0.6.1):
 
-Then install a release {release} of statista (available from release 2018.1) with pip:
+```bash
+pip install statista==0.6.1
+```
 
-+ ``pip install statista=={release}``
+You can check [libraries.io](https://libraries.io/github/Serapieum-of-alex/statista) to see the latest versions of the dependencies.
 
+## Verifying the Installation
 
-## Check if the installation is successful
+To check if the installation is successful, run the following command in your Python environment:
 
-To check it the install is successful, go to the examples directory and run the following command:
+```python
+import statista
+print(statista.__version__)
+```
 
-+ ``python -m statista.*******``
+You can also try running one of the example scripts from the examples directory:
+
+```bash
+python examples/extreme-value-statistics.py
+```
