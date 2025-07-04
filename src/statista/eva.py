@@ -60,49 +60,46 @@ def ams_analysis(
     ams analysis method reads resamples all the time series in the given dataframe to annual maximum, then fits
     the time series to a given distribution and parameter estimation method.
 
-    Parameters
-    ----------
-    time_series_df: DataFrame
-        DataFrame containing multiple time series to do the statistical analysis on.
-    ams: bool
-        True if the given time series is annual mean series. Default is False.
-    ams_start: str
-        The beginning of the year which is used to resample the time series to get the annual maximum series.
-        Default is "A-OCT".
-    save_plots: bool
-        True if you want to save the plots.
-    save_to: str
-        The rdir where you want to save the statistical properties.
-    filter_out: bool
-        For observed or hydraulic model data it has gaps of times where the model did not run or gaps in the observed
-        data if these gap days are filled with a specific value and you want to ignore it here
-        give filter_out = Value you want
-    distribution: str, Default is "GEV".
-        distribution name.
-    method: str, Default is "lmoments".
-        available methods are 'mle', 'mm', 'lmoments', 'optimization'.
-    obj_func: callable
-        objective function to be used in the optimization method, default is None. for Gumbel distribution there is the
-        `Gumbel.truncated_distribution` and similarly for the GEV distribution there is the GEV.truncated_distribution.
-    quartile: float
-        the quartile is only used when estimating the distribution parameters based on optimization and a threshould
-        value, the threshold value will be calculated as the quartile coresponding to the value of this parameter.
-    alpha: float, optional, Default is [0.1].
-        alpha or Significance level is a value of the confidence interval.
+    Args:
+        time_series_df (DataFrame):
+            DataFrame containing multiple time series to do the statistical analysis on.
+        ams (bool):
+            True if the given time series is annual mean series. Default is False.
+        ams_start (str):
+            The beginning of the year which is used to resample the time series to get the annual maximum series.
+            Default is "A-OCT".
+        save_plots (bool):
+            True if you want to save the plots.
+        save_to (str):
+            The rdir where you want to save the statistical properties.
+        filter_out (bool):
+            For observed or hydraulic model data it has gaps of times where the model did not run or gaps in the observed
+            data if these gap days are filled with a specific value and you want to ignore it here
+            give filter_out = Value you want
+        distribution (str):
+            distribution name. Default is "GEV".
+        method (str):
+            available methods are 'mle', 'mm', 'lmoments', 'optimization'. Default is "lmoments".
+        obj_func (callable):
+            objective function to be used in the optimization method, default is None. for Gumbel distribution there is the
+            `Gumbel.truncated_distribution` and similarly for the GEV distribution there is the GEV.truncated_distribution.
+        quartile (float):
+            the quartile is only used when estimating the distribution parameters based on optimization and a threshould
+            value, the threshold value will be calculated as the quartile coresponding to the value of this parameter.
+        alpha (float, optional):
+            alpha or Significance level is a value of the confidence interval. Default is [0.1].
 
-    Returns
-    -------
-    DataFrame:
-        Statistical properties like mean, std, min, 5%, 25%, median, 75%, 95%, max, start_year, end_year, nyr, q1.5,
-        q2, q5, q10, q25, q50, q100, q200, q500, q1000.
-    DataFrame:
-        Distribution properties like the shape, location, and scale parameters of the fitted distribution, plus the
-        D-static and P-Value of the KS test.
+    Returns:
+        DataFrame:
+            Statistical properties like mean, std, min, 5%, 25%, median, 75%, 95%, max, start_year, end_year, nyr, q1.5,
+            q2, q5, q10, q25, q50, q100, q200, q500, q1000.
+        DataFrame:
+            Distribution properties like the shape, location, and scale parameters of the fitted distribution, plus the
+            D-static and P-Value of the KS test.
 
-    Examples
-    --------
+    Examples:
     - First read the data as `pandas.DataFrame`.
-
+        ```python
         >>> import pandas as pd
         >>> ams_gauges = pd.read_csv(f"examples/data/ams-gauges.csv", index_col=0)
         >>> print(ams_gauges) # doctest: +SKIP
@@ -124,6 +121,7 @@ def ams_analysis(
         2003       1800   5090  5350       8620     8840   9470
         2004        197   1150  1190       1470     1580   1810
 
+        ```
     - The time series data we have just read are the annual maximum series of the gauges, the first column is an
         index of the year (54 years in total) and the rest are dischate values in m3/s for each the station. a value 0f
         "-9" is used to fill the missing data.
@@ -140,7 +138,7 @@ def ams_analysis(
         will use `method="lmoments"`, and `distribution="GEV"`.
     - The `alpha` is the significance level of the confidence interval, the default is 0.1. The `alpha` parameter is
         necessary for the confidence interval calculation.
-
+        ```python
         >>> method = "lmoments"
         >>> save_to = "examples/data/gauges"
         >>> statistical_properties, distribution_properties = ams_analysis(
@@ -162,12 +160,13 @@ def ams_analysis(
         P value = 0.9999427584427157
         2024-08-18 12:45:04.779 | DEBUG    | statista.confidence_interval:boot_strap:104 - Some values used top 10 low/high samples; results may be unstable.
         2024-08-18 12:45:05.221 | INFO     | statista.eva:ams_analysis:300 - Gauge Frankfurt done.
-        …
+
+        ```
     - The `ams_analysis` function will iterate over all the gauges in the time series and fit the time series to the
         distribution and calculate the statistical properties and the distribution properties of the fitted distribution.
     - One of the outputs of the function is the statistical properties of the time series, which includes the mean, std,
         min, and  some quantile (5%, 25%, ..., 95%, max).
-
+        ```python
         >>> print(statistical_properties.loc[:, statistical_properties.columns[:9]]) # doctest: +SKIP
                           mean          std     min       5%      25%  median      75%       95%      max
         id
@@ -178,9 +177,10 @@ def ams_analysis(
         Cologne    6489.277778  2037.005658  1580.0  3354.50  5277.50  6585.0  7560.00   9728.85  10700.0
         Rees       6701.425926  2074.994365  1810.0  3556.50  5450.00  6575.0  7901.75  10005.00  11300.0
 
+        ```
     - The rest of the columns in the `statistical_properties` are start_year, end_year, nyr, q1.5, q2, q5, q10, q25,
         q50, q100, q200, q500, q1000, which are the return periods of the fitted distribution.
-
+        ```python
         >>> print(statistical_properties.loc[:, statistical_properties.columns[9:]]) # doctest: +SKIP
                    start_year  end_year   nyr         q1.5           q2  ...          q200          q500         q1000
         id
@@ -191,9 +191,10 @@ def ams_analysis(
         Cologne        1951.0    2004.0  53.0  5583.579049  6507.694660  ...  10940.851299  11261.139356  11591.687060
         Rees           1951.0    2004.0  53.0  5759.172691  6693.471602  ...  11368.384249  11728.167908  12106.027638
 
+        ```
     - The other output is the distribution properties of the fitted distribution, which includes the shape, location, and
         scale parameters of the fitted distribution, plus the D-static and P-Value of the KS test.
-
+        ```python
         >>> print(distribution_properties) # doctest: +SKIP
                           c          loc        scale  D-static   P-Value
         id
@@ -204,15 +205,14 @@ def ams_analysis(
         Cologne    0.306146  5783.017454  2090.224037  0.074074  0.998738
         Rees       0.284227  5960.022503  2107.197210  0.074074  0.998738
 
+        ```
     - Since we have set `save_plots=True`, the function will save the plots in the directory we have provided in `save_to`.
         For example, the plot of Frankfurt's time series data is saved as "Frankfurt.png" for the `pdf` and `cdf` and
         "f-Frankfurt.png" for the confidince interval plot in the specified directory.'
 
-        .. image:: /_images/Frankfurt.png
-            :align: center
+        ![Frankfurt](./../_images/Frankfurt.png)
 
-        .. image:: /_images/f-Frankfurt.png
-            :align: center
+        ![f-Frankfurt](./../_images/f-Frankfurt.png)
 
     """
     gauges = time_series_df.columns.tolist()

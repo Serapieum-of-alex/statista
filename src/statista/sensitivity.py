@@ -1,4 +1,13 @@
-"""Sensitivity Analysis."""
+"""Sensitivity Analysis module for evaluating parameter influence on model outputs.
+
+This module provides tools for conducting sensitivity analysis on model parameters.
+It includes methods for One-At-a-Time (OAT) sensitivity analysis and visualization
+of sensitivity results using Sobol plots.
+
+The module is designed to help users understand how changes in input parameters
+affect model outputs, which is crucial for model calibration, uncertainty analysis,
+and decision-making processes.
+"""
 
 from typing import List, Union
 import matplotlib.pyplot as plt
@@ -7,9 +16,83 @@ from pandas import DataFrame
 
 
 class Sensitivity:
-    """Sensitivity.
+    """A class for performing sensitivity analysis on model parameters.
 
-    Sensitivity class
+    This class provides methods for conducting sensitivity analysis to evaluate how changes
+    in model parameters affect model outputs. It supports One-At-a-Time (OAT) sensitivity
+    analysis and visualization of results through Sobol plots.
+
+    Attributes:
+        parameter (DataFrame): DataFrame containing parameter values with parameter names as index.
+        lower_bound (List[Union[int, float]]): Lower bounds for each parameter.
+        upper_bound (List[Union[int, float]]): Upper bounds for each parameter.
+        function (callable): The model function to evaluate.
+        NoValues (int): Number of parameter values to test between bounds.
+        return_values (int): Specifies return type (1 for single value, 2 for value and calculations).
+        num_parameters (int): Number of parameters to analyze.
+        positions (List[int]): Positions of parameters to analyze.
+        sen (dict): Dictionary storing sensitivity analysis results.
+        MarkerStyleList (List[str]): List of marker styles for plotting.
+
+    Examples:
+        - Import necessary libraries:
+            ```python
+            >>> import pandas as pd
+            >>> import numpy as np
+            >>> from statista.sensitivity import Sensitivity
+
+            ```
+        - Define a simple model function:
+            ```python
+            >>> def model_function(params, *args, **kwargs):
+            ...     # A simple quadratic function
+            ...     return params[0]**2 + params[1]
+
+            ```
+        - Create parameter DataFrame:
+            ```python
+            >>> parameters = pd.DataFrame({'value': [2.0, 3.0]}, index=['param1', 'param2'])
+
+            ```
+        - Define parameter bounds:
+            ```python
+            >>> lower_bounds = [0.5, 1.0]
+            >>> upper_bounds = [4.0, 5.0]
+
+            ```
+        - Create sensitivity analysis object:
+            ```python
+            >>> sensitivity = Sensitivity(parameters, lower_bounds, upper_bounds, model_function)
+
+            ```
+        - Perform one-at-a-time sensitivity analysis:
+            ```python
+            >>> sensitivity.one_at_a_time()
+            0-param1 -0
+            3.25
+            0-param1 -1
+            4.891
+            0-param1 -2
+            7.0
+            ...
+            1-param2 -3
+            7.0
+            1-param2 -4
+            8.0
+            1-param2 -5
+            9.0
+
+            ```
+        - Plot results:
+            ```python
+            >>> fig, ax = sensitivity.sobol(
+            ...     title="Parameter Sensitivity",
+            ...     xlabel="Relative Parameter Value",
+            ...     ylabel="Model Output"
+            ... )
+
+            ```
+            ![one-at-a-time](./../_images/sensitivity/one-at-a-time.png)
     """
 
     MarkerStyleList = [
@@ -36,39 +119,68 @@ class Sensitivity:
         n_values=5,
         return_values=1,
     ):
-        """Sensitivity.
+        """Initialize the Sensitivity analysis object.
 
-        plotting_to instantiate the Sensitivity class you have to provide the
-        following parameters
+        This constructor sets up the sensitivity analysis by defining the parameters to analyze,
+        their bounds, the model function to evaluate, and configuration options for the analysis.
 
-        Parameters
-        ----------
-        parameter: [dataframe]
-            dataframe with the index as the name of the parameters and one column
-            with the name "value" contains the values of the parameters.
-        lower_bound: [list]
-            lower bound of the parameter.
-        upper_bound: [list]
-            upper bound of the parameter.
-        function: Callable
-            DESCRIPTION.
-        positions: [list], optional
-            position of the parameter in the list (the beginning of the list starts
-            with 0), if the Position argument is an empty list, the sensitivity will
-            be done for all parameters. The default is None.
-        n_values: [integer], optional
-            number of parameter values between the bounds you want to calculate the
-            metric for, if the values do not include the value if the given parameter
-            it will be appended to the values. The default is 5.
-        return_values: [integer], optional
-            return_values equals 1 if the function returns one value (the measured metric)
-            return_values equals 2 if the function returns two values (the measured metric,
-            and any calculated values you want to check how they change by changing
-            the value of the parameter). The default is 1.
+        Args:
+            parameter (DataFrame): DataFrame with parameter names as index and a column named 'value'
+                containing the parameter values.
+            lower_bound (List[Union[int, float]]): List of lower bounds for each parameter.
+            upper_bound (List[Union[int, float]]): List of upper bounds for each parameter.
+            function (callable): The model function to evaluate. Should accept a list of parameter
+                values as its first argument, followed by any additional args and kwargs.
+            positions (List[int], optional): Positions of parameters to analyze (0-indexed).
+                If None, all parameters will be analyzed. Defaults to None.
+            n_values (int, optional): Number of parameter values to test between bounds.
+                The parameter's current value will be included in addition to these points.
+                Defaults to 5.
+            return_values (int, optional): Specifies the return type of the function:
+                - 1: Function returns a single metric value
+                - 2: Function returns a tuple of (metric, calculated_values)
+                Defaults to 1.
 
-        Returns
-        -------
-        None.
+        Raises:
+            AssertionError: If the lengths of parameter, lower_bound, and upper_bound don't match.
+            AssertionError: If the provided function is not callable.
+
+        Examples:
+            - Import necessary libraries:
+                ```python
+                >>> import pandas as pd
+                >>> from statista.sensitivity import Sensitivity
+
+                ```
+            - Define a simple model function:
+                ```python
+                >>> def model_function(params):
+                ...     return params[0] + 2 * params[1]
+
+                ```
+            - Create parameter DataFrame:
+                ```python
+                >>> parameters = pd.DataFrame({'value': [1.0, 2.0]}, index=['x', 'y'])
+
+                ```
+            - Define parameter bounds:
+                ```python
+                >>> lower_bounds = [0.1, 0.5]
+                >>> upper_bounds = [2.0, 3.0]
+
+                ```
+            - Create sensitivity analysis object for all parameters:
+                ```python
+                >>> sensitivity_all = Sensitivity(parameters, lower_bounds, upper_bounds, model_function)
+
+                ```
+            - Create sensitivity analysis object for specific parameters:
+                ```python
+                >>> sensitivity_specific = Sensitivity(
+                ...     parameters, lower_bounds, upper_bounds, model_function, positions=[1]
+                ... )
+
+                ```
         """
         self.parameter = parameter
         self.lower_bound = lower_bound
@@ -94,52 +206,139 @@ class Sensitivity:
 
     @staticmethod
     def marker_style(style):
-        """MarkerStyle.
+        """Get a marker style for plotting sensitivity analysis results.
 
-        Marker styles for plotting
+        This static method returns a marker style string from a predefined list of styles.
+        If the style index exceeds the list length, it wraps around using modulo operation.
 
-        Parameters
-        ----------
-        style : TYPE
-            DESCRIPTION.
+        Args:
+            style (int): Index of the marker style to retrieve.
 
-        Returns
-        -------
-        TYPE
-            DESCRIPTION.
+        Returns:
+            str: A matplotlib-compatible marker style string (e.g., "--o", ":D").
+
+        Examples:
+            - Import necessary libraries:
+                ```python
+                >>> from statista.sensitivity import Sensitivity
+
+                ```
+            - Get the first marker style:
+                ```python
+                >>> style1 = Sensitivity.marker_style(0)
+                >>> print(style1)
+                --o
+
+                ```
+            - Get the second marker style:
+                ```python
+                >>> style2 = Sensitivity.marker_style(1)
+                >>> print(style2)
+                :D
+
+                ```
+            - Demonstrate wrapping behavior:
+                ```python
+                >>> style_wrapped = Sensitivity.marker_style(len(Sensitivity.MarkerStyleList) + 2)
+                >>> print(style_wrapped == Sensitivity.marker_style(2))
+                True
+
+                ```
         """
         if style > len(Sensitivity.MarkerStyleList) - 1:
             style %= len(Sensitivity.MarkerStyleList)
         return Sensitivity.MarkerStyleList[style]
 
     def one_at_a_time(self, *args, **kwargs):
-        """OAT.
+        """Perform One-At-a-Time (OAT) sensitivity analysis.
 
-        OAT one-at-a-time sensitivity analysis.
+        This method performs OAT sensitivity analysis by varying each parameter one at a time
+        while keeping others constant. For each parameter, it generates a range of values
+        between the lower and upper bounds, evaluates the model function for each value,
+        and stores the results.
 
-        Parameters
-        ----------
-        *args: [positional argument]
-            arguments of the function with the same exact names inside the function.
-        **kwargs
-            keyword arguments of the function with the same exact names inside the function.
+        The results are stored in the `sen` attribute, which is a dictionary with parameter
+        names as keys. Each value is a list containing:
+        1. Relative parameter values (ratio to original value)
+        2. Corresponding metric values from the model function
+        3. Actual parameter values used
+        4. Additional calculated values (if return_values=2)
 
-            parameter: [dataframe]
-                parameters dataframe including the parameter values in a column with
-                name 'value' and the parameters' name as index.
-            LB: [List]
-                parameters upper bounds.
-            UB: [List]
-                parameters lower bounds.
-            function: [function]
-                the function you want to run it several times.
+        Args:
+            *args: Variable length argument list passed to the model function.
+            **kwargs: Arbitrary keyword arguments passed to the model function.
 
-        Returns
-        -------
-        sen: [Dict]
-            for each parameter as a key, there is a list containing 4 lists,
-            1-relative parameter values, 2-metric values, 3-Real parameter values
-            4- addition calculated values from the function if you choose return_values=2.
+        Raises:
+            ValueError: If the function returns more than one value when return_values=1,
+                or doesn't return the expected format when return_values=2.
+
+        Examples:
+            - Import necessary libraries:
+                ```python
+                >>> import pandas as pd
+                >>> import numpy as np
+                >>> from statista.sensitivity import Sensitivity
+
+                ```
+            - Define a model function:
+                ```python
+                >>> def model_function(params, multiplier=1):
+                ...     return multiplier * (params[0]**2 + params[1])
+
+                ```
+            - Create parameter DataFrame:
+                ```python
+                >>> parameters = pd.DataFrame({'value': [2.0, 3.0]}, index=['param1', 'param2'])
+
+                ```
+            - Define parameter bounds:
+                ```python
+                >>> lower_bounds = [0.5, 1.0]
+                >>> upper_bounds = [4.0, 5.0]
+
+                ```
+            - Create sensitivity analysis object:
+                ```python
+                >>> sensitivity = Sensitivity(parameters, lower_bounds, upper_bounds, model_function)
+
+                ```
+            - Perform OAT sensitivity analysis with additional argument:
+                ```python
+                >>> sensitivity.one_at_a_time(multiplier=2)
+                0-param1 -0
+                6.5
+                0-param1 -1
+                9.781
+                0-param1 -2
+                14.0
+                0-param1 -3
+                16.125
+                0-param1 -4
+                ...
+                1-param2 -2
+                14.0
+                1-param2 -3
+                14.0
+                1-param2 -4
+                16.0
+                1-param2 -5
+                18.0
+
+                ```
+            - Access results for the first parameter:
+                ```python
+                >>> param_name = parameters.index[0]
+                >>> relative_values = sensitivity.sen[param_name][0]
+                >>> metric_values = sensitivity.sen[param_name][1]
+                >>> actual_values = sensitivity.sen[param_name][2]
+
+                ```
+            - Print a sample result:
+                ```python
+                >>> print(f"When {param_name} = {actual_values[0]}, metric = {metric_values[0]}")
+                When param1 = 0.5, metric = 6.5
+
+                ```
         """
         self.sen = {}
 
@@ -189,7 +388,7 @@ class Sensitivity:
     def sobol(
         self,
         real_values: bool = False,
-        title: str = "",  # CalculatedValues=False,
+        title: str = "",
         xlabel: str = "xlabel",
         ylabel: str = "Metric values",
         labelfontsize=12,
@@ -198,44 +397,122 @@ class Sensitivity:
         title2: str = "",
         xlabel2: str = "xlabel2",
         ylabel2: str = "ylabel2",
-        spaces=List[float],
+        spaces=None,
     ):
-        """Sobol.
+        """Plot sensitivity analysis results using Sobol-style visualization.
 
-        Parameters
-        ----------
-        real_values: [bool], optional
-            if you want to plot the real values in the x-axis not the relative
-            values, works properly only if you are checking the sensitivity of
-            one parameter as the range of parameters differes. The default is False.
-        CalculatedValues: [bool], optional
-            if you choose return_values=2 in the OAT method, then the function returns
-            calculated values, and here you can True to plot it . The default is False.
-        title: [string], optional
-            DESCRIPTION. The default is ''.
-        xlabel: [string], optional
-            DESCRIPTION. The default is 'xlabel'.
-        ylabel: [string], optional
-            DESCRIPTION. The default is 'Metric values'.
-        labelfontsize: [integer], optional
-            DESCRIPTION. The default is 12.
-        plotting_from : TYPE, optional
-            the calculated values are in array type and From attribute is from
-            where the plotting will start. The default is ''.
-        plotting_to: TYPE, optional
-            the calculated values are in array type and plotting_to attribute is from
-            where the plotting will end. The default is ''.
-        title2: TYPE, optional
-            DESCRIPTION. The default is ''.
-        xlabel2: TYPE, optional
-            DESCRIPTION. The default is 'xlabel2'.
-        ylabel2: TYPE, optional
-            DESCRIPTION. The default is 'ylabel2'.
-        spaces: TYPE, optional
-            DESCRIPTION. The default is [None, None, None, None, None, None].
+        This method creates plots to visualize the results of sensitivity analysis.
+        It can generate either a single plot (when return_values=1) or two plots
+        (when return_values=2) to show both the metric values and additional calculated values.
 
-        Returns
-        -------
+        Args:
+            real_values (bool, optional):
+                If True, plots actual parameter values on x-axis instead of relative values. Works best when
+                analyzing a single parameter since parameter ranges may differ. Defaults to False.
+            title (str, optional):
+                Title for the main plot. Defaults to "".
+            xlabel (str, optional):
+                X-axis label for the main plot. Defaults to "xlabel".
+            ylabel (str, optional):
+                Y-axis label for the main plot. Defaults to "Metric values".
+            labelfontsize (int, optional):
+                Font size for axis labels. Defaults to 12.
+            plotting_from (str or int, optional):
+                Starting index for plotting calculated values in the second plot. Defaults to "" (start from beginning).
+            plotting_to (str or int, optional): Ending index for plotting calculated values
+                in the second plot. Defaults to "" (plot until end).
+            title2 (str, optional): Title for the second plot (when return_values=2).
+                Defaults to "".
+            xlabel2 (str, optional):
+                X-axis label for the second plot. Defaults to "xlabel2".
+            ylabel2 (str, optional):
+                Y-axis label for the second plot. Defaults to "ylabel2".
+            spaces (List[float], optional):
+                Spacing parameters for subplot adjustment [left, bottom, right, top, wspace, hspace]. Defaults to None.
+
+        Returns:
+            tuple: When return_values=1, returns (fig, ax) where fig is the matplotlib figure
+                and ax is the axis. When return_values=2, returns (fig, (ax1, ax2)) where
+                ax1 is the main plot axis and ax2 is the calculated values plot axis.
+
+        Raises:
+            ValueError:
+                If attempting to plot calculated values when return_values is not 2.
+
+        Examples:
+            - Import necessary libraries:
+                ```python
+                >>> import pandas as pd
+                >>> import numpy as np
+                >>> from statista.sensitivity import Sensitivity
+                >>> import matplotlib.pyplot as plt
+
+                ```
+            - Define a model function:
+                ```python
+                >>> def model_function(params):
+                ...     return params[0]**2 + params[1]
+
+                ```
+            - Create parameter DataFrame:
+                ```python
+                >>> parameters = pd.DataFrame({'value': [2.0, 3.0]}, index=['param1', 'param2'])
+
+                ```
+            - Define parameter bounds:
+                ```python
+                >>> lower_bounds = [0.5, 1.0]
+                >>> upper_bounds = [4.0, 5.0]
+
+                ```
+            - Create sensitivity analysis object:
+                ```python
+                >>> sensitivity = Sensitivity(parameters, lower_bounds, upper_bounds, model_function)
+
+                ```
+            - Perform OAT sensitivity analysis:
+                ```python
+                >>> sensitivity.one_at_a_time()
+                0-param1 -0
+                3.25
+                0-param1 -1
+                4.891
+                0-param1 -2
+                7.0
+                0-param1 -3
+                ...
+                1-param2 -2
+                7.0
+                1-param2 -3
+                7.0
+                1-param2 -4
+                8.0
+                1-param2 -5
+                9.0
+
+                ```
+            - Plot results with relative parameter values:
+                ```python
+                >>> fig, ax = sensitivity.sobol(
+                ...     title="Parameter Sensitivity Analysis",
+                ...     xlabel="Relative Parameter Value",
+                ...     ylabel="Model Output"
+                ... )
+                >>> plt.show()
+                ```
+                ![one-at-a-time](./../_images/sensitivity/one-at-a-time.png)
+
+            - Plot results with actual parameter values:
+                ```python
+                >>> fig2, ax2 = sensitivity.sobol(
+                ...     real_values=True,
+                ...     title="Parameter Sensitivity Analysis",
+                ...     xlabel="Parameter Value",
+                ...     ylabel="Model Output"
+                ... )
+
+                ```
+                ![one-at-a-time](./../_images/sensitivity/real_values.png)
         """
         if self.return_values == 1:
             fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(8, 6))
@@ -345,4 +622,5 @@ class Sensitivity:
                 )
 
             plt.tight_layout()
+            plt.show()
             return fig, (ax1, ax2)
