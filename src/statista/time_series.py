@@ -25,8 +25,8 @@ from matplotlib.figure import Figure
 from matplotlib.axes import Axes
 
 
-BOX_MEAN_PROP = dict(marker="x", markeredgecolor="w", markerfacecolor="firebrick")
-VIOLIN_PROP = dict(face="#27408B", edge="black", alpha=0.7)
+BOX_MEAN_PROP = {'marker': "x", 'markeredgecolor': "w", 'markerfacecolor': "firebrick"}
+VIOLIN_PROP = {'face': "#27408B", 'edge': "black", 'alpha': 0.7}
 
 
 class TimeSeries(DataFrame):
@@ -36,50 +36,50 @@ class TimeSeries(DataFrame):
     Inherits from `pandas.DataFrame` and adds additional methods for statistical-analysis and visualization specific
     to time series data.
 
-    Parameters
-    ----------
-    data: array-like (1D or 2D)
-        The data to be converted into a time series. If 2D, each column is treated as a separate series.
-    index: array-like, optional
-        The index for the time series data. If None, a default RangeIndex is used.
-    name : str, optional
-        The name of the column in the DataFrame. Default is 'TimeSeriesData'.
-    *args : tuple
-        Additional positional arguments to pass to the DataFrame constructor.
-    **kwargs : dict
-        Additional keyword arguments to pass to the DataFrame constructor.
+    Args:
+        data: array-like (1D or 2D)
+            The data to be converted into a time series. If 2D, each column is treated as a separate series.
+        index: array-like, optional
+            The index for the time series data. If None, a default RangeIndex is used.
+        name : str, optional
+            The name of the column in the DataFrame. Default is 'TimeSeriesData'.
+        *args : tuple
+            Additional positional arguments to pass to the DataFrame constructor.
+        **kwargs : dict
+            Additional keyword arguments to pass to the DataFrame constructor.
 
-    Examples
-    --------
-    - Create a time series from a 1D array:
+    Examples:
+        - Create a time series from a 1D array:
+            ```python
+            >>> data = np.random.randn(100)
+            >>> ts = TimeSeries(data)
+            >>> print(ts.stats) # doctest: +SKIP
+                      Series1
+            count  100.000000
+            mean     0.061816
+            std      1.016592
+            min     -2.622123
+            25%     -0.539548
+            50%     -0.010321
+            75%      0.751756
+            max      2.344767
+            ```
+        - Create a time series from a 2D array:
+            ```python
+            >>> data_2d = np.random.randn(100, 3)
+            >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C'])
+            >>> print(ts_2d.stats) # doctest: +SKIP
+                      Series1     Series2     Series3
+            count  100.000000  100.000000  100.000000
+            mean     0.239437    0.058122   -0.063077
+            std      1.002170    0.980495    1.000381
+            min     -2.254215   -2.500011   -2.081786
+            25%     -0.405632   -0.574242   -0.799128
+            50%      0.308706    0.022795   -0.245399
+            75%      0.879848    0.606253    0.607085
+            max      2.628358    2.822292    2.538793
 
-        >>> data = np.random.randn(100)
-        >>> ts = TimeSeries(data)
-        >>> print(ts.stats) # doctest: +SKIP
-                  Series1
-        count  100.000000
-        mean     0.061816
-        std      1.016592
-        min     -2.622123
-        25%     -0.539548
-        50%     -0.010321
-        75%      0.751756
-        max      2.344767
-
-    - Create a time series from a 2D array:
-
-        >>> data_2d = np.random.randn(100, 3)
-        >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C'])
-        >>> print(ts_2d.stats) # doctest: +SKIP
-                  Series1     Series2     Series3
-        count  100.000000  100.000000  100.000000
-        mean     0.239437    0.058122   -0.063077
-        std      1.002170    0.980495    1.000381
-        min     -2.254215   -2.500011   -2.081786
-        25%     -0.405632   -0.574242   -0.799128
-        50%      0.308706    0.022795   -0.245399
-        75%      0.879848    0.606253    0.607085
-        max      2.628358    2.822292    2.538793
+            ```
     """
 
     def __init__(
@@ -118,15 +118,15 @@ class TimeSeries(DataFrame):
         """
         Returns a detailed statistical summary of the time series.
 
-        Returns
-        -------
-        pandas.DataFrame
-            Statistical summary including count, mean, std, min, 25%, 50%, 75%, max.
+        Returns:
+            pandas.DataFrame
+                Statistical summary including count, mean, std, min, 25%, 50%, 75%, max.
 
-        Examples
-        --------
-        >>> ts = TimeSeries(np.random.randn(100))
-        >>> ts.stats
+        Examples:
+            ```python
+            >>> ts = TimeSeries(np.random.randn(100))
+            >>> ts.stats
+            ```
         """
         return self.describe()
 
@@ -205,8 +205,6 @@ class TimeSeries(DataFrame):
             - Spread and Skewness: The length of the box (interquartile range, IQR) shows the spread of the middle 50% of
                 the data, while the position of the median line within the box can suggest skewness.
 
-            .. code-block:: none
-
                       Q1-1.5IQR   Q1   median  Q3   Q3+1.5IQR
                                    |-----:-----|
                    o      |--------|     :     |--------|    o  o
@@ -218,75 +216,71 @@ class TimeSeries(DataFrame):
             - Useful for quickly comparing the distribution of the time series data and identifying any anomalies or
                 outliers.
 
-        Parameters
-        ----------
-        mean: bool, optional, default is False.
-            Whether to show the mean value in the box plot.
-        notch: bool, optional, default is False.
-                Whether to draw a notched boxplot (`True`), or a rectangular
-                boxplot (`False`).  The notches represent the confidence interval
-                (CI) around the median.  The documentation for *bootstrap*
-                describes how the locations of the notches are computed by
-                default, but their locations may also be overridden by setting the
-                *conf_intervals* parameter.
-        **kwargs: dict, optional
-            fig: matplotlib.figure.Figure, optional
-                Existing figure to plot on. If None, a new figure is created.
-            ax: matplotlib.axes.Axes, optional
-                Existing axes to plot on. If None, a new axes is created.
-            grid: bool, optional, Default is False.
-                Whether to show grid lines.
-            color: dict, optional, default is None.
-                Colors to use for the plot elements. Default is None.
-                >>> color = {"boxes", "#27408B"}
-            title: str, optional
-                Title of the plot.
-            xlabel: str, optional
-                Label for the x-axis.
-            ylabel: str, optional
-                Label for the y-axis.
+        Args:
+            mean: bool, optional, default is False.
+                Whether to show the mean value in the box plot.
+            notch: bool, optional, default is False.
+                    Whether to draw a notched boxplot (`True`), or a rectangular
+                    boxplot (`False`).  The notches represent the confidence interval
+                    (CI) around the median.  The documentation for *bootstrap*
+                    describes how the locations of the notches are computed by
+                    default, but their locations may also be overridden by setting the
+                    *conf_intervals* parameter.
+            **kwargs: dict, optional
+                fig: matplotlib.figure.Figure, optional
+                    Existing figure to plot on. If None, a new figure is created.
+                ax: matplotlib.axes.Axes, optional
+                    Existing axes to plot on. If None, a new axes is created.
+                grid: bool, optional, Default is False.
+                    Whether to show grid lines.
+                color: dict, optional, default is None.
+                    Colors to use for the plot elements. Default is None.
+                    >>> color = {"boxes", "#27408B"}
+                title: str, optional
+                    Title of the plot.
+                xlabel: str, optional
+                    Label for the x-axis.
+                ylabel: str, optional
+                    Label for the y-axis.
 
+        Returns:
+            fig: matplotlib.figure.Figure
+                The figure object containing the plot.
+            ax: matplotlib.axes.Axes
+                The axes object containing the plot.
 
-        Returns
-        -------
-        fig: matplotlib.figure.Figure
-            The figure object containing the plot.
-        ax: matplotlib.axes.Axes
-            The axes object containing the plot.
+        Examples:
+            - Plot the box plot for a 1D time series:
+                ```python
+                >>> ts = TimeSeries(np.random.randn(100))
+                >>> fig, ax = ts.box_plot()
 
-        Examples
-        --------
-        - Plot the box plot for a 1D time series:
+                ```
+                ![box_plot_1d](./../_images/time_series/box_plot_1d.png)
 
-            >>> ts = TimeSeries(np.random.randn(100))
-            >>> fig, ax = ts.box_plot()
+            - Plot the box plot for a multiple time series:
+                ```python
+                >>> data_2d = np.random.randn(100, 4)
+                >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
+                >>> fig, ax = ts_2d.box_plot(mean=True, grid=True)
 
-            .. image:: /_images/time_series/box_plot_1d.png
-                :align: center
+                ```
+                ![box_plot_2d](./../_images/time_series/box_plot_2d.png)
+                ```python
+                >>> fig, ax = ts_2d.box_plot(grid=True, mean=True, color={"boxes": "#DC143C"})
 
-        - Plot the box plot for a multiple time series:
+                ```
+                ![box_plot_color](./../_images/time_series/box_plot_color.png)
+                ```python
+                >>> fig, ax = ts_2d.box_plot(xlabel='Custom X', ylabel='Custom Y', title='Custom Box Plot')
 
-            >>> data_2d = np.random.randn(100, 4)
-            >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
-            >>> fig, ax = ts_2d.box_plot(mean=True, grid=True)
+                ```
+                ![box_plot_axes-label](./../_images/time_series/box_plot_axes-label.png)
+                ```python
+                >>> fig, ax = ts_2d.box_plot(notch=True)
 
-            .. image:: /_images/time_series/box_plot_2d.png
-                :align: center
-
-            >>> fig, ax = ts_2d.box_plot(grid=True, mean=True, color={"boxes": "#DC143C"})
-
-            .. image:: /_images/time_series/box_plot_color.png
-                :align: center
-
-            >>> fig, ax = ts_2d.box_plot(xlabel='Custom X', ylabel='Custom Y', title='Custom Box Plot')
-
-            .. image:: /_images/time_series/box_plot_axes-label.png
-                :align: center
-
-            >>> fig, ax = ts_2d.box_plot(notch=True)
-
-            .. image:: /_images/time_series/box_plot_notch.png
-                :align: center
+                ```
+                ![box_plot_notch](./../_images/time_series/box_plot_notch.png)
         """
         fig, ax = self._get_ax_fig(**kwargs)
         kwargs.pop("fig", None)
@@ -299,11 +293,9 @@ class TimeSeries(DataFrame):
             patch_artist=True,
             showmeans=mean,
             meanprops=BOX_MEAN_PROP,
-            boxprops=dict(
-                facecolor=(
-                    "#27408B" if color is None else color.get("boxes", "#27408B")
-                )
-            ),
+            boxprops={
+                'facecolor': ("#27408B" if color is None else color.get("boxes", "#27408B"))
+            },
         )
         ax = self._adjust_axes_labels(
             ax,
@@ -318,21 +310,19 @@ class TimeSeries(DataFrame):
     def calculate_whiskers(data: Union[np.ndarray, list], q1: float, q3: float):
         """Calculate the upper and lower whiskers for a box plot.
 
-        Parameters
-        ----------
-        data: np.ndarray
-            Input array of data.
-        q1: float
-            first quartile
-        q3: float
-            third quartile
+        Args:
+            data: np.ndarray
+                Input array of data.
+            q1: float
+                first quartile
+            q3: float
+                third quartile
 
-        Returns
-        -------
-        lower_wisker: float
-            Lower whisker value.
-        upper_wisker: float
-            Upper whisker value.
+        Returns:
+            lower_wisker: float
+                Lower whisker value.
+            upper_wisker: float
+                Upper whisker value.
         """
         inter_quartile = q3 - q1
         upper_whisker = q3 + inter_quartile * 1.5
@@ -354,89 +344,86 @@ class TimeSeries(DataFrame):
         """
         Plots a violin plot of the time series data.
 
-        Parameters
-        ----------
-        mean: bool, optional, default is True.
-            Whether to show the means in the violin plot.
-        median: bool, optional, default is False.
-            Whether to show the median in the violin plot.
-        extrema: bool, optional, default is False.
-            Whether to show the minima and maxima in the violin plot.
-        side: {'both', 'low', 'high'}, default: 'both'
-            'both' plots standard violins. 'low'/'high' only
-            plots the side below/above the position value.
-        spacing: int, optional, default is 0.
-            The spacing (number of ticks) between the violins.
-        **kwargs: dict, optional
-            fig: matplotlib.figure.Figure, optional
-                Existing figure to plot on. If None, a new figure is created.
-            ax: matplotlib.axes.Axes, optional
-                Existing axes to plot on. If None, a new axes is created.
-            grid: bool, optional
-                Whether to show grid lines. Default is True.
-            color: dict, optional, default is None.
-                Colors to use for the plot elements. Default is None.
-                >>> color = {"face", "#27408B", "edge", "#DC143C", "alpha", 0.7}
-            title: str, optional
-                Title of the plot. Default is 'Box Plot'.
-            xlabel: str, optional
-                Label for the x-axis. Default is 'Index'.
-            ylabel: str, optional
-                Label for the y-axis. Default is 'Value'.
+        Args:
+            mean: bool, optional, default is True.
+                Whether to show the means in the violin plot.
+            median: bool, optional, default is False.
+                Whether to show the median in the violin plot.
+            extrema: bool, optional, default is False.
+                Whether to show the minima and maxima in the violin plot.
+            side: {'both', 'low', 'high'}, default: 'both'
+                'both' plots standard violins. 'low'/'high' only
+                plots the side below/above the position value.
+            spacing: int, optional, default is 0.
+                The spacing (number of ticks) between the violins.
+            **kwargs: dict, optional
+                fig: matplotlib.figure.Figure, optional
+                    Existing figure to plot on. If None, a new figure is created.
+                ax: matplotlib.axes.Axes, optional
+                    Existing axes to plot on. If None, a new axes is created.
+                grid: bool, optional
+                    Whether to show grid lines. Default is True.
+                color: dict, optional, default is None.
+                    Colors to use for the plot elements. Default is None.
+                    >>> color = {"face", "#27408B", "edge", "#DC143C", "alpha", 0.7}
+                title: str, optional
+                    Title of the plot. Default is 'Box Plot'.
+                xlabel: str, optional
+                    Label for the x-axis. Default is 'Index'.
+                ylabel: str, optional
+                    Label for the y-axis. Default is 'Value'.
 
-        Returns
-        -------
-        fig: matplotlib.figure.Figure
-            The figure object containing the plot.
-        ax: matplotlib.axes.Axes
-            The axes object containing the plot.
+        Returns:
+            fig: matplotlib.figure.Figure
+                The figure object containing the plot.
+            ax: matplotlib.axes.Axes
+                The axes object containing the plot.
 
-        Examples
-        --------
-        - Plot the box plot for a 1D time series:
+        Examples:
+            - Plot the box plot for a 1D time series:
+                ```python
+                >>> ts = TimeSeries(np.random.randn(100))
+                >>> fig, ax = ts.violin()
 
-            >>> ts = TimeSeries(np.random.randn(100))
-            >>> fig, ax = ts.violin()
+                ```
+                ![violin_1d](./../_images/time_series/violin_1d.png)
 
-            .. image:: /_images/time_series/violin_1d.png
-                :align: center
+            - Plot the box plot for a multiple time series:
+                ```python
+                >>> data_2d = np.random.randn(100, 4)
+                >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
+                >>> fig, ax = ts_2d.violin()
 
-        - Plot the box plot for a multiple time series:
+                ```
+                ![violin_2d](./../_images/time_series/violin_2d.png)
 
-            >>> data_2d = np.random.randn(100, 4)
-            >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
-            >>> fig, ax = ts_2d.violin()
+            - you can control the spacing between the violins using the `spacing` parameter:
+                ```python
+                >>> fig, ax = ts_2d.violin(spacing=2)
 
-            .. image:: /_images/time_series/violin_2d.png
-                :align: center
+                ```
+                ![violin_2d_spacing](./../_images/time_series/violin_2d_spacing.png)
 
-        - you can control the spacing between the violins using the `spacing` parameter:
+            - You can change the title, xlabel, and ylabel using the respective parameters:
+                ```python
+                >>> fig, ax = ts_2d.violin(xlabel='Random Data', ylabel='Custom Y', title='Custom Box Plot')
 
-            >>> fig, ax = ts_2d.violin(spacing=2)
+                ```
+                ![violin_labels_titles](./../_images/time_series/violin_labels_titles.png)
 
-            .. image:: /_images/time_series/violin_2d_spacing.png
-                :align: center
+            - You can display the means, medians, and extrema using the respective parameters:
+                ```python
+                >>> fig, ax = ts_2d.violin(mean=True, median=True, extrema=True)
 
-        - You can change the title, xlabel, and ylabel using the respective parameters:
+                ```
+                ![violin_means_medians_extrema](./../_images/time_series/violin_means_medians_extrema.png)
 
-            >>> fig, ax = ts_2d.violin(xlabel='Random Data', ylabel='Custom Y', title='Custom Box Plot')
+            - You can display the violins on the low side only using the `side` parameter:
+                ```python
+                >>> fig, ax = ts_2d.violin(side='low')
 
-            .. image:: /_images/time_series/violin_labels_titles.png
-                :align: center
-
-        - You can display the means, medians, and extrema using the respective parameters:
-
-            >>> fig, ax = ts_2d.violin(mean=True, median=True, extrema=True)
-
-            .. image:: /_images/time_series/violin_means_medians_extrema.png
-                :align: center
-
-        - You can display the violins on the low side only using the `side` parameter:
-
-            >>> fig, ax = ts_2d.violin(side='low')
-
-            .. image:: /_images/time_series/violin_low_side.png
-                :align: center
+                ```
+                ![violin_low_side](./../_images/time_series/violin_low_side.png)
         """
         fig, ax = self._get_ax_fig(**kwargs)
         # kwargs.pop("fig", None)
@@ -482,62 +469,62 @@ class TimeSeries(DataFrame):
     ) -> Tuple[Figure, Axes]:
         """RainCloud plot.
 
-        Parameters
-        ----------
-        overlay: bool, optional, default is True.
-            Whether to overlay the plots or display them side-by-side.
-        violin_width: float, optional, default is 0.4.
-            Width of the violins.
-        scatter_offset: float, optional, default is 0.15.
-            Offset for the scatter plot.
-        boxplot_width: float, optional, default is
-            Width of the box plot.
-        order: list, optional, default is None.
-            Order of the plots. Default is ['violin', 'scatter', 'box'].
-        **kwargs: dict, optional
-            fig: matplotlib.figure.Figure, optional
-                Existing figure to plot on. If None, a new figure is created.
-            ax: matplotlib.axes.Axes, optional
-                Existing axes to plot on. If None, a new axes is created.
-            grid: bool, optional
-                Whether to show grid lines. Default is True.
-            color: dict, optional, default is None.
-                Colors to use for the plot elements. Default is None.
-                >>> color = {"boxes", "#27408B"}
-            title: str, optional
-                Title of the plot. Default is 'Box Plot'.
-            xlabel: str, optional
-                Label for the x-axis. Default is 'Index'.
-            ylabel: str, optional
-                Label for the y-axis. Default is 'Value'.
+        Args:
+            overlay: bool, optional, default is True.
+                Whether to overlay the plots or display them side-by-side.
+            violin_width: float, optional, default is 0.4.
+                Width of the violins.
+            scatter_offset: float, optional, default is 0.15.
+                Offset for the scatter plot.
+            boxplot_width: float, optional, default is
+                Width of the box plot.
+            order: list, optional, default is None.
+                Order of the plots. Default is ['violin', 'scatter', 'box'].
+            **kwargs: dict, optional
+                fig: matplotlib.figure.Figure, optional
+                    Existing figure to plot on. If None, a new figure is created.
+                ax: matplotlib.axes.Axes, optional
+                    Existing axes to plot on. If None, a new axes is created.
+                grid: bool, optional
+                    Whether to show grid lines. Default is True.
+                color: dict, optional, default is None.
+                    Colors to use for the plot elements. Default is None.
+                    >>> color = {"boxes", "#27408B"}
+                title: str, optional
+                    Title of the plot. Default is 'Box Plot'.
+                xlabel: str, optional
+                    Label for the x-axis. Default is 'Index'.
+                ylabel: str, optional
+                    Label for the y-axis. Default is 'Value'.
 
-        Returns
-        -------
-        fig: matplotlib.figure.Figure
-            The figure object containing the plot.
-        ax: matplotlib.axes.Axes
-            The axes object containing the plot.
+        Returns:
+            fig: matplotlib.figure.Figure
+                The figure object containing the plot.
+            ax: matplotlib.axes.Axes
+                The axes object containing the plot.
 
-        Examples
-        --------
-        - Plot the raincloud plot for a 1D time series, and use the `overlay` parameter to overlay the plots:
+        Examples:
+            - Plot the raincloud plot for a 1D time series, and use the `overlay` parameter to overlay the plots:
+                ```python
+                >>> ts = TimeSeries(np.random.randn(100))
+                >>> fig, ax = ts.raincloud()
 
-            >>> ts = TimeSeries(np.random.randn(100))
-            >>> fig, ax = ts.raincloud()
+                ```
+                ![raincloud_1d](./../_images/time_series/raincloud_1d.png)
 
-            .. image:: /_images/time_series/raincloud_1d.png
-                :align: center
+                ```python
+                >>> fig, ax = ts.raincloud(overlay=False)
 
-            >>> fig, ax = ts.raincloud(overlay=False)
+                ```
+                ![raincloud-overlay-false](./../_images/time_series/raincloud-overlay-false.png)
 
-            .. image:: /_images/time_series/raincloud-overlay-false.png
-                :align: center
+            - Plot the box plot for a multiple time series:
+                ```python
+                >>> data_2d = np.random.randn(100, 4)
+                >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
+                >>> fig, ax = ts_2d.raincloud(mean=True, grid=True)
 
-        - Plot the box plot for a multiple time series:
-
-            >>> data_2d = np.random.randn(100, 4)
-            >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
-            >>> fig, ax = ts_2d.raincloud(mean=True, grid=True)
+                ```
         """
         fig, ax = self._get_ax_fig(**kwargs)
         kwargs.pop("fig", None)
@@ -573,8 +560,8 @@ class TimeSeries(DataFrame):
                 widths=boxplot_width,
                 vert=True,
                 patch_artist=True,
-                boxprops=dict(facecolor="lightblue", color="blue"),
-                medianprops=dict(color="red"),
+                boxprops={"facecolor": "lightblue", "color":"blue"},
+                medianprops={"color": "red"},
             ),
         }
 
@@ -629,96 +616,89 @@ class TimeSeries(DataFrame):
         """
         Plots a histogram of the time series data.
 
-        Parameters
-        ----------
-        bins : int, optional, default is 10.
-            Number of histogram bins.
-        **kwargs: dict, optional
-            fig: matplotlib.figure.Figure, optional
-                Existing figure to plot on. If None, a new figure is created.
-            ax: matplotlib.axes.Axes, optional
-                Existing axes to plot on. If None, a new axes is created.
-            grid: bool, optional
-                Whether to show grid lines. Default is True.
-            color: str, optional, default is None.
-                Colors to use for the plot elements.
-            title: str, optional
-                Title of the plot. Default is 'Box Plot'.
-            xlabel: str, optional
-                Label for the x-axis. Default is 'Index'.
-            ylabel: str, optional
-                Label for the y-axis. Default is 'Value'.
-            title_fontsize: int, optional
-                Font size of the title.
-            label_fontsize: int, optional
-                Font size of the title and labels.
-            tick_fontsize: int, optional
-                Font size of the tick labels.
-            xtick_labels: List[str], optional
-                Labels for the x-axis ticks.
-            legend: List[str], optional
-                Legend to display in the plot.
-            legend_fontsize: int, optional
-                Font size of the legend.
+        Args:
+            bins : int, optional, default is 10.
+                Number of histogram bins.
+            **kwargs: dict, optional
+                fig: matplotlib.figure.Figure, optional
+                    Existing figure to plot on. If None, a new figure is created.
+                ax: matplotlib.axes.Axes, optional
+                    Existing axes to plot on. If None, a new axes is created.
+                grid: bool, optional
+                    Whether to show grid lines. Default is True.
+                color: str, optional, default is None.
+                    Colors to use for the plot elements.
+                title: str, optional
+                    Title of the plot. Default is 'Box Plot'.
+                xlabel: str, optional
+                    Label for the x-axis. Default is 'Index'.
+                ylabel: str, optional
+                    Label for the y-axis. Default is 'Value'.
+                title_fontsize: int, optional
+                    Font size of the title.
+                label_fontsize: int, optional
+                    Font size of the title and labels.
+                tick_fontsize: int, optional
+                    Font size of the tick labels.
+                xtick_labels: List[str], optional
+                    Labels for the x-axis ticks.
+                legend: List[str], optional
+                    Legend to display in the plot.
+                legend_fontsize: int, optional
+                    Font size of the legend.
 
-        Returns
-        -------
-        fig : matplotlib.figure.Figure
-            The figure object containing the plot.
-        ax : matplotlib.axes.Axes
-            The axes object containing the plot.
-        n_values : np.ndarray
-            The number of values in each histogram bin.
-        bin_edges : np.ndarray
-            The edges of the bins. Length nbins + 1 (nbins left edges and right
-            edge of last bin).  Always a single array even when multiple data
-            sets are passed in.
+        Returns:
+            fig : matplotlib.figure.Figure
+                The figure object containing the plot.
+            ax : matplotlib.axes.Axes
+                The axes object containing the plot.
+            n_values : np.ndarray
+                The number of values in each histogram bin.
+            bin_edges : np.ndarray
+                The edges of the bins. Length nbins + 1 (nbins left edges and right
+                edge of last bin).  Always a single array even when multiple data
+                sets are passed in.
 
-        Examples
-        --------
-        - Plot the box plot for a 1D time series:
+        Examples:
+            - Plot the box plot for a 1D time series:
+                ```python
+                >>> ts = TimeSeries(np.random.randn(100))
+                >>> n_values, bin_edges, fig, ax = ts.histogram()
+                >>> print(n_values)
+                [ 5.  8. 11. 12. 14. 17. 15.  9.  4.  5.]
+                >>> print(bin_edges)
+                [-2.41934673 -1.9628219  -1.50629707 -1.04977224 -0.5932474  -0.13672257
+                  0.31980226  0.77632709  1.23285192  1.68937676  2.14590159]
+                ```
+                ![histogram](./../_images/time_series/histogram.png)
 
-            >>> ts = TimeSeries(np.random.randn(100))
-            >>> n_values, bin_edges, fig, ax = ts.histogram()
-            >>> print(n_values)
-            [ 5.  8. 11. 12. 14. 17. 15.  9.  4.  5.]
-            >>> print(bin_edges)
-            [-2.41934673 -1.9628219  -1.50629707 -1.04977224 -0.5932474  -0.13672257
-              0.31980226  0.77632709  1.23285192  1.68937676  2.14590159]
-
-            .. image:: /_images/time_series/histogram.png
-                :align: center
-
-        - Plot the box plot for a multiple time series:
-
-            >>> data_2d = np.random.randn(100, 4)
-            >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
-            >>> n_values, bin_edges, fig, ax = ts_2d.histogram(legend=['A', 'B', 'C', 'D'])
-            >>> print(n_values)
-            [[ 0.  7.  9. 12. 20. 20. 19.  7.  5.  1.]
-             [ 1.  1.  9. 12. 20. 25. 13. 14.  5.  0.]
-             [ 5.  4. 11. 10. 18. 23. 13.  9.  4.  3.]
-             [ 1.  2. 11. 18. 16. 20. 13. 11.  6.  2.]]
-            >>> print(bin_edges)
-            [-2.76976813 -2.22944508 -1.68912202 -1.14879896 -0.6084759  -0.06815285
-              0.47217021  1.01249327  1.55281633  2.09313939  2.63346244]
-
-            .. image:: /_images/time_series/histogram-2d.png
-                :align: center
-
+            - Plot the box plot for a multiple time series:
+                ```python
+                >>> data_2d = np.random.randn(100, 4)
+                >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
+                >>> n_values, bin_edges, fig, ax = ts_2d.histogram(legend=['A', 'B', 'C', 'D'])
+                >>> print(n_values)
+                [[ 0.  7.  9. 12. 20. 20. 19.  7.  5.  1.]
+                 [ 1.  1.  9. 12. 20. 25. 13. 14.  5.  0.]
+                 [ 5.  4. 11. 10. 18. 23. 13.  9.  4.  3.]
+                 [ 1.  2. 11. 18. 16. 20. 13. 11.  6.  2.]]
+                >>> print(bin_edges)
+                [-2.76976813 -2.22944508 -1.68912202 -1.14879896 -0.6084759  -0.06815285
+                  0.47217021  1.01249327  1.55281633  2.09313939  2.63346244]
+                ```
+                ![histogram-2d](./../_images/time_series/histogram-2d.png)
         """
         # plt.style.use('ggplot')
 
         fig, ax = self._get_ax_fig(**kwargs)
 
         color = kwargs.get("color") if "color" in kwargs else VIOLIN_PROP
-        if len(self.columns) > 1:
-            if not isinstance(color.get("face"), list):
-                color = None
-                warnings.warn(
-                    "Multiple columns detected. Please provide a list of colors for each column, Otherwise the given"
-                    "color will be ignored."
-                )
+        if len(self.columns) > 1 and not isinstance(color.get("face"), list):
+            color = None
+            warnings.warn(
+                "Multiple columns detected. Please provide a list of colors for each column, Otherwise the given"
+                "color will be ignored."
+            )
         n_values, bin_edges, _ = ax.hist(
             self.values,
             bins=bins,
@@ -747,51 +727,48 @@ class TimeSeries(DataFrame):
         """
         Plots a density plot of the time series data.
 
-        Parameters
-        ----------
-        color : str, optional
-            Color of the density line. Default is 'blue'.
-        **kwargs: dict, optional
-            fig: matplotlib.figure.Figure, optional
-                Existing figure to plot on. If None, a new figure is created.
-            ax: matplotlib.axes.Axes, optional
-                Existing axes to plot on. If None, a new axes is created.
-            grid: bool, optional, Default is False.
-                Whether to show grid lines.
-            color: dict, optional, default is None.
-                Colors to use for the plot elements. Default is None.
-                >>> color = {"boxes", "#27408B"}
-            title: str, optional
-                Title of the plot.
-            xlabel: str, optional
-                Label for the x-axis.
-            ylabel: str, optional
-                Label for the y-axis.
+        Args:
+            color : str, optional
+                Color of the density line. Default is 'blue'.
+            **kwargs: dict, optional
+                fig: matplotlib.figure.Figure, optional
+                    Existing figure to plot on. If None, a new figure is created.
+                ax: matplotlib.axes.Axes, optional
+                    Existing axes to plot on. If None, a new axes is created.
+                grid: bool, optional, Default is False.
+                    Whether to show grid lines.
+                color: dict, optional, default is None.
+                    Colors to use for the plot elements. Default is None.
+                    >>> color = {"boxes", "#27408B"}
+                title: str, optional
+                    Title of the plot.
+                xlabel: str, optional
+                    Label for the x-axis.
+                ylabel: str, optional
+                    Label for the y-axis.
 
-        Returns
-        -------
-        fig : matplotlib.figure.Figure
-            The figure object containing the plot.
-        ax : matplotlib.axes.Axes
-            The axes object containing the plot.
+        Returns:
+            fig : matplotlib.figure.Figure
+                The figure object containing the plot.
+            ax : matplotlib.axes.Axes
+                The axes object containing the plot.
 
-        Examples
-        --------
-        - Plot the KDE density plot for a 1D time series:
+        Examples:
+            - Plot the KDE density plot for a 1D time series:
+                ```python
+                >>> ts = TimeSeries(np.random.randn(100))
+                >>> fig, ax = ts.density(title='Density Plot', xlabel='Random Values', ylabel='KDE density')
 
-            >>> ts = TimeSeries(np.random.randn(100))
-            >>> fig, ax = ts.density(title='Density Plot', xlabel='Random Values', ylabel='KDE density')
+                ```
+                ![density-1d](./../_images/time_series/density-1d.png)
 
-            .. image:: /_images/time_series/density-1d.png
-                    :align: center
+            - Plot the KDE density plot for a 2D time series:
+                ```python
+                >>> ts = TimeSeries(np.random.randn(100, 4))
+                >>> fig, ax = ts.density(title='Density Plot', xlabel='Random Values', ylabel='KDE density')
 
-        - Plot the KDE density plot for a 2D time series:
-
-            >>> ts = TimeSeries(np.random.randn(100, 4))
-            >>> fig, ax = ts.density(title='Density Plot', xlabel='Random Values', ylabel='KDE density')
-
-            .. image:: /_images/time_series/density-2d.png
-                    :align: center
+                ```
+                ![density-2d](./../_images/time_series/density-2d.png)
         """
         fig, ax = self._get_ax_fig(**kwargs)
         color = kwargs.get("color", None)
@@ -811,67 +788,64 @@ class TimeSeries(DataFrame):
         """
         Plots the rolling mean and standard deviation of the time series data.
 
-        Parameters
-        ----------
-        window : int, optional, default is 10.
-            The window size for the rolling statistics.
-        **kwargs: dict, optional
-            fig: matplotlib.figure.Figure, optional
-                Existing figure to plot on. If None, a new figure is created.
-            ax: matplotlib.axes.Axes, optional
-                Existing axes to plot on. If None, a new axes is created.
-            grid: bool, optional
-                Whether to show grid lines. Default is True.
-            color: str, optional, default is None.
-                Colors to use for the plot elements.
-            title: str, optional
-                Title of the plot. Default is 'Rolling Mean & Standard Deviation'.
-            xlabel: str, optional
-                Label for the x-axis. Default is 'Index'.
-            ylabel: str, optional
-                Label for the y-axis. Default is 'Value'.
-            title_fontsize: int, optional
-                Font size of the title.
-            label_fontsize: int, optional
-                Font size of the title and labels.
-            tick_fontsize: int, optional
-                Font size of the tick labels.
-            xtick_labels: List[str], optional
-                Labels for the x-axis ticks.
-            legend: List[str], optional
-                Legend to display in the plot.
-            legend_fontsize: int, optional
-                Font size of the legend.
+        Args:
+            window : int, optional, default is 10.
+                The window size for the rolling statistics.
+            **kwargs: dict, optional
+                fig: matplotlib.figure.Figure, optional
+                    Existing figure to plot on. If None, a new figure is created.
+                ax: matplotlib.axes.Axes, optional
+                    Existing axes to plot on. If None, a new axes is created.
+                grid: bool, optional
+                    Whether to show grid lines. Default is True.
+                color: str, optional, default is None.
+                    Colors to use for the plot elements.
+                title: str, optional
+                    Title of the plot. Default is 'Rolling Mean & Standard Deviation'.
+                xlabel: str, optional
+                    Label for the x-axis. Default is 'Index'.
+                ylabel: str, optional
+                    Label for the y-axis. Default is 'Value'.
+                title_fontsize: int, optional
+                    Font size of the title.
+                label_fontsize: int, optional
+                    Font size of the title and labels.
+                tick_fontsize: int, optional
+                    Font size of the tick labels.
+                xtick_labels: List[str], optional
+                    Labels for the x-axis ticks.
+                legend: List[str], optional
+                    Legend to display in the plot.
+                legend_fontsize: int, optional
+                    Font size of the legend.
 
-        Returns
-        -------
-        fig : matplotlib.figure.Figure
-            The figure object containing the plot.
-        ax : matplotlib.axes.Axes
-            The axes object containing the plot.
+        Returns:
+            fig : matplotlib.figure.Figure
+                The figure object containing the plot.
+            ax : matplotlib.axes.Axes
+                The axes object containing the plot.
 
-        Examples
-        --------
-        - Plot the rolling average and standard deviation for a 1D time series:
+        Examples:
+            - Plot the rolling average and standard deviation for a 1D time series:
+                ```python
+                >>> ts = TimeSeries(np.random.randn(100))
+                >>> fig, ax = ts.rolling_statistics(
+                ...    window=20, title='Rolling Statistics', xlabel='Random Values', ylabel='Random Y',
+                ...    legend=['Rolling Mean', 'Rolling Std']
+                ... )
 
-            >>> ts = TimeSeries(np.random.randn(100))
-            >>> fig, ax = ts.rolling_statistics(
-            ...    window=20, title='Rolling Statistics', xlabel='Random Values', ylabel='Random Y',
-            ...    legend=['Rolling Mean', 'Rolling Std']
-            ... )
+                ```
+                ![rolling-statistics](./../_images/time_series/rolling-statistics.png)
 
-                .. image:: /_images/time_series/rolling-statistics.png
-                        :align: center
+            - Plot the rolling average and standard deviation for a 2D time series:
+                ```python
+                >>> ts = TimeSeries(np.random.randn(100, 3))
+                >>> fig, ax = ts.rolling_statistics(
+                ...    window=10, title='Rolling Statistics', xlabel='Random Values', ylabel='Random Y',
+                ... )
 
-        - Plot the rolling average and standard deviation for a 2D time series:
-
-            >>> ts = TimeSeries(np.random.randn(100, 3))
-            >>> fig, ax = ts.rolling_statistics(
-            ...    window=10, title='Rolling Statistics', xlabel='Random Values', ylabel='Random Y',
-            ... )
-
-                .. image:: /_images/time_series/rolling-statistics-2d.png
-                        :align: center
+                ```
+                ![rolling-statistics-2d](./../_images/time_series/rolling-statistics-2d.png)
         """
         fig, ax = self._get_ax_fig(**kwargs)
 
