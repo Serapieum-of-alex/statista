@@ -100,7 +100,7 @@ fig, ax = dist.plot()
 ### Extreme Value Analysis
 
 ```python
-from statista.distributions import GEV, PlottingPosition
+from statista.distributions import PlottingPosition
 
 # Create a GEV distribution
 gev_dist = Distributions("GEV", data)
