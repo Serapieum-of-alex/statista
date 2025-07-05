@@ -19,6 +19,10 @@
 Current release info
 ====================
 
+Repository: [GitHub](https://github.com/Serapieum-of-alex/statista)
+conda-forge feedstock: [![Repo: statista-feedstock](https://img.shields.io/badge/repo‑statista--feedstock-blue)](https://github.com/conda-forge/statista-feedstock)
+Documentation: [GitHub Pages](https://serapieum-of-alex.github.io/statista)
+
 | Name | Downloads                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Version | Platforms |
 | --- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| --- | --- |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-statista-green.svg)](https://anaconda.org/conda-forge/statista) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/statista.svg)](https://anaconda.org/conda-forge/statista) [![Downloads](https://pepy.tech/badge/statista)](https://pepy.tech/project/statista) [![Downloads](https://pepy.tech/badge/statista/month)](https://pepy.tech/project/statista)  [![Downloads](https://pepy.tech/badge/statista/week)](https://pepy.tech/project/statista)  ![PyPI - Downloads](https://img.shields.io/pypi/dd/statista?color=blue&style=flat-square) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/statista.svg)](https://anaconda.org/conda-forge/statista) [![PyPI version](https://badge.fury.io/py/statista.svg)](https://badge.fury.io/py/statista) [![Anaconda-Server Badge](https://anaconda.org/conda-forge/statista/badges/version.svg)](https://anaconda.org/conda-forge/statista) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/statista.svg)](https://anaconda.org/conda-forge/statista) [![Join the chat at https://gitter.im/Hapi-Nile/Hapi](https://badges.gitter.im/Hapi-Nile/Hapi.svg)](https://gitter.im/Hapi-Nile/Hapi?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) |
@@ -130,7 +134,7 @@ This project is licensed under the GPL-3.0 License - see the LICENSE file for de
 If you use Statista in your research, please cite it as:
 
 ```
-Farrag, M. (2023). Statista: A Python package for statistical analysis, extreme value analysis, and sensitivity analysis. 
+Farrag, M. (2023). Statista: A Python package for statistical analysis, extreme value analysis, and sensitivity analysis.
 https://github.com/Serapieum-of-alex/statista
 ```
 
