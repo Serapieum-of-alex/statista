@@ -16,17 +16,17 @@ https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.plot
 """
 
 import warnings
-from typing import Union, List, Tuple, Literal
-from pandas import DataFrame
-from matplotlib.collections import PolyCollection
-import numpy as np
+from typing import List, Literal, Tuple, Union
+
 import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
+import numpy as np
 from matplotlib.axes import Axes
+from matplotlib.collections import PolyCollection
+from matplotlib.figure import Figure
+from pandas import DataFrame
 
-
-BOX_MEAN_PROP = {'marker': "x", 'markeredgecolor': "w", 'markerfacecolor': "firebrick"}
-VIOLIN_PROP = {'face': "#27408B", 'edge': "black", 'alpha': 0.7}
+BOX_MEAN_PROP = {"marker": "x", "markeredgecolor": "w", "markerfacecolor": "firebrick"}
+VIOLIN_PROP = {"face": "#27408B", "edge": "black", "alpha": 0.7}
 
 
 class TimeSeries(DataFrame):
@@ -63,6 +63,7 @@ class TimeSeries(DataFrame):
             50%     -0.010321
             75%      0.751756
             max      2.344767
+
             ```
         - Create a time series from a 2D array:
             ```python
@@ -125,7 +126,16 @@ class TimeSeries(DataFrame):
         Examples:
             ```python
             >>> ts = TimeSeries(np.random.randn(100))
-            >>> ts.stats
+            >>> ts.stats # doctest: +SKIP
+                      Series1
+            count  100.000000
+            mean     0.130961
+            std      0.912412
+            min     -2.850323
+            25%     -0.442838
+            50%      0.157995
+            75%      0.787275
+            max      1.972673
             ```
         """
         return self.describe()
@@ -235,7 +245,7 @@ class TimeSeries(DataFrame):
                     Whether to show grid lines.
                 color: dict, optional, default is None.
                     Colors to use for the plot elements. Default is None.
-                    >>> color = {"boxes", "#27408B"}
+                    ```color = {"boxes", "#27408B"}```
                 title: str, optional
                     Title of the plot.
                 xlabel: str, optional
@@ -294,7 +304,9 @@ class TimeSeries(DataFrame):
             showmeans=mean,
             meanprops=BOX_MEAN_PROP,
             boxprops={
-                'facecolor': ("#27408B" if color is None else color.get("boxes", "#27408B"))
+                "facecolor": (
+                    "#27408B" if color is None else color.get("boxes", "#27408B")
+                )
             },
         )
         ax = self._adjust_axes_labels(
@@ -365,7 +377,7 @@ class TimeSeries(DataFrame):
                     Whether to show grid lines. Default is True.
                 color: dict, optional, default is None.
                     Colors to use for the plot elements. Default is None.
-                    >>> color = {"face", "#27408B", "edge", "#DC143C", "alpha", 0.7}
+                    ```color = {"face", "#27408B", "edge", "#DC143C", "alpha", 0.7}```
                 title: str, optional
                     Title of the plot. Default is 'Box Plot'.
                 xlabel: str, optional
@@ -489,7 +501,7 @@ class TimeSeries(DataFrame):
                     Whether to show grid lines. Default is True.
                 color: dict, optional, default is None.
                     Colors to use for the plot elements. Default is None.
-                    >>> color = {"boxes", "#27408B"}
+                    ```color = {"boxes", "#27408B"}```
                 title: str, optional
                     Title of the plot. Default is 'Box Plot'.
                 xlabel: str, optional
@@ -560,7 +572,7 @@ class TimeSeries(DataFrame):
                 widths=boxplot_width,
                 vert=True,
                 patch_artist=True,
-                boxprops={"facecolor": "lightblue", "color":"blue"},
+                boxprops={"facecolor": "lightblue", "color": "blue"},
                 medianprops={"color": "red"},
             ),
         }
@@ -664,9 +676,9 @@ class TimeSeries(DataFrame):
                 ```python
                 >>> ts = TimeSeries(np.random.randn(100))
                 >>> n_values, bin_edges, fig, ax = ts.histogram()
-                >>> print(n_values)
+                >>> print(n_values) #doctest: +SKIP
                 [ 5.  8. 11. 12. 14. 17. 15.  9.  4.  5.]
-                >>> print(bin_edges)
+                >>> print(bin_edges) #doctest: +SKIP
                 [-2.41934673 -1.9628219  -1.50629707 -1.04977224 -0.5932474  -0.13672257
                   0.31980226  0.77632709  1.23285192  1.68937676  2.14590159]
                 ```
@@ -677,12 +689,12 @@ class TimeSeries(DataFrame):
                 >>> data_2d = np.random.randn(100, 4)
                 >>> ts_2d = TimeSeries(data_2d, columns=['A', 'B', 'C', 'D'])
                 >>> n_values, bin_edges, fig, ax = ts_2d.histogram(legend=['A', 'B', 'C', 'D'])
-                >>> print(n_values)
+                >>> print(n_values) #doctest: +SKIP
                 [[ 0.  7.  9. 12. 20. 20. 19.  7.  5.  1.]
                  [ 1.  1.  9. 12. 20. 25. 13. 14.  5.  0.]
                  [ 5.  4. 11. 10. 18. 23. 13.  9.  4.  3.]
                  [ 1.  2. 11. 18. 16. 20. 13. 11.  6.  2.]]
-                >>> print(bin_edges)
+                >>> print(bin_edges) #doctest: +SKIP
                 [-2.76976813 -2.22944508 -1.68912202 -1.14879896 -0.6084759  -0.06815285
                   0.47217021  1.01249327  1.55281633  2.09313939  2.63346244]
                 ```
@@ -728,29 +740,29 @@ class TimeSeries(DataFrame):
         Plots a density plot of the time series data.
 
         Args:
-            color : str, optional
-                Color of the density line. Default is 'blue'.
             **kwargs: dict, optional
-                fig: matplotlib.figure.Figure, optional
+                color (str, optional):
+                    Color of the density line. Default is 'blue'.
+                fig (matplotlib.figure.Figure, optional):
                     Existing figure to plot on. If None, a new figure is created.
-                ax: matplotlib.axes.Axes, optional
+                ax (matplotlib.axes.Axes, optional):
                     Existing axes to plot on. If None, a new axes is created.
-                grid: bool, optional, Default is False.
-                    Whether to show grid lines.
-                color: dict, optional, default is None.
+                grid (bool, optional):
+                    Whether to show grid lines. Default is False.
+                color (dict, optional):
                     Colors to use for the plot elements. Default is None.
-                    >>> color = {"boxes", "#27408B"}
-                title: str, optional
+                    ```color = {"boxes", "#27408B"}```
+                title (str, optional):
                     Title of the plot.
-                xlabel: str, optional
+                xlabel (str, optional):
                     Label for the x-axis.
-                ylabel: str, optional
+                ylabel (str, optional):
                     Label for the y-axis.
 
         Returns:
-            fig : matplotlib.figure.Figure
+            fig (matplotlib.figure.Figure):
                 The figure object containing the plot.
-            ax : matplotlib.axes.Axes
+            ax (matplotlib.axes.Axes):
                 The axes object containing the plot.
 
         Examples:

@@ -1,24 +1,25 @@
 """Statistical distributions."""
 
-from numbers import Number
-from typing import Any, List, Tuple, Union, Dict, Callable
 from abc import ABC, abstractmethod
-import numpy as np
+from numbers import Number
 from statistics import mode
+from typing import Any, Callable, Dict, List, Tuple, Union
+
+import numpy as np
 import scipy.optimize as so
-from matplotlib.figure import Figure
 from matplotlib.axes import Axes
-
+from matplotlib.figure import Figure
 from numpy import ndarray
-from scipy.stats import chisquare, genextreme, gumbel_r, ks_2samp, norm, expon
+from scipy.stats import chisquare, expon, genextreme, gumbel_r, ks_2samp, norm
 
-from statista.parameters import Lmoments
-from statista.tools import Tools as st
-from statista.plot import Plot
 from statista.confidence_interval import ConfidenceInterval
-
+from statista.parameters import Lmoments
+from statista.plot import Plot
+from statista.tools import Tools as st
 
 ninf = 1e-5
+XLABEL = "Actual data"
+
 
 __all__ = [
     "PlottingPosition",
@@ -32,9 +33,6 @@ __all__ = [
 
 class PlottingPosition:
     """PlottingPosition."""
-
-    def __init__(self):
-        pass
 
     @staticmethod
     def return_period(prob_non_exceed: Union[list, np.ndarray]) -> np.ndarray:
@@ -259,7 +257,7 @@ class AbstractDistribution(ABC):
         parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
         fig_size: tuple = (6, 5),
-        xlabel: str = "Actual data",
+        xlabel: str = XLABEL,
         ylabel: str = "pdf",
         fontsize: Union[float, int] = 15,
         data: Union[List[float], np.ndarray] = None,
@@ -613,7 +611,7 @@ class AbstractDistribution(ABC):
     def plot(
         self,
         fig_size: tuple = (10, 5),
-        xlabel: str = "Actual data",
+        xlabel: str = XLABEL,
         ylabel: str = "cdf",
         fontsize: int = 15,
         cdf: np.ndarray = None,
@@ -651,11 +649,11 @@ class AbstractDistribution(ABC):
 class Gumbel(AbstractDistribution):
     """Gumbel distribution (Maximum - Right Skewed) for extreme value analysis.
 
-    The Gumbel distribution is used to model the distribution of the maximum (or the minimum) 
-    of a number of samples of various distributions. It is commonly used in hydrology, 
+    The Gumbel distribution is used to model the distribution of the maximum (or the minimum)
+    of a number of samples of various distributions. It is commonly used in hydrology,
     meteorology, and other fields to model extreme events like floods, rainfall, and wind speeds.
 
-    The Gumbel distribution is a special case of the Generalized Extreme Value (GEV) 
+    The Gumbel distribution is a special case of the Generalized Extreme Value (GEV)
     distribution with shape parameter ξ = 0.
 
     Attributes:
@@ -701,6 +699,7 @@ class Gumbel(AbstractDistribution):
                 ```python
                 >>> import numpy as np
                 >>> from statista.distributions import Gumbel
+
                 ```
             - Load sample data
                 ```python
@@ -725,7 +724,6 @@ class Gumbel(AbstractDistribution):
                 ```
         """
         super().__init__(data, parameters)
-        pass
 
     @staticmethod
     def _pdf_eq(
@@ -806,6 +804,7 @@ class Gumbel(AbstractDistribution):
                 ```python
                 >>> import numpy as np
                 >>> from statista.distributions import Gumbel
+
                 ```
             - Load sample data:
                 ```python
@@ -1137,13 +1136,13 @@ class Gumbel(AbstractDistribution):
     def truncated_distribution(opt_parameters: list[float], data: list[float]) -> float:
         """Calculate negative log-likelihood for a truncated Gumbel distribution.
 
-        This function calculates the negative log-likelihood of a Gumbel distribution 
+        This function calculates the negative log-likelihood of a Gumbel distribution
         that is truncated (i.e., the data only includes values above a certain threshold).
         It is used as an objective function for parameter optimization when fitting
         a truncated Gumbel distribution to data.
 
-        This approach is useful when the dataset is incomplete or when data is only 
-        available above a certain threshold, a common scenario in environmental sciences, 
+        This approach is useful when the dataset is incomplete or when data is only
+        available above a certain threshold, a common scenario in environmental sciences,
         finance, and other fields dealing with extremes.
 
         Args:
@@ -1186,12 +1185,14 @@ class Gumbel(AbstractDistribution):
                 ...     args=(data,),
                 ...     method='Nelder-Mead'
                 ... )
+
                 ```
             - Extract optimized parameters:
                 ```python
                 >>> threshold, loc, scale = result.x
                 >>> print(f"Optimized parameters: threshold={threshold}, loc={loc}, scale={scale}")
                 Optimized parameters: threshold=4.0, loc=9.599999999999994, scale=1.5
+
                 ```
         """
         threshold = opt_parameters[0]
@@ -1286,8 +1287,6 @@ class Gumbel(AbstractDistribution):
                 Statistic = 0.019
                 Accept Hypothesis
                 P value = 0.9937026761524456
-
-
                 >>> print(parameters)
                 {'loc': np.float64(0.010101355750222706), 'scale': 1.0313042643102108}
 
@@ -1325,7 +1324,6 @@ class Gumbel(AbstractDistribution):
                 ```
             # Note: When P value is less than the significance level, we reject the null hypothesis,
             # but in this case we're fitting the distribution to part of the data, not the whole data.
-            ```
         """
         # obj_func = lambda p, x: (-np.log(Gumbel.pdf(x, p[0], p[1]))).sum()
         # #first we make a simple Gumbel fit
@@ -1434,7 +1432,9 @@ class Gumbel(AbstractDistribution):
         return qth
 
     @staticmethod
-    def _inv_cdf(cdf: Union[np.ndarray, List[float]], parameters: Dict[str, float]) -> np.ndarray:
+    def _inv_cdf(
+        cdf: Union[np.ndarray, List[float]], parameters: Dict[str, float]
+    ) -> np.ndarray:
         """Calculate the inverse CDF (quantile function) values for Gumbel distribution.
 
         This method implements the Gumbel inverse CDF equation:
@@ -1692,7 +1692,7 @@ class Gumbel(AbstractDistribution):
     def plot(
         self,
         fig_size: Tuple[float, float] = (10, 5),
-        xlabel: str = "Actual data",
+        xlabel: str = XLABEL,
         ylabel: str = "cdf",
         fontsize: int = 15,
         cdf: Union[np.ndarray, list] = None,
@@ -1745,6 +1745,7 @@ class Gumbel(AbstractDistribution):
             Figure(1000x500)
             >>> print(ax)
             (<Axes: xlabel='Actual data', ylabel='pdf'>, <Axes: xlabel='Actual data', ylabel='cdf'>)
+
             ```
         ![gumbel-plot](./../_images/gumbel-plot.png)
         """
@@ -1883,7 +1884,6 @@ class GEV(AbstractDistribution):
             ```
         """
         super().__init__(data, parameters)
-        pass
 
     @staticmethod
     def _pdf_eq(
