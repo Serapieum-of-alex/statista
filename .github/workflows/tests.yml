@@ -1,0 +1,36 @@
+name: tests
+
+on: [push]
+
+jobs:
+  main-package:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.11", "3.12", "3.13"]
+    env:
+      OS: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+
+      - name: Install dependencies
+        run: |
+            pip install .[dev]
+
+      - name: Run Tests
+        run: |
+          pytest -vvv --cov=statista --cov-report=xml
+
+      - name: Upload coverage reports to Codecov with GitHub Action
+        uses: codecov/codecov-action@v3
+
+      - name: test Jupyter notebook
+        run: |
+          pytest --nbval --nbval-lax --verbose
