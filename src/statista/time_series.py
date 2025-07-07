@@ -737,7 +737,11 @@ class TimeSeries(DataFrame):
 
     def density(self, **kwargs) -> Tuple[Figure, Axes]:
         """
-        Plots a density plot of the time series data.
+        Plots a density (KDE) plot of the time series data.
+
+        - KDE is a non-parametric method for estimating the probability density function of a random variable.
+        - It provides a smoothed estimate of the underlying probability distribution based on observed data points
+        - This function uses Gaussian kernels and includes automatic bandwidth determination
 
         Args:
             **kwargs: dict, optional
