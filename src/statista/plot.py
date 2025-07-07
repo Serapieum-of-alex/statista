@@ -1,12 +1,15 @@
 """Plotting functions for statista package."""
 
-from typing import Union, Tuple
 from numbers import Number
+from typing import Tuple, Union
+
 import matplotlib.pyplot as plt
-from matplotlib import gridspec
-from matplotlib.figure import Figure
-from matplotlib.axes import Axes
 import numpy as np
+from matplotlib import gridspec
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+
+XLABEL = "Actual data"
 
 
 class Plot:
@@ -37,11 +40,13 @@ class Plot:
             Accept Hypothesis
             P value = 0.8154147124661313
             {'loc': np.float64(9.876997051725278), 'scale': np.float64(2.010896054339655)}
+
             ```
         - Generate points for plotting:
             ```python
             >>> x = np.linspace(min(data), max(data), 10000)
             >>> pdf_values = normal_dist.pdf(data=x)
+
             ```
         - Create a PDF plot:
             ```python
@@ -51,16 +56,13 @@ class Plot:
             ![PDF Plot Example](./../_images/plot/plot-pdf.png)
     """
 
-    def __init__(self):
-        pass
-
     @staticmethod
     def pdf(
         qx: np.ndarray,
         pdf_fitted,
         data_sorted: np.ndarray,
         fig_size: Tuple[float, float] = (6, 5),
-        xlabel: str = "Actual data",
+        xlabel: str = XLABEL,
         ylabel: str = "pdf",
         fontsize: int = 11,
     ) -> Tuple[Figure, Axes]:
@@ -148,7 +150,7 @@ class Plot:
         data_sorted: np.ndarray,
         cdf_weibul: np.ndarray,
         fig_size: Tuple[float, float] = (6, 5),
-        xlabel: str = "Actual data",
+        xlabel: str = XLABEL,
         ylabel: str = "cdf",
         fontsize: int = 11,
     ) -> Tuple[Figure, Axes]:
@@ -251,7 +253,7 @@ class Plot:
         cdf_fitted: Union[np.ndarray, list],
         cdf: Union[np.ndarray, list],
         fig_size: Tuple[float, float] = (10, 5),
-        xlabel: str = "Actual data",
+        xlabel: str = XLABEL,
         ylabel: str = "cdf",
         fontsize: int = 11,
     ) -> Tuple[Figure, Tuple[Axes, Axes]]:
@@ -405,6 +407,7 @@ class Plot:
                 >>> import numpy as np
                 >>> from statista.plot import Plot
                 >>> from statista.distributions import Normal
+
                 ```
             - Generate some sample data:
                 ```python

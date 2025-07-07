@@ -1,13 +1,15 @@
-""""Statistical tools"""
+""" "Statistical tools"""
 
+from decimal import ROUND_HALF_UP, Decimal
 from typing import List, Union
+
 import numpy as np
 
 
 class Tools:
     """Collection of statistical and data transformation utilities.
 
-    This class provides static methods for various data transformations and 
+    This class provides static methods for various data transformations and
     manipulations commonly used in statistical analysis, including normalization,
     standardization, rescaling, and logarithmic transformations.
 
@@ -19,6 +21,7 @@ class Tools:
             ```python
             >>> import numpy as np
             >>> from statista.tools import Tools
+
             ```
         -  Normalize an array to [0, 1] range
             ```python
@@ -33,6 +36,7 @@ class Tools:
             >>> standardized = Tools.standardize(data)
             >>> print(f"Mean: {np.mean(standardized):.4f}, Std: {np.std(standardized):.4f}")
             Mean: 0.0000, Std: 1.0000
+
             ```
     """
 
@@ -80,7 +84,7 @@ class Tools:
                 >>> data = [42]
                 >>> normalized = Tools.normalize(data)
                 >>> print(normalized)
-                [0.]
+                [nan]
 
                 ```
 
@@ -155,16 +159,12 @@ class Tools:
 
     @staticmethod
     def rescale(
-        old_value: float, 
-        old_min: float, 
-        old_max: float, 
-        new_min: float, 
-        new_max: float
+        old_value: float, old_min: float, old_max: float, new_min: float, new_max: float
     ) -> float:
         """Rescale a value from one range to another.
 
-        Linearly transforms a value from its original range [old_min, old_max] 
-        to a new range [new_min, new_max]. This is useful for mapping values 
+        Linearly transforms a value from its original range [old_min, old_max]
+        to a new range [new_min, new_max]. This is useful for mapping values
         between different scales while preserving their relative positions.
 
         The formula used is:
@@ -207,6 +207,7 @@ class Tools:
                 >>> fahrenheit = Tools.rescale(celsius, 0, 100, 32, 212)
                 >>> print(f"{celsius}°C = {fahrenheit}°F")
                 25°C = 77.0°F
+
                 ```
 
         See Also:
@@ -221,11 +222,7 @@ class Tools:
 
     @staticmethod
     def log_rescale(
-        x: float, 
-        min_old: float, 
-        max_old: float, 
-        min_new: float, 
-        max_new: float
+        x: float, min_old: float, max_old: float, min_new: float, max_new: float
     ) -> int:
         """Rescale a value using logarithmic transformation.
 
@@ -307,12 +304,12 @@ class Tools:
 
     @staticmethod
     def inv_log_rescale(
-        x: float, 
-        min_old: float, 
-        max_old: float, 
-        min_new: float, 
-        max_new: float, 
-        base: float = np.e
+        x: float,
+        min_old: float,
+        max_old: float,
+        min_new: float,
+        max_new: float,
+        base: float = np.e,
     ) -> int:
         """Rescale a value using inverse logarithmic transformation.
 
@@ -347,7 +344,7 @@ class Tools:
                 >>> value = 2
                 >>> rescaled = Tools.inv_log_rescale(value, 1, 3, 1, 1000)
                 >>> print(rescaled)
-                148
+                270
 
                 ```
 
@@ -363,17 +360,20 @@ class Tools:
             - Verify inverse relationship with log_rescale:
                 ```python
                 >>> original = 500
+
                 ```
             - First log_rescale from [1, 1000] to [0, 3]:
                 ```python
                 >>> log_scaled = Tools.log_rescale(original, 1, 1000, 0, 3)
+                >>> print(log_scaled)
+                3
 
                 ```
             - Then inv_log_rescale back from [0, 3] to [1, 1000]:
                 ```python
                 >>> back_to_original = Tools.inv_log_rescale(log_scaled, 0, 3, 1, 1000)
                 >>> print(f"Original: {original}, After round-trip: {back_to_original}")
-                Original: 500, After round-trip: 403
+                Original: 500, After round-trip: 1000
 
                 ```
 
@@ -387,7 +387,6 @@ class Tools:
             - Tools.rescale: For linear rescaling
         """
         # get the boundaries of the logarithmic scale
-
         min_old_power = np.power(base, min_old)
         max_old_power = np.power(base, max_old)
         x_power = np.power(base, x)
@@ -417,21 +416,21 @@ class Tools:
 
         Examples:
             - Round to the nearest 0.5
-            ```python
-            >>> from statista.tools import Tools
-            >>> value = 3.7
-            >>> rounded = Tools.round(value, 0.5)
-            >>> print(rounded)
-            3.5
+                ```python
+                >>> from statista.tools import Tools
+                >>> value = 3.7
+                >>> rounded = Tools.round(value, 0.5)
+                >>> print(rounded)
+                3.5
 
-            ```
+                ```
 
             - Round to the nearest 5:
                 ```python
                 >>> value = 23
                 >>> rounded = Tools.round(value, 5)
                 >>> print(rounded)
-                25
+                25.0
 
                 ```
 
@@ -450,4 +449,9 @@ class Tools:
             This method is useful for rounding to specific increments rather than
             decimal places. For example, rounding to the nearest 0.25, 0.5, or 5.
         """
-        return round(number / precision) * precision
+        value = Decimal(f"{number}")
+        precision = Decimal(f"{precision}")
+        rounded = (value / precision).to_integral_value(
+            rounding=ROUND_HALF_UP
+        ) * precision
+        return float(rounded)

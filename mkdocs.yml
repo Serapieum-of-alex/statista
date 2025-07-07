@@ -106,6 +106,7 @@ nav:
   - Installation: installation.md
   - Reference:
     - Distributions: reference/distributions-class.md
+    - Time Series: reference/time-series-class.md
     - Extreme Value Analysis: reference/eva-class.md
     - Descriptors: reference/descriptors-module.md
     - Plot: reference/plot-class.md
