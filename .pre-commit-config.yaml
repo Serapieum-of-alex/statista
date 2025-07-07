@@ -166,7 +166,7 @@ repos:
     hooks:
       - id: doctest
         name: doctest
-        entry: python -c "import matplotlib; matplotlib.use('Agg'); import pytest; pytest.main(['--doctest-modules', 'src/statista'])"
+        entry: python -c "import sys, matplotlib; matplotlib.use('Agg'); import pytest; sys.exit(pytest.main(['--doctest-modules', 'src/statista']))"
         language: system
         files: ^src/statista/.*\.py$
         always_run: true
