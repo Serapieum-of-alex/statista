@@ -12,7 +12,7 @@ class ConfidenceInterval:
     """ConfidenceInterval."""
 
     @staticmethod
-    def bs_indexes(data, n_samples=10000) -> np.ndarray:
+    def bs_indexes(data: Union[list, np.ndarray], n_samples=10000):
         """bs_indexes.
 
             - generate random indeces to shuffle the data of the given array.
@@ -24,19 +24,17 @@ class ConfidenceInterval:
         This can be used as a list of bootstrap indexes (with
         list(bootstrap_indexes(data))) as well.
 
-        Returns
-        -------
-        np.ndarray
-            array with the same length as the input data, containing integer indeces.
+        Returns:
+            np.ndarray
+                array with the same length as the input data, containing integer indeces.
 
-        Examples
-        --------
-        >>> data = [3.1, 2.4, 5.6, 8.4]
-        >>> indeces = ConfidenceInterval.bs_indexes(data, n_samples=2)
-        >>> print(indeces)
-        >>> [1, 4, 4, 3]
-        >>> print(indeces)
-        >>> [2, 3, 1, 2]
+        Examples:
+            ```python
+            >>> from statista.confidence_interval import ConfidenceInterval
+            >>> data = [3.1, 2.4, 5.6, 8.4]
+            >>> indices = ConfidenceInterval.bs_indexes(data, n_samples=2)
+
+            ```
         """
         for _ in range(n_samples):
             yield randint(data.shape[0], size=(data.shape[0],))
@@ -58,24 +56,23 @@ class ConfidenceInterval:
             - Efron: "An Introduction to the Bootstrap", Chapman & Hall (1993)
             - https://en.wikipedia.org/wiki/Bootstrapping_%28statistics%29
 
-        Parameters
-        ----------
-        data: [list, np.ndarray]
-            data to be used to calculate the confidence interval
-        state_function: [callable]
-            function to be used to calculate the confidence interval
-        n_samples: int, Default is 100.
-            number of samples to be generated. .
-        alpha: numeric, optional, default is 0.05
-                alpha or SignificanceLevel is a value of the confidence interval.
-        kwargs:
-            gevfit: [list]
-                list of the three parameters of the GEV distribution [shape, loc, scale]
-            F: [list]
-                non-exceedance probability/ cdf
-            method: [str]
-                method used to fit the generated samples from the bootstrap method ["lmoments", "mle", "mm"]. Default is
-                "lmoments".
+        Args:
+            data (list, np.ndarray):
+                data to be used to calculate the confidence interval
+            state_function (callable):
+                function to be used to calculate the confidence interval
+            n_samples (int):
+                number of samples to be generated. Default is 100.
+            alpha (numeric, optional):
+                alpha or SignificanceLevel is a value of the confidence interval. default is 0.05
+            kwargs:
+                gevfit (list):
+                    list of the three parameters of the GEV distribution [shape, loc, scale]
+                F (list):
+                    non-exceedance probability/ cdf
+                method (str):
+                    method used to fit the generated samples from the bootstrap method ["lmoments", "mle", "mm"]. Default is
+                    "lmoments".
         """
         alphas = np.array([alpha / 2, 1 - alpha / 2])
         tdata = (np.array(data),)
