@@ -16,7 +16,7 @@ class ConfidenceInterval:
         """bs_indexes.
 
             - generate random indeces to shuffle the data of the given array.
-            - using the indeces, you can access the given data array and obtain randomly generated data from the
+            - using the indeces, you can access the given data array and get randomly generated data from the
             original given data.
             - Given data points data, where axis 0 is considered to delineate points, return a generator for
             sets of bootstrap indexes.
@@ -50,7 +50,7 @@ class ConfidenceInterval:
         """boot_strap
 
         Calculate confidence intervals using parametric bootstrap and the percentile interval method This is used to
-        obtain confidence intervals for the estimators and the return values for several return values.
+        get confidence intervals for the estimators and the return values for several return values.
 
         More info about bootstrapping can be found on:
             - Efron: "An Introduction to the Bootstrap", Chapman & Hall (1993)
@@ -64,10 +64,10 @@ class ConfidenceInterval:
             n_samples (int):
                 number of samples to be generated. Default is 100.
             alpha (numeric, optional):
-                alpha or SignificanceLevel is a value of the confidence interval. default is 0.05
+                alpha or SignificanceLevel is a value of the confidence interval. Default is 0.05
             kwargs:
                 gevfit (list):
-                    list of the three parameters of the GEV distribution [shape, loc, scale]
+                    Three parameters of the GEV distribution [shape, loc, scale]
                 F (list):
                     non-exceedance probability/ cdf
                 method (str):
@@ -78,7 +78,7 @@ class ConfidenceInterval:
         tdata = (np.array(data),)
 
         # We don't need to generate actual samples; that would take more memory.
-        # Instead, we can generate just the indexes, and then apply the stat-fun
+        # Instead, we can generate just the indexes and then apply the stat-fun
         # to those indexes.
         boot_indexes = ConfidenceInterval.bs_indexes(tdata[0], n_samples)
         stat = np.array(
@@ -95,20 +95,13 @@ class ConfidenceInterval:
 
         if np.any(n_vals == 0) or np.any(n_vals == n_samples - 1):
             logger.debug(
-                "Some values used extremal samples; results are probably unstable."
+                "Some values used extreme samples; results are probably unstable."
             )
-            # warnings.warn(
-            #     "Some values used extremal samples; results are probably unstable.",
-            #     InstabilityWarning,
-            # )
+            
         elif np.any(n_vals < 10) or np.any(n_vals >= n_samples - 10):
             logger.debug(
-                "Some values used top 10 low/high samples; results may be unstable."
+                "Some values used the top 10 low/high samples; results may be unstable."
             )
-            # warnings.warn(
-            #     "Some values used top 10 low/high samples; results may be unstable.",
-            #     InstabilityWarning,
-            # )
 
         if n_vals.ndim == 1:
             # All n_vals are the same. Simple broadcasting
