@@ -3,21 +3,21 @@
 import matplotlib
 
 matplotlib.use("Agg")
-from typing import List, Dict
+from typing import Dict, List
 
 import numpy as np
-from matplotlib.figure import Figure
+import pytest
 from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
 from statista.distributions import (
     GEV,
-    Gumbel,
-    PlottingPosition,
-    Exponential,
-    Normal,
     Distributions,
+    Exponential,
+    Gumbel,
+    Normal,
+    PlottingPosition,
 )
-import pytest
 
 
 class TestPlottingPosition:

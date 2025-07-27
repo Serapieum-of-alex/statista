@@ -1,4 +1,4 @@
-"""Statistical descriptors. """
+"""Statistical descriptors."""
 
 from numbers import Number
 from typing import Union
@@ -360,10 +360,10 @@ def kge(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
 def wb(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
     """Water Balance Error.
 
-    Calculates the water balance error, which measures how well the model reproduces 
+    Calculates the water balance error, which measures how well the model reproduces
     the total stream flow volume.
 
-    This metric allows error compensation between time steps and is not an indication 
+    This metric allows error compensation between time steps and is not an indication
     of the temporal accuracy of the model. It only measures the overall volume balance.
     Note that the naive model of Nash-Sutcliffe (simulated flow equals the average observed
     flow) will result in a WB error of 100%.
@@ -373,7 +373,7 @@ def wb(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
         sim: Simulated flow values as a list or numpy array.
 
     Returns:
-        float: The water balance error as a percentage (0-100). 
+        float: The water balance error as a percentage (0-100).
             100% indicates perfect volume balance, while lower values indicate poorer performance.
 
     Raises:
@@ -421,10 +421,10 @@ def wb(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
 def nse(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
     """Nash-Sutcliffe Efficiency.
 
-    Calculates the Nash-Sutcliffe Efficiency (NSE), a widely used metric for assessing 
+    Calculates the Nash-Sutcliffe Efficiency (NSE), a widely used metric for assessing
     the performance of hydrological models.
 
-    NSE measures the relative magnitude of the residual variance compared to the 
+    NSE measures the relative magnitude of the residual variance compared to the
     variance of the observed data. It indicates how well the model predictions match
     the observations compared to using the mean of the observations as a predictor.
 
@@ -491,8 +491,8 @@ def nse(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
 def nse_hf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
     """Modified Nash-Sutcliffe Efficiency for High Flows.
 
-    Calculates a modified version of the Nash-Sutcliffe Efficiency that gives more 
-    weight to high flow values. This is particularly useful for evaluating model 
+    Calculates a modified version of the Nash-Sutcliffe Efficiency that gives more
+    weight to high flow values. This is particularly useful for evaluating model
     performance during flood events or peak flows.
 
     This modification weights the squared errors by the observed flow values, giving
@@ -558,8 +558,8 @@ def nse_hf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
 def nse_lf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
     """Modified Nash-Sutcliffe Efficiency for Low Flows.
 
-    Calculates a modified version of the Nash-Sutcliffe Efficiency that gives more 
-    weight to low flow values. This is particularly useful for evaluating model 
+    Calculates a modified version of the Nash-Sutcliffe Efficiency that gives more
+    weight to low flow values. This is particularly useful for evaluating model
     performance during drought periods or base flow conditions.
 
     This modification applies a logarithmic transformation to the flow values before
@@ -638,7 +638,7 @@ def mbe(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
         sim: Simulated values as a list or numpy array.
 
     Returns:
-        float: The Mean Bias Error value. 
+        float: The Mean Bias Error value.
             - MBE = 0: No bias
             - MBE > 0: Overestimation bias (simulated values tend to be larger than observed)
             - MBE < 0: Underestimation bias (simulated values tend to be smaller than observed)

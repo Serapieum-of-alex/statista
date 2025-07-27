@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 from typing import Any, List, Union
+
 import numpy as np
 import scipy as sp
 import scipy.special as _spsp
 from numpy import ndarray
-
 
 ninf = 1e-5
 MAXIT = 20
@@ -393,7 +393,7 @@ class Lmoments:
 
     @staticmethod
     def generalized_logistic(
-        lmoments: List[Union[float, int]]
+        lmoments: List[Union[float, int]],
     ) -> List[Union[float, int]]:
         """Generalized logistic distribution.
 
@@ -425,7 +425,7 @@ class Lmoments:
 
     @staticmethod
     def generalized_normal(
-        lmoments: List[Union[float, int]]
+        lmoments: List[Union[float, int]],
     ) -> List[Union[float, int]]:
         """Generalized Normal distribution.
 
@@ -472,7 +472,7 @@ class Lmoments:
 
     @staticmethod
     def generalized_pareto(
-        lmoments: List[Union[float, int]]
+        lmoments: List[Union[float, int]],
     ) -> List[Union[float, int]]:
         """Generalized Pareto distribution.
 

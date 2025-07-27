@@ -1,5 +1,6 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 from statista.parameters import Lmoments
 
 time_series1 = pd.read_csv("examples/data/time_series1.txt", header=None)[0].tolist()

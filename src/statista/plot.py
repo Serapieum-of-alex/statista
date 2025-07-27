@@ -1,12 +1,13 @@
 """Plotting functions for statista package."""
 
-from typing import Union, Tuple
 from numbers import Number
+from typing import Tuple, Union
+
 import matplotlib.pyplot as plt
-from matplotlib import gridspec
-from matplotlib.figure import Figure
-from matplotlib.axes import Axes
 import numpy as np
+from matplotlib import gridspec
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
 
 class Plot:

@@ -1,10 +1,11 @@
 """Confidence interval module."""
 
 from collections import OrderedDict
-from loguru import logger
 from typing import Union
-from numpy.random import randint
+
 import numpy as np
+from loguru import logger
+from numpy.random import randint
 
 
 class ConfidenceInterval:

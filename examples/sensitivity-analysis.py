@@ -3,11 +3,10 @@ Path = "F:/algorithms/Hydrology/HAPI/examples"
 import matplotlib
 
 matplotlib.use("TkAgg")
-import pandas as pd
-
 # functions
 import Hapi.rrm.hbv_bergestrom92 as HBVLumped
 import Hapi.sm.performancecriteria as PC
+import pandas as pd
 from Hapi.catchment import Catchment
 from Hapi.rrm.routing import Routing
 from Hapi.run import Run

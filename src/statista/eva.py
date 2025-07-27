@@ -31,8 +31,9 @@ Common Applications:
     - Temperature Extremes: AMS can be used to evaluate the risk of extremely high or low temperatures.
 """
 
-from typing import Union, Tuple
 from pathlib import Path
+from typing import Tuple, Union
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd

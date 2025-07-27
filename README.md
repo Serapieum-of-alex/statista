@@ -128,7 +128,7 @@ This project is licensed under the GPL-3.0 License - see the LICENSE file for de
 If you use Statista in your research, please cite it as:
 
 ```
-Farrag, M. (2023). Statista: A Python package for statistical analysis, extreme value analysis, and sensitivity analysis. 
+Farrag, M. (2023). Statista: A Python package for statistical analysis, extreme value analysis, and sensitivity analysis.
 https://github.com/Serapieum-of-alex/statista
 ```
 

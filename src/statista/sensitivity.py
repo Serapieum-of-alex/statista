@@ -10,6 +10,7 @@ and decision-making processes.
 """
 
 from typing import List, Union
+
 import matplotlib.pyplot as plt
 import numpy as np
 from pandas import DataFrame

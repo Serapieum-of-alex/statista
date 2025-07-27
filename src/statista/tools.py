@@ -1,13 +1,14 @@
-""""Statistical tools"""
+""" "Statistical tools"""
 
 from typing import List, Union
+
 import numpy as np
 
 
 class Tools:
     """Collection of statistical and data transformation utilities.
 
-    This class provides static methods for various data transformations and 
+    This class provides static methods for various data transformations and
     manipulations commonly used in statistical analysis, including normalization,
     standardization, rescaling, and logarithmic transformations.
 
@@ -155,16 +156,12 @@ class Tools:
 
     @staticmethod
     def rescale(
-        old_value: float, 
-        old_min: float, 
-        old_max: float, 
-        new_min: float, 
-        new_max: float
+        old_value: float, old_min: float, old_max: float, new_min: float, new_max: float
     ) -> float:
         """Rescale a value from one range to another.
 
-        Linearly transforms a value from its original range [old_min, old_max] 
-        to a new range [new_min, new_max]. This is useful for mapping values 
+        Linearly transforms a value from its original range [old_min, old_max]
+        to a new range [new_min, new_max]. This is useful for mapping values
         between different scales while preserving their relative positions.
 
         The formula used is:
@@ -221,11 +218,7 @@ class Tools:
 
     @staticmethod
     def log_rescale(
-        x: float, 
-        min_old: float, 
-        max_old: float, 
-        min_new: float, 
-        max_new: float
+        x: float, min_old: float, max_old: float, min_new: float, max_new: float
     ) -> int:
         """Rescale a value using logarithmic transformation.
 
@@ -307,12 +300,12 @@ class Tools:
 
     @staticmethod
     def inv_log_rescale(
-        x: float, 
-        min_old: float, 
-        max_old: float, 
-        min_new: float, 
-        max_new: float, 
-        base: float = np.e
+        x: float,
+        min_old: float,
+        max_old: float,
+        min_new: float,
+        max_new: float,
+        base: float = np.e,
     ) -> int:
         """Rescale a value using inverse logarithmic transformation.
 
