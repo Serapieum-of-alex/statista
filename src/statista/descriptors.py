@@ -280,7 +280,7 @@ def rmse_lf(
         w = ((1 / (alpha**2)) * (1 - qr) ** 2) - ((2 / alpha) * (1 - qr)) + 1
         w[1 - qr > alpha] = 0
     elif ws_type == 3:
-        # the same like WStype 2
+        # the same as WStype 2
         # w=1-qr*((0.50 - alpha)**N)
         w = ((1 / (alpha**2)) * (1 - qr) ** 2) - ((2 / alpha) * (1 - qr)) + 1
         w[1 - qr > alpha] = 0
