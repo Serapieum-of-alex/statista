@@ -29,12 +29,12 @@ __all__ = [
 ]
 
 SCALE_PARAMETER_ERROR = "Scale parameter is negative"
+CDF_INVALID_VALUE_ERROR = "cdf Value Invalid"
+OBJ_FUNCTION_THRESHOULD_ERROR = "obj_func and threshold should be numeric value"
 
 class PlottingPosition:
     """PlottingPosition."""
 
-    def __init__(self):
-        pass
 
     @staticmethod
     def return_period(prob_non_exceed: Union[list, np.ndarray]) -> np.ndarray:
@@ -726,7 +726,6 @@ class Gumbel(AbstractDistribution):
                 ```
         """
         super().__init__(data, parameters)
-        pass
 
     @staticmethod
     def _pdf_eq(
@@ -749,13 +748,22 @@ class Gumbel(AbstractDistribution):
 
         Raises:
             ValueError: If the scale parameter is negative or zero.
+
+        old code:
+        ```python
+        >>> ts = np.array([1, 2, 3, 4, 5]) # any value
+        >>> loc = 0.0 # any value
+        >>> scale = 1.0 # any value
+        >>> z = (ts - loc) / scale
+        >>> pdf = (1.0 / scale) * (np.exp(-(z + (np.exp(-z)))))
+
+        ```
         """
         loc = parameters.get("loc")
         scale = parameters.get("scale")
         if scale <= 0:
             raise ValueError(SCALE_PARAMETER_ERROR)
-        # z = (ts - loc) / scale
-        # pdf = (1.0 / scale) * (np.exp(-(z + (np.exp(-z)))))
+
         pdf = gumbel_r.pdf(data, loc=loc, scale=scale)
         return pdf
 
@@ -958,13 +966,22 @@ class Gumbel(AbstractDistribution):
 
         Raises:
             ValueError: If the scale parameter is negative or zero.
+
+        old code:
+        ```python
+        >>> ts = np.array([1, 2, 3, 4, 5]) # any value
+        >>> loc = 0.0 # any value
+        >>> scale = 1.0 # any value
+        >>> z = (ts - loc) / scale
+        >>> cdf = np.exp(-np.exp(-z))
+
+        ```
         """
         loc = parameters.get("loc")
         scale = parameters.get("scale")
         if scale <= 0:
             raise ValueError(SCALE_PARAMETER_ERROR)
-        # z = (ts - loc) / scale
-        # cdf = np.exp(-np.exp(-z))
+
         cdf = gumbel_r.cdf(data, loc=loc, scale=scale)
         return cdf
 
@@ -1222,7 +1239,7 @@ class Gumbel(AbstractDistribution):
         l1 = (-np.log((pdf / scale))).sum()
         # L2 is cdf based
         l2 = (-np.log(cdf_at_threshold)) * nx2
-        # print x1, nx2, L1, L2
+
         return l1 + l2
 
     def fit_model(
@@ -1431,7 +1448,7 @@ class Gumbel(AbstractDistribution):
             parameters = self.parameters
 
         if any(cdf) <= 0 or any(cdf) > 1:
-            raise ValueError("cdf Value Invalid")
+            raise ValueError(CDF_INVALID_VALUE_ERROR)
 
         cdf = np.array(cdf)
         qth = self._inv_cdf(cdf, parameters)
@@ -1891,7 +1908,6 @@ class GEV(AbstractDistribution):
             ```
         """
         super().__init__(data, parameters)
-        pass
 
     @staticmethod
     def _pdf_eq(
@@ -1900,35 +1916,7 @@ class GEV(AbstractDistribution):
         loc = parameters.get("loc")
         scale = parameters.get("scale")
         shape = parameters.get("shape")
-        # pdf = []
-        # for ts_i in ts:
-        #     z = (ts_i - loc) / scale
-        #
-        #     # Gumbel
-        #     if shape == 0:
-        #         val = np.exp(-(z + np.exp(-z)))
-        #         pdf.append((1 / scale) * val)
-        #         continue
-        #
-        #     # GEV
-        #     y = 1 - shape * z
-        #     if y > ninf:
-        #         # np.log(y) = ln(y)
-        #         # ln is the inverse of e
-        #         lnY = (-1 / shape) * np.log(y)
-        #         val = np.exp(-(1 - shape) * lnY - np.exp(-lnY))
-        #         pdf.append((1 / scale) * val)
-        #         continue
-        #
-        #     if shape < 0:
-        #         pdf.append(0)
-        #         continue
-        #     pdf.append(0)
-        #
-        # if len(pdf) == 1:
-        #     pdf = pdf[0]
 
-        # pdf = np.array(pdf)
         pdf = genextreme.pdf(data, loc=loc, scale=scale, c=shape)
         return pdf
 
@@ -2274,7 +2262,7 @@ class GEV(AbstractDistribution):
             param = Lmoments.gev(lmu)
         elif method == "optimization":
             if obj_func is None or threshold is None:
-                raise TypeError("obj_func and threshold should be numeric value")
+                raise TypeError(OBJ_FUNCTION_THRESHOULD_ERROR)
 
             param = genextreme.fit(self.data, method="mle")
             # then we use the result as starting value for your truncated Gumbel fit
@@ -2294,10 +2282,6 @@ class GEV(AbstractDistribution):
 
         if test:
             self.ks()
-            # try:
-            #     self.chisquare()
-            # except ValueError:
-            #     print("chisquare test failed")
 
         return param
 
@@ -2342,7 +2326,7 @@ class GEV(AbstractDistribution):
             parameters = self.parameters
 
         if any(cdf) < 0 or any(cdf) > 1:
-            raise ValueError("cdf Value Invalid")
+            raise ValueError(CDF_INVALID_VALUE_ERROR)
 
         q_th = self._inv_cdf(cdf, parameters)
         return q_th
@@ -2354,26 +2338,11 @@ class GEV(AbstractDistribution):
         shape = parameters.get("shape")
 
         if scale <= 0:
-            raise ValueError("Parameters Invalid")
+            raise ValueError(SCALE_PARAMETER_ERROR)
 
         if shape is None:
             raise ValueError("Shape parameter should not be None")
-        # q_th = list()
-        # for i in range(len(cdf)):
-        #     if cdf[i] <= 0 or cdf[i] >= 1:
-        #         if cdf[i] == 0 and shape < 0:
-        #             q_th.append(loc + scale / shape)
-        #         elif cdf[i] == 1 and shape > 0:
-        #             q_th.append(loc + scale / shape)
-        #         else:
-        #             raise ValueError(str(cdf[i]) + " value of cdf is Invalid")
-        #     # cdf = np.array(cdf)
-        #     Y = -np.log(-np.log(cdf[i]))
-        #     if shape != 0:
-        #         Y = (1 - np.exp(-1 * shape * Y)) / shape
-        #
-        #     q_th.append(loc + scale * Y)
-        # q_th = np.array(q_th)
+
         # the main equation from scipy
         q_th = genextreme.ppf(cdf, shape, loc=loc, scale=scale)
         return q_th
@@ -2648,284 +2617,6 @@ class GEV(AbstractDistribution):
         return tuple(res)
 
 
-# class Frechet:
-#
-#     """
-#     f(x: threshold, scale) = (1/scale) e **(- (x-threshold)/scale)
-#
-#     """
-#
-#     def __init__(
-#         self,
-#         data: Union[list, np.ndarray] = None,
-#         loc: Union[int, float] = None,
-#         scale: Union[int, float] = None,
-#     ):
-#         """Gumbel.
-#
-#         Parameters
-#         ----------
-#         data : [list]
-#             data time series.
-#         loc: [numeric]
-#             location parameter
-#         scale: [numeric]
-#             scale parameter
-#         """
-#         if isinstance(data, list) or isinstance(data, np.ndarray):
-#             self.data = np.array(data)
-#             self.data_sorted = np.sort(data)
-#             self.cdf_Weibul = PlottingPosition.weibul(data)
-#             self.KStable = 1.22 / np.sqrt(len(self.data))
-#
-#         self.loc = loc
-#         self.scale = scale
-#         self.Dstatic = None
-#         self.KS_Pvalue = None
-#         self.chistatic = None
-#         self.chi_Pvalue = None
-#
-#     def pdf(
-#         self,
-#         loc: Union[float, int],
-#         scale: Union[float, int],
-#         plot_figure: bool = False,
-#         fig_size: tuple = (6, 5),
-#         xlabel: str = "Actual data",
-#         ylabel: str = "pdf",
-#         fontsize: Union[float, int] = 15,
-#         data: Union[bool, np.ndarray] = True,
-#     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
-#         """pdf.
-#
-#         Returns the value of Gumbel's pdf with parameters loc and scale at x .
-#
-#         Parameters
-#         -----------
-#         loc : [numeric]
-#             location parameter of the gumbel distribution.
-#         scale : [numeric]
-#             scale parameter of the gumbel distribution.
-#
-#         Returns
-#         -------
-#         pdf : [array]
-#             probability density function pdf.
-#         """
-#         if scale <= 0:
-#             raise ValueError(SCALE_PARAMETER_ERROR)
-#
-#         if isinstance(data, bool):
-#             ts = self.data
-#         else:
-#             ts = data
-#
-#         # pdf = []
-#         #
-#         # for i in ts:
-#         #     Y = (i - loc) / scale
-#         #     if Y <= 0:
-#         #         pdf.append(0)
-#         #     else:
-#         #         pdf.append(np.exp(-Y) / scale)
-#         #
-#         # if len(pdf) == 1:
-#         #     pdf = pdf[0]
-#
-#         pdf = expon.pdf(ts, loc=loc, scale=scale)
-#         if plot_figure:
-#             q_x = np.linspace(
-#                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
-#             )
-#             pdf_fitted = self.pdf(loc, scale, data=q_x)
-#
-#             fig, ax = Plot.pdf(
-#                 q_x,
-#                 pdf_fitted,
-#                 self.data_sorted,
-#                 fig_size=fig_size,
-#                 xlabel=xlabel,
-#                 ylabel=ylabel,
-#                 fontsize=fontsize,
-#             )
-#             return pdf, fig, ax
-#         else:
-#             return pdf
-#
-#     def cdf(
-#         self,
-#         loc: Union[float, int],
-#         scale: Union[float, int],
-#         plot_figure: bool = False,
-#         fig_size: tuple = (6, 5),
-#         xlabel: str = "data",
-#         ylabel: str = "cdf",
-#         fontsize: int = 15,
-#         data: Union[bool, np.ndarray] = True,
-#     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
-#         """cdf.
-#
-#         cdf calculates the value of Gumbel's cdf with parameters loc and scale at x.
-#
-#         parameter:
-#         ----------
-#         loc : [numeric]
-#             location parameter of the gumbel distribution.
-#         scale : [numeric]
-#             scale parameter of the gumbel distribution.
-#         """
-#         if scale <= 0:
-#             raise ValueError(SCALE_PARAMETER_ERROR)
-#         if loc <= 0:
-#             raise ValueError("Threshold parameter should be greater than zero")
-#
-#         if isinstance(data, bool):
-#             ts = self.data
-#         else:
-#             ts = data
-#
-#         # Y = (ts - loc) / scale
-#         # cdf = 1 - np.exp(-Y)
-#         #
-#         # for i in range(0, len(cdf)):
-#         #     if cdf[i] < 0:
-#         #         cdf[i] = 0
-#         cdf = expon.cdf(ts, loc=loc, scale=scale)
-#
-#         if plot_figure:
-#             q_x = np.linspace(
-#                 float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
-#             )
-#             cdf_fitted = self.cdf(loc, scale, data=q_x)
-#
-#             cdf_Weibul = PlottingPosition.weibul(self.data_sorted)
-#
-#             fig, ax = Plot.cdf(
-#                 q_x,
-#                 cdf_fitted,
-#                 self.data_sorted,
-#                 cdf_Weibul,
-#                 fig_size=fig_size,
-#                 xlabel=xlabel,
-#                 ylabel=ylabel,
-#                 fontsize=fontsize,
-#             )
-#
-#             return cdf, fig, ax
-#         else:
-#             return cdf
-#
-#     def fit_model(
-#         self,
-#         method: str = "mle",
-#         obj_func=None,
-#         threshold: Union[int, float, None] = None,
-#         test: bool = True,
-#     ) -> tuple:
-#         """fit_model.
-#
-#         fit_model estimates the distribution parameter based on MLM
-#         (Maximum likelihood method), if an objective function is entered as an input
-#
-#         There are two likelihood functions (L1 and L2), one for values above some
-#         threshold (x>=C) and one for values below (x < C), now the likeliest parameters
-#         are those at the max value of multiplication between two functions max(L1*L2).
-#
-#         In this case the L1 is still the product of multiplication of probability
-#         density function's values at xi, but the L2 is the probability that threshold
-#         value C will be exceeded (1-F(C)).
-#
-#         Parameters
-#         ----------
-#         obj_func : [function]
-#             function to be used to get the distribution parameters.
-#         threshold : [numeric]
-#             Value you want to consider only the greater values.
-#         method : [string]
-#             'mle', 'mm', 'lmoments', optimization
-#         test: bool
-#             Default is True
-#
-#         Returns
-#         -------
-#         Param : [list]
-#             shape, loc, scale parameter of the gumbel distribution in that order.
-#         """
-#         # obj_func = lambda p, x: (-np.log(Gumbel.pdf(x, p[0], p[1]))).sum()
-#         # #first we make a simple Gumbel fit
-#         # Par1 = so.fmin(obj_func, [0.5,0.5], args=(np.array(data),))
-#         method = method.lower()
-#         if method not in ["mle", "mm", "lmoments", "optimization"]:
-#             raise ValueError(
-#                 method + "value should be 'mle', 'mm', 'lmoments' or 'optimization'"
-#             )
-#
-#         if method == "mle" or method == "mm":
-#             Param = list(expon.fit(self.data, method=method))
-#         elif method == "lmoments":
-#             LM = Lmoments(self.data)
-#             LMU = LM.Lmom()
-#             Param = Lmoments.gev(LMU)
-#         elif method == "optimization":
-#             if obj_func is None or threshold is None:
-#                 raise TypeError("obj_func and threshold should be numeric value")
-#
-#             Param = expon.fit(self.data, method="mle")
-#             # then we use the result as starting value for your truncated Gumbel fit
-#             Param = so.fmin(
-#                 obj_func,
-#                 [threshold, Param[0], Param[1]],
-#                 args=(self.data,),
-#                 maxiter=500,
-#                 maxfun=500,
-#             )
-#             Param = [Param[1], Param[2]]
-#
-#         self.loc = Param[0]
-#         self.scale = Param[1]
-#
-#         if test:
-#             self.ks()
-#             try:
-#                 self.chisquare()
-#             except ValueError:
-#                 print("chisquare test failed")
-#
-#         return Param
-#
-#     @staticmethod
-#     def inverse_cdf(
-#         loc: Union[float, int],
-#         scale: Union[float, int],
-#         prob_non_exceed: np.ndarray,
-#     ) -> np.ndarray:
-#         """inverse_cdf.
-#
-#         inverse_cdf method calculates the theoretical values based on a given non-exceedance probability
-#
-#         Parameters
-#         -----------
-#         param : [list]
-#             location ans scale parameters of the gumbel distribution.
-#         prob_non_exceed : [list]
-#             cummulative distribution function/ Non Exceedence probability.
-#
-#         Returns
-#         -------
-#         theoreticalvalue : [numeric]
-#             Value based on the theoretical distribution
-#         """
-#         if scale <= 0:
-#             raise ValueError("Parameters Invalid")
-#
-#         if any(prob_non_exceed) < 0 or any(prob_non_exceed) > 1:
-#             raise ValueError("cdf Value Invalid")
-#
-#         # the main equation from scipy
-#         q_th = expon.ppf(prob_non_exceed, loc=loc, scale=scale)
-#         return q_th
-
-
 class Exponential(AbstractDistribution):
     """Exponential distribution.
 
@@ -2992,18 +2683,6 @@ class Exponential(AbstractDistribution):
 
         if scale <= 0:
             raise ValueError(SCALE_PARAMETER_ERROR)
-
-        # pdf = []
-        #
-        # for i in ts:
-        #     Y = (i - loc) / scale
-        #     if Y <= 0:
-        #         pdf.append(0)
-        #     else:
-        #         pdf.append(np.exp(-Y) / scale)
-        #
-        # if len(pdf) == 1:
-        #     pdf = pdf[0]
 
         pdf = expon.pdf(data, loc=loc, scale=scale)
         return pdf
@@ -3133,18 +2812,24 @@ class Exponential(AbstractDistribution):
     def _cdf_eq(
         data: Union[list, np.ndarray], parameters: Dict[str, Union[float, Any]]
     ) -> np.ndarray:
+        """
+        old cdf equation.
+        ```python
+        >>> ts = np.array([1, 2, 3, 4, 5, 6]) # any value
+        >>> loc = 0 # any value
+        >>> scale = 2 # any value
+        >>> Y = (ts - loc) / scale
+        >>> cdf = 1 - np.exp(-Y)
+        >>> for i in range(0, len(cdf)):
+        ...     if cdf[i] < 0:
+        ...     cdf[i] = 0
+        ```
+        """
         loc = parameters.get("loc")
         scale = parameters.get("scale")
         if scale <= 0:
             raise ValueError(SCALE_PARAMETER_ERROR)
-        # if loc <= 0:
-        #     raise ValueError("Threshold parameter should be greater than zero")
-        # Y = (ts - loc) / scale
-        # cdf = 1 - np.exp(-Y)
-        #
-        # for i in range(0, len(cdf)):
-        #     if cdf[i] < 0:
-        #         cdf[i] = 0
+
         cdf = expon.cdf(data, loc=loc, scale=scale)
         return cdf
 
@@ -3296,7 +2981,7 @@ class Exponential(AbstractDistribution):
             param = Lmoments.exponential(lmu)
         elif method == "optimization":
             if obj_func is None or threshold is None:
-                raise TypeError("obj_func and threshold should be numeric value")
+                raise TypeError(OBJ_FUNCTION_THRESHOULD_ERROR)
 
             param = expon.fit(self.data, method="mle")
             # then we use the result as starting value for your truncated Gumbel fit
@@ -3316,10 +3001,6 @@ class Exponential(AbstractDistribution):
 
         if test:
             self.ks()
-            # try:
-            #     self.chisquare()
-            # except ValueError:
-            #     print("chisquare test failed")
 
         return param
 
@@ -3372,10 +3053,10 @@ class Exponential(AbstractDistribution):
         scale = parameters.get("scale")
 
         if scale <= 0:
-            raise ValueError("Parameters Invalid")
+            raise ValueError(SCALE_PARAMETER_ERROR)
 
         if any(cdf) < 0 or any(cdf) > 1:
-            raise ValueError("cdf Value Invalid")
+            raise ValueError(CDF_INVALID_VALUE_ERROR)
 
         # the main equation from scipy
         q_th = expon.ppf(cdf, loc=loc, scale=scale)
@@ -3625,7 +3306,7 @@ class Normal(AbstractDistribution):
             param = Lmoments.normal(lmu)
         elif method == "optimization":
             if obj_func is None or threshold is None:
-                raise TypeError("obj_func and threshold should be numeric value")
+                raise TypeError(OBJ_FUNCTION_THRESHOULD_ERROR)
 
             param = norm.fit(self.data, method="mle")
             # then we use the result as starting value for your truncated Gumbel fit
@@ -3645,10 +3326,6 @@ class Normal(AbstractDistribution):
 
         if test:
             self.ks()
-            # try:
-            #     self.chisquare()
-            # except ValueError:
-            #     print("chisquare test failed")
 
         return param
 
@@ -3685,10 +3362,10 @@ class Normal(AbstractDistribution):
         scale = parameters.get("scale")
 
         if scale <= 0:
-            raise ValueError("Parameters Invalid")
+            raise ValueError(SCALE_PARAMETER_ERROR)
 
         if any(cdf) < 0 or any(cdf) > 1:
-            raise ValueError("cdf Value Invalid")
+            raise ValueError(CDF_INVALID_VALUE_ERROR)
 
         # the main equation from scipy
         q_th = norm.ppf(cdf, loc=loc, scale=scale)
