@@ -28,6 +28,7 @@ __all__ = [
     "Distributions",
 ]
 
+SCALE_PARAMETER_ERROR = "Scale parameter is negative"
 
 class PlottingPosition:
     """PlottingPosition."""
@@ -752,7 +753,7 @@ class Gumbel(AbstractDistribution):
         loc = parameters.get("loc")
         scale = parameters.get("scale")
         if scale <= 0:
-            raise ValueError("Scale parameter is negative")
+            raise ValueError(SCALE_PARAMETER_ERROR)
         # z = (ts - loc) / scale
         # pdf = (1.0 / scale) * (np.exp(-(z + (np.exp(-z)))))
         pdf = gumbel_r.pdf(data, loc=loc, scale=scale)
@@ -931,7 +932,7 @@ class Gumbel(AbstractDistribution):
         loc = parameters.get("loc")
         scale = parameters.get("scale")
         if scale <= 0:
-            raise ValueError("Scale parameter is negative")
+            raise ValueError(SCALE_PARAMETER_ERROR)
 
         random_data = gumbel_r.rvs(loc=loc, scale=scale, size=size)
         return random_data
@@ -961,7 +962,7 @@ class Gumbel(AbstractDistribution):
         loc = parameters.get("loc")
         scale = parameters.get("scale")
         if scale <= 0:
-            raise ValueError("Scale parameter is negative")
+            raise ValueError(SCALE_PARAMETER_ERROR)
         # z = (ts - loc) / scale
         # cdf = np.exp(-np.exp(-z))
         cdf = gumbel_r.cdf(data, loc=loc, scale=scale)
@@ -1463,7 +1464,7 @@ class Gumbel(AbstractDistribution):
         loc = parameters.get("loc")
         scale = parameters.get("scale")
         if scale <= 0:
-            raise ValueError("Scale parameter is negative")
+            raise ValueError(SCALE_PARAMETER_ERROR)
         # the main equation from scipy
         # Qth = loc - scale * (np.log(-np.log(cdf)))
         qth = gumbel_r.ppf(cdf, loc=loc, scale=scale)
@@ -1664,7 +1665,7 @@ class Gumbel(AbstractDistribution):
 
         scale = parameters.get("scale")
         if scale <= 0:
-            raise ValueError("Scale parameter is negative")
+            raise ValueError(SCALE_PARAMETER_ERROR)
 
         if prob_non_exceed is None:
             prob_non_exceed = PlottingPosition.weibul(self.data)
@@ -1762,7 +1763,7 @@ class Gumbel(AbstractDistribution):
         scale = parameters.get("scale")
 
         if scale <= 0:
-            raise ValueError("Scale parameter is negative")
+            raise ValueError(SCALE_PARAMETER_ERROR)
 
         if cdf is None:
             cdf = PlottingPosition.weibul(self.data)
@@ -2051,7 +2052,7 @@ class GEV(AbstractDistribution):
         shape = parameters.get("shape")
 
         if scale <= 0:
-            raise ValueError("Scale parameter is negative")
+            raise ValueError(SCALE_PARAMETER_ERROR)
 
         random_data = genextreme.rvs(loc=loc, scale=scale, c=shape, size=size)
         return random_data
@@ -2470,7 +2471,7 @@ class GEV(AbstractDistribution):
 
         scale = parameters.get("scale")
         if scale <= 0:
-            raise ValueError("Scale parameter is negative")
+            raise ValueError(SCALE_PARAMETER_ERROR)
 
         if prob_non_exceed is None:
             prob_non_exceed = PlottingPosition.weibul(self.data)
@@ -2573,7 +2574,7 @@ class GEV(AbstractDistribution):
         scale = parameters.get("scale")
 
         if scale <= 0:
-            raise ValueError("Scale parameter is negative")
+            raise ValueError(SCALE_PARAMETER_ERROR)
 
         if cdf is None:
             cdf = PlottingPosition.weibul(self.data)
@@ -2712,7 +2713,7 @@ class GEV(AbstractDistribution):
 #             probability density function pdf.
 #         """
 #         if scale <= 0:
-#             raise ValueError("Scale parameter is negative")
+#             raise ValueError(SCALE_PARAMETER_ERROR)
 #
 #         if isinstance(data, bool):
 #             ts = self.data
@@ -2774,7 +2775,7 @@ class GEV(AbstractDistribution):
 #             scale parameter of the gumbel distribution.
 #         """
 #         if scale <= 0:
-#             raise ValueError("Scale parameter is negative")
+#             raise ValueError(SCALE_PARAMETER_ERROR)
 #         if loc <= 0:
 #             raise ValueError("Threshold parameter should be greater than zero")
 #
@@ -2990,7 +2991,7 @@ class Exponential(AbstractDistribution):
         scale = parameters.get("scale")
 
         if scale <= 0:
-            raise ValueError("Scale parameter is negative")
+            raise ValueError(SCALE_PARAMETER_ERROR)
 
         # pdf = []
         #
@@ -3123,7 +3124,7 @@ class Exponential(AbstractDistribution):
         loc = parameters.get("loc")
         scale = parameters.get("scale")
         if scale <= 0:
-            raise ValueError("Scale parameter is negative")
+            raise ValueError(SCALE_PARAMETER_ERROR)
 
         random_data = expon.rvs(loc=loc, scale=scale, size=size)
         return random_data
@@ -3135,7 +3136,7 @@ class Exponential(AbstractDistribution):
         loc = parameters.get("loc")
         scale = parameters.get("scale")
         if scale <= 0:
-            raise ValueError("Scale parameter is negative")
+            raise ValueError(SCALE_PARAMETER_ERROR)
         # if loc <= 0:
         #     raise ValueError("Threshold parameter should be greater than zero")
         # Y = (ts - loc) / scale
@@ -3444,7 +3445,7 @@ class Normal(AbstractDistribution):
         loc = parameters.get("loc")
         scale = parameters.get("scale")
         if scale <= 0:
-            raise ValueError("Scale parameter is negative")
+            raise ValueError(SCALE_PARAMETER_ERROR)
         pdf = norm.pdf(data, loc=loc, scale=scale)
 
         return pdf
@@ -3513,7 +3514,7 @@ class Normal(AbstractDistribution):
         scale = parameters.get("scale")
 
         if scale <= 0:
-            raise ValueError("Scale parameter is negative")
+            raise ValueError(SCALE_PARAMETER_ERROR)
         if loc <= 0:
             raise ValueError("Threshold parameter should be greater than zero")
 
