@@ -2430,7 +2430,10 @@ Any other value: Uses sigmoid function weighting.</p>
 <span class="normal"><a href="#__codelineno-0-294">294</a></span>
 <span class="normal"><a href="#__codelineno-0-295">295</a></span>
 <span class="normal"><a href="#__codelineno-0-296">296</a></span>
-<span class="normal"><a href="#__codelineno-0-297">297</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-181" name="__codelineno-0-181"></a><span class="k">def</span><span class="w"> </span><span class="nf">rmse_lf</span><span class="p">(</span>
+<span class="normal"><a href="#__codelineno-0-297">297</a></span>
+<span class="normal"><a href="#__codelineno-0-298">298</a></span>
+<span class="normal"><a href="#__codelineno-0-299">299</a></span>
+<span class="normal"><a href="#__codelineno-0-300">300</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-181" name="__codelineno-0-181"></a><span class="k">def</span><span class="w"> </span><span class="nf">rmse_lf</span><span class="p">(</span>
 <a id="__codelineno-0-182" name="__codelineno-0-182"></a>    <span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
 <a id="__codelineno-0-183" name="__codelineno-0-183"></a>    <span class="n">qsim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
 <a id="__codelineno-0-184" name="__codelineno-0-184"></a>    <span class="n">ws_type</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -2520,33 +2523,36 @@ Any other value: Uses sigmoid function weighting.</p>
 <a id="__codelineno-0-268" name="__codelineno-0-268"></a>    <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
 <a id="__codelineno-0-269" name="__codelineno-0-269"></a>    <span class="n">qsim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">qsim</span><span class="p">)</span>
 <a id="__codelineno-0-270" name="__codelineno-0-270"></a>
-<a id="__codelineno-0-271" name="__codelineno-0-271"></a>    <span class="n">qmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>  <span class="c1"># rational Discharge power N</span>
-<a id="__codelineno-0-272" name="__codelineno-0-272"></a>    <span class="n">qr</span> <span class="o">=</span> <span class="p">(</span><span class="n">qmax</span> <span class="o">-</span> <span class="n">obs</span><span class="p">)</span> <span class="o">/</span> <span class="n">qmax</span>
-<a id="__codelineno-0-273" name="__codelineno-0-273"></a>
-<a id="__codelineno-0-274" name="__codelineno-0-274"></a>    <span class="k">if</span> <span class="n">ws_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-<a id="__codelineno-0-275" name="__codelineno-0-275"></a>        <span class="n">w</span> <span class="o">=</span> <span class="n">qr</span><span class="o">**</span><span class="n">n</span>
-<a id="__codelineno-0-276" name="__codelineno-0-276"></a>    <span class="k">elif</span> <span class="n">ws_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># ------------------------------- N is not in the equation</span>
-<a id="__codelineno-0-277" name="__codelineno-0-277"></a>        <span class="c1">#  w=1-qr*((0.50 - alpha)**N)</span>
-<a id="__codelineno-0-278" name="__codelineno-0-278"></a>        <span class="n">w</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">alpha</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qr</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="p">((</span><span class="mi">2</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qr</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
-<a id="__codelineno-0-279" name="__codelineno-0-279"></a>        <span class="n">w</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qr</span> <span class="o">&gt;</span> <span class="n">alpha</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-<a id="__codelineno-0-280" name="__codelineno-0-280"></a>    <span class="k">elif</span> <span class="n">ws_type</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>  <span class="c1"># the same like WStype 2</span>
-<a id="__codelineno-0-281" name="__codelineno-0-281"></a>        <span class="c1"># w=1-qr*((0.50 - alpha)**N)</span>
-<a id="__codelineno-0-282" name="__codelineno-0-282"></a>        <span class="n">w</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">alpha</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qr</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="p">((</span><span class="mi">2</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qr</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
-<a id="__codelineno-0-283" name="__codelineno-0-283"></a>        <span class="n">w</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qr</span> <span class="o">&gt;</span> <span class="n">alpha</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-<a id="__codelineno-0-284" name="__codelineno-0-284"></a>    <span class="k">elif</span> <span class="n">ws_type</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-<a id="__codelineno-0-285" name="__codelineno-0-285"></a>        <span class="c1"># w = 1-qr*(0.50 - alpha)</span>
-<a id="__codelineno-0-286" name="__codelineno-0-286"></a>        <span class="n">w</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qr</span><span class="p">)</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span>
-<a id="__codelineno-0-287" name="__codelineno-0-287"></a>        <span class="n">w</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qr</span> <span class="o">&gt;</span> <span class="n">alpha</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-<a id="__codelineno-0-288" name="__codelineno-0-288"></a>    <span class="k">else</span><span class="p">:</span>  <span class="c1"># sigmoid function</span>
-<a id="__codelineno-0-289" name="__codelineno-0-289"></a>        <span class="c1"># w=1/(1+np.exp(10*h-5))</span>
-<a id="__codelineno-0-290" name="__codelineno-0-290"></a>        <span class="n">w</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span> <span class="o">*</span> <span class="n">qr</span> <span class="o">+</span> <span class="mi">5</span><span class="p">))</span>
-<a id="__codelineno-0-291" name="__codelineno-0-291"></a>
-<a id="__codelineno-0-292" name="__codelineno-0-292"></a>    <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">obs</span> <span class="o">-</span> <span class="n">qsim</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
-<a id="__codelineno-0-293" name="__codelineno-0-293"></a>    <span class="n">b</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">w</span>
-<a id="__codelineno-0-294" name="__codelineno-0-294"></a>    <span class="n">c</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
-<a id="__codelineno-0-295" name="__codelineno-0-295"></a>    <span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">c</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span>
-<a id="__codelineno-0-296" name="__codelineno-0-296"></a>
-<a id="__codelineno-0-297" name="__codelineno-0-297"></a>    <span class="k">return</span> <span class="n">error</span>
+<a id="__codelineno-0-271" name="__codelineno-0-271"></a>    <span class="c1"># rational Discharge power N</span>
+<a id="__codelineno-0-272" name="__codelineno-0-272"></a>    <span class="n">qmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+<a id="__codelineno-0-273" name="__codelineno-0-273"></a>    <span class="n">qr</span> <span class="o">=</span> <span class="p">(</span><span class="n">qmax</span> <span class="o">-</span> <span class="n">obs</span><span class="p">)</span> <span class="o">/</span> <span class="n">qmax</span>
+<a id="__codelineno-0-274" name="__codelineno-0-274"></a>
+<a id="__codelineno-0-275" name="__codelineno-0-275"></a>    <span class="k">if</span> <span class="n">ws_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+<a id="__codelineno-0-276" name="__codelineno-0-276"></a>        <span class="n">w</span> <span class="o">=</span> <span class="n">qr</span><span class="o">**</span><span class="n">n</span>
+<a id="__codelineno-0-277" name="__codelineno-0-277"></a>    <span class="k">elif</span> <span class="n">ws_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+<a id="__codelineno-0-278" name="__codelineno-0-278"></a>        <span class="c1"># N is not in the equation</span>
+<a id="__codelineno-0-279" name="__codelineno-0-279"></a>        <span class="c1">#  w=1-qr*((0.50 - alpha)**N)</span>
+<a id="__codelineno-0-280" name="__codelineno-0-280"></a>        <span class="n">w</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">alpha</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qr</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="p">((</span><span class="mi">2</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qr</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+<a id="__codelineno-0-281" name="__codelineno-0-281"></a>        <span class="n">w</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qr</span> <span class="o">&gt;</span> <span class="n">alpha</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="__codelineno-0-282" name="__codelineno-0-282"></a>    <span class="k">elif</span> <span class="n">ws_type</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+<a id="__codelineno-0-283" name="__codelineno-0-283"></a>        <span class="c1"># the same as WStype 2</span>
+<a id="__codelineno-0-284" name="__codelineno-0-284"></a>        <span class="c1"># w=1-qr*((0.50 - alpha)**N)</span>
+<a id="__codelineno-0-285" name="__codelineno-0-285"></a>        <span class="n">w</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">alpha</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qr</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="p">((</span><span class="mi">2</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qr</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+<a id="__codelineno-0-286" name="__codelineno-0-286"></a>        <span class="n">w</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qr</span> <span class="o">&gt;</span> <span class="n">alpha</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="__codelineno-0-287" name="__codelineno-0-287"></a>    <span class="k">elif</span> <span class="n">ws_type</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+<a id="__codelineno-0-288" name="__codelineno-0-288"></a>        <span class="c1"># w = 1-qr*(0.50 - alpha)</span>
+<a id="__codelineno-0-289" name="__codelineno-0-289"></a>        <span class="n">w</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qr</span><span class="p">)</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span>
+<a id="__codelineno-0-290" name="__codelineno-0-290"></a>        <span class="n">w</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qr</span> <span class="o">&gt;</span> <span class="n">alpha</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="__codelineno-0-291" name="__codelineno-0-291"></a>    <span class="k">else</span><span class="p">:</span>  <span class="c1"># sigmoid function</span>
+<a id="__codelineno-0-292" name="__codelineno-0-292"></a>        <span class="c1"># w=1/(1+np.exp(10*h-5))</span>
+<a id="__codelineno-0-293" name="__codelineno-0-293"></a>        <span class="n">w</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span> <span class="o">*</span> <span class="n">qr</span> <span class="o">+</span> <span class="mi">5</span><span class="p">))</span>
+<a id="__codelineno-0-294" name="__codelineno-0-294"></a>
+<a id="__codelineno-0-295" name="__codelineno-0-295"></a>    <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">obs</span> <span class="o">-</span> <span class="n">qsim</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+<a id="__codelineno-0-296" name="__codelineno-0-296"></a>    <span class="n">b</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">w</span>
+<a id="__codelineno-0-297" name="__codelineno-0-297"></a>    <span class="n">c</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<a id="__codelineno-0-298" name="__codelineno-0-298"></a>    <span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">c</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span>
+<a id="__codelineno-0-299" name="__codelineno-0-299"></a>
+<a id="__codelineno-0-300" name="__codelineno-0-300"></a>    <span class="k">return</span> <span class="n">error</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -2704,10 +2710,7 @@ Journal of Hydrology, 377(1-2), 80-91.</p>
 
             <details class="quote">
               <summary>Source code in <code>statista/descriptors.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-300">300</a></span>
-<span class="normal"><a href="#__codelineno-0-301">301</a></span>
-<span class="normal"><a href="#__codelineno-0-302">302</a></span>
-<span class="normal"><a href="#__codelineno-0-303">303</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-303">303</a></span>
 <span class="normal"><a href="#__codelineno-0-304">304</a></span>
 <span class="normal"><a href="#__codelineno-0-305">305</a></span>
 <span class="normal"><a href="#__codelineno-0-306">306</a></span>
@@ -2766,69 +2769,72 @@ Journal of Hydrology, 377(1-2), 80-91.</p>
 <span class="normal"><a href="#__codelineno-0-359">359</a></span>
 <span class="normal"><a href="#__codelineno-0-360">360</a></span>
 <span class="normal"><a href="#__codelineno-0-361">361</a></span>
-<span class="normal"><a href="#__codelineno-0-362">362</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-300" name="__codelineno-0-300"></a><span class="k">def</span><span class="w"> </span><span class="nf">kge</span><span class="p">(</span><span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<a id="__codelineno-0-301" name="__codelineno-0-301"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Kling-Gupta Efficiency.</span>
-<a id="__codelineno-0-302" name="__codelineno-0-302"></a>
-<a id="__codelineno-0-303" name="__codelineno-0-303"></a><span class="sd">    Calculates the Kling-Gupta Efficiency (KGE) between observed and simulated values.</span>
-<a id="__codelineno-0-304" name="__codelineno-0-304"></a>
-<a id="__codelineno-0-305" name="__codelineno-0-305"></a><span class="sd">    KGE addresses limitations of using a single error function like Nash-Sutcliffe Efficiency (NSE)</span>
-<a id="__codelineno-0-306" name="__codelineno-0-306"></a><span class="sd">    or RMSE by decomposing the error into three components: correlation, variability, and bias.</span>
-<a id="__codelineno-0-307" name="__codelineno-0-307"></a><span class="sd">    This provides a more comprehensive assessment of model performance.</span>
-<a id="__codelineno-0-308" name="__codelineno-0-308"></a>
-<a id="__codelineno-0-309" name="__codelineno-0-309"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-310" name="__codelineno-0-310"></a><span class="sd">        obs: Observed flow values as a list or numpy array.</span>
-<a id="__codelineno-0-311" name="__codelineno-0-311"></a><span class="sd">        sim: Simulated flow values as a list or numpy array.</span>
-<a id="__codelineno-0-312" name="__codelineno-0-312"></a>
-<a id="__codelineno-0-313" name="__codelineno-0-313"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-314" name="__codelineno-0-314"></a><span class="sd">        float: The KGE value. KGE ranges from -∞ to 1, with 1 being perfect agreement.</span>
-<a id="__codelineno-0-315" name="__codelineno-0-315"></a><span class="sd">            Values closer to 1 indicate better model performance.</span>
-<a id="__codelineno-0-316" name="__codelineno-0-316"></a>
-<a id="__codelineno-0-317" name="__codelineno-0-317"></a><span class="sd">    Raises:</span>
-<a id="__codelineno-0-318" name="__codelineno-0-318"></a><span class="sd">        ValueError: If the input arrays have different lengths or contain invalid values.</span>
+<span class="normal"><a href="#__codelineno-0-362">362</a></span>
+<span class="normal"><a href="#__codelineno-0-363">363</a></span>
+<span class="normal"><a href="#__codelineno-0-364">364</a></span>
+<span class="normal"><a href="#__codelineno-0-365">365</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-303" name="__codelineno-0-303"></a><span class="k">def</span><span class="w"> </span><span class="nf">kge</span><span class="p">(</span><span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="__codelineno-0-304" name="__codelineno-0-304"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Kling-Gupta Efficiency.</span>
+<a id="__codelineno-0-305" name="__codelineno-0-305"></a>
+<a id="__codelineno-0-306" name="__codelineno-0-306"></a><span class="sd">    Calculates the Kling-Gupta Efficiency (KGE) between observed and simulated values.</span>
+<a id="__codelineno-0-307" name="__codelineno-0-307"></a>
+<a id="__codelineno-0-308" name="__codelineno-0-308"></a><span class="sd">    KGE addresses limitations of using a single error function like Nash-Sutcliffe Efficiency (NSE)</span>
+<a id="__codelineno-0-309" name="__codelineno-0-309"></a><span class="sd">    or RMSE by decomposing the error into three components: correlation, variability, and bias.</span>
+<a id="__codelineno-0-310" name="__codelineno-0-310"></a><span class="sd">    This provides a more comprehensive assessment of model performance.</span>
+<a id="__codelineno-0-311" name="__codelineno-0-311"></a>
+<a id="__codelineno-0-312" name="__codelineno-0-312"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-313" name="__codelineno-0-313"></a><span class="sd">        obs: Observed flow values as a list or numpy array.</span>
+<a id="__codelineno-0-314" name="__codelineno-0-314"></a><span class="sd">        sim: Simulated flow values as a list or numpy array.</span>
+<a id="__codelineno-0-315" name="__codelineno-0-315"></a>
+<a id="__codelineno-0-316" name="__codelineno-0-316"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-317" name="__codelineno-0-317"></a><span class="sd">        float: The KGE value. KGE ranges from -∞ to 1, with 1 being perfect agreement.</span>
+<a id="__codelineno-0-318" name="__codelineno-0-318"></a><span class="sd">            Values closer to 1 indicate better model performance.</span>
 <a id="__codelineno-0-319" name="__codelineno-0-319"></a>
-<a id="__codelineno-0-320" name="__codelineno-0-320"></a><span class="sd">    Examples:</span>
-<a id="__codelineno-0-321" name="__codelineno-0-321"></a><span class="sd">        - Example with good performance:</span>
-<a id="__codelineno-0-322" name="__codelineno-0-322"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-323" name="__codelineno-0-323"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
-<a id="__codelineno-0-324" name="__codelineno-0-324"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import kge</span>
-<a id="__codelineno-0-325" name="__codelineno-0-325"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
-<a id="__codelineno-0-326" name="__codelineno-0-326"></a><span class="sd">            &gt;&gt;&gt; simulated = [12, 18, 33, 43, 48]</span>
-<a id="__codelineno-0-327" name="__codelineno-0-327"></a><span class="sd">            &gt;&gt;&gt; kge_value = kge(observed, simulated)</span>
-<a id="__codelineno-0-328" name="__codelineno-0-328"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;KGE: {kge_value:.4f}&quot;)</span>
-<a id="__codelineno-0-329" name="__codelineno-0-329"></a><span class="sd">            KGE: 0.9657</span>
-<a id="__codelineno-0-330" name="__codelineno-0-330"></a>
-<a id="__codelineno-0-331" name="__codelineno-0-331"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-332" name="__codelineno-0-332"></a><span class="sd">        - Example with poorer performance:</span>
-<a id="__codelineno-0-333" name="__codelineno-0-333"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-334" name="__codelineno-0-334"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
-<a id="__codelineno-0-335" name="__codelineno-0-335"></a><span class="sd">            &gt;&gt;&gt; simulated = [5, 15, 45, 35, 60]</span>
-<a id="__codelineno-0-336" name="__codelineno-0-336"></a><span class="sd">            &gt;&gt;&gt; kge_value = kge(observed, simulated)</span>
-<a id="__codelineno-0-337" name="__codelineno-0-337"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;KGE: {kge_value:.4f}&quot;)</span>
-<a id="__codelineno-0-338" name="__codelineno-0-338"></a><span class="sd">            KGE: 0.5805</span>
-<a id="__codelineno-0-339" name="__codelineno-0-339"></a>
-<a id="__codelineno-0-340" name="__codelineno-0-340"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-341" name="__codelineno-0-341"></a>
-<a id="__codelineno-0-342" name="__codelineno-0-342"></a><span class="sd">    References:</span>
-<a id="__codelineno-0-343" name="__codelineno-0-343"></a><span class="sd">        Gupta, H. V., Kling, H., Yilmaz, K. K., &amp; Martinez, G. F. (2009).</span>
-<a id="__codelineno-0-344" name="__codelineno-0-344"></a><span class="sd">        Decomposition of the mean squared error and NSE performance criteria:</span>
-<a id="__codelineno-0-345" name="__codelineno-0-345"></a><span class="sd">        Implications for improving hydrological modelling.</span>
-<a id="__codelineno-0-346" name="__codelineno-0-346"></a><span class="sd">        Journal of Hydrology, 377(1-2), 80-91.</span>
-<a id="__codelineno-0-347" name="__codelineno-0-347"></a>
-<a id="__codelineno-0-348" name="__codelineno-0-348"></a><span class="sd">    See Also:</span>
-<a id="__codelineno-0-349" name="__codelineno-0-349"></a><span class="sd">        - nse: Nash-Sutcliffe Efficiency</span>
-<a id="__codelineno-0-350" name="__codelineno-0-350"></a><span class="sd">        - rmse: Root Mean Square Error</span>
-<a id="__codelineno-0-351" name="__codelineno-0-351"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-352" name="__codelineno-0-352"></a>    <span class="c1"># convert obs &amp; sim into arrays</span>
-<a id="__codelineno-0-353" name="__codelineno-0-353"></a>    <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-<a id="__codelineno-0-354" name="__codelineno-0-354"></a>    <span class="n">sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
-<a id="__codelineno-0-355" name="__codelineno-0-355"></a>
-<a id="__codelineno-0-356" name="__codelineno-0-356"></a>    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">sim</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-<a id="__codelineno-0-357" name="__codelineno-0-357"></a>    <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-<a id="__codelineno-0-358" name="__codelineno-0-358"></a>    <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-<a id="__codelineno-0-359" name="__codelineno-0-359"></a>
-<a id="__codelineno-0-360" name="__codelineno-0-360"></a>    <span class="n">kge</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="n">c</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">alpha</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">beta</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
-<a id="__codelineno-0-361" name="__codelineno-0-361"></a>
-<a id="__codelineno-0-362" name="__codelineno-0-362"></a>    <span class="k">return</span> <span class="n">kge</span>
+<a id="__codelineno-0-320" name="__codelineno-0-320"></a><span class="sd">    Raises:</span>
+<a id="__codelineno-0-321" name="__codelineno-0-321"></a><span class="sd">        ValueError: If the input arrays have different lengths or contain invalid values.</span>
+<a id="__codelineno-0-322" name="__codelineno-0-322"></a>
+<a id="__codelineno-0-323" name="__codelineno-0-323"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-0-324" name="__codelineno-0-324"></a><span class="sd">        - Example with good performance:</span>
+<a id="__codelineno-0-325" name="__codelineno-0-325"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-326" name="__codelineno-0-326"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
+<a id="__codelineno-0-327" name="__codelineno-0-327"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import kge</span>
+<a id="__codelineno-0-328" name="__codelineno-0-328"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
+<a id="__codelineno-0-329" name="__codelineno-0-329"></a><span class="sd">            &gt;&gt;&gt; simulated = [12, 18, 33, 43, 48]</span>
+<a id="__codelineno-0-330" name="__codelineno-0-330"></a><span class="sd">            &gt;&gt;&gt; kge_value = kge(observed, simulated)</span>
+<a id="__codelineno-0-331" name="__codelineno-0-331"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;KGE: {kge_value:.4f}&quot;)</span>
+<a id="__codelineno-0-332" name="__codelineno-0-332"></a><span class="sd">            KGE: 0.9657</span>
+<a id="__codelineno-0-333" name="__codelineno-0-333"></a>
+<a id="__codelineno-0-334" name="__codelineno-0-334"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-335" name="__codelineno-0-335"></a><span class="sd">        - Example with poorer performance:</span>
+<a id="__codelineno-0-336" name="__codelineno-0-336"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-337" name="__codelineno-0-337"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
+<a id="__codelineno-0-338" name="__codelineno-0-338"></a><span class="sd">            &gt;&gt;&gt; simulated = [5, 15, 45, 35, 60]</span>
+<a id="__codelineno-0-339" name="__codelineno-0-339"></a><span class="sd">            &gt;&gt;&gt; kge_value = kge(observed, simulated)</span>
+<a id="__codelineno-0-340" name="__codelineno-0-340"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;KGE: {kge_value:.4f}&quot;)</span>
+<a id="__codelineno-0-341" name="__codelineno-0-341"></a><span class="sd">            KGE: 0.5805</span>
+<a id="__codelineno-0-342" name="__codelineno-0-342"></a>
+<a id="__codelineno-0-343" name="__codelineno-0-343"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-344" name="__codelineno-0-344"></a>
+<a id="__codelineno-0-345" name="__codelineno-0-345"></a><span class="sd">    References:</span>
+<a id="__codelineno-0-346" name="__codelineno-0-346"></a><span class="sd">        Gupta, H. V., Kling, H., Yilmaz, K. K., &amp; Martinez, G. F. (2009).</span>
+<a id="__codelineno-0-347" name="__codelineno-0-347"></a><span class="sd">        Decomposition of the mean squared error and NSE performance criteria:</span>
+<a id="__codelineno-0-348" name="__codelineno-0-348"></a><span class="sd">        Implications for improving hydrological modelling.</span>
+<a id="__codelineno-0-349" name="__codelineno-0-349"></a><span class="sd">        Journal of Hydrology, 377(1-2), 80-91.</span>
+<a id="__codelineno-0-350" name="__codelineno-0-350"></a>
+<a id="__codelineno-0-351" name="__codelineno-0-351"></a><span class="sd">    See Also:</span>
+<a id="__codelineno-0-352" name="__codelineno-0-352"></a><span class="sd">        - nse: Nash-Sutcliffe Efficiency</span>
+<a id="__codelineno-0-353" name="__codelineno-0-353"></a><span class="sd">        - rmse: Root Mean Square Error</span>
+<a id="__codelineno-0-354" name="__codelineno-0-354"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-355" name="__codelineno-0-355"></a>    <span class="c1"># convert obs &amp; sim into arrays</span>
+<a id="__codelineno-0-356" name="__codelineno-0-356"></a>    <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+<a id="__codelineno-0-357" name="__codelineno-0-357"></a>    <span class="n">sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
+<a id="__codelineno-0-358" name="__codelineno-0-358"></a>
+<a id="__codelineno-0-359" name="__codelineno-0-359"></a>    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">sim</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+<a id="__codelineno-0-360" name="__codelineno-0-360"></a>    <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+<a id="__codelineno-0-361" name="__codelineno-0-361"></a>    <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+<a id="__codelineno-0-362" name="__codelineno-0-362"></a>
+<a id="__codelineno-0-363" name="__codelineno-0-363"></a>    <span class="n">kge</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="n">c</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">alpha</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">beta</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+<a id="__codelineno-0-364" name="__codelineno-0-364"></a>
+<a id="__codelineno-0-365" name="__codelineno-0-365"></a>    <span class="k">return</span> <span class="n">kge</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -2997,10 +3003,7 @@ model parameterizations. Water Resources Research, 42(7).</p>
 
             <details class="quote">
               <summary>Source code in <code>statista/descriptors.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-365">365</a></span>
-<span class="normal"><a href="#__codelineno-0-366">366</a></span>
-<span class="normal"><a href="#__codelineno-0-367">367</a></span>
-<span class="normal"><a href="#__codelineno-0-368">368</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-368">368</a></span>
 <span class="normal"><a href="#__codelineno-0-369">369</a></span>
 <span class="normal"><a href="#__codelineno-0-370">370</a></span>
 <span class="normal"><a href="#__codelineno-0-371">371</a></span>
@@ -3055,65 +3058,68 @@ model parameterizations. Water Resources Research, 42(7).</p>
 <span class="normal"><a href="#__codelineno-0-420">420</a></span>
 <span class="normal"><a href="#__codelineno-0-421">421</a></span>
 <span class="normal"><a href="#__codelineno-0-422">422</a></span>
-<span class="normal"><a href="#__codelineno-0-423">423</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-365" name="__codelineno-0-365"></a><span class="k">def</span><span class="w"> </span><span class="nf">wb</span><span class="p">(</span><span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<a id="__codelineno-0-366" name="__codelineno-0-366"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Water Balance Error.</span>
-<a id="__codelineno-0-367" name="__codelineno-0-367"></a>
-<a id="__codelineno-0-368" name="__codelineno-0-368"></a><span class="sd">    Calculates the water balance error, which measures how well the model reproduces</span>
-<a id="__codelineno-0-369" name="__codelineno-0-369"></a><span class="sd">    the total stream flow volume.</span>
+<span class="normal"><a href="#__codelineno-0-423">423</a></span>
+<span class="normal"><a href="#__codelineno-0-424">424</a></span>
+<span class="normal"><a href="#__codelineno-0-425">425</a></span>
+<span class="normal"><a href="#__codelineno-0-426">426</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-368" name="__codelineno-0-368"></a><span class="k">def</span><span class="w"> </span><span class="nf">wb</span><span class="p">(</span><span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="__codelineno-0-369" name="__codelineno-0-369"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Water Balance Error.</span>
 <a id="__codelineno-0-370" name="__codelineno-0-370"></a>
-<a id="__codelineno-0-371" name="__codelineno-0-371"></a><span class="sd">    This metric allows error compensation between time steps and is not an indication</span>
-<a id="__codelineno-0-372" name="__codelineno-0-372"></a><span class="sd">    of the temporal accuracy of the model. It only measures the overall volume balance.</span>
-<a id="__codelineno-0-373" name="__codelineno-0-373"></a><span class="sd">    Note that the naive model of Nash-Sutcliffe (simulated flow equals the average observed</span>
-<a id="__codelineno-0-374" name="__codelineno-0-374"></a><span class="sd">    flow) will result in a WB error of 100%.</span>
-<a id="__codelineno-0-375" name="__codelineno-0-375"></a>
-<a id="__codelineno-0-376" name="__codelineno-0-376"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-377" name="__codelineno-0-377"></a><span class="sd">        obs: Observed flow values as a list or numpy array.</span>
-<a id="__codelineno-0-378" name="__codelineno-0-378"></a><span class="sd">        sim: Simulated flow values as a list or numpy array.</span>
-<a id="__codelineno-0-379" name="__codelineno-0-379"></a>
-<a id="__codelineno-0-380" name="__codelineno-0-380"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-381" name="__codelineno-0-381"></a><span class="sd">        float: The water balance error as a percentage (0-100).</span>
-<a id="__codelineno-0-382" name="__codelineno-0-382"></a><span class="sd">            100% indicates perfect volume balance, while lower values indicate poorer performance.</span>
-<a id="__codelineno-0-383" name="__codelineno-0-383"></a>
-<a id="__codelineno-0-384" name="__codelineno-0-384"></a><span class="sd">    Raises:</span>
-<a id="__codelineno-0-385" name="__codelineno-0-385"></a><span class="sd">        ValueError: If the sum of observed values is zero (division by zero).</span>
-<a id="__codelineno-0-386" name="__codelineno-0-386"></a><span class="sd">        ValueError: If the input arrays have different lengths.</span>
-<a id="__codelineno-0-387" name="__codelineno-0-387"></a>
-<a id="__codelineno-0-388" name="__codelineno-0-388"></a><span class="sd">    Examples:</span>
-<a id="__codelineno-0-389" name="__codelineno-0-389"></a><span class="sd">        - Example with goof volume balance</span>
-<a id="__codelineno-0-390" name="__codelineno-0-390"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-391" name="__codelineno-0-391"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
-<a id="__codelineno-0-392" name="__codelineno-0-392"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import wb</span>
-<a id="__codelineno-0-393" name="__codelineno-0-393"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
-<a id="__codelineno-0-394" name="__codelineno-0-394"></a><span class="sd">            &gt;&gt;&gt; simulated = [12, 18, 33, 43, 44]</span>
-<a id="__codelineno-0-395" name="__codelineno-0-395"></a><span class="sd">            &gt;&gt;&gt; wb_value = wb(observed, simulated)</span>
-<a id="__codelineno-0-396" name="__codelineno-0-396"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;Water Balance Error: {wb_value:.2f}%&quot;)</span>
-<a id="__codelineno-0-397" name="__codelineno-0-397"></a><span class="sd">            Water Balance Error: 100.00%</span>
-<a id="__codelineno-0-398" name="__codelineno-0-398"></a>
-<a id="__codelineno-0-399" name="__codelineno-0-399"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-400" name="__codelineno-0-400"></a><span class="sd">        - Example with volume underestimation</span>
-<a id="__codelineno-0-401" name="__codelineno-0-401"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-402" name="__codelineno-0-402"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
-<a id="__codelineno-0-403" name="__codelineno-0-403"></a><span class="sd">            &gt;&gt;&gt; simulated = [8, 15, 25, 35, 40]</span>
-<a id="__codelineno-0-404" name="__codelineno-0-404"></a><span class="sd">            &gt;&gt;&gt; wb_value = wb(observed, simulated)</span>
-<a id="__codelineno-0-405" name="__codelineno-0-405"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;Water Balance Error: {wb_value:.2f}%&quot;)</span>
-<a id="__codelineno-0-406" name="__codelineno-0-406"></a><span class="sd">            Water Balance Error: 82.00%</span>
-<a id="__codelineno-0-407" name="__codelineno-0-407"></a>
-<a id="__codelineno-0-408" name="__codelineno-0-408"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-409" name="__codelineno-0-409"></a>
-<a id="__codelineno-0-410" name="__codelineno-0-410"></a><span class="sd">    References:</span>
-<a id="__codelineno-0-411" name="__codelineno-0-411"></a><span class="sd">        Oudin, L., Andréassian, V., Mathevet, T., Perrin, C., &amp; Michel, C. (2006).</span>
-<a id="__codelineno-0-412" name="__codelineno-0-412"></a><span class="sd">        Dynamic averaging of rainfall-runoff model simulations from complementary</span>
-<a id="__codelineno-0-413" name="__codelineno-0-413"></a><span class="sd">        model parameterizations. Water Resources Research, 42(7).</span>
-<a id="__codelineno-0-414" name="__codelineno-0-414"></a>
-<a id="__codelineno-0-415" name="__codelineno-0-415"></a><span class="sd">    See Also:</span>
-<a id="__codelineno-0-416" name="__codelineno-0-416"></a><span class="sd">        - rmse: Root Mean Square Error</span>
-<a id="__codelineno-0-417" name="__codelineno-0-417"></a><span class="sd">        - nse: Nash-Sutcliffe Efficiency</span>
-<a id="__codelineno-0-418" name="__codelineno-0-418"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-419" name="__codelineno-0-419"></a>    <span class="n">qobs_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-<a id="__codelineno-0-420" name="__codelineno-0-420"></a>    <span class="n">qsim_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
-<a id="__codelineno-0-421" name="__codelineno-0-421"></a>    <span class="n">wb</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">qsim_sum</span> <span class="o">/</span> <span class="n">qobs_sum</span><span class="p">)))</span>
-<a id="__codelineno-0-422" name="__codelineno-0-422"></a>
-<a id="__codelineno-0-423" name="__codelineno-0-423"></a>    <span class="k">return</span> <span class="n">wb</span>
+<a id="__codelineno-0-371" name="__codelineno-0-371"></a><span class="sd">    Calculates the water balance error, which measures how well the model reproduces</span>
+<a id="__codelineno-0-372" name="__codelineno-0-372"></a><span class="sd">    the total stream flow volume.</span>
+<a id="__codelineno-0-373" name="__codelineno-0-373"></a>
+<a id="__codelineno-0-374" name="__codelineno-0-374"></a><span class="sd">    This metric allows error compensation between time steps and is not an indication</span>
+<a id="__codelineno-0-375" name="__codelineno-0-375"></a><span class="sd">    of the temporal accuracy of the model. It only measures the overall volume balance.</span>
+<a id="__codelineno-0-376" name="__codelineno-0-376"></a><span class="sd">    Note that the naive model of Nash-Sutcliffe (simulated flow equals the average observed</span>
+<a id="__codelineno-0-377" name="__codelineno-0-377"></a><span class="sd">    flow) will result in a WB error of 100%.</span>
+<a id="__codelineno-0-378" name="__codelineno-0-378"></a>
+<a id="__codelineno-0-379" name="__codelineno-0-379"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-380" name="__codelineno-0-380"></a><span class="sd">        obs: Observed flow values as a list or numpy array.</span>
+<a id="__codelineno-0-381" name="__codelineno-0-381"></a><span class="sd">        sim: Simulated flow values as a list or numpy array.</span>
+<a id="__codelineno-0-382" name="__codelineno-0-382"></a>
+<a id="__codelineno-0-383" name="__codelineno-0-383"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-384" name="__codelineno-0-384"></a><span class="sd">        float: The water balance error as a percentage (0-100).</span>
+<a id="__codelineno-0-385" name="__codelineno-0-385"></a><span class="sd">            100% indicates perfect volume balance, while lower values indicate poorer performance.</span>
+<a id="__codelineno-0-386" name="__codelineno-0-386"></a>
+<a id="__codelineno-0-387" name="__codelineno-0-387"></a><span class="sd">    Raises:</span>
+<a id="__codelineno-0-388" name="__codelineno-0-388"></a><span class="sd">        ValueError: If the sum of observed values is zero (division by zero).</span>
+<a id="__codelineno-0-389" name="__codelineno-0-389"></a><span class="sd">        ValueError: If the input arrays have different lengths.</span>
+<a id="__codelineno-0-390" name="__codelineno-0-390"></a>
+<a id="__codelineno-0-391" name="__codelineno-0-391"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-0-392" name="__codelineno-0-392"></a><span class="sd">        - Example with goof volume balance</span>
+<a id="__codelineno-0-393" name="__codelineno-0-393"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-394" name="__codelineno-0-394"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
+<a id="__codelineno-0-395" name="__codelineno-0-395"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import wb</span>
+<a id="__codelineno-0-396" name="__codelineno-0-396"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
+<a id="__codelineno-0-397" name="__codelineno-0-397"></a><span class="sd">            &gt;&gt;&gt; simulated = [12, 18, 33, 43, 44]</span>
+<a id="__codelineno-0-398" name="__codelineno-0-398"></a><span class="sd">            &gt;&gt;&gt; wb_value = wb(observed, simulated)</span>
+<a id="__codelineno-0-399" name="__codelineno-0-399"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;Water Balance Error: {wb_value:.2f}%&quot;)</span>
+<a id="__codelineno-0-400" name="__codelineno-0-400"></a><span class="sd">            Water Balance Error: 100.00%</span>
+<a id="__codelineno-0-401" name="__codelineno-0-401"></a>
+<a id="__codelineno-0-402" name="__codelineno-0-402"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-403" name="__codelineno-0-403"></a><span class="sd">        - Example with volume underestimation</span>
+<a id="__codelineno-0-404" name="__codelineno-0-404"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-405" name="__codelineno-0-405"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
+<a id="__codelineno-0-406" name="__codelineno-0-406"></a><span class="sd">            &gt;&gt;&gt; simulated = [8, 15, 25, 35, 40]</span>
+<a id="__codelineno-0-407" name="__codelineno-0-407"></a><span class="sd">            &gt;&gt;&gt; wb_value = wb(observed, simulated)</span>
+<a id="__codelineno-0-408" name="__codelineno-0-408"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;Water Balance Error: {wb_value:.2f}%&quot;)</span>
+<a id="__codelineno-0-409" name="__codelineno-0-409"></a><span class="sd">            Water Balance Error: 82.00%</span>
+<a id="__codelineno-0-410" name="__codelineno-0-410"></a>
+<a id="__codelineno-0-411" name="__codelineno-0-411"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-412" name="__codelineno-0-412"></a>
+<a id="__codelineno-0-413" name="__codelineno-0-413"></a><span class="sd">    References:</span>
+<a id="__codelineno-0-414" name="__codelineno-0-414"></a><span class="sd">        Oudin, L., Andréassian, V., Mathevet, T., Perrin, C., &amp; Michel, C. (2006).</span>
+<a id="__codelineno-0-415" name="__codelineno-0-415"></a><span class="sd">        Dynamic averaging of rainfall-runoff model simulations from complementary</span>
+<a id="__codelineno-0-416" name="__codelineno-0-416"></a><span class="sd">        model parameterizations. Water Resources Research, 42(7).</span>
+<a id="__codelineno-0-417" name="__codelineno-0-417"></a>
+<a id="__codelineno-0-418" name="__codelineno-0-418"></a><span class="sd">    See Also:</span>
+<a id="__codelineno-0-419" name="__codelineno-0-419"></a><span class="sd">        - rmse: Root Mean Square Error</span>
+<a id="__codelineno-0-420" name="__codelineno-0-420"></a><span class="sd">        - nse: Nash-Sutcliffe Efficiency</span>
+<a id="__codelineno-0-421" name="__codelineno-0-421"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-422" name="__codelineno-0-422"></a>    <span class="n">qobs_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+<a id="__codelineno-0-423" name="__codelineno-0-423"></a>    <span class="n">qsim_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
+<a id="__codelineno-0-424" name="__codelineno-0-424"></a>    <span class="n">wb</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">qsim_sum</span> <span class="o">/</span> <span class="n">qobs_sum</span><span class="p">)))</span>
+<a id="__codelineno-0-425" name="__codelineno-0-425"></a>
+<a id="__codelineno-0-426" name="__codelineno-0-426"></a>    <span class="k">return</span> <span class="n">wb</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3284,10 +3290,7 @@ the observations compared to using the mean of the observations as a predictor.<
 
             <details class="quote">
               <summary>Source code in <code>statista/descriptors.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-426">426</a></span>
-<span class="normal"><a href="#__codelineno-0-427">427</a></span>
-<span class="normal"><a href="#__codelineno-0-428">428</a></span>
-<span class="normal"><a href="#__codelineno-0-429">429</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-429">429</a></span>
 <span class="normal"><a href="#__codelineno-0-430">430</a></span>
 <span class="normal"><a href="#__codelineno-0-431">431</a></span>
 <span class="normal"><a href="#__codelineno-0-432">432</a></span>
@@ -3352,75 +3355,78 @@ the observations compared to using the mean of the observations as a predictor.<
 <span class="normal"><a href="#__codelineno-0-491">491</a></span>
 <span class="normal"><a href="#__codelineno-0-492">492</a></span>
 <span class="normal"><a href="#__codelineno-0-493">493</a></span>
-<span class="normal"><a href="#__codelineno-0-494">494</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-426" name="__codelineno-0-426"></a><span class="k">def</span><span class="w"> </span><span class="nf">nse</span><span class="p">(</span><span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<a id="__codelineno-0-427" name="__codelineno-0-427"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Nash-Sutcliffe Efficiency.</span>
-<a id="__codelineno-0-428" name="__codelineno-0-428"></a>
-<a id="__codelineno-0-429" name="__codelineno-0-429"></a><span class="sd">    Calculates the Nash-Sutcliffe Efficiency (NSE), a widely used metric for assessing</span>
-<a id="__codelineno-0-430" name="__codelineno-0-430"></a><span class="sd">    the performance of hydrological models.</span>
+<span class="normal"><a href="#__codelineno-0-494">494</a></span>
+<span class="normal"><a href="#__codelineno-0-495">495</a></span>
+<span class="normal"><a href="#__codelineno-0-496">496</a></span>
+<span class="normal"><a href="#__codelineno-0-497">497</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-429" name="__codelineno-0-429"></a><span class="k">def</span><span class="w"> </span><span class="nf">nse</span><span class="p">(</span><span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="__codelineno-0-430" name="__codelineno-0-430"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Nash-Sutcliffe Efficiency.</span>
 <a id="__codelineno-0-431" name="__codelineno-0-431"></a>
-<a id="__codelineno-0-432" name="__codelineno-0-432"></a><span class="sd">    NSE measures the relative magnitude of the residual variance compared to the</span>
-<a id="__codelineno-0-433" name="__codelineno-0-433"></a><span class="sd">    variance of the observed data. It indicates how well the model predictions match</span>
-<a id="__codelineno-0-434" name="__codelineno-0-434"></a><span class="sd">    the observations compared to using the mean of the observations as a predictor.</span>
-<a id="__codelineno-0-435" name="__codelineno-0-435"></a>
-<a id="__codelineno-0-436" name="__codelineno-0-436"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-437" name="__codelineno-0-437"></a><span class="sd">        obs: Observed flow values as a list or numpy array.</span>
-<a id="__codelineno-0-438" name="__codelineno-0-438"></a><span class="sd">        sim: Simulated flow values as a list or numpy array.</span>
-<a id="__codelineno-0-439" name="__codelineno-0-439"></a>
-<a id="__codelineno-0-440" name="__codelineno-0-440"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-441" name="__codelineno-0-441"></a><span class="sd">        float: The NSE value. NSE ranges from -∞ to 1:</span>
-<a id="__codelineno-0-442" name="__codelineno-0-442"></a><span class="sd">            - NSE = 1: Perfect match between simulated and observed values</span>
-<a id="__codelineno-0-443" name="__codelineno-0-443"></a><span class="sd">            - NSE = 0: Model predictions are as accurate as the mean of observed data</span>
-<a id="__codelineno-0-444" name="__codelineno-0-444"></a><span class="sd">            - NSE &lt; 0: Mean of observed data is a better predictor than the model</span>
-<a id="__codelineno-0-445" name="__codelineno-0-445"></a>
-<a id="__codelineno-0-446" name="__codelineno-0-446"></a><span class="sd">    Raises:</span>
-<a id="__codelineno-0-447" name="__codelineno-0-447"></a><span class="sd">        ValueError: If the input arrays have different lengths.</span>
-<a id="__codelineno-0-448" name="__codelineno-0-448"></a><span class="sd">        ValueError: If the variance of observed values is zero.</span>
-<a id="__codelineno-0-449" name="__codelineno-0-449"></a>
-<a id="__codelineno-0-450" name="__codelineno-0-450"></a><span class="sd">    Examples:</span>
-<a id="__codelineno-0-451" name="__codelineno-0-451"></a><span class="sd">        - Example with good performance:</span>
-<a id="__codelineno-0-452" name="__codelineno-0-452"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-453" name="__codelineno-0-453"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
-<a id="__codelineno-0-454" name="__codelineno-0-454"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import nse</span>
-<a id="__codelineno-0-455" name="__codelineno-0-455"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
-<a id="__codelineno-0-456" name="__codelineno-0-456"></a><span class="sd">            &gt;&gt;&gt; simulated = [12, 18, 33, 43, 48]</span>
-<a id="__codelineno-0-457" name="__codelineno-0-457"></a><span class="sd">            &gt;&gt;&gt; nse_value = nse(observed, simulated)</span>
-<a id="__codelineno-0-458" name="__codelineno-0-458"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;NSE: {nse_value:.4f}&quot;)</span>
-<a id="__codelineno-0-459" name="__codelineno-0-459"></a><span class="sd">            NSE: 0.9700</span>
-<a id="__codelineno-0-460" name="__codelineno-0-460"></a>
-<a id="__codelineno-0-461" name="__codelineno-0-461"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-462" name="__codelineno-0-462"></a><span class="sd">        - Example with poorer performance:</span>
-<a id="__codelineno-0-463" name="__codelineno-0-463"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-464" name="__codelineno-0-464"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
-<a id="__codelineno-0-465" name="__codelineno-0-465"></a><span class="sd">            &gt;&gt;&gt; simulated = [5, 15, 45, 35, 60]</span>
-<a id="__codelineno-0-466" name="__codelineno-0-466"></a><span class="sd">            &gt;&gt;&gt; nse_value = nse(observed, simulated)</span>
-<a id="__codelineno-0-467" name="__codelineno-0-467"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;NSE: {nse_value:.4f}&quot;)</span>
-<a id="__codelineno-0-468" name="__codelineno-0-468"></a><span class="sd">            NSE: 0.6000</span>
-<a id="__codelineno-0-469" name="__codelineno-0-469"></a>
-<a id="__codelineno-0-470" name="__codelineno-0-470"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-471" name="__codelineno-0-471"></a><span class="sd">        - Example with negative NSE (poor model):</span>
-<a id="__codelineno-0-472" name="__codelineno-0-472"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-473" name="__codelineno-0-473"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
-<a id="__codelineno-0-474" name="__codelineno-0-474"></a><span class="sd">            &gt;&gt;&gt; simulated = [50, 40, 30, 20, 10]</span>
-<a id="__codelineno-0-475" name="__codelineno-0-475"></a><span class="sd">            &gt;&gt;&gt; nse_value = nse(observed, simulated)</span>
-<a id="__codelineno-0-476" name="__codelineno-0-476"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;NSE: {nse_value:.4f}&quot;)</span>
-<a id="__codelineno-0-477" name="__codelineno-0-477"></a><span class="sd">            NSE: -3.0000</span>
-<a id="__codelineno-0-478" name="__codelineno-0-478"></a>
-<a id="__codelineno-0-479" name="__codelineno-0-479"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-480" name="__codelineno-0-480"></a>
-<a id="__codelineno-0-481" name="__codelineno-0-481"></a><span class="sd">    See Also:</span>
-<a id="__codelineno-0-482" name="__codelineno-0-482"></a><span class="sd">        - nse_hf: Modified Nash-Sutcliffe Efficiency for high flows</span>
-<a id="__codelineno-0-483" name="__codelineno-0-483"></a><span class="sd">        - nse_lf: Modified Nash-Sutcliffe Efficiency for low flows</span>
-<a id="__codelineno-0-484" name="__codelineno-0-484"></a><span class="sd">        - kge: Kling-Gupta Efficiency</span>
-<a id="__codelineno-0-485" name="__codelineno-0-485"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-486" name="__codelineno-0-486"></a>    <span class="c1"># convert obs &amp; sim into arrays</span>
-<a id="__codelineno-0-487" name="__codelineno-0-487"></a>    <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-<a id="__codelineno-0-488" name="__codelineno-0-488"></a>    <span class="n">sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
-<a id="__codelineno-0-489" name="__codelineno-0-489"></a>
-<a id="__codelineno-0-490" name="__codelineno-0-490"></a>    <span class="n">a</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">((</span><span class="n">obs</span> <span class="o">-</span> <span class="n">sim</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-<a id="__codelineno-0-491" name="__codelineno-0-491"></a>    <span class="n">b</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">((</span><span class="n">obs</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-<a id="__codelineno-0-492" name="__codelineno-0-492"></a>    <span class="n">e</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">)</span>
-<a id="__codelineno-0-493" name="__codelineno-0-493"></a>
-<a id="__codelineno-0-494" name="__codelineno-0-494"></a>    <span class="k">return</span> <span class="n">e</span>
+<a id="__codelineno-0-432" name="__codelineno-0-432"></a><span class="sd">    Calculates the Nash-Sutcliffe Efficiency (NSE), a widely used metric for assessing</span>
+<a id="__codelineno-0-433" name="__codelineno-0-433"></a><span class="sd">    the performance of hydrological models.</span>
+<a id="__codelineno-0-434" name="__codelineno-0-434"></a>
+<a id="__codelineno-0-435" name="__codelineno-0-435"></a><span class="sd">    NSE measures the relative magnitude of the residual variance compared to the</span>
+<a id="__codelineno-0-436" name="__codelineno-0-436"></a><span class="sd">    variance of the observed data. It indicates how well the model predictions match</span>
+<a id="__codelineno-0-437" name="__codelineno-0-437"></a><span class="sd">    the observations compared to using the mean of the observations as a predictor.</span>
+<a id="__codelineno-0-438" name="__codelineno-0-438"></a>
+<a id="__codelineno-0-439" name="__codelineno-0-439"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-440" name="__codelineno-0-440"></a><span class="sd">        obs: Observed flow values as a list or numpy array.</span>
+<a id="__codelineno-0-441" name="__codelineno-0-441"></a><span class="sd">        sim: Simulated flow values as a list or numpy array.</span>
+<a id="__codelineno-0-442" name="__codelineno-0-442"></a>
+<a id="__codelineno-0-443" name="__codelineno-0-443"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-444" name="__codelineno-0-444"></a><span class="sd">        float: The NSE value. NSE ranges from -∞ to 1:</span>
+<a id="__codelineno-0-445" name="__codelineno-0-445"></a><span class="sd">            - NSE = 1: Perfect match between simulated and observed values</span>
+<a id="__codelineno-0-446" name="__codelineno-0-446"></a><span class="sd">            - NSE = 0: Model predictions are as accurate as the mean of observed data</span>
+<a id="__codelineno-0-447" name="__codelineno-0-447"></a><span class="sd">            - NSE &lt; 0: Mean of observed data is a better predictor than the model</span>
+<a id="__codelineno-0-448" name="__codelineno-0-448"></a>
+<a id="__codelineno-0-449" name="__codelineno-0-449"></a><span class="sd">    Raises:</span>
+<a id="__codelineno-0-450" name="__codelineno-0-450"></a><span class="sd">        ValueError: If the input arrays have different lengths.</span>
+<a id="__codelineno-0-451" name="__codelineno-0-451"></a><span class="sd">        ValueError: If the variance of observed values is zero.</span>
+<a id="__codelineno-0-452" name="__codelineno-0-452"></a>
+<a id="__codelineno-0-453" name="__codelineno-0-453"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-0-454" name="__codelineno-0-454"></a><span class="sd">        - Example with good performance:</span>
+<a id="__codelineno-0-455" name="__codelineno-0-455"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-456" name="__codelineno-0-456"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
+<a id="__codelineno-0-457" name="__codelineno-0-457"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import nse</span>
+<a id="__codelineno-0-458" name="__codelineno-0-458"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
+<a id="__codelineno-0-459" name="__codelineno-0-459"></a><span class="sd">            &gt;&gt;&gt; simulated = [12, 18, 33, 43, 48]</span>
+<a id="__codelineno-0-460" name="__codelineno-0-460"></a><span class="sd">            &gt;&gt;&gt; nse_value = nse(observed, simulated)</span>
+<a id="__codelineno-0-461" name="__codelineno-0-461"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;NSE: {nse_value:.4f}&quot;)</span>
+<a id="__codelineno-0-462" name="__codelineno-0-462"></a><span class="sd">            NSE: 0.9700</span>
+<a id="__codelineno-0-463" name="__codelineno-0-463"></a>
+<a id="__codelineno-0-464" name="__codelineno-0-464"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-465" name="__codelineno-0-465"></a><span class="sd">        - Example with poorer performance:</span>
+<a id="__codelineno-0-466" name="__codelineno-0-466"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-467" name="__codelineno-0-467"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
+<a id="__codelineno-0-468" name="__codelineno-0-468"></a><span class="sd">            &gt;&gt;&gt; simulated = [5, 15, 45, 35, 60]</span>
+<a id="__codelineno-0-469" name="__codelineno-0-469"></a><span class="sd">            &gt;&gt;&gt; nse_value = nse(observed, simulated)</span>
+<a id="__codelineno-0-470" name="__codelineno-0-470"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;NSE: {nse_value:.4f}&quot;)</span>
+<a id="__codelineno-0-471" name="__codelineno-0-471"></a><span class="sd">            NSE: 0.6000</span>
+<a id="__codelineno-0-472" name="__codelineno-0-472"></a>
+<a id="__codelineno-0-473" name="__codelineno-0-473"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-474" name="__codelineno-0-474"></a><span class="sd">        - Example with negative NSE (poor model):</span>
+<a id="__codelineno-0-475" name="__codelineno-0-475"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-476" name="__codelineno-0-476"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
+<a id="__codelineno-0-477" name="__codelineno-0-477"></a><span class="sd">            &gt;&gt;&gt; simulated = [50, 40, 30, 20, 10]</span>
+<a id="__codelineno-0-478" name="__codelineno-0-478"></a><span class="sd">            &gt;&gt;&gt; nse_value = nse(observed, simulated)</span>
+<a id="__codelineno-0-479" name="__codelineno-0-479"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;NSE: {nse_value:.4f}&quot;)</span>
+<a id="__codelineno-0-480" name="__codelineno-0-480"></a><span class="sd">            NSE: -3.0000</span>
+<a id="__codelineno-0-481" name="__codelineno-0-481"></a>
+<a id="__codelineno-0-482" name="__codelineno-0-482"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-483" name="__codelineno-0-483"></a>
+<a id="__codelineno-0-484" name="__codelineno-0-484"></a><span class="sd">    See Also:</span>
+<a id="__codelineno-0-485" name="__codelineno-0-485"></a><span class="sd">        - nse_hf: Modified Nash-Sutcliffe Efficiency for high flows</span>
+<a id="__codelineno-0-486" name="__codelineno-0-486"></a><span class="sd">        - nse_lf: Modified Nash-Sutcliffe Efficiency for low flows</span>
+<a id="__codelineno-0-487" name="__codelineno-0-487"></a><span class="sd">        - kge: Kling-Gupta Efficiency</span>
+<a id="__codelineno-0-488" name="__codelineno-0-488"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-489" name="__codelineno-0-489"></a>    <span class="c1"># convert obs &amp; sim into arrays</span>
+<a id="__codelineno-0-490" name="__codelineno-0-490"></a>    <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+<a id="__codelineno-0-491" name="__codelineno-0-491"></a>    <span class="n">sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
+<a id="__codelineno-0-492" name="__codelineno-0-492"></a>
+<a id="__codelineno-0-493" name="__codelineno-0-493"></a>    <span class="n">a</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">((</span><span class="n">obs</span> <span class="o">-</span> <span class="n">sim</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-0-494" name="__codelineno-0-494"></a>    <span class="n">b</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">((</span><span class="n">obs</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-0-495" name="__codelineno-0-495"></a>    <span class="n">e</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">)</span>
+<a id="__codelineno-0-496" name="__codelineno-0-496"></a>
+<a id="__codelineno-0-497" name="__codelineno-0-497"></a>    <span class="k">return</span> <span class="n">e</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3591,10 +3597,7 @@ parameter regionalization of a watershed model. Journal of Hydrology,
 
             <details class="quote">
               <summary>Source code in <code>statista/descriptors.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-497">497</a></span>
-<span class="normal"><a href="#__codelineno-0-498">498</a></span>
-<span class="normal"><a href="#__codelineno-0-499">499</a></span>
-<span class="normal"><a href="#__codelineno-0-500">500</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-500">500</a></span>
 <span class="normal"><a href="#__codelineno-0-501">501</a></span>
 <span class="normal"><a href="#__codelineno-0-502">502</a></span>
 <span class="normal"><a href="#__codelineno-0-503">503</a></span>
@@ -3655,71 +3658,74 @@ parameter regionalization of a watershed model. Journal of Hydrology,
 <span class="normal"><a href="#__codelineno-0-558">558</a></span>
 <span class="normal"><a href="#__codelineno-0-559">559</a></span>
 <span class="normal"><a href="#__codelineno-0-560">560</a></span>
-<span class="normal"><a href="#__codelineno-0-561">561</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-497" name="__codelineno-0-497"></a><span class="k">def</span><span class="w"> </span><span class="nf">nse_hf</span><span class="p">(</span><span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<a id="__codelineno-0-498" name="__codelineno-0-498"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Modified Nash-Sutcliffe Efficiency for High Flows.</span>
-<a id="__codelineno-0-499" name="__codelineno-0-499"></a>
-<a id="__codelineno-0-500" name="__codelineno-0-500"></a><span class="sd">    Calculates a modified version of the Nash-Sutcliffe Efficiency that gives more</span>
-<a id="__codelineno-0-501" name="__codelineno-0-501"></a><span class="sd">    weight to high flow values. This is particularly useful for evaluating model</span>
-<a id="__codelineno-0-502" name="__codelineno-0-502"></a><span class="sd">    performance during flood events or peak flows.</span>
-<a id="__codelineno-0-503" name="__codelineno-0-503"></a>
-<a id="__codelineno-0-504" name="__codelineno-0-504"></a><span class="sd">    This modification weights the squared errors by the observed flow values, giving</span>
-<a id="__codelineno-0-505" name="__codelineno-0-505"></a><span class="sd">    more importance to errors during high flow periods.</span>
+<span class="normal"><a href="#__codelineno-0-561">561</a></span>
+<span class="normal"><a href="#__codelineno-0-562">562</a></span>
+<span class="normal"><a href="#__codelineno-0-563">563</a></span>
+<span class="normal"><a href="#__codelineno-0-564">564</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-500" name="__codelineno-0-500"></a><span class="k">def</span><span class="w"> </span><span class="nf">nse_hf</span><span class="p">(</span><span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="__codelineno-0-501" name="__codelineno-0-501"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Modified Nash-Sutcliffe Efficiency for High Flows.</span>
+<a id="__codelineno-0-502" name="__codelineno-0-502"></a>
+<a id="__codelineno-0-503" name="__codelineno-0-503"></a><span class="sd">    Calculates a modified version of the Nash-Sutcliffe Efficiency that gives more</span>
+<a id="__codelineno-0-504" name="__codelineno-0-504"></a><span class="sd">    weight to high flow values. This is particularly useful for evaluating model</span>
+<a id="__codelineno-0-505" name="__codelineno-0-505"></a><span class="sd">    performance during flood events or peak flows.</span>
 <a id="__codelineno-0-506" name="__codelineno-0-506"></a>
-<a id="__codelineno-0-507" name="__codelineno-0-507"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-508" name="__codelineno-0-508"></a><span class="sd">        obs: Observed flow values as a list or numpy array.</span>
-<a id="__codelineno-0-509" name="__codelineno-0-509"></a><span class="sd">        sim: Simulated flow values as a list or numpy array.</span>
-<a id="__codelineno-0-510" name="__codelineno-0-510"></a>
-<a id="__codelineno-0-511" name="__codelineno-0-511"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-512" name="__codelineno-0-512"></a><span class="sd">        float: The modified NSE value for high flows. Like standard NSE, it ranges from -∞ to 1:</span>
-<a id="__codelineno-0-513" name="__codelineno-0-513"></a><span class="sd">            - NSE_HF = 1: Perfect match between simulated and observed values</span>
-<a id="__codelineno-0-514" name="__codelineno-0-514"></a><span class="sd">            - NSE_HF = 0: Model predictions are as accurate as the mean of observed data</span>
-<a id="__codelineno-0-515" name="__codelineno-0-515"></a><span class="sd">            - NSE_HF &lt; 0: Mean of observed data is a better predictor than the model</span>
-<a id="__codelineno-0-516" name="__codelineno-0-516"></a>
-<a id="__codelineno-0-517" name="__codelineno-0-517"></a><span class="sd">    Raises:</span>
-<a id="__codelineno-0-518" name="__codelineno-0-518"></a><span class="sd">        ValueError: If the input arrays have different lengths.</span>
-<a id="__codelineno-0-519" name="__codelineno-0-519"></a><span class="sd">        ValueError: If the weighted variance of observed values is zero.</span>
-<a id="__codelineno-0-520" name="__codelineno-0-520"></a>
-<a id="__codelineno-0-521" name="__codelineno-0-521"></a><span class="sd">    Examples:</span>
-<a id="__codelineno-0-522" name="__codelineno-0-522"></a><span class="sd">        - Example with good performance on high flows</span>
-<a id="__codelineno-0-523" name="__codelineno-0-523"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-524" name="__codelineno-0-524"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
-<a id="__codelineno-0-525" name="__codelineno-0-525"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import nse_hf</span>
-<a id="__codelineno-0-526" name="__codelineno-0-526"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 100]  # Note the high value at the end</span>
-<a id="__codelineno-0-527" name="__codelineno-0-527"></a><span class="sd">            &gt;&gt;&gt; simulated = [12, 18, 33, 43, 90]</span>
-<a id="__codelineno-0-528" name="__codelineno-0-528"></a><span class="sd">            &gt;&gt;&gt; nse_hf_value = nse_hf(observed, simulated)</span>
-<a id="__codelineno-0-529" name="__codelineno-0-529"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;NSE_HF: {nse_hf_value:.4f}&quot;)</span>
-<a id="__codelineno-0-530" name="__codelineno-0-530"></a><span class="sd">            NSE_HF: 0.9717</span>
-<a id="__codelineno-0-531" name="__codelineno-0-531"></a>
-<a id="__codelineno-0-532" name="__codelineno-0-532"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-533" name="__codelineno-0-533"></a><span class="sd">        - Example with poor performance on high flows</span>
-<a id="__codelineno-0-534" name="__codelineno-0-534"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-535" name="__codelineno-0-535"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 100]</span>
-<a id="__codelineno-0-536" name="__codelineno-0-536"></a><span class="sd">            &gt;&gt;&gt; simulated = [12, 18, 33, 43, 50]  # Significant underestimation of peak flow</span>
-<a id="__codelineno-0-537" name="__codelineno-0-537"></a><span class="sd">            &gt;&gt;&gt; nse_hf_value = nse_hf(observed, simulated)</span>
-<a id="__codelineno-0-538" name="__codelineno-0-538"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;NSE_HF: {nse_hf_value:.4f}&quot;)</span>
-<a id="__codelineno-0-539" name="__codelineno-0-539"></a><span class="sd">            NSE_HF: 0.3401</span>
-<a id="__codelineno-0-540" name="__codelineno-0-540"></a>
-<a id="__codelineno-0-541" name="__codelineno-0-541"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-542" name="__codelineno-0-542"></a>
-<a id="__codelineno-0-543" name="__codelineno-0-543"></a><span class="sd">    References:</span>
-<a id="__codelineno-0-544" name="__codelineno-0-544"></a><span class="sd">        Hundecha Y. &amp; Bárdossy A. (2004). Modeling of the effect of land use</span>
-<a id="__codelineno-0-545" name="__codelineno-0-545"></a><span class="sd">        changes on the runoff generation of a river basin through</span>
-<a id="__codelineno-0-546" name="__codelineno-0-546"></a><span class="sd">        parameter regionalization of a watershed model. Journal of Hydrology,</span>
-<a id="__codelineno-0-547" name="__codelineno-0-547"></a><span class="sd">        292(1-4), 281-295.</span>
-<a id="__codelineno-0-548" name="__codelineno-0-548"></a>
-<a id="__codelineno-0-549" name="__codelineno-0-549"></a><span class="sd">    See Also:</span>
-<a id="__codelineno-0-550" name="__codelineno-0-550"></a><span class="sd">        - nse: Standard Nash-Sutcliffe Efficiency</span>
-<a id="__codelineno-0-551" name="__codelineno-0-551"></a><span class="sd">        - nse_lf: Modified Nash-Sutcliffe Efficiency for low flows</span>
-<a id="__codelineno-0-552" name="__codelineno-0-552"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-553" name="__codelineno-0-553"></a>    <span class="c1"># convert obs &amp; sim into arrays</span>
-<a id="__codelineno-0-554" name="__codelineno-0-554"></a>    <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-<a id="__codelineno-0-555" name="__codelineno-0-555"></a>    <span class="n">sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
-<a id="__codelineno-0-556" name="__codelineno-0-556"></a>
-<a id="__codelineno-0-557" name="__codelineno-0-557"></a>    <span class="n">a</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">obs</span> <span class="o">*</span> <span class="p">(</span><span class="n">obs</span> <span class="o">-</span> <span class="n">sim</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-<a id="__codelineno-0-558" name="__codelineno-0-558"></a>    <span class="n">b</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">obs</span> <span class="o">*</span> <span class="p">(</span><span class="n">obs</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-<a id="__codelineno-0-559" name="__codelineno-0-559"></a>    <span class="n">e</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">)</span>
-<a id="__codelineno-0-560" name="__codelineno-0-560"></a>
-<a id="__codelineno-0-561" name="__codelineno-0-561"></a>    <span class="k">return</span> <span class="n">e</span>
+<a id="__codelineno-0-507" name="__codelineno-0-507"></a><span class="sd">    This modification weights the squared errors by the observed flow values, giving</span>
+<a id="__codelineno-0-508" name="__codelineno-0-508"></a><span class="sd">    more importance to errors during high flow periods.</span>
+<a id="__codelineno-0-509" name="__codelineno-0-509"></a>
+<a id="__codelineno-0-510" name="__codelineno-0-510"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-511" name="__codelineno-0-511"></a><span class="sd">        obs: Observed flow values as a list or numpy array.</span>
+<a id="__codelineno-0-512" name="__codelineno-0-512"></a><span class="sd">        sim: Simulated flow values as a list or numpy array.</span>
+<a id="__codelineno-0-513" name="__codelineno-0-513"></a>
+<a id="__codelineno-0-514" name="__codelineno-0-514"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-515" name="__codelineno-0-515"></a><span class="sd">        float: The modified NSE value for high flows. Like standard NSE, it ranges from -∞ to 1:</span>
+<a id="__codelineno-0-516" name="__codelineno-0-516"></a><span class="sd">            - NSE_HF = 1: Perfect match between simulated and observed values</span>
+<a id="__codelineno-0-517" name="__codelineno-0-517"></a><span class="sd">            - NSE_HF = 0: Model predictions are as accurate as the mean of observed data</span>
+<a id="__codelineno-0-518" name="__codelineno-0-518"></a><span class="sd">            - NSE_HF &lt; 0: Mean of observed data is a better predictor than the model</span>
+<a id="__codelineno-0-519" name="__codelineno-0-519"></a>
+<a id="__codelineno-0-520" name="__codelineno-0-520"></a><span class="sd">    Raises:</span>
+<a id="__codelineno-0-521" name="__codelineno-0-521"></a><span class="sd">        ValueError: If the input arrays have different lengths.</span>
+<a id="__codelineno-0-522" name="__codelineno-0-522"></a><span class="sd">        ValueError: If the weighted variance of observed values is zero.</span>
+<a id="__codelineno-0-523" name="__codelineno-0-523"></a>
+<a id="__codelineno-0-524" name="__codelineno-0-524"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-0-525" name="__codelineno-0-525"></a><span class="sd">        - Example with good performance on high flows</span>
+<a id="__codelineno-0-526" name="__codelineno-0-526"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-527" name="__codelineno-0-527"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
+<a id="__codelineno-0-528" name="__codelineno-0-528"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import nse_hf</span>
+<a id="__codelineno-0-529" name="__codelineno-0-529"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 100]  # Note the high value at the end</span>
+<a id="__codelineno-0-530" name="__codelineno-0-530"></a><span class="sd">            &gt;&gt;&gt; simulated = [12, 18, 33, 43, 90]</span>
+<a id="__codelineno-0-531" name="__codelineno-0-531"></a><span class="sd">            &gt;&gt;&gt; nse_hf_value = nse_hf(observed, simulated)</span>
+<a id="__codelineno-0-532" name="__codelineno-0-532"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;NSE_HF: {nse_hf_value:.4f}&quot;)</span>
+<a id="__codelineno-0-533" name="__codelineno-0-533"></a><span class="sd">            NSE_HF: 0.9717</span>
+<a id="__codelineno-0-534" name="__codelineno-0-534"></a>
+<a id="__codelineno-0-535" name="__codelineno-0-535"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-536" name="__codelineno-0-536"></a><span class="sd">        - Example with poor performance on high flows</span>
+<a id="__codelineno-0-537" name="__codelineno-0-537"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-538" name="__codelineno-0-538"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 100]</span>
+<a id="__codelineno-0-539" name="__codelineno-0-539"></a><span class="sd">            &gt;&gt;&gt; simulated = [12, 18, 33, 43, 50]  # Significant underestimation of peak flow</span>
+<a id="__codelineno-0-540" name="__codelineno-0-540"></a><span class="sd">            &gt;&gt;&gt; nse_hf_value = nse_hf(observed, simulated)</span>
+<a id="__codelineno-0-541" name="__codelineno-0-541"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;NSE_HF: {nse_hf_value:.4f}&quot;)</span>
+<a id="__codelineno-0-542" name="__codelineno-0-542"></a><span class="sd">            NSE_HF: 0.3401</span>
+<a id="__codelineno-0-543" name="__codelineno-0-543"></a>
+<a id="__codelineno-0-544" name="__codelineno-0-544"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-545" name="__codelineno-0-545"></a>
+<a id="__codelineno-0-546" name="__codelineno-0-546"></a><span class="sd">    References:</span>
+<a id="__codelineno-0-547" name="__codelineno-0-547"></a><span class="sd">        Hundecha Y. &amp; Bárdossy A. (2004). Modeling of the effect of land use</span>
+<a id="__codelineno-0-548" name="__codelineno-0-548"></a><span class="sd">        changes on the runoff generation of a river basin through</span>
+<a id="__codelineno-0-549" name="__codelineno-0-549"></a><span class="sd">        parameter regionalization of a watershed model. Journal of Hydrology,</span>
+<a id="__codelineno-0-550" name="__codelineno-0-550"></a><span class="sd">        292(1-4), 281-295.</span>
+<a id="__codelineno-0-551" name="__codelineno-0-551"></a>
+<a id="__codelineno-0-552" name="__codelineno-0-552"></a><span class="sd">    See Also:</span>
+<a id="__codelineno-0-553" name="__codelineno-0-553"></a><span class="sd">        - nse: Standard Nash-Sutcliffe Efficiency</span>
+<a id="__codelineno-0-554" name="__codelineno-0-554"></a><span class="sd">        - nse_lf: Modified Nash-Sutcliffe Efficiency for low flows</span>
+<a id="__codelineno-0-555" name="__codelineno-0-555"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-556" name="__codelineno-0-556"></a>    <span class="c1"># convert obs &amp; sim into arrays</span>
+<a id="__codelineno-0-557" name="__codelineno-0-557"></a>    <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+<a id="__codelineno-0-558" name="__codelineno-0-558"></a>    <span class="n">sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
+<a id="__codelineno-0-559" name="__codelineno-0-559"></a>
+<a id="__codelineno-0-560" name="__codelineno-0-560"></a>    <span class="n">a</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">obs</span> <span class="o">*</span> <span class="p">(</span><span class="n">obs</span> <span class="o">-</span> <span class="n">sim</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-0-561" name="__codelineno-0-561"></a>    <span class="n">b</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">obs</span> <span class="o">*</span> <span class="p">(</span><span class="n">obs</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-0-562" name="__codelineno-0-562"></a>    <span class="n">e</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">)</span>
+<a id="__codelineno-0-563" name="__codelineno-0-563"></a>
+<a id="__codelineno-0-564" name="__codelineno-0-564"></a>    <span class="k">return</span> <span class="n">e</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3900,10 +3906,7 @@ parameter regionalization of a watershed model. Journal of Hydrology,
 
             <details class="quote">
               <summary>Source code in <code>statista/descriptors.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-564">564</a></span>
-<span class="normal"><a href="#__codelineno-0-565">565</a></span>
-<span class="normal"><a href="#__codelineno-0-566">566</a></span>
-<span class="normal"><a href="#__codelineno-0-567">567</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-567">567</a></span>
 <span class="normal"><a href="#__codelineno-0-568">568</a></span>
 <span class="normal"><a href="#__codelineno-0-569">569</a></span>
 <span class="normal"><a href="#__codelineno-0-570">570</a></span>
@@ -3965,72 +3968,75 @@ parameter regionalization of a watershed model. Journal of Hydrology,
 <span class="normal"><a href="#__codelineno-0-626">626</a></span>
 <span class="normal"><a href="#__codelineno-0-627">627</a></span>
 <span class="normal"><a href="#__codelineno-0-628">628</a></span>
-<span class="normal"><a href="#__codelineno-0-629">629</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-564" name="__codelineno-0-564"></a><span class="k">def</span><span class="w"> </span><span class="nf">nse_lf</span><span class="p">(</span><span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<a id="__codelineno-0-565" name="__codelineno-0-565"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Modified Nash-Sutcliffe Efficiency for Low Flows.</span>
-<a id="__codelineno-0-566" name="__codelineno-0-566"></a>
-<a id="__codelineno-0-567" name="__codelineno-0-567"></a><span class="sd">    Calculates a modified version of the Nash-Sutcliffe Efficiency that gives more</span>
-<a id="__codelineno-0-568" name="__codelineno-0-568"></a><span class="sd">    weight to low flow values. This is particularly useful for evaluating model</span>
-<a id="__codelineno-0-569" name="__codelineno-0-569"></a><span class="sd">    performance during drought periods or base flow conditions.</span>
-<a id="__codelineno-0-570" name="__codelineno-0-570"></a>
-<a id="__codelineno-0-571" name="__codelineno-0-571"></a><span class="sd">    This modification applies a logarithmic transformation to the flow values before</span>
-<a id="__codelineno-0-572" name="__codelineno-0-572"></a><span class="sd">    calculating the NSE, which gives more weight to relative errors during low flow periods.</span>
+<span class="normal"><a href="#__codelineno-0-629">629</a></span>
+<span class="normal"><a href="#__codelineno-0-630">630</a></span>
+<span class="normal"><a href="#__codelineno-0-631">631</a></span>
+<span class="normal"><a href="#__codelineno-0-632">632</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-567" name="__codelineno-0-567"></a><span class="k">def</span><span class="w"> </span><span class="nf">nse_lf</span><span class="p">(</span><span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="__codelineno-0-568" name="__codelineno-0-568"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Modified Nash-Sutcliffe Efficiency for Low Flows.</span>
+<a id="__codelineno-0-569" name="__codelineno-0-569"></a>
+<a id="__codelineno-0-570" name="__codelineno-0-570"></a><span class="sd">    Calculates a modified version of the Nash-Sutcliffe Efficiency that gives more</span>
+<a id="__codelineno-0-571" name="__codelineno-0-571"></a><span class="sd">    weight to low flow values. This is particularly useful for evaluating model</span>
+<a id="__codelineno-0-572" name="__codelineno-0-572"></a><span class="sd">    performance during drought periods or base flow conditions.</span>
 <a id="__codelineno-0-573" name="__codelineno-0-573"></a>
-<a id="__codelineno-0-574" name="__codelineno-0-574"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-575" name="__codelineno-0-575"></a><span class="sd">        obs: Observed flow values as a list or numpy array. Values must be positive.</span>
-<a id="__codelineno-0-576" name="__codelineno-0-576"></a><span class="sd">        sim: Simulated flow values as a list or numpy array. Values must be positive.</span>
-<a id="__codelineno-0-577" name="__codelineno-0-577"></a>
-<a id="__codelineno-0-578" name="__codelineno-0-578"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-579" name="__codelineno-0-579"></a><span class="sd">        float: The modified NSE value for low flows. Like standard NSE, it ranges from -∞ to 1:</span>
-<a id="__codelineno-0-580" name="__codelineno-0-580"></a><span class="sd">            - NSE_LF = 1: Perfect match between simulated and observed values</span>
-<a id="__codelineno-0-581" name="__codelineno-0-581"></a><span class="sd">            - NSE_LF = 0: Model predictions are as accurate as the mean of observed data</span>
-<a id="__codelineno-0-582" name="__codelineno-0-582"></a><span class="sd">            - NSE_LF &lt; 0: Mean of observed data is a better predictor than the model</span>
-<a id="__codelineno-0-583" name="__codelineno-0-583"></a>
-<a id="__codelineno-0-584" name="__codelineno-0-584"></a><span class="sd">    Raises:</span>
-<a id="__codelineno-0-585" name="__codelineno-0-585"></a><span class="sd">        ValueError: If the input arrays have different lengths.</span>
-<a id="__codelineno-0-586" name="__codelineno-0-586"></a><span class="sd">        ValueError: If any values in the input arrays are zero or negative (logarithm cannot be applied).</span>
-<a id="__codelineno-0-587" name="__codelineno-0-587"></a><span class="sd">        ValueError: If the weighted variance of log-transformed observed values is zero.</span>
-<a id="__codelineno-0-588" name="__codelineno-0-588"></a>
-<a id="__codelineno-0-589" name="__codelineno-0-589"></a><span class="sd">    Examples:</span>
-<a id="__codelineno-0-590" name="__codelineno-0-590"></a><span class="sd">        - Example with good performance on low flows:</span>
-<a id="__codelineno-0-591" name="__codelineno-0-591"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-592" name="__codelineno-0-592"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
-<a id="__codelineno-0-593" name="__codelineno-0-593"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import nse_lf</span>
-<a id="__codelineno-0-594" name="__codelineno-0-594"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 5, 3, 2, 1]  # Note the low values at the end</span>
-<a id="__codelineno-0-595" name="__codelineno-0-595"></a><span class="sd">            &gt;&gt;&gt; simulated = [11, 5.5, 2.8, 1.9, 1.1]</span>
-<a id="__codelineno-0-596" name="__codelineno-0-596"></a><span class="sd">            &gt;&gt;&gt; nse_lf_value = nse_lf(observed, simulated)</span>
-<a id="__codelineno-0-597" name="__codelineno-0-597"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;NSE_LF: {nse_lf_value:.4f}&quot;)</span>
-<a id="__codelineno-0-598" name="__codelineno-0-598"></a><span class="sd">            NSE_LF: 0.9882</span>
-<a id="__codelineno-0-599" name="__codelineno-0-599"></a>
-<a id="__codelineno-0-600" name="__codelineno-0-600"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-601" name="__codelineno-0-601"></a><span class="sd">        - Example with poor performance on low flows:</span>
-<a id="__codelineno-0-602" name="__codelineno-0-602"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-603" name="__codelineno-0-603"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 5, 3, 2, 1]</span>
-<a id="__codelineno-0-604" name="__codelineno-0-604"></a><span class="sd">            &gt;&gt;&gt; simulated = [11, 5.5, 2.8, 1.9, 0.5]  # Significant error in lowest flow</span>
-<a id="__codelineno-0-605" name="__codelineno-0-605"></a><span class="sd">            &gt;&gt;&gt; nse_lf_value = nse_lf(observed, simulated)</span>
-<a id="__codelineno-0-606" name="__codelineno-0-606"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;NSE_LF: {nse_lf_value:.4f}&quot;)</span>
-<a id="__codelineno-0-607" name="__codelineno-0-607"></a><span class="sd">            NSE_LF: 0.9882</span>
-<a id="__codelineno-0-608" name="__codelineno-0-608"></a>
-<a id="__codelineno-0-609" name="__codelineno-0-609"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-610" name="__codelineno-0-610"></a>
-<a id="__codelineno-0-611" name="__codelineno-0-611"></a><span class="sd">    References:</span>
-<a id="__codelineno-0-612" name="__codelineno-0-612"></a><span class="sd">        Hundecha Y. &amp; Bárdossy A. (2004). Modeling of the effect of land use</span>
-<a id="__codelineno-0-613" name="__codelineno-0-613"></a><span class="sd">        changes on the runoff generation of a river basin through</span>
-<a id="__codelineno-0-614" name="__codelineno-0-614"></a><span class="sd">        parameter regionalization of a watershed model. Journal of Hydrology,</span>
-<a id="__codelineno-0-615" name="__codelineno-0-615"></a><span class="sd">        292(1-4), 281-295.</span>
-<a id="__codelineno-0-616" name="__codelineno-0-616"></a>
-<a id="__codelineno-0-617" name="__codelineno-0-617"></a><span class="sd">    See Also:</span>
-<a id="__codelineno-0-618" name="__codelineno-0-618"></a><span class="sd">        - nse: Standard Nash-Sutcliffe Efficiency</span>
-<a id="__codelineno-0-619" name="__codelineno-0-619"></a><span class="sd">        - nse_hf: Modified Nash-Sutcliffe Efficiency for high flows</span>
-<a id="__codelineno-0-620" name="__codelineno-0-620"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-621" name="__codelineno-0-621"></a>    <span class="c1"># convert obs &amp; sim into arrays</span>
-<a id="__codelineno-0-622" name="__codelineno-0-622"></a>    <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span>
-<a id="__codelineno-0-623" name="__codelineno-0-623"></a>    <span class="n">sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sim</span><span class="p">))</span>
-<a id="__codelineno-0-624" name="__codelineno-0-624"></a>
-<a id="__codelineno-0-625" name="__codelineno-0-625"></a>    <span class="n">a</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">obs</span> <span class="o">*</span> <span class="p">(</span><span class="n">obs</span> <span class="o">-</span> <span class="n">sim</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-<a id="__codelineno-0-626" name="__codelineno-0-626"></a>    <span class="n">b</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">obs</span> <span class="o">*</span> <span class="p">(</span><span class="n">obs</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-<a id="__codelineno-0-627" name="__codelineno-0-627"></a>    <span class="n">e</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">)</span>
-<a id="__codelineno-0-628" name="__codelineno-0-628"></a>
-<a id="__codelineno-0-629" name="__codelineno-0-629"></a>    <span class="k">return</span> <span class="n">e</span>
+<a id="__codelineno-0-574" name="__codelineno-0-574"></a><span class="sd">    This modification applies a logarithmic transformation to the flow values before</span>
+<a id="__codelineno-0-575" name="__codelineno-0-575"></a><span class="sd">    calculating the NSE, which gives more weight to relative errors during low flow periods.</span>
+<a id="__codelineno-0-576" name="__codelineno-0-576"></a>
+<a id="__codelineno-0-577" name="__codelineno-0-577"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-578" name="__codelineno-0-578"></a><span class="sd">        obs: Observed flow values as a list or numpy array. Values must be positive.</span>
+<a id="__codelineno-0-579" name="__codelineno-0-579"></a><span class="sd">        sim: Simulated flow values as a list or numpy array. Values must be positive.</span>
+<a id="__codelineno-0-580" name="__codelineno-0-580"></a>
+<a id="__codelineno-0-581" name="__codelineno-0-581"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-582" name="__codelineno-0-582"></a><span class="sd">        float: The modified NSE value for low flows. Like standard NSE, it ranges from -∞ to 1:</span>
+<a id="__codelineno-0-583" name="__codelineno-0-583"></a><span class="sd">            - NSE_LF = 1: Perfect match between simulated and observed values</span>
+<a id="__codelineno-0-584" name="__codelineno-0-584"></a><span class="sd">            - NSE_LF = 0: Model predictions are as accurate as the mean of observed data</span>
+<a id="__codelineno-0-585" name="__codelineno-0-585"></a><span class="sd">            - NSE_LF &lt; 0: Mean of observed data is a better predictor than the model</span>
+<a id="__codelineno-0-586" name="__codelineno-0-586"></a>
+<a id="__codelineno-0-587" name="__codelineno-0-587"></a><span class="sd">    Raises:</span>
+<a id="__codelineno-0-588" name="__codelineno-0-588"></a><span class="sd">        ValueError: If the input arrays have different lengths.</span>
+<a id="__codelineno-0-589" name="__codelineno-0-589"></a><span class="sd">        ValueError: If any values in the input arrays are zero or negative (logarithm cannot be applied).</span>
+<a id="__codelineno-0-590" name="__codelineno-0-590"></a><span class="sd">        ValueError: If the weighted variance of log-transformed observed values is zero.</span>
+<a id="__codelineno-0-591" name="__codelineno-0-591"></a>
+<a id="__codelineno-0-592" name="__codelineno-0-592"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-0-593" name="__codelineno-0-593"></a><span class="sd">        - Example with good performance on low flows:</span>
+<a id="__codelineno-0-594" name="__codelineno-0-594"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-595" name="__codelineno-0-595"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
+<a id="__codelineno-0-596" name="__codelineno-0-596"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import nse_lf</span>
+<a id="__codelineno-0-597" name="__codelineno-0-597"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 5, 3, 2, 1]  # Note the low values at the end</span>
+<a id="__codelineno-0-598" name="__codelineno-0-598"></a><span class="sd">            &gt;&gt;&gt; simulated = [11, 5.5, 2.8, 1.9, 1.1]</span>
+<a id="__codelineno-0-599" name="__codelineno-0-599"></a><span class="sd">            &gt;&gt;&gt; nse_lf_value = nse_lf(observed, simulated)</span>
+<a id="__codelineno-0-600" name="__codelineno-0-600"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;NSE_LF: {nse_lf_value:.4f}&quot;)</span>
+<a id="__codelineno-0-601" name="__codelineno-0-601"></a><span class="sd">            NSE_LF: 0.9882</span>
+<a id="__codelineno-0-602" name="__codelineno-0-602"></a>
+<a id="__codelineno-0-603" name="__codelineno-0-603"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-604" name="__codelineno-0-604"></a><span class="sd">        - Example with poor performance on low flows:</span>
+<a id="__codelineno-0-605" name="__codelineno-0-605"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-606" name="__codelineno-0-606"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 5, 3, 2, 1]</span>
+<a id="__codelineno-0-607" name="__codelineno-0-607"></a><span class="sd">            &gt;&gt;&gt; simulated = [11, 5.5, 2.8, 1.9, 0.5]  # Significant error in lowest flow</span>
+<a id="__codelineno-0-608" name="__codelineno-0-608"></a><span class="sd">            &gt;&gt;&gt; nse_lf_value = nse_lf(observed, simulated)</span>
+<a id="__codelineno-0-609" name="__codelineno-0-609"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;NSE_LF: {nse_lf_value:.4f}&quot;)</span>
+<a id="__codelineno-0-610" name="__codelineno-0-610"></a><span class="sd">            NSE_LF: 0.9882</span>
+<a id="__codelineno-0-611" name="__codelineno-0-611"></a>
+<a id="__codelineno-0-612" name="__codelineno-0-612"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-613" name="__codelineno-0-613"></a>
+<a id="__codelineno-0-614" name="__codelineno-0-614"></a><span class="sd">    References:</span>
+<a id="__codelineno-0-615" name="__codelineno-0-615"></a><span class="sd">        Hundecha Y. &amp; Bárdossy A. (2004). Modeling of the effect of land use</span>
+<a id="__codelineno-0-616" name="__codelineno-0-616"></a><span class="sd">        changes on the runoff generation of a river basin through</span>
+<a id="__codelineno-0-617" name="__codelineno-0-617"></a><span class="sd">        parameter regionalization of a watershed model. Journal of Hydrology,</span>
+<a id="__codelineno-0-618" name="__codelineno-0-618"></a><span class="sd">        292(1-4), 281-295.</span>
+<a id="__codelineno-0-619" name="__codelineno-0-619"></a>
+<a id="__codelineno-0-620" name="__codelineno-0-620"></a><span class="sd">    See Also:</span>
+<a id="__codelineno-0-621" name="__codelineno-0-621"></a><span class="sd">        - nse: Standard Nash-Sutcliffe Efficiency</span>
+<a id="__codelineno-0-622" name="__codelineno-0-622"></a><span class="sd">        - nse_hf: Modified Nash-Sutcliffe Efficiency for high flows</span>
+<a id="__codelineno-0-623" name="__codelineno-0-623"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-624" name="__codelineno-0-624"></a>    <span class="c1"># convert obs &amp; sim into arrays</span>
+<a id="__codelineno-0-625" name="__codelineno-0-625"></a>    <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span>
+<a id="__codelineno-0-626" name="__codelineno-0-626"></a>    <span class="n">sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sim</span><span class="p">))</span>
+<a id="__codelineno-0-627" name="__codelineno-0-627"></a>
+<a id="__codelineno-0-628" name="__codelineno-0-628"></a>    <span class="n">a</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">obs</span> <span class="o">*</span> <span class="p">(</span><span class="n">obs</span> <span class="o">-</span> <span class="n">sim</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-0-629" name="__codelineno-0-629"></a>    <span class="n">b</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">obs</span> <span class="o">*</span> <span class="p">(</span><span class="n">obs</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-0-630" name="__codelineno-0-630"></a>    <span class="n">e</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">)</span>
+<a id="__codelineno-0-631" name="__codelineno-0-631"></a>
+<a id="__codelineno-0-632" name="__codelineno-0-632"></a>    <span class="k">return</span> <span class="n">e</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -4190,10 +4196,7 @@ a negative value indicates underestimation bias.</p>
 
             <details class="quote">
               <summary>Source code in <code>statista/descriptors.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-632">632</a></span>
-<span class="normal"><a href="#__codelineno-0-633">633</a></span>
-<span class="normal"><a href="#__codelineno-0-634">634</a></span>
-<span class="normal"><a href="#__codelineno-0-635">635</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-635">635</a></span>
 <span class="normal"><a href="#__codelineno-0-636">636</a></span>
 <span class="normal"><a href="#__codelineno-0-637">637</a></span>
 <span class="normal"><a href="#__codelineno-0-638">638</a></span>
@@ -4249,66 +4252,69 @@ a negative value indicates underestimation bias.</p>
 <span class="normal"><a href="#__codelineno-0-688">688</a></span>
 <span class="normal"><a href="#__codelineno-0-689">689</a></span>
 <span class="normal"><a href="#__codelineno-0-690">690</a></span>
-<span class="normal"><a href="#__codelineno-0-691">691</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-632" name="__codelineno-0-632"></a><span class="k">def</span><span class="w"> </span><span class="nf">mbe</span><span class="p">(</span><span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<a id="__codelineno-0-633" name="__codelineno-0-633"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Mean Bias Error (MBE).</span>
-<a id="__codelineno-0-634" name="__codelineno-0-634"></a>
-<a id="__codelineno-0-635" name="__codelineno-0-635"></a><span class="sd">    Calculates the Mean Bias Error between observed and simulated values.</span>
-<a id="__codelineno-0-636" name="__codelineno-0-636"></a><span class="sd">    MBE measures the average tendency of the simulated values to be larger or smaller</span>
-<a id="__codelineno-0-637" name="__codelineno-0-637"></a><span class="sd">    than the observed values. A positive value indicates overestimation bias, while</span>
-<a id="__codelineno-0-638" name="__codelineno-0-638"></a><span class="sd">    a negative value indicates underestimation bias.</span>
-<a id="__codelineno-0-639" name="__codelineno-0-639"></a>
-<a id="__codelineno-0-640" name="__codelineno-0-640"></a><span class="sd">    Formula: MBE = (sim - obs)/n</span>
-<a id="__codelineno-0-641" name="__codelineno-0-641"></a>
-<a id="__codelineno-0-642" name="__codelineno-0-642"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-643" name="__codelineno-0-643"></a><span class="sd">        obs: Observed values as a list or numpy array.</span>
-<a id="__codelineno-0-644" name="__codelineno-0-644"></a><span class="sd">        sim: Simulated values as a list or numpy array.</span>
-<a id="__codelineno-0-645" name="__codelineno-0-645"></a>
-<a id="__codelineno-0-646" name="__codelineno-0-646"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-647" name="__codelineno-0-647"></a><span class="sd">        float: The Mean Bias Error value.</span>
-<a id="__codelineno-0-648" name="__codelineno-0-648"></a><span class="sd">            - MBE = 0: No bias</span>
-<a id="__codelineno-0-649" name="__codelineno-0-649"></a><span class="sd">            - MBE &gt; 0: Overestimation bias (simulated values tend to be larger than observed)</span>
-<a id="__codelineno-0-650" name="__codelineno-0-650"></a><span class="sd">            - MBE &lt; 0: Underestimation bias (simulated values tend to be smaller than observed)</span>
-<a id="__codelineno-0-651" name="__codelineno-0-651"></a>
-<a id="__codelineno-0-652" name="__codelineno-0-652"></a><span class="sd">    Raises:</span>
-<a id="__codelineno-0-653" name="__codelineno-0-653"></a><span class="sd">        ValueError: If the input arrays have different lengths.</span>
+<span class="normal"><a href="#__codelineno-0-691">691</a></span>
+<span class="normal"><a href="#__codelineno-0-692">692</a></span>
+<span class="normal"><a href="#__codelineno-0-693">693</a></span>
+<span class="normal"><a href="#__codelineno-0-694">694</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-635" name="__codelineno-0-635"></a><span class="k">def</span><span class="w"> </span><span class="nf">mbe</span><span class="p">(</span><span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="__codelineno-0-636" name="__codelineno-0-636"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Mean Bias Error (MBE).</span>
+<a id="__codelineno-0-637" name="__codelineno-0-637"></a>
+<a id="__codelineno-0-638" name="__codelineno-0-638"></a><span class="sd">    Calculates the Mean Bias Error between observed and simulated values.</span>
+<a id="__codelineno-0-639" name="__codelineno-0-639"></a><span class="sd">    MBE measures the average tendency of the simulated values to be larger or smaller</span>
+<a id="__codelineno-0-640" name="__codelineno-0-640"></a><span class="sd">    than the observed values. A positive value indicates overestimation bias, while</span>
+<a id="__codelineno-0-641" name="__codelineno-0-641"></a><span class="sd">    a negative value indicates underestimation bias.</span>
+<a id="__codelineno-0-642" name="__codelineno-0-642"></a>
+<a id="__codelineno-0-643" name="__codelineno-0-643"></a><span class="sd">    Formula: MBE = (sim - obs)/n</span>
+<a id="__codelineno-0-644" name="__codelineno-0-644"></a>
+<a id="__codelineno-0-645" name="__codelineno-0-645"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-646" name="__codelineno-0-646"></a><span class="sd">        obs: Observed values as a list or numpy array.</span>
+<a id="__codelineno-0-647" name="__codelineno-0-647"></a><span class="sd">        sim: Simulated values as a list or numpy array.</span>
+<a id="__codelineno-0-648" name="__codelineno-0-648"></a>
+<a id="__codelineno-0-649" name="__codelineno-0-649"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-650" name="__codelineno-0-650"></a><span class="sd">        float: The Mean Bias Error value.</span>
+<a id="__codelineno-0-651" name="__codelineno-0-651"></a><span class="sd">            - MBE = 0: No bias</span>
+<a id="__codelineno-0-652" name="__codelineno-0-652"></a><span class="sd">            - MBE &gt; 0: Overestimation bias (simulated values tend to be larger than observed)</span>
+<a id="__codelineno-0-653" name="__codelineno-0-653"></a><span class="sd">            - MBE &lt; 0: Underestimation bias (simulated values tend to be smaller than observed)</span>
 <a id="__codelineno-0-654" name="__codelineno-0-654"></a>
-<a id="__codelineno-0-655" name="__codelineno-0-655"></a><span class="sd">    Examples:</span>
-<a id="__codelineno-0-656" name="__codelineno-0-656"></a><span class="sd">        - Example with overestimation bias:</span>
-<a id="__codelineno-0-657" name="__codelineno-0-657"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-658" name="__codelineno-0-658"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
-<a id="__codelineno-0-659" name="__codelineno-0-659"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import mbe</span>
-<a id="__codelineno-0-660" name="__codelineno-0-660"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
-<a id="__codelineno-0-661" name="__codelineno-0-661"></a><span class="sd">            &gt;&gt;&gt; simulated = [12, 22, 32, 42, 52]  # Consistently higher than observed</span>
-<a id="__codelineno-0-662" name="__codelineno-0-662"></a><span class="sd">            &gt;&gt;&gt; mbe_value = mbe(observed, simulated)</span>
-<a id="__codelineno-0-663" name="__codelineno-0-663"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;MBE: {mbe_value:.1f}&quot;)</span>
-<a id="__codelineno-0-664" name="__codelineno-0-664"></a><span class="sd">            MBE: 2.0</span>
-<a id="__codelineno-0-665" name="__codelineno-0-665"></a>
-<a id="__codelineno-0-666" name="__codelineno-0-666"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-667" name="__codelineno-0-667"></a><span class="sd">        - Example with underestimation bias:</span>
-<a id="__codelineno-0-668" name="__codelineno-0-668"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-669" name="__codelineno-0-669"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
-<a id="__codelineno-0-670" name="__codelineno-0-670"></a><span class="sd">            &gt;&gt;&gt; simulated = [8, 18, 28, 38, 48]  # Consistently lower than observed</span>
-<a id="__codelineno-0-671" name="__codelineno-0-671"></a><span class="sd">            &gt;&gt;&gt; mbe_value = mbe(observed, simulated)</span>
-<a id="__codelineno-0-672" name="__codelineno-0-672"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;MBE: {mbe_value:.1f}&quot;)</span>
-<a id="__codelineno-0-673" name="__codelineno-0-673"></a><span class="sd">            MBE: -2.0</span>
-<a id="__codelineno-0-674" name="__codelineno-0-674"></a>
-<a id="__codelineno-0-675" name="__codelineno-0-675"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-676" name="__codelineno-0-676"></a><span class="sd">        - Example with no bias:</span>
-<a id="__codelineno-0-677" name="__codelineno-0-677"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-678" name="__codelineno-0-678"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
-<a id="__codelineno-0-679" name="__codelineno-0-679"></a><span class="sd">            &gt;&gt;&gt; simulated = [12, 18, 32, 38, 50]  # Some higher, some lower, balanced overall</span>
-<a id="__codelineno-0-680" name="__codelineno-0-680"></a><span class="sd">            &gt;&gt;&gt; mbe_value = mbe(observed, simulated)</span>
-<a id="__codelineno-0-681" name="__codelineno-0-681"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;MBE: {mbe_value:.1f}&quot;)</span>
-<a id="__codelineno-0-682" name="__codelineno-0-682"></a><span class="sd">            MBE: 0.0</span>
-<a id="__codelineno-0-683" name="__codelineno-0-683"></a>
-<a id="__codelineno-0-684" name="__codelineno-0-684"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-685" name="__codelineno-0-685"></a>
-<a id="__codelineno-0-686" name="__codelineno-0-686"></a><span class="sd">    See Also:</span>
-<a id="__codelineno-0-687" name="__codelineno-0-687"></a><span class="sd">        - mae: Mean Absolute Error</span>
-<a id="__codelineno-0-688" name="__codelineno-0-688"></a><span class="sd">        - rmse: Root Mean Square Error</span>
-<a id="__codelineno-0-689" name="__codelineno-0-689"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-690" name="__codelineno-0-690"></a>
-<a id="__codelineno-0-691" name="__codelineno-0-691"></a>    <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<a id="__codelineno-0-655" name="__codelineno-0-655"></a><span class="sd">    Raises:</span>
+<a id="__codelineno-0-656" name="__codelineno-0-656"></a><span class="sd">        ValueError: If the input arrays have different lengths.</span>
+<a id="__codelineno-0-657" name="__codelineno-0-657"></a>
+<a id="__codelineno-0-658" name="__codelineno-0-658"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-0-659" name="__codelineno-0-659"></a><span class="sd">        - Example with overestimation bias:</span>
+<a id="__codelineno-0-660" name="__codelineno-0-660"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-661" name="__codelineno-0-661"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
+<a id="__codelineno-0-662" name="__codelineno-0-662"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import mbe</span>
+<a id="__codelineno-0-663" name="__codelineno-0-663"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
+<a id="__codelineno-0-664" name="__codelineno-0-664"></a><span class="sd">            &gt;&gt;&gt; simulated = [12, 22, 32, 42, 52]  # Consistently higher than observed</span>
+<a id="__codelineno-0-665" name="__codelineno-0-665"></a><span class="sd">            &gt;&gt;&gt; mbe_value = mbe(observed, simulated)</span>
+<a id="__codelineno-0-666" name="__codelineno-0-666"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;MBE: {mbe_value:.1f}&quot;)</span>
+<a id="__codelineno-0-667" name="__codelineno-0-667"></a><span class="sd">            MBE: 2.0</span>
+<a id="__codelineno-0-668" name="__codelineno-0-668"></a>
+<a id="__codelineno-0-669" name="__codelineno-0-669"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-670" name="__codelineno-0-670"></a><span class="sd">        - Example with underestimation bias:</span>
+<a id="__codelineno-0-671" name="__codelineno-0-671"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-672" name="__codelineno-0-672"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
+<a id="__codelineno-0-673" name="__codelineno-0-673"></a><span class="sd">            &gt;&gt;&gt; simulated = [8, 18, 28, 38, 48]  # Consistently lower than observed</span>
+<a id="__codelineno-0-674" name="__codelineno-0-674"></a><span class="sd">            &gt;&gt;&gt; mbe_value = mbe(observed, simulated)</span>
+<a id="__codelineno-0-675" name="__codelineno-0-675"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;MBE: {mbe_value:.1f}&quot;)</span>
+<a id="__codelineno-0-676" name="__codelineno-0-676"></a><span class="sd">            MBE: -2.0</span>
+<a id="__codelineno-0-677" name="__codelineno-0-677"></a>
+<a id="__codelineno-0-678" name="__codelineno-0-678"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-679" name="__codelineno-0-679"></a><span class="sd">        - Example with no bias:</span>
+<a id="__codelineno-0-680" name="__codelineno-0-680"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-681" name="__codelineno-0-681"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
+<a id="__codelineno-0-682" name="__codelineno-0-682"></a><span class="sd">            &gt;&gt;&gt; simulated = [12, 18, 32, 38, 50]  # Some higher, some lower, balanced overall</span>
+<a id="__codelineno-0-683" name="__codelineno-0-683"></a><span class="sd">            &gt;&gt;&gt; mbe_value = mbe(observed, simulated)</span>
+<a id="__codelineno-0-684" name="__codelineno-0-684"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;MBE: {mbe_value:.1f}&quot;)</span>
+<a id="__codelineno-0-685" name="__codelineno-0-685"></a><span class="sd">            MBE: 0.0</span>
+<a id="__codelineno-0-686" name="__codelineno-0-686"></a>
+<a id="__codelineno-0-687" name="__codelineno-0-687"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-688" name="__codelineno-0-688"></a>
+<a id="__codelineno-0-689" name="__codelineno-0-689"></a><span class="sd">    See Also:</span>
+<a id="__codelineno-0-690" name="__codelineno-0-690"></a><span class="sd">        - mae: Mean Absolute Error</span>
+<a id="__codelineno-0-691" name="__codelineno-0-691"></a><span class="sd">        - rmse: Root Mean Square Error</span>
+<a id="__codelineno-0-692" name="__codelineno-0-692"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-693" name="__codelineno-0-693"></a>
+<a id="__codelineno-0-694" name="__codelineno-0-694"></a>    <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -4469,10 +4475,7 @@ values indicating better model performance.
 
             <details class="quote">
               <summary>Source code in <code>statista/descriptors.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-694">694</a></span>
-<span class="normal"><a href="#__codelineno-0-695">695</a></span>
-<span class="normal"><a href="#__codelineno-0-696">696</a></span>
-<span class="normal"><a href="#__codelineno-0-697">697</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-697">697</a></span>
 <span class="normal"><a href="#__codelineno-0-698">698</a></span>
 <span class="normal"><a href="#__codelineno-0-699">699</a></span>
 <span class="normal"><a href="#__codelineno-0-700">700</a></span>
@@ -4526,64 +4529,67 @@ values indicating better model performance.
 <span class="normal"><a href="#__codelineno-0-748">748</a></span>
 <span class="normal"><a href="#__codelineno-0-749">749</a></span>
 <span class="normal"><a href="#__codelineno-0-750">750</a></span>
-<span class="normal"><a href="#__codelineno-0-751">751</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-694" name="__codelineno-0-694"></a><span class="k">def</span><span class="w"> </span><span class="nf">mae</span><span class="p">(</span><span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<a id="__codelineno-0-695" name="__codelineno-0-695"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Mean Absolute Error (MAE).</span>
-<a id="__codelineno-0-696" name="__codelineno-0-696"></a>
-<a id="__codelineno-0-697" name="__codelineno-0-697"></a><span class="sd">    Calculates the Mean Absolute Error between observed and simulated values.</span>
-<a id="__codelineno-0-698" name="__codelineno-0-698"></a><span class="sd">    MAE measures the average magnitude of the errors without considering their direction.</span>
-<a id="__codelineno-0-699" name="__codelineno-0-699"></a><span class="sd">    It&#39;s the average of the absolute differences between observed and simulated values.</span>
-<a id="__codelineno-0-700" name="__codelineno-0-700"></a>
-<a id="__codelineno-0-701" name="__codelineno-0-701"></a><span class="sd">    Formula: MAE = |(obs - sim)|/n</span>
-<a id="__codelineno-0-702" name="__codelineno-0-702"></a>
-<a id="__codelineno-0-703" name="__codelineno-0-703"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-704" name="__codelineno-0-704"></a><span class="sd">        obs: Observed values as a list or numpy array.</span>
-<a id="__codelineno-0-705" name="__codelineno-0-705"></a><span class="sd">        sim: Simulated values as a list or numpy array.</span>
-<a id="__codelineno-0-706" name="__codelineno-0-706"></a>
-<a id="__codelineno-0-707" name="__codelineno-0-707"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-708" name="__codelineno-0-708"></a><span class="sd">        float: The Mean Absolute Error value. MAE is always non-negative, with smaller</span>
-<a id="__codelineno-0-709" name="__codelineno-0-709"></a><span class="sd">            values indicating better model performance.</span>
-<a id="__codelineno-0-710" name="__codelineno-0-710"></a><span class="sd">            - MAE = 0: Perfect match between observed and simulated values</span>
-<a id="__codelineno-0-711" name="__codelineno-0-711"></a><span class="sd">            - MAE &gt; 0: Average absolute difference between observed and simulated values</span>
-<a id="__codelineno-0-712" name="__codelineno-0-712"></a>
-<a id="__codelineno-0-713" name="__codelineno-0-713"></a><span class="sd">    Raises:</span>
-<a id="__codelineno-0-714" name="__codelineno-0-714"></a><span class="sd">        ValueError: If the input arrays have different lengths.</span>
+<span class="normal"><a href="#__codelineno-0-751">751</a></span>
+<span class="normal"><a href="#__codelineno-0-752">752</a></span>
+<span class="normal"><a href="#__codelineno-0-753">753</a></span>
+<span class="normal"><a href="#__codelineno-0-754">754</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-697" name="__codelineno-0-697"></a><span class="k">def</span><span class="w"> </span><span class="nf">mae</span><span class="p">(</span><span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="__codelineno-0-698" name="__codelineno-0-698"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Mean Absolute Error (MAE).</span>
+<a id="__codelineno-0-699" name="__codelineno-0-699"></a>
+<a id="__codelineno-0-700" name="__codelineno-0-700"></a><span class="sd">    Calculates the Mean Absolute Error between observed and simulated values.</span>
+<a id="__codelineno-0-701" name="__codelineno-0-701"></a><span class="sd">    MAE measures the average magnitude of the errors without considering their direction.</span>
+<a id="__codelineno-0-702" name="__codelineno-0-702"></a><span class="sd">    It&#39;s the average of the absolute differences between observed and simulated values.</span>
+<a id="__codelineno-0-703" name="__codelineno-0-703"></a>
+<a id="__codelineno-0-704" name="__codelineno-0-704"></a><span class="sd">    Formula: MAE = |(obs - sim)|/n</span>
+<a id="__codelineno-0-705" name="__codelineno-0-705"></a>
+<a id="__codelineno-0-706" name="__codelineno-0-706"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-707" name="__codelineno-0-707"></a><span class="sd">        obs: Observed values as a list or numpy array.</span>
+<a id="__codelineno-0-708" name="__codelineno-0-708"></a><span class="sd">        sim: Simulated values as a list or numpy array.</span>
+<a id="__codelineno-0-709" name="__codelineno-0-709"></a>
+<a id="__codelineno-0-710" name="__codelineno-0-710"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-711" name="__codelineno-0-711"></a><span class="sd">        float: The Mean Absolute Error value. MAE is always non-negative, with smaller</span>
+<a id="__codelineno-0-712" name="__codelineno-0-712"></a><span class="sd">            values indicating better model performance.</span>
+<a id="__codelineno-0-713" name="__codelineno-0-713"></a><span class="sd">            - MAE = 0: Perfect match between observed and simulated values</span>
+<a id="__codelineno-0-714" name="__codelineno-0-714"></a><span class="sd">            - MAE &gt; 0: Average absolute difference between observed and simulated values</span>
 <a id="__codelineno-0-715" name="__codelineno-0-715"></a>
-<a id="__codelineno-0-716" name="__codelineno-0-716"></a><span class="sd">    Examples:</span>
-<a id="__codelineno-0-717" name="__codelineno-0-717"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-718" name="__codelineno-0-718"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
-<a id="__codelineno-0-719" name="__codelineno-0-719"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import mae</span>
-<a id="__codelineno-0-720" name="__codelineno-0-720"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
-<a id="__codelineno-0-721" name="__codelineno-0-721"></a><span class="sd">            &gt;&gt;&gt; simulated = [12, 18, 33, 42, 48]</span>
-<a id="__codelineno-0-722" name="__codelineno-0-722"></a><span class="sd">            &gt;&gt;&gt; mae_value = mae(observed, simulated)</span>
-<a id="__codelineno-0-723" name="__codelineno-0-723"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;MAE: {mae_value:.1f}&quot;)</span>
-<a id="__codelineno-0-724" name="__codelineno-0-724"></a><span class="sd">            MAE: 2.2</span>
-<a id="__codelineno-0-725" name="__codelineno-0-725"></a>
-<a id="__codelineno-0-726" name="__codelineno-0-726"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-727" name="__codelineno-0-727"></a><span class="sd">        - Example with larger errors:</span>
-<a id="__codelineno-0-728" name="__codelineno-0-728"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-729" name="__codelineno-0-729"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
-<a id="__codelineno-0-730" name="__codelineno-0-730"></a><span class="sd">            &gt;&gt;&gt; simulated = [15, 15, 35, 35, 55]</span>
-<a id="__codelineno-0-731" name="__codelineno-0-731"></a><span class="sd">            &gt;&gt;&gt; mae_value = mae(observed, simulated)</span>
-<a id="__codelineno-0-732" name="__codelineno-0-732"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;MAE: {mae_value:.1f}&quot;)</span>
-<a id="__codelineno-0-733" name="__codelineno-0-733"></a><span class="sd">            MAE: 5.0</span>
-<a id="__codelineno-0-734" name="__codelineno-0-734"></a>
-<a id="__codelineno-0-735" name="__codelineno-0-735"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-736" name="__codelineno-0-736"></a><span class="sd">        - Example with perfect match</span>
-<a id="__codelineno-0-737" name="__codelineno-0-737"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-738" name="__codelineno-0-738"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
-<a id="__codelineno-0-739" name="__codelineno-0-739"></a><span class="sd">            &gt;&gt;&gt; simulated = [10, 20, 30, 40, 50]</span>
-<a id="__codelineno-0-740" name="__codelineno-0-740"></a><span class="sd">            &gt;&gt;&gt; mae_value = mae(observed, simulated)</span>
-<a id="__codelineno-0-741" name="__codelineno-0-741"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;MAE: {mae_value:.1f}&quot;)</span>
-<a id="__codelineno-0-742" name="__codelineno-0-742"></a><span class="sd">            MAE: 0.0</span>
-<a id="__codelineno-0-743" name="__codelineno-0-743"></a>
-<a id="__codelineno-0-744" name="__codelineno-0-744"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-745" name="__codelineno-0-745"></a>
-<a id="__codelineno-0-746" name="__codelineno-0-746"></a><span class="sd">    See Also:</span>
-<a id="__codelineno-0-747" name="__codelineno-0-747"></a><span class="sd">        - mbe: Mean Bias Error</span>
-<a id="__codelineno-0-748" name="__codelineno-0-748"></a><span class="sd">        - rmse: Root Mean Square Error (gives more weight to larger errors)</span>
-<a id="__codelineno-0-749" name="__codelineno-0-749"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-750" name="__codelineno-0-750"></a>
-<a id="__codelineno-0-751" name="__codelineno-0-751"></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sim</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<a id="__codelineno-0-716" name="__codelineno-0-716"></a><span class="sd">    Raises:</span>
+<a id="__codelineno-0-717" name="__codelineno-0-717"></a><span class="sd">        ValueError: If the input arrays have different lengths.</span>
+<a id="__codelineno-0-718" name="__codelineno-0-718"></a>
+<a id="__codelineno-0-719" name="__codelineno-0-719"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-0-720" name="__codelineno-0-720"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-721" name="__codelineno-0-721"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
+<a id="__codelineno-0-722" name="__codelineno-0-722"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import mae</span>
+<a id="__codelineno-0-723" name="__codelineno-0-723"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
+<a id="__codelineno-0-724" name="__codelineno-0-724"></a><span class="sd">            &gt;&gt;&gt; simulated = [12, 18, 33, 42, 48]</span>
+<a id="__codelineno-0-725" name="__codelineno-0-725"></a><span class="sd">            &gt;&gt;&gt; mae_value = mae(observed, simulated)</span>
+<a id="__codelineno-0-726" name="__codelineno-0-726"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;MAE: {mae_value:.1f}&quot;)</span>
+<a id="__codelineno-0-727" name="__codelineno-0-727"></a><span class="sd">            MAE: 2.2</span>
+<a id="__codelineno-0-728" name="__codelineno-0-728"></a>
+<a id="__codelineno-0-729" name="__codelineno-0-729"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-730" name="__codelineno-0-730"></a><span class="sd">        - Example with larger errors:</span>
+<a id="__codelineno-0-731" name="__codelineno-0-731"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-732" name="__codelineno-0-732"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
+<a id="__codelineno-0-733" name="__codelineno-0-733"></a><span class="sd">            &gt;&gt;&gt; simulated = [15, 15, 35, 35, 55]</span>
+<a id="__codelineno-0-734" name="__codelineno-0-734"></a><span class="sd">            &gt;&gt;&gt; mae_value = mae(observed, simulated)</span>
+<a id="__codelineno-0-735" name="__codelineno-0-735"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;MAE: {mae_value:.1f}&quot;)</span>
+<a id="__codelineno-0-736" name="__codelineno-0-736"></a><span class="sd">            MAE: 5.0</span>
+<a id="__codelineno-0-737" name="__codelineno-0-737"></a>
+<a id="__codelineno-0-738" name="__codelineno-0-738"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-739" name="__codelineno-0-739"></a><span class="sd">        - Example with perfect match</span>
+<a id="__codelineno-0-740" name="__codelineno-0-740"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-741" name="__codelineno-0-741"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
+<a id="__codelineno-0-742" name="__codelineno-0-742"></a><span class="sd">            &gt;&gt;&gt; simulated = [10, 20, 30, 40, 50]</span>
+<a id="__codelineno-0-743" name="__codelineno-0-743"></a><span class="sd">            &gt;&gt;&gt; mae_value = mae(observed, simulated)</span>
+<a id="__codelineno-0-744" name="__codelineno-0-744"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;MAE: {mae_value:.1f}&quot;)</span>
+<a id="__codelineno-0-745" name="__codelineno-0-745"></a><span class="sd">            MAE: 0.0</span>
+<a id="__codelineno-0-746" name="__codelineno-0-746"></a>
+<a id="__codelineno-0-747" name="__codelineno-0-747"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-748" name="__codelineno-0-748"></a>
+<a id="__codelineno-0-749" name="__codelineno-0-749"></a><span class="sd">    See Also:</span>
+<a id="__codelineno-0-750" name="__codelineno-0-750"></a><span class="sd">        - mbe: Mean Bias Error</span>
+<a id="__codelineno-0-751" name="__codelineno-0-751"></a><span class="sd">        - rmse: Root Mean Square Error (gives more weight to larger errors)</span>
+<a id="__codelineno-0-752" name="__codelineno-0-752"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-753" name="__codelineno-0-753"></a>
+<a id="__codelineno-0-754" name="__codelineno-0-754"></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sim</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -4756,10 +4762,7 @@ where Cov is the covariance and σ is the standard deviation.</p>
 
             <details class="quote">
               <summary>Source code in <code>statista/descriptors.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-754">754</a></span>
-<span class="normal"><a href="#__codelineno-0-755">755</a></span>
-<span class="normal"><a href="#__codelineno-0-756">756</a></span>
-<span class="normal"><a href="#__codelineno-0-757">757</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-757">757</a></span>
 <span class="normal"><a href="#__codelineno-0-758">758</a></span>
 <span class="normal"><a href="#__codelineno-0-759">759</a></span>
 <span class="normal"><a href="#__codelineno-0-760">760</a></span>
@@ -4821,72 +4824,75 @@ where Cov is the covariance and σ is the standard deviation.</p>
 <span class="normal"><a href="#__codelineno-0-816">816</a></span>
 <span class="normal"><a href="#__codelineno-0-817">817</a></span>
 <span class="normal"><a href="#__codelineno-0-818">818</a></span>
-<span class="normal"><a href="#__codelineno-0-819">819</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-754" name="__codelineno-0-754"></a><span class="k">def</span><span class="w"> </span><span class="nf">pearson_corr_coeff</span><span class="p">(</span>
-<a id="__codelineno-0-755" name="__codelineno-0-755"></a>    <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
-<a id="__codelineno-0-756" name="__codelineno-0-756"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Number</span><span class="p">:</span>
-<a id="__codelineno-0-757" name="__codelineno-0-757"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Pearson Correlation Coefficient.</span>
-<a id="__codelineno-0-758" name="__codelineno-0-758"></a>
-<a id="__codelineno-0-759" name="__codelineno-0-759"></a><span class="sd">    Calculates the Pearson correlation coefficient between two variables, which measures</span>
-<a id="__codelineno-0-760" name="__codelineno-0-760"></a><span class="sd">    the linear relationship between them.</span>
+<span class="normal"><a href="#__codelineno-0-819">819</a></span>
+<span class="normal"><a href="#__codelineno-0-820">820</a></span>
+<span class="normal"><a href="#__codelineno-0-821">821</a></span>
+<span class="normal"><a href="#__codelineno-0-822">822</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-757" name="__codelineno-0-757"></a><span class="k">def</span><span class="w"> </span><span class="nf">pearson_corr_coeff</span><span class="p">(</span>
+<a id="__codelineno-0-758" name="__codelineno-0-758"></a>    <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+<a id="__codelineno-0-759" name="__codelineno-0-759"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Number</span><span class="p">:</span>
+<a id="__codelineno-0-760" name="__codelineno-0-760"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Pearson Correlation Coefficient.</span>
 <a id="__codelineno-0-761" name="__codelineno-0-761"></a>
-<a id="__codelineno-0-762" name="__codelineno-0-762"></a><span class="sd">    Key properties:</span>
-<a id="__codelineno-0-763" name="__codelineno-0-763"></a><span class="sd">    - Independent of the magnitude of the numbers (scale-invariant)</span>
-<a id="__codelineno-0-764" name="__codelineno-0-764"></a><span class="sd">    - Sensitive to relative changes only</span>
-<a id="__codelineno-0-765" name="__codelineno-0-765"></a><span class="sd">    - Measures only linear relationships</span>
-<a id="__codelineno-0-766" name="__codelineno-0-766"></a>
-<a id="__codelineno-0-767" name="__codelineno-0-767"></a><span class="sd">    The mathematical formula is:</span>
-<a id="__codelineno-0-768" name="__codelineno-0-768"></a><span class="sd">    R = Cov(x,y) / (σx * σy)</span>
-<a id="__codelineno-0-769" name="__codelineno-0-769"></a><span class="sd">    where Cov is the covariance and σ is the standard deviation.</span>
-<a id="__codelineno-0-770" name="__codelineno-0-770"></a>
-<a id="__codelineno-0-771" name="__codelineno-0-771"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-772" name="__codelineno-0-772"></a><span class="sd">        x: First variable as a list or numpy array.</span>
-<a id="__codelineno-0-773" name="__codelineno-0-773"></a><span class="sd">        y: Second variable as a list or numpy array.</span>
-<a id="__codelineno-0-774" name="__codelineno-0-774"></a>
-<a id="__codelineno-0-775" name="__codelineno-0-775"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-776" name="__codelineno-0-776"></a><span class="sd">        Number: The correlation coefficient between -1 and 1:</span>
-<a id="__codelineno-0-777" name="__codelineno-0-777"></a><span class="sd">            - R = 1: Perfect positive linear relationship</span>
-<a id="__codelineno-0-778" name="__codelineno-0-778"></a><span class="sd">            - R = 0: No linear relationship</span>
-<a id="__codelineno-0-779" name="__codelineno-0-779"></a><span class="sd">            - R = -1: Perfect negative linear relationship</span>
-<a id="__codelineno-0-780" name="__codelineno-0-780"></a>
-<a id="__codelineno-0-781" name="__codelineno-0-781"></a><span class="sd">    Raises:</span>
-<a id="__codelineno-0-782" name="__codelineno-0-782"></a><span class="sd">        ValueError: If the input arrays have different lengths.</span>
-<a id="__codelineno-0-783" name="__codelineno-0-783"></a><span class="sd">        ValueError: If either array has zero variance (standard deviation = 0).</span>
-<a id="__codelineno-0-784" name="__codelineno-0-784"></a>
-<a id="__codelineno-0-785" name="__codelineno-0-785"></a><span class="sd">    Examples:</span>
-<a id="__codelineno-0-786" name="__codelineno-0-786"></a><span class="sd">        - Perfect positive correlation:</span>
-<a id="__codelineno-0-787" name="__codelineno-0-787"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-788" name="__codelineno-0-788"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
-<a id="__codelineno-0-789" name="__codelineno-0-789"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import pearson_corr_coeff</span>
-<a id="__codelineno-0-790" name="__codelineno-0-790"></a><span class="sd">            &gt;&gt;&gt; x = [1, 2, 3, 4, 5]</span>
-<a id="__codelineno-0-791" name="__codelineno-0-791"></a><span class="sd">            &gt;&gt;&gt; y = [2, 4, 6, 8, 10]  # y = 2x</span>
-<a id="__codelineno-0-792" name="__codelineno-0-792"></a><span class="sd">            &gt;&gt;&gt; r = pearson_corr_coeff(x, y)</span>
-<a id="__codelineno-0-793" name="__codelineno-0-793"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;Correlation: {r:.4f}&quot;)</span>
-<a id="__codelineno-0-794" name="__codelineno-0-794"></a><span class="sd">            Correlation: 1.0000</span>
-<a id="__codelineno-0-795" name="__codelineno-0-795"></a>
-<a id="__codelineno-0-796" name="__codelineno-0-796"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-797" name="__codelineno-0-797"></a><span class="sd">        - Perfect negative correlation:</span>
-<a id="__codelineno-0-798" name="__codelineno-0-798"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-799" name="__codelineno-0-799"></a><span class="sd">            &gt;&gt;&gt; x = [1, 2, 3, 4, 5]</span>
-<a id="__codelineno-0-800" name="__codelineno-0-800"></a><span class="sd">            &gt;&gt;&gt; y = [10, 8, 6, 4, 2]  # y = -2x + 12</span>
-<a id="__codelineno-0-801" name="__codelineno-0-801"></a><span class="sd">            &gt;&gt;&gt; r = pearson_corr_coeff(x, y)</span>
-<a id="__codelineno-0-802" name="__codelineno-0-802"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;Correlation: {r:.4f}&quot;)</span>
-<a id="__codelineno-0-803" name="__codelineno-0-803"></a><span class="sd">            Correlation: -1.0000</span>
-<a id="__codelineno-0-804" name="__codelineno-0-804"></a>
-<a id="__codelineno-0-805" name="__codelineno-0-805"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-806" name="__codelineno-0-806"></a><span class="sd">        - No correlation:</span>
-<a id="__codelineno-0-807" name="__codelineno-0-807"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-808" name="__codelineno-0-808"></a><span class="sd">            &gt;&gt;&gt; x = [1, 2, 3, 4, 5]</span>
-<a id="__codelineno-0-809" name="__codelineno-0-809"></a><span class="sd">            &gt;&gt;&gt; y = [5, 2, 8, 1, 4]  # Random values</span>
-<a id="__codelineno-0-810" name="__codelineno-0-810"></a><span class="sd">            &gt;&gt;&gt; r = pearson_corr_coeff(x, y)</span>
-<a id="__codelineno-0-811" name="__codelineno-0-811"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;Correlation: {r:.4f}&quot;)</span>
-<a id="__codelineno-0-812" name="__codelineno-0-812"></a><span class="sd">            Correlation: -0.1732</span>
-<a id="__codelineno-0-813" name="__codelineno-0-813"></a>
-<a id="__codelineno-0-814" name="__codelineno-0-814"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-815" name="__codelineno-0-815"></a>
-<a id="__codelineno-0-816" name="__codelineno-0-816"></a><span class="sd">    See Also:</span>
-<a id="__codelineno-0-817" name="__codelineno-0-817"></a><span class="sd">        - r2: Coefficient of determination</span>
-<a id="__codelineno-0-818" name="__codelineno-0-818"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-819" name="__codelineno-0-819"></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+<a id="__codelineno-0-762" name="__codelineno-0-762"></a><span class="sd">    Calculates the Pearson correlation coefficient between two variables, which measures</span>
+<a id="__codelineno-0-763" name="__codelineno-0-763"></a><span class="sd">    the linear relationship between them.</span>
+<a id="__codelineno-0-764" name="__codelineno-0-764"></a>
+<a id="__codelineno-0-765" name="__codelineno-0-765"></a><span class="sd">    Key properties:</span>
+<a id="__codelineno-0-766" name="__codelineno-0-766"></a><span class="sd">    - Independent of the magnitude of the numbers (scale-invariant)</span>
+<a id="__codelineno-0-767" name="__codelineno-0-767"></a><span class="sd">    - Sensitive to relative changes only</span>
+<a id="__codelineno-0-768" name="__codelineno-0-768"></a><span class="sd">    - Measures only linear relationships</span>
+<a id="__codelineno-0-769" name="__codelineno-0-769"></a>
+<a id="__codelineno-0-770" name="__codelineno-0-770"></a><span class="sd">    The mathematical formula is:</span>
+<a id="__codelineno-0-771" name="__codelineno-0-771"></a><span class="sd">    R = Cov(x,y) / (σx * σy)</span>
+<a id="__codelineno-0-772" name="__codelineno-0-772"></a><span class="sd">    where Cov is the covariance and σ is the standard deviation.</span>
+<a id="__codelineno-0-773" name="__codelineno-0-773"></a>
+<a id="__codelineno-0-774" name="__codelineno-0-774"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-775" name="__codelineno-0-775"></a><span class="sd">        x: First variable as a list or numpy array.</span>
+<a id="__codelineno-0-776" name="__codelineno-0-776"></a><span class="sd">        y: Second variable as a list or numpy array.</span>
+<a id="__codelineno-0-777" name="__codelineno-0-777"></a>
+<a id="__codelineno-0-778" name="__codelineno-0-778"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-779" name="__codelineno-0-779"></a><span class="sd">        Number: The correlation coefficient between -1 and 1:</span>
+<a id="__codelineno-0-780" name="__codelineno-0-780"></a><span class="sd">            - R = 1: Perfect positive linear relationship</span>
+<a id="__codelineno-0-781" name="__codelineno-0-781"></a><span class="sd">            - R = 0: No linear relationship</span>
+<a id="__codelineno-0-782" name="__codelineno-0-782"></a><span class="sd">            - R = -1: Perfect negative linear relationship</span>
+<a id="__codelineno-0-783" name="__codelineno-0-783"></a>
+<a id="__codelineno-0-784" name="__codelineno-0-784"></a><span class="sd">    Raises:</span>
+<a id="__codelineno-0-785" name="__codelineno-0-785"></a><span class="sd">        ValueError: If the input arrays have different lengths.</span>
+<a id="__codelineno-0-786" name="__codelineno-0-786"></a><span class="sd">        ValueError: If either array has zero variance (standard deviation = 0).</span>
+<a id="__codelineno-0-787" name="__codelineno-0-787"></a>
+<a id="__codelineno-0-788" name="__codelineno-0-788"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-0-789" name="__codelineno-0-789"></a><span class="sd">        - Perfect positive correlation:</span>
+<a id="__codelineno-0-790" name="__codelineno-0-790"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-791" name="__codelineno-0-791"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
+<a id="__codelineno-0-792" name="__codelineno-0-792"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import pearson_corr_coeff</span>
+<a id="__codelineno-0-793" name="__codelineno-0-793"></a><span class="sd">            &gt;&gt;&gt; x = [1, 2, 3, 4, 5]</span>
+<a id="__codelineno-0-794" name="__codelineno-0-794"></a><span class="sd">            &gt;&gt;&gt; y = [2, 4, 6, 8, 10]  # y = 2x</span>
+<a id="__codelineno-0-795" name="__codelineno-0-795"></a><span class="sd">            &gt;&gt;&gt; r = pearson_corr_coeff(x, y)</span>
+<a id="__codelineno-0-796" name="__codelineno-0-796"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;Correlation: {r:.4f}&quot;)</span>
+<a id="__codelineno-0-797" name="__codelineno-0-797"></a><span class="sd">            Correlation: 1.0000</span>
+<a id="__codelineno-0-798" name="__codelineno-0-798"></a>
+<a id="__codelineno-0-799" name="__codelineno-0-799"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-800" name="__codelineno-0-800"></a><span class="sd">        - Perfect negative correlation:</span>
+<a id="__codelineno-0-801" name="__codelineno-0-801"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-802" name="__codelineno-0-802"></a><span class="sd">            &gt;&gt;&gt; x = [1, 2, 3, 4, 5]</span>
+<a id="__codelineno-0-803" name="__codelineno-0-803"></a><span class="sd">            &gt;&gt;&gt; y = [10, 8, 6, 4, 2]  # y = -2x + 12</span>
+<a id="__codelineno-0-804" name="__codelineno-0-804"></a><span class="sd">            &gt;&gt;&gt; r = pearson_corr_coeff(x, y)</span>
+<a id="__codelineno-0-805" name="__codelineno-0-805"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;Correlation: {r:.4f}&quot;)</span>
+<a id="__codelineno-0-806" name="__codelineno-0-806"></a><span class="sd">            Correlation: -1.0000</span>
+<a id="__codelineno-0-807" name="__codelineno-0-807"></a>
+<a id="__codelineno-0-808" name="__codelineno-0-808"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-809" name="__codelineno-0-809"></a><span class="sd">        - No correlation:</span>
+<a id="__codelineno-0-810" name="__codelineno-0-810"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-811" name="__codelineno-0-811"></a><span class="sd">            &gt;&gt;&gt; x = [1, 2, 3, 4, 5]</span>
+<a id="__codelineno-0-812" name="__codelineno-0-812"></a><span class="sd">            &gt;&gt;&gt; y = [5, 2, 8, 1, 4]  # Random values</span>
+<a id="__codelineno-0-813" name="__codelineno-0-813"></a><span class="sd">            &gt;&gt;&gt; r = pearson_corr_coeff(x, y)</span>
+<a id="__codelineno-0-814" name="__codelineno-0-814"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;Correlation: {r:.4f}&quot;)</span>
+<a id="__codelineno-0-815" name="__codelineno-0-815"></a><span class="sd">            Correlation: -0.1732</span>
+<a id="__codelineno-0-816" name="__codelineno-0-816"></a>
+<a id="__codelineno-0-817" name="__codelineno-0-817"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-818" name="__codelineno-0-818"></a>
+<a id="__codelineno-0-819" name="__codelineno-0-819"></a><span class="sd">    See Also:</span>
+<a id="__codelineno-0-820" name="__codelineno-0-820"></a><span class="sd">        - r2: Coefficient of determination</span>
+<a id="__codelineno-0-821" name="__codelineno-0-821"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-822" name="__codelineno-0-822"></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5049,10 +5055,7 @@ The closer the data points are to the 1:1 line, the higher the coefficient of de
 
             <details class="quote">
               <summary>Source code in <code>statista/descriptors.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-822">822</a></span>
-<span class="normal"><a href="#__codelineno-0-823">823</a></span>
-<span class="normal"><a href="#__codelineno-0-824">824</a></span>
-<span class="normal"><a href="#__codelineno-0-825">825</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-825">825</a></span>
 <span class="normal"><a href="#__codelineno-0-826">826</a></span>
 <span class="normal"><a href="#__codelineno-0-827">827</a></span>
 <span class="normal"><a href="#__codelineno-0-828">828</a></span>
@@ -5111,69 +5114,72 @@ The closer the data points are to the 1:1 line, the higher the coefficient of de
 <span class="normal"><a href="#__codelineno-0-881">881</a></span>
 <span class="normal"><a href="#__codelineno-0-882">882</a></span>
 <span class="normal"><a href="#__codelineno-0-883">883</a></span>
-<span class="normal"><a href="#__codelineno-0-884">884</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-822" name="__codelineno-0-822"></a><span class="k">def</span><span class="w"> </span><span class="nf">r2</span><span class="p">(</span><span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<a id="__codelineno-0-823" name="__codelineno-0-823"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Coefficient of Determination (R²).</span>
-<a id="__codelineno-0-824" name="__codelineno-0-824"></a>
-<a id="__codelineno-0-825" name="__codelineno-0-825"></a><span class="sd">    Calculates the coefficient of determination (R²) between observed and simulated values.</span>
-<a id="__codelineno-0-826" name="__codelineno-0-826"></a>
-<a id="__codelineno-0-827" name="__codelineno-0-827"></a><span class="sd">    R² measures how well the predicted values match the observed values, based on the</span>
-<a id="__codelineno-0-828" name="__codelineno-0-828"></a><span class="sd">    distance between the points and the 1:1 line (not the best-fit regression line).</span>
-<a id="__codelineno-0-829" name="__codelineno-0-829"></a><span class="sd">    The closer the data points are to the 1:1 line, the higher the coefficient of determination.</span>
-<a id="__codelineno-0-830" name="__codelineno-0-830"></a>
-<a id="__codelineno-0-831" name="__codelineno-0-831"></a><span class="sd">    Important properties:</span>
-<a id="__codelineno-0-832" name="__codelineno-0-832"></a><span class="sd">    - Unlike the Pearson correlation coefficient, R² depends on the magnitude of the numbers</span>
-<a id="__codelineno-0-833" name="__codelineno-0-833"></a><span class="sd">    - It measures the actual agreement between values, not just correlation</span>
-<a id="__codelineno-0-834" name="__codelineno-0-834"></a><span class="sd">    - It can range from negative infinity to 1</span>
-<a id="__codelineno-0-835" name="__codelineno-0-835"></a>
-<a id="__codelineno-0-836" name="__codelineno-0-836"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-837" name="__codelineno-0-837"></a><span class="sd">        obs: Observed values as a list or numpy array.</span>
-<a id="__codelineno-0-838" name="__codelineno-0-838"></a><span class="sd">        sim: Simulated values as a list or numpy array.</span>
-<a id="__codelineno-0-839" name="__codelineno-0-839"></a>
-<a id="__codelineno-0-840" name="__codelineno-0-840"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-841" name="__codelineno-0-841"></a><span class="sd">        float: The coefficient of determination:</span>
-<a id="__codelineno-0-842" name="__codelineno-0-842"></a><span class="sd">            - R² = 1: Perfect match between simulated and observed values</span>
-<a id="__codelineno-0-843" name="__codelineno-0-843"></a><span class="sd">            - R² = 0: Model predictions are as accurate as using the mean of observed data</span>
-<a id="__codelineno-0-844" name="__codelineno-0-844"></a><span class="sd">            - R² &lt; 0: Model predictions are worse than using the mean of observed data</span>
-<a id="__codelineno-0-845" name="__codelineno-0-845"></a>
-<a id="__codelineno-0-846" name="__codelineno-0-846"></a><span class="sd">    Raises:</span>
-<a id="__codelineno-0-847" name="__codelineno-0-847"></a><span class="sd">        ValueError: If the input arrays have different lengths.</span>
+<span class="normal"><a href="#__codelineno-0-884">884</a></span>
+<span class="normal"><a href="#__codelineno-0-885">885</a></span>
+<span class="normal"><a href="#__codelineno-0-886">886</a></span>
+<span class="normal"><a href="#__codelineno-0-887">887</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-825" name="__codelineno-0-825"></a><span class="k">def</span><span class="w"> </span><span class="nf">r2</span><span class="p">(</span><span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="__codelineno-0-826" name="__codelineno-0-826"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Coefficient of Determination (R²).</span>
+<a id="__codelineno-0-827" name="__codelineno-0-827"></a>
+<a id="__codelineno-0-828" name="__codelineno-0-828"></a><span class="sd">    Calculates the coefficient of determination (R²) between observed and simulated values.</span>
+<a id="__codelineno-0-829" name="__codelineno-0-829"></a>
+<a id="__codelineno-0-830" name="__codelineno-0-830"></a><span class="sd">    R² measures how well the predicted values match the observed values, based on the</span>
+<a id="__codelineno-0-831" name="__codelineno-0-831"></a><span class="sd">    distance between the points and the 1:1 line (not the best-fit regression line).</span>
+<a id="__codelineno-0-832" name="__codelineno-0-832"></a><span class="sd">    The closer the data points are to the 1:1 line, the higher the coefficient of determination.</span>
+<a id="__codelineno-0-833" name="__codelineno-0-833"></a>
+<a id="__codelineno-0-834" name="__codelineno-0-834"></a><span class="sd">    Important properties:</span>
+<a id="__codelineno-0-835" name="__codelineno-0-835"></a><span class="sd">    - Unlike the Pearson correlation coefficient, R² depends on the magnitude of the numbers</span>
+<a id="__codelineno-0-836" name="__codelineno-0-836"></a><span class="sd">    - It measures the actual agreement between values, not just correlation</span>
+<a id="__codelineno-0-837" name="__codelineno-0-837"></a><span class="sd">    - It can range from negative infinity to 1</span>
+<a id="__codelineno-0-838" name="__codelineno-0-838"></a>
+<a id="__codelineno-0-839" name="__codelineno-0-839"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-840" name="__codelineno-0-840"></a><span class="sd">        obs: Observed values as a list or numpy array.</span>
+<a id="__codelineno-0-841" name="__codelineno-0-841"></a><span class="sd">        sim: Simulated values as a list or numpy array.</span>
+<a id="__codelineno-0-842" name="__codelineno-0-842"></a>
+<a id="__codelineno-0-843" name="__codelineno-0-843"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-844" name="__codelineno-0-844"></a><span class="sd">        float: The coefficient of determination:</span>
+<a id="__codelineno-0-845" name="__codelineno-0-845"></a><span class="sd">            - R² = 1: Perfect match between simulated and observed values</span>
+<a id="__codelineno-0-846" name="__codelineno-0-846"></a><span class="sd">            - R² = 0: Model predictions are as accurate as using the mean of observed data</span>
+<a id="__codelineno-0-847" name="__codelineno-0-847"></a><span class="sd">            - R² &lt; 0: Model predictions are worse than using the mean of observed data</span>
 <a id="__codelineno-0-848" name="__codelineno-0-848"></a>
-<a id="__codelineno-0-849" name="__codelineno-0-849"></a><span class="sd">    Examples:</span>
-<a id="__codelineno-0-850" name="__codelineno-0-850"></a><span class="sd">        - Good model fit:</span>
-<a id="__codelineno-0-851" name="__codelineno-0-851"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-852" name="__codelineno-0-852"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
-<a id="__codelineno-0-853" name="__codelineno-0-853"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import r2</span>
-<a id="__codelineno-0-854" name="__codelineno-0-854"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
-<a id="__codelineno-0-855" name="__codelineno-0-855"></a><span class="sd">            &gt;&gt;&gt; simulated = [11, 19, 31, 41, 49]</span>
-<a id="__codelineno-0-856" name="__codelineno-0-856"></a><span class="sd">            &gt;&gt;&gt; r2_value = r2(observed, simulated)</span>
-<a id="__codelineno-0-857" name="__codelineno-0-857"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;R²: {r2_value:.4f}&quot;)</span>
-<a id="__codelineno-0-858" name="__codelineno-0-858"></a><span class="sd">            R²: 0.9950</span>
-<a id="__codelineno-0-859" name="__codelineno-0-859"></a>
-<a id="__codelineno-0-860" name="__codelineno-0-860"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-861" name="__codelineno-0-861"></a><span class="sd">        - Poor model fit:</span>
-<a id="__codelineno-0-862" name="__codelineno-0-862"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-863" name="__codelineno-0-863"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
-<a id="__codelineno-0-864" name="__codelineno-0-864"></a><span class="sd">            &gt;&gt;&gt; simulated = [15, 15, 35, 35, 50]</span>
-<a id="__codelineno-0-865" name="__codelineno-0-865"></a><span class="sd">            &gt;&gt;&gt; r2_value = r2(observed, simulated)</span>
-<a id="__codelineno-0-866" name="__codelineno-0-866"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;R²: {r2_value:.4f}&quot;)</span>
-<a id="__codelineno-0-867" name="__codelineno-0-867"></a><span class="sd">            R²: 0.9000</span>
-<a id="__codelineno-0-868" name="__codelineno-0-868"></a>
-<a id="__codelineno-0-869" name="__codelineno-0-869"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-870" name="__codelineno-0-870"></a><span class="sd">        - Negative R² (very poor model):</span>
-<a id="__codelineno-0-871" name="__codelineno-0-871"></a><span class="sd">            ```python</span>
-<a id="__codelineno-0-872" name="__codelineno-0-872"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
-<a id="__codelineno-0-873" name="__codelineno-0-873"></a><span class="sd">            &gt;&gt;&gt; simulated = [50, 40, 30, 20, 10]</span>
-<a id="__codelineno-0-874" name="__codelineno-0-874"></a><span class="sd">            &gt;&gt;&gt; r2_value = r2(observed, simulated)</span>
-<a id="__codelineno-0-875" name="__codelineno-0-875"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;R²: {r2_value:.4f}&quot;)</span>
-<a id="__codelineno-0-876" name="__codelineno-0-876"></a><span class="sd">            R²: -3.0000</span>
-<a id="__codelineno-0-877" name="__codelineno-0-877"></a>
-<a id="__codelineno-0-878" name="__codelineno-0-878"></a><span class="sd">            ```</span>
-<a id="__codelineno-0-879" name="__codelineno-0-879"></a>
-<a id="__codelineno-0-880" name="__codelineno-0-880"></a><span class="sd">    See Also:</span>
-<a id="__codelineno-0-881" name="__codelineno-0-881"></a><span class="sd">        - pearson_corr_coeff: Pearson correlation coefficient (measures correlation, not agreement)</span>
-<a id="__codelineno-0-882" name="__codelineno-0-882"></a><span class="sd">        - nse: Nash-Sutcliffe Efficiency (mathematically equivalent to R² for the 1:1 line)</span>
-<a id="__codelineno-0-883" name="__codelineno-0-883"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-884" name="__codelineno-0-884"></a>    <span class="k">return</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obs</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sim</span><span class="p">))</span>
+<a id="__codelineno-0-849" name="__codelineno-0-849"></a><span class="sd">    Raises:</span>
+<a id="__codelineno-0-850" name="__codelineno-0-850"></a><span class="sd">        ValueError: If the input arrays have different lengths.</span>
+<a id="__codelineno-0-851" name="__codelineno-0-851"></a>
+<a id="__codelineno-0-852" name="__codelineno-0-852"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-0-853" name="__codelineno-0-853"></a><span class="sd">        - Good model fit:</span>
+<a id="__codelineno-0-854" name="__codelineno-0-854"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-855" name="__codelineno-0-855"></a><span class="sd">            &gt;&gt;&gt; import numpy as np</span>
+<a id="__codelineno-0-856" name="__codelineno-0-856"></a><span class="sd">            &gt;&gt;&gt; from statista.descriptors import r2</span>
+<a id="__codelineno-0-857" name="__codelineno-0-857"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
+<a id="__codelineno-0-858" name="__codelineno-0-858"></a><span class="sd">            &gt;&gt;&gt; simulated = [11, 19, 31, 41, 49]</span>
+<a id="__codelineno-0-859" name="__codelineno-0-859"></a><span class="sd">            &gt;&gt;&gt; r2_value = r2(observed, simulated)</span>
+<a id="__codelineno-0-860" name="__codelineno-0-860"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;R²: {r2_value:.4f}&quot;)</span>
+<a id="__codelineno-0-861" name="__codelineno-0-861"></a><span class="sd">            R²: 0.9950</span>
+<a id="__codelineno-0-862" name="__codelineno-0-862"></a>
+<a id="__codelineno-0-863" name="__codelineno-0-863"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-864" name="__codelineno-0-864"></a><span class="sd">        - Poor model fit:</span>
+<a id="__codelineno-0-865" name="__codelineno-0-865"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-866" name="__codelineno-0-866"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
+<a id="__codelineno-0-867" name="__codelineno-0-867"></a><span class="sd">            &gt;&gt;&gt; simulated = [15, 15, 35, 35, 50]</span>
+<a id="__codelineno-0-868" name="__codelineno-0-868"></a><span class="sd">            &gt;&gt;&gt; r2_value = r2(observed, simulated)</span>
+<a id="__codelineno-0-869" name="__codelineno-0-869"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;R²: {r2_value:.4f}&quot;)</span>
+<a id="__codelineno-0-870" name="__codelineno-0-870"></a><span class="sd">            R²: 0.9000</span>
+<a id="__codelineno-0-871" name="__codelineno-0-871"></a>
+<a id="__codelineno-0-872" name="__codelineno-0-872"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-873" name="__codelineno-0-873"></a><span class="sd">        - Negative R² (very poor model):</span>
+<a id="__codelineno-0-874" name="__codelineno-0-874"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-875" name="__codelineno-0-875"></a><span class="sd">            &gt;&gt;&gt; observed = [10, 20, 30, 40, 50]</span>
+<a id="__codelineno-0-876" name="__codelineno-0-876"></a><span class="sd">            &gt;&gt;&gt; simulated = [50, 40, 30, 20, 10]</span>
+<a id="__codelineno-0-877" name="__codelineno-0-877"></a><span class="sd">            &gt;&gt;&gt; r2_value = r2(observed, simulated)</span>
+<a id="__codelineno-0-878" name="__codelineno-0-878"></a><span class="sd">            &gt;&gt;&gt; print(f&quot;R²: {r2_value:.4f}&quot;)</span>
+<a id="__codelineno-0-879" name="__codelineno-0-879"></a><span class="sd">            R²: -3.0000</span>
+<a id="__codelineno-0-880" name="__codelineno-0-880"></a>
+<a id="__codelineno-0-881" name="__codelineno-0-881"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-882" name="__codelineno-0-882"></a>
+<a id="__codelineno-0-883" name="__codelineno-0-883"></a><span class="sd">    See Also:</span>
+<a id="__codelineno-0-884" name="__codelineno-0-884"></a><span class="sd">        - pearson_corr_coeff: Pearson correlation coefficient (measures correlation, not agreement)</span>
+<a id="__codelineno-0-885" name="__codelineno-0-885"></a><span class="sd">        - nse: Nash-Sutcliffe Efficiency (mathematically equivalent to R² for the 1:1 line)</span>
+<a id="__codelineno-0-886" name="__codelineno-0-886"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-887" name="__codelineno-0-887"></a>    <span class="k">return</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obs</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sim</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
