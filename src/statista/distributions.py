@@ -46,12 +46,12 @@ class PlottingPosition:
         """Return Period.
 
         Args:
-            prob_non_exceed(list/array):
+            prob_non_exceed:
                 non-exceedance probability.
 
         Returns:
             array:
-               return period.
+                calculated return period.
 
         Examples:
             - First generate some random numbers between 0 and 1 as a non-exceedance probability. then use this non-exceedance
@@ -82,15 +82,15 @@ class PlottingPosition:
         return period.
 
         Args:
-            data(list/array):
+            data:
                 list/array of the data.
-            return_period(bool):
-                False to calculate the cumulative distribution function cdf or
-                True to calculate the return period. Default=False
+            return_period:
+                False to calculate the cumulative distribution function cdf or True to calculate the return period.
+                Default=False
 
         Returns:
-            cdf/T (list):
-                list of cumulative distribution function or return period.
+            cdf/T:
+                cumulative distribution function or return period.
 
         Examples:
             ```python
@@ -137,10 +137,12 @@ class AbstractDistribution(ABC):
                 Data time series as a list or numpy array.
             parameters:
                 Dictionary of distribution parameters.
-                Example: {"loc": 0.0, "scale": 1.0, "shape": 0.0}
                 - loc: Location parameter
                 - scale: Scale parameter
                 - shape: Shape parameter (if applicable)
+                ```
+                {"loc": 0.0, "scale": 1.0, "shape": 0.0}
+                ```
 
         Raises:
             ValueError:
@@ -268,7 +270,7 @@ class AbstractDistribution(ABC):
         ylabel: str = "pdf",
         fontsize: Union[float, int] = 15,
         data: Union[List[float], np.ndarray] = None,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> Union[np.ndarray, Tuple[np.ndarray, Figure, Axes]]:
         """Calculate the probability density function (PDF) values.
 
@@ -686,11 +688,16 @@ class Gumbel(AbstractDistribution):
         """Initialize a Gumbel distribution with data or parameters.
 
         Args:
-            data: Data time series as a list or numpy array.
-            parameters: Dictionary of distribution parameters.
-                Example: {"loc": 0.0, "scale": 1.0}
-                - loc: Location parameter of the Gumbel distribution
-                - scale: Scale parameter of the Gumbel distribution (must be positive)
+            data:
+                Data time series as a list or numpy array.
+            parameters:
+                - loc (numeric):
+                    Location parameter of the Gumbel distribution
+                - scale (numeric):
+                    Scale parameter of the Gumbel distribution (must be positive)
+                ```python
+                {"loc": 0.0, "scale": 1.0}
+                ```
 
         Raises:
             ValueError: If neither data nor parameters are provided.
@@ -737,11 +744,13 @@ class Gumbel(AbstractDistribution):
         f(x; ζ, δ) = (1/δ) * exp(-(x-ζ)/δ) * exp(-exp(-(x-ζ)/δ))
 
         Args:
-            data: Data points for which to calculate PDF values.
-            parameters: Dictionary of distribution parameters.
+            data:
+                Data points for which to calculate PDF values.
+            parameters:
+                Dictionary of distribution parameters.
                 Must contain:
-                - "loc": Location parameter (ζ)
-                - "scale": Scale parameter (δ), must be positive
+                    - "loc": Location parameter (ζ)
+                    - "scale": Scale parameter (δ), must be positive
 
         Returns:
             Numpy array containing the PDF values for each data point.
@@ -770,10 +779,10 @@ class Gumbel(AbstractDistribution):
     def pdf(
         self,
         plot_figure: bool = False,
-        parameters: Dict[str, Union[float, Any]] = None,
+        parameters: Dict[str, Any] = None,
         data: Union[List[float], np.ndarray] = None,
         *args,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> Union[np.ndarray, Tuple[np.ndarray, Figure, Any]]:
         """Calculate the probability density function (PDF) values for Gumbel distribution.
 
@@ -781,25 +790,32 @@ class Gumbel(AbstractDistribution):
         Gumbel distribution parameters. It can also generate a plot of the PDF.
 
         Args:
-            plot_figure: Whether to generate a plot of the PDF.
-                Default is False.
-            parameters: Dictionary of distribution parameters.
-                Example: {"loc": 0.0, "scale": 1.0}
-                - loc: Location parameter of the Gumbel distribution
-                - scale: Scale parameter of the Gumbel distribution (must be positive)
-                If None, uses the parameters provided during initialization.
-            data: Data points for which to calculate PDF values.
-                If None, uses the data provided during initialization.
-            *args: Variable length argument list to pass to the parent class method.
-            **kwargs: Arbitrary keyword arguments to pass to the plotting function.
-                - fig_size: Size of the figure as a tuple (width, height).
-                  Default is (6, 5).
-                - xlabel: Label for the x-axis.
-                  Default is "Actual data".
-                - ylabel: Label for the y-axis.
-                  Default is "pdf".
-                - fontsize: Font size for plot labels.
-                  Default is 15.
+            plot_figure:
+                Whether to generate a plot of the PDF. Default is False.
+            parameters:
+                    - loc (Numberic):
+                        Location parameter of the Gumbel distribution
+                    - scale (Numberic):
+                        Scale parameter of the Gumbel distribution (must be positive)
+                    ```python
+                    {"loc": 0.0, "scale": 1.0}
+                    ```
+                    If None, uses the parameters provided during initialization.
+            data:
+                Data points for which to calculate PDF values. If None, uses the data provided during initialization.
+            *args:
+                Variable length argument list to pass to the parent class method.
+            **kwargs:
+                Arbitrary keyword arguments to pass to the plotting function.
+                the possible keyword arguments are:
+                    - fig_size:
+                        Size of the figure as a tuple (width, height). Default is (6, 5).
+                    - xlabel:
+                        Label for the x-axis. Default is "Actual data".
+                    - ylabel:
+                        Label for the y-axis. Default is "pdf".
+                    - fontsize:
+                        Font size for plot labels. Default is 15.
 
         Returns:
             If plot_figure is False:
@@ -811,7 +827,7 @@ class Gumbel(AbstractDistribution):
                 - Axes object
 
         Examples:
-            - Import necessary libraries:
+            - Import libraries:
                 ```python
                 >>> import numpy as np
                 >>> from statista.distributions import Gumbel
@@ -880,12 +896,17 @@ class Gumbel(AbstractDistribution):
         with the specified parameters.
 
         Args:
-            size: Number of random samples to generate.
-            parameters: Dictionary of distribution parameters.
-                Example: {"loc": 0.0, "scale": 1.0}
-                - loc: Location parameter of the Gumbel distribution
-                - scale: Scale parameter of the Gumbel distribution (must be positive)
-                If None, uses the parameters provided during initialization.
+            size:
+                Number of random samples to generate.
+            parameters:
+                    - loc (Numberic):
+                        Location parameter of the Gumbel distribution
+                    - scale (Numberic):
+                        Scale parameter of the Gumbel distribution (must be positive)
+                    ```python
+                    {"loc": 0.0, "scale": 1.0}
+                    ```
+                    If None, uses the parameters provided during initialization.
 
         Returns:
             Numpy array containing the generated random samples.
@@ -988,10 +1009,10 @@ class Gumbel(AbstractDistribution):
     def cdf(
         self,
         plot_figure: bool = False,
-        parameters: Dict[str, Union[float, Any]] = None,
+        parameters: Dict[str, Any] = None,
         data: Union[List[float], np.ndarray] = None,
         *args,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> Union[
         np.ndarray, Tuple[np.ndarray, Figure, Axes]
     ]:  # pylint: disable=arguments-differ
@@ -1001,25 +1022,30 @@ class Gumbel(AbstractDistribution):
         Gumbel distribution parameters. It can also generate a plot of the CDF.
 
         Args:
-            plot_figure: Whether to generate a plot of the CDF.
-                Default is False.
-            parameters: Dictionary of distribution parameters.
-                Example: {"loc": 0.0, "scale": 1.0}
-                - loc: Location parameter of the Gumbel distribution
-                - scale: Scale parameter of the Gumbel distribution (must be positive)
+            plot_figure:
+                Whether to generate a plot of the CDF. Default is False.
+            parameters:
+                - loc:
+                    Location parameter of the Gumbel distribution
+                - scale:
+                    Scale parameter of the Gumbel distribution (must be positive)
+                ```python
+                {"loc": 0.0, "scale": 1.0}
+                ```
                 If None, uses the parameters provided during initialization.
-            data: Data points for which to calculate CDF values.
-                If None, uses the data provided during initialization.
-            *args: Variable length argument list to pass to the parent class method.
-            **kwargs: Arbitrary keyword arguments to pass to the plotting function.
-                - fig_size: Size of the figure as a tuple (width, height).
-                  Default is (6, 5).
-                - xlabel: Label for the x-axis.
-                  Default is "Actual data".
-                - ylabel: Label for the y-axis.
-                  Default is "cdf".
-                - fontsize: Font size for plot labels.
-                  Default is 15.
+            data:
+                Data points for which to calculate CDF values. If None, uses the data provided during initialization.
+            *args:
+                Variable length argument list to pass to the parent class method.
+            **kwargs:
+                - fig_size:
+                    Size of the figure as a tuple (width, height). Default is (6, 5).
+                - xlabel:
+                    Label for the x-axis. Default is "Actual data".
+                - ylabel:
+                    Label for the y-axis. Default is "cdf".
+                - fontsize:
+                    Font size for plot labels. Default is 15.
 
         Returns:
             If plot_figure is False:
@@ -1088,26 +1114,31 @@ class Gumbel(AbstractDistribution):
         self,
         data: Union[bool, List[float]] = None,
         parameters: Dict[str, Union[float, Any]] = None,
-    ):
+    ) -> np.ndarray:
         """Calculate return periods for given data values.
 
         The return period is the average time between events of a given magnitude.
         It is calculated as 1/(1-F(x)), where F(x) is the cumulative distribution function.
 
         Args:
-            data: Values for which to calculate return periods.
-                Can be a single value, list, or array.
+            data:
+                Values for which to calculate return periods. Can be a single value, list, or array.
                 If None, uses the data provided during initialization.
-            parameters: Dictionary of distribution parameters.
-                Example: {"loc": 0.0, "scale": 1.0}
-                - loc: Location parameter of the Gumbel distribution
-                - scale: Scale parameter of the Gumbel distribution (must be positive)
+            parameters:
+                - loc (Numeric):
+                    Location parameter of the Gumbel distribution
+                - scale (Numeric):
+                    Scale parameter of the Gumbel distribution (must be positive)
+                ```
+                {"loc": 0.0, "scale": 1.0}
+                ```
                 If None, uses the parameters provided during initialization.
 
         Returns:
-            Return periods corresponding to the input data values.
-            If input is a single value, returns a single value.
-            If input is a list or array, returns an array of return periods.
+            np.ndarray:
+                Return periods corresponding to the input data values.
+                - If input is a single value, returns a single value.
+                - If input is a list or array, returns an array of return periods.
 
         Examples:
             - Import necessary libraries:
@@ -1167,19 +1198,21 @@ class Gumbel(AbstractDistribution):
         finance, and other fields dealing with extremes.
 
         Args:
-            opt_parameters: List of parameters to optimize:
-                - opt_parameters[0]: Threshold value
-                - opt_parameters[1]: Location parameter (loc)
-                - opt_parameters[2]: Scale parameter (scale)
-            data: Data points to fit the truncated distribution to.
+            opt_parameters:
+                List of parameters to optimize:
+                    - opt_parameters[0]: Threshold value
+                    - opt_parameters[1]: Location parameter (loc)
+                    - opt_parameters[2]: Scale parameter (scale)
+            data:
+                Data points to fit the truncated distribution to.
 
         Returns:
             Negative log-likelihood value. Lower values indicate better fit.
 
         Notes:
             The negative log-likelihood is calculated as the sum of two components:
-            - L1: Log-likelihood for values below the threshold
-            - L2: Log-likelihood for values above the threshold
+                - L1: Log-likelihood for values below the threshold
+                - L2: Log-likelihood for values above the threshold
 
         Reference:
             https://stackoverflow.com/questions/23217484/how-to-find-parameters-of-gumbels-distribution-using-scipy-optimize
@@ -1257,33 +1290,37 @@ class Gumbel(AbstractDistribution):
 
         When using the 'optimization' method with a threshold, the method employs two
         likelihood functions:
-        - L1: For values below the threshold
-        - L2: For values above the threshold
+            - L1: For values below the threshold
+            - L2: For values above the threshold
 
         The parameters are estimated by maximizing the product L1*L2.
 
         Args:
-            method: Estimation method to use.
-                Options: 'mle' (Maximum Likelihood Estimation),
-                         'mm' (Method of Moments),
-                         'lmoments' (L-moments),
-                         'optimization' (Custom optimization)
-                Default is 'mle'.
-            obj_func: Custom objective function to use for parameter estimation.
-                Only used when method is 'optimization'.
+            method:
+                Estimation method to use. Default is 'mle'.
+                Options:
+                    - 'mle' (Maximum Likelihood Estimation),
+                    - 'mm' (Method of Moments),
+                    - 'lmoments' (L-moments),
+                    - 'optimization' (Custom optimization)
+            obj_func (callable | None):
+                Custom objective function to use for parameter estimation. Only used when method is 'optimization'.
                 Default is None.
-            threshold: Value above which to consider data points.
-                If provided, only data points above this threshold are used for estimation
-                when using the 'optimization' method.
-                Default is None (use all data points).
-            test: Whether to perform goodness-of-fit tests after estimation.
-                Default is True.
+            threshold (float | int | None):
+                Value above which to consider data points. If provided, only data points above this threshold are
+                used for estimation when using the 'optimization' method. Default is None (use all data points).
+            test:
+                Whether to perform goodness-of-fit tests after estimation. Default is True.
 
         Returns:
-            Dictionary of estimated Gumbel distribution parameters.
-            Example: {"loc": 0.0, "scale": 1.0}
-            - loc: Location parameter of the Gumbel distribution
-            - scale: Scale parameter of the Gumbel distribution
+            Dict:
+                - loc (Numeric):
+                    Location parameter of the Gumbel distribution
+                - scale (Numeric):
+                    Scale parameter of the Gumbel distribution
+                ```python
+                {"loc": 0.0, "scale": 1.0}
+                ```
 
         Raises:
             ValueError: If an invalid method is specified or if required parameters are missing.
@@ -1399,11 +1436,15 @@ class Gumbel(AbstractDistribution):
         Args:
             cdf: CDF values (non-exceedance probabilities) for which to calculate the quantiles.
                 Values should be between 0 and 1.
-            parameters: Dictionary of distribution parameters.
-                Example: {"loc": 0.0, "scale": 1.0}
-                - loc: Location parameter of the Gumbel distribution
-                - scale: Scale parameter of the Gumbel distribution (must be positive)
+            parameters (Dict[str, float]):
                 If None, uses the parameters provided during initialization.
+                    - loc (Numeric):
+                        Location parameter of the Gumbel distribution
+                    - scale (Numeric):
+                        Scale parameter of the Gumbel distribution (must be positive)
+                    ```python
+                    {"loc": 0.0, "scale": 1.0}
+                ```
 
         Returns:
             Numpy array containing the quantile values corresponding to the given CDF values.
@@ -1496,19 +1537,22 @@ class Gumbel(AbstractDistribution):
         with the theoretical CDF of the fitted distribution.
 
         Returns:
-            Tuple containing:
-            - D statistic: The maximum absolute difference between the empirical and theoretical CDFs.
-              The smaller the D statistic, the more likely the data follows the distribution.
-              The KS test statistic measures the maximum distance between the empirical CDF
-              (Weibull plotting position) and the CDF of the reference distribution.
-            - p-value: The probability of observing a D statistic as extreme as the one calculated,
-              assuming the null hypothesis is true (data follows the distribution).
-              A high p-value (close to 1) suggests that there is a high probability that the sample
-              comes from the specified distribution.
-              If p-value < significance level (typically 0.05), reject the null hypothesis.
+            Tuple:
+                - 0:
+                    D statistic: The maximum absolute difference between the empirical and theoretical CDFs.
+                    The smaller the D statistic, the more likely the data follows the distribution.
+                    The KS test statistic measures the maximum distance between the empirical CDF
+                    (Weibull plotting position) and the CDF of the reference distribution.
+                - 1:
+                    p-value The probability of observing a D statistic as extreme as the one calculated, assuming the
+                    null hypothesis is true (data follows the distribution).
+                    A high p-value (close to 1) suggests that there is a high probability that the sample comes from
+                    the specified distribution.
+                    If p-value < significance level (typically 0.05), reject the null hypothesis.
 
         Raises:
-            ValueError: If the distribution parameters have not been estimated.
+            ValueError:
+                If the distribution parameters have not been estimated.
 
         Examples:
             - Import necessary libraries and initialize the Gumbel distribution:
@@ -1550,24 +1594,25 @@ class Gumbel(AbstractDistribution):
         """
         return super().ks()
 
-    def chisquare(self) -> tuple:
+    def chisquare(self) -> Tuple:
         """Perform the Chi-square test for goodness of fit.
 
-        This method tests whether the data follows the fitted Gumbel distribution using
-        the Chi-square test. The test compares the observed frequencies with the
-        expected frequencies under the fitted distribution.
+        This method tests whether the data follows the fitted Gumbel distribution using the Chi-square test. The test
+        compares the observed frequencies with the expected frequencies under the fitted distribution.
 
         Returns:
-            Tuple containing:
-            - Chi-square statistic: The test statistic measuring the difference between
-              observed and expected frequencies.
-            - p-value: The probability of observing a Chi-square statistic as extreme as the one calculated,
-              assuming the null hypothesis is true (data follows the distribution).
-              If p-value < significance level (typically 0.05), reject the null hypothesis.
-            Returns None if the test fails due to an exception.
+            Tuple:
+                - Chi-square statistic:
+                    The test statistic measuring the difference between observed and expected frequencies.
+                - p-value:
+                    The probability of observing a Chi-square statistic as extreme as the one calculated,
+                    assuming the null hypothesis is true (data follows the distribution).
+                    If p-value < significance level (typically 0.05), reject the null hypothesis. Returns None if the test
+                    fails due to an exception.
 
         Raises:
-            ValueError: If the distribution parameters have not been estimated.
+            ValueError:
+                If the distribution parameters have not been estimated.
 
         Examples:
             - Perform Chi-square test:
@@ -1604,7 +1649,7 @@ class Gumbel(AbstractDistribution):
         prob_non_exceed: np.ndarray = None,
         parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> Union[
         Tuple[np.ndarray, np.ndarray], Tuple[np.ndarray, np.ndarray, Figure, Axes]
     ]:
@@ -1615,23 +1660,29 @@ class Gumbel(AbstractDistribution):
         confidence intervals.
 
         Args:
-            alpha: Significance level for the confidence interval.
-                Default is 0.1 (90% confidence interval).
+            alpha (float):
+                Significance level for the confidence interval. Default is 0.1 (90% confidence interval).
             prob_non_exceed: Non-exceedance probabilities for which to calculate quantiles.
                 If None, uses the empirical CDF calculated using Weibull plotting positions.
-            parameters: Dictionary of distribution parameters.
-                Example: {"loc": 0.0, "scale": 1.0}
-                - loc: Location parameter of the Gumbel distribution
-                - scale: Scale parameter of the Gumbel distribution (must be positive)
+            parameters (Dict[str, Any]):
                 If None, uses the parameters provided during initialization.
-            plot_figure: Whether to generate a plot of the confidence intervals.
-                Default is False.
-            **kwargs: Additional keyword arguments to pass to the plotting function.
-                - fig_size: Size of the figure as a tuple (width, height).
-                  Default is (6, 6).
-                - fontsize: Font size for plot labels.
-                  Default is 11.
-                - marker_size: Size of markers in the plot.
+                - loc (Numeric):
+                    Location parameter of the Gumbel distribution
+                - scale (Numeric):
+                    Scale parameter of the Gumbel distribution (must be positive)
+                ```python
+                {"loc": 0.0, "scale": 1.0}
+                ```
+            plot_figure (bool):
+                Whether to generate a plot of the confidence intervals. Default is False.
+            **kwargs:
+                Additional keyword arguments to pass to the plotting function.
+                    - fig_size:
+                        Size of the figure as a tuple (width, height). Default is (6, 6).
+                    - fontsize:
+                        Font size for plot labels. Default is 11.
+                    - marker_size:
+                        Size of markers in the plot.
 
         Returns:
             If plot_figure is False:
@@ -1924,7 +1975,7 @@ class GEV(AbstractDistribution):
         parameters: Dict[str, float] = None,
         data: Union[List[float], np.ndarray] = None,
         *args,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
@@ -2077,7 +2128,7 @@ class GEV(AbstractDistribution):
         parameters: Dict[str, Union[float, Any]] = None,
         data: Union[List[float], np.ndarray] = None,
         *args,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> Union[
         Tuple[np.ndarray, Figure, Axes], np.ndarray
     ]:  # pylint: disable=arguments-differ
@@ -2137,22 +2188,22 @@ class GEV(AbstractDistribution):
         )
         return result
 
-    def return_period(self, parameters: Dict[str, Union[float, Any]], data: np.ndarray):
+    def return_period(self, parameters: Dict[str, Any], data: np.ndarray):
         """return_period.
 
             calculate return period calculates the return period for a list/array of values or a single value.
 
         Args:
-            data:[list/array/float]
+            data (list/array/float):
                 value you want the coresponding return value for
-            parameters: Dict[str, str]
+            parameters (Dict[str, Any]):
                 {"loc": val, "scale": val, "shape": value}
 
-                - shape: [float]
+                - shape (float):
                     shape parameter
-                - loc: [float]
+                - loc (float):
                     location parameter
-                - scale: [float]
+                - scale (float):
                     scale parameter
 
         Returns:
@@ -2352,9 +2403,9 @@ class GEV(AbstractDistribution):
         IF Pvalue < significance level ------ reject
 
         Returns:
-            Dstatic: [numeric]
+            Dstatic (numeric):
                 The smaller the D static the more likely that the two samples are drawn from the same distribution
-            Pvalue : [numeric]
+            Pvalue (numeric):
                 IF Pvalue < significance level ------ reject the null hypothesis
         """
         return super().ks()
@@ -2372,7 +2423,7 @@ class GEV(AbstractDistribution):
         state_function: callable = None,
         n_samples: int = 100,
         method: str = "lmoments",
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> Union[
         Tuple[np.ndarray, np.ndarray], Tuple[np.ndarray, np.ndarray, Figure, Axes]
     ]:  # pylint: disable=arguments-differ
@@ -2473,10 +2524,10 @@ class GEV(AbstractDistribution):
 
     def plot(
         self,
-        fig_size=(10, 5),
-        xlabel=PDF_XAXIS_LABEL,
-        ylabel="cdf",
-        fontsize=15,
+        fig_size: Tuple = (10, 5),
+        xlabel: str = PDF_XAXIS_LABEL,
+        ylabel: str = "cdf",
+        fontsize: int = 15,
         cdf: Union[np.ndarray, list] = None,
         parameters: Dict[str, Union[float, Any]] = None,
     ) -> Tuple[Figure, Tuple[Axes, Axes]]:
@@ -2486,24 +2537,24 @@ class GEV(AbstractDistribution):
         parameters, theoretical cdf (or weibul), and calculates the confidence interval.
 
         Args:
-            parameters: Dict[str, str]
+            parameters (Dict[str, str]):
                 {"loc": val, "scale": val, shape: val}
 
-                - loc: [numeric]
+                - loc (numeric):
                     Location parameter of the GEV distribution.
-                - scale: [numeric]
+                - scale (numeric):
                     Scale parameter of the GEV distribution.
-                - shape: [float, int]
+                - shape (Union[float, int]):
                     Shape parameter for the GEV distribution.
-            cdf: [list]
+            cdf (list):
                 Theoretical cdf calculated using weibul or using the distribution cdf function.
-            fontsize: [numeric]
+            fontsize (numeric):
                 Font size of the axis labels and legend
-            ylabel: [string]
+            ylabel (str):
                 y label string
-            xlabel: [string]
+            xlabel (str):
                 X label string
-            fig_size: [tuple]
+            fig_size (int):
                 size of the pdf and cdf figure
 
         Returns:
@@ -2570,14 +2621,14 @@ class GEV(AbstractDistribution):
         # The function to bootstrap
 
     @staticmethod
-    def ci_func(data: Union[list, np.ndarray], **kwargs):
+    def ci_func(data: Union[list, np.ndarray], **kwargs: Dict[str, Any]):
         """GEV distribution function.
 
         Parameters
         ----------
         data: [list, np.ndarray]
             time series
-        kwargs:
+        kwargs (Dict[str, Any]):
             gevfit: [list]
                 GEV parameter [shape, location, scale]
             F: [list]
@@ -2652,17 +2703,16 @@ class Exponential(AbstractDistribution):
     ):
         """Exponential Distribution.
 
-        Parameters
-        ----------
-        data: [list]
-            data time series.
-        parameters: Dict[str, str]
-            {"loc": val, "scale": val}
+        Args:
+            data (list):
+                data time series.
+            parameters (Dict[str, float]):
+                {"loc": val, "scale": val}
 
-            - loc: [numeric]
-                location parameter of the exponential distribution.
-            - scale: [numeric]
-                scale parameter of the exponential distribution.
+                - loc (numeric):
+                    location parameter of the exponential distribution.
+                - scale (numeric):
+                    scale parameter of the exponential distribution.
         """
         super().__init__(data, parameters)
 
@@ -2685,26 +2735,29 @@ class Exponential(AbstractDistribution):
         parameters: Dict[str, float] = None,
         data: Union[List[float], np.ndarray] = None,
         *args,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
         Returns the value of Gumbel's pdf with parameters loc and scale at x.
 
         Args:
-            parameters(Dict[str, str], optional):
+            parameters (Dict[str, float], optional):
                 if not provided, the parameters provided in the class initialization will be used.
-                {"loc": val, "scale": val}. default is None.
                 - loc: [numeric]
                     location parameter of the gumbel distribution.
                 - scale: [numeric]
                     scale parameter of the gumbel distribution.
-            data(np.ndarray):
+                ```python
+                {"loc": val, "scale": val}. default is None.
+
+                ```
+            data (np.ndarray):
                 array if you want to calculate the pdf for different data than the time series given to the constructor
                 method. default is None.
             plot_figure (bool):
                 Default is False.
-            kwargs:
+            kwargs (Dict[str, Any]):
                 fig_size(tuple):
                     Default is (6, 5).
                 xlabel (str):
@@ -2755,12 +2808,14 @@ class Exponential(AbstractDistribution):
             size (int):
                 size of the random generated sample.
             parameters (Dict[str, str]):
+                - loc (numeric):
+                    location parameter of the gumbel distribution.
+                - scale (numeric):
+                    scale parameter of the gumbel distribution.
+                ```python
                 {"loc": val, "scale": val}
 
-                - loc: [numeric]
-                    location parameter of the gumbel distribution.
-                - scale: [numeric]
-                    scale parameter of the gumbel distribution.
+                ```
 
         Returns:
             data (np.ndarray):
@@ -2831,7 +2886,7 @@ class Exponential(AbstractDistribution):
         parameters: Dict[str, Union[float, Any]] = None,
         data: Union[List[float], np.ndarray] = None,
         *args,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> Union[
         Tuple[np.ndarray, Figure, Any], np.ndarray
     ]:  # pylint: disable=arguments-differ
@@ -2839,49 +2894,49 @@ class Exponential(AbstractDistribution):
 
         cdf calculates the value of Gumbel's cdf with parameters loc and scale at x.
 
-        parameter:
-        ----------
-        parameters: Dict[str, str], optional, default is None.
-            if not provided, the parameters provided in the class initialization will be used.
-            {"loc": val, "scale": val}
+        Args:
+            parameters (Dict[str, str], optional):
+                if not provided, the parameters provided in the class initialization will be used. default is None.
+                - loc (numeric):
+                    location parameter of the gumbel distribution.
+                - scale (numeric):
+                    scale parameter of the gumbel distribution.
+                ```python
+                {"loc": val, "scale": val}
+                ```
+            data (np.ndarray):
+                array if you want to calculate the cdf for different data than the time series given to the constructor
+                method. default is None.
+            plot_figure (bool):
+                Default is False.
+            kwargs (Dict[str, Any]):
+                fig_size: [tuple]
+                    Default is (6, 5).
+                xlabel (str):
+                    Default is "Actual data".
+                ylabel (str):
+                    Default is "cdf".
+                fontsize (int):
+                    Default is 15.
 
-            - loc: [numeric]
-                location parameter of the gumbel distribution.
-            - scale: [numeric]
-                scale parameter of the gumbel distribution.
-        data: np.ndarray, default is None.
-            array if you want to calculate the cdf for different data than the time series given to the constructor
-            method.
-        plot_figure: [bool]
-            Default is False.
-        kwargs:
-            fig_size: [tuple]
-                Default is (6, 5).
-            xlabel: [str]
-                Default is "Actual data".
-            ylabel: [str]
-                Default is "cdf".
-            fontsize: [int]
-                Default is 15.
+        Returns:
+            cdf (array):
+                probability density function cdf.
+            fig (matplotlib.figure.Figure):
+                Figure object is returned only if `plot_figure` is True.
+            ax (matplotlib.axes.Axes):
+                Axes object is returned only if `plot_figure` is True.
 
-        Returns
-        -------
-        cdf: [array]
-            probability density function cdf.
-        fig: matplotlib.figure.Figure, if `plot_figure` is True.
-            Figure object.
-        ax: matplotlib.axes.Axes, if `plot_figure` is True.
-            Axes object.
-
-        Examples
-        --------
-        >>> data = np.loadtxt("examples/data/expo.txt")
-        >>> parameters = {'loc': 0, 'scale': 2}
-        >>> expo_dist = Exponential(data, parameters)
-        >>> expo_dist.cdf(plot_figure=True)  # doctest: +SKIP
-
-        .. image:: /_images/expo-random-cdf.png
-            :align: center
+        Examples:
+            ```python
+            >>> import numpy as np
+            >>> from statista.distributions import Exponential
+            >>> data = np.loadtxt("examples/data/expo.txt")
+            >>> parameters = {'loc': 0, 'scale': 2}
+            >>> expo_dist = Exponential(data, parameters)
+            >>> expo_dist.cdf(plot_figure=True)
+            ```
+            ![gamma-pdf](./../_images/distributions/expo-random-cdf.png)
         """
         result = super().cdf(
             parameters=parameters,
@@ -3005,38 +3060,39 @@ class Exponential(AbstractDistribution):
 
         Theoretical Estimate method calculates the theoretical values based on a given  non-exceedance probability
 
-        Parameters
-        -----------
-        parameters: Dict[str, str]
-            {"loc": val, "scale": val}
+        Args:
+            parameters (Dict[str, str]):
+                - loc: [numeric]
+                    location parameter of the gumbel distribution.
+                - scale: [numeric]
+                    scale parameter of the gumbel distribution.
+                ```python
+                {"loc": val, "scale": val}
+                ```
+            cdf (list):
+                cumulative distribution function/ Non-Exceedance probability.
 
-            - loc: [numeric]
-                location parameter of the gumbel distribution.
-            - scale: [numeric]
-                scale parameter of the gumbel distribution.
-        cdf: [list]
-            cumulative distribution function/ Non-Exceedance probability.
+        Returns:
+            theoretical value (numeric):
+                Value based on the theoretical distribution
 
-        Returns
-        -------
-        theoretical value: [numeric]
-            Value based on the theoretical distribution
+        Examples:
+            - Instantiate the Exponential class only with the data.
+                ```python
+                >>> data = np.loadtxt("examples/data/expo.txt")
+                >>> parameters = {'loc': 0, 'scale': 2}
+                >>> expo_dist = Exponential(data, parameters)
 
-        Examples
-        --------
-        - Instantiate the Exponential class only with the data.
+                ```
+            - We will generate a random numbers between 0 and 1 and pass it to the inverse_cdf method as a probabilities
+                to get the data that coresponds to these probabilities based on the distribution.
+                ```python
+                >>> cdf = [0.1, 0.2, 0.4, 0.6, 0.8, 0.9]
+                >>> data_values = expo_dist.inverse_cdf(cdf)
+                >>> print(data_values)
+                [0.21072103 0.4462871  1.02165125 1.83258146 3.21887582 4.60517019]
 
-            >>> data = np.loadtxt("examples/data/expo.txt")
-            >>> parameters = {'loc': 0, 'scale': 2}
-            >>> expo_dist = Exponential(data, parameters)
-
-        - We will generate a random numbers between 0 and 1 and pass it to the inverse_cdf method as a probabilities
-            to get the data that coresponds to these probabilities based on the distribution.
-
-            >>> cdf = [0.1, 0.2, 0.4, 0.6, 0.8, 0.9]
-            >>> data_values = expo_dist.inverse_cdf(cdf)
-            >>> print(data_values)
-            [0.21072103 0.4462871  1.02165125 1.83258146 3.21887582 4.60517019]
+                ```
         """
         if parameters is None:
             parameters = self.parameters
@@ -3060,11 +3116,10 @@ class Exponential(AbstractDistribution):
         The smaller the D static, the more likely that the two samples are drawn from the same distribution
         IF Pvalue < significance level ------ reject
 
-        Returns
-        -------
-            Dstatic: [numeric]
+        Returns:
+            Dstatic (numeric):
                 The smaller the D static the more likely that the two samples are drawn from the same distribution
-            Pvalue : [numeric]
+            Pvalue (numeric):
                 IF Pvalue < significance level ------ reject the null hypothesis
         """
         return super().ks()
@@ -3097,17 +3152,17 @@ class Normal(AbstractDistribution):
     ):
         """Gumbel.
 
-        Parameters
-        ----------
-        data : [list]
-            data time series.
-        parameters: Dict[str, str]
-            {"loc": val, "scale": val}
-
-            - loc: [numeric]
-                location parameter of the exponential distribution.
-            - scale: [numeric]
-                scale parameter of the exponential distribution.
+        Ars:
+            data (list):
+                data time series.
+            parameters (Dict[str, str]):
+                - loc: [numeric]
+                    location parameter of the exponential distribution.
+                - scale: [numeric]
+                    scale parameter of the exponential distribution.
+                ```python
+                {"loc": val, "scale": val}
+                ```
         """
         super().__init__(data, parameters)
 
@@ -3129,45 +3184,44 @@ class Normal(AbstractDistribution):
         parameters: Dict[str, float] = None,
         data: Union[List[float], np.ndarray] = None,
         *args,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """pdf.
 
         Returns the value of Gumbel's pdf with parameters loc and scale at x.
 
-        Parameters
-        -----------
-        parameters: Dict[str, str], optional, default is None.
-            if not provided, the parameters provided in the class initialization will be used.
-            {"loc": val, "scale": val, "shape": value}
+        Args:
+            parameters (Dict[str, str], optional):
+                if not provided, the parameters provided in the class initialization will be used. default is None.
+                - loc: [numeric]
+                    location parameter of the normal distribution.
+                - scale: [numeric]
+                    scale parameter of the normal distribution.
+                ```python
+                {"loc": val, "scale": val}
+                ```
+            data (np.ndarray):
+                array if you want to calculate the pdf for different data than the time series given to the constructor
+                method. default is None.
+            plot_figure (bool):
+                Default is False.
+            kwargs (Dict[str, Any]):
+                fig_size: [tuple]
+                    Default is (6, 5).
+                xlabel: [str]
+                    Default is "Actual data".
+                ylabel: [str]
+                    Default is "pdf".
+                fontsize: [int]
+                    Default is 15
 
-            - loc: [numeric]
-                location parameter of the GEV distribution.
-            - scale: [numeric]
-                scale parameter of the GEV distribution.
-        data : np.ndarray, default is None.
-            array if you want to calculate the pdf for different data than the time series given to the constructor
-            method.
-        plot_figure: [bool]
-            Default is False.
-        kwargs:
-            fig_size: [tuple]
-                Default is (6, 5).
-            xlabel: [str]
-                Default is "Actual data".
-            ylabel: [str]
-                Default is "pdf".
-            fontsize: [int]
-                Default is 15
-
-        Returns
-        -------
-        pdf: [array]
-            probability density function pdf.
-        fig: matplotlib.figure.Figure, if `plot_figure` is True.
-            Figure object.
-        ax: matplotlib.axes.Axes, if `plot_figure` is True.
-            Axes object.
+        Returns:
+            pdf (array):
+                probability density function pdf.
+            fig (matplotlib.figure.Figure):
+                Figure object is returned only if `plot_figure` is True.
+            ax (matplotlib.axes.Axes):
+                Axes object is returned only if `plot_figure` is True.
         """
         result = super().pdf(
             parameters=parameters,
@@ -3200,45 +3254,44 @@ class Normal(AbstractDistribution):
         parameters: Dict[str, Union[float, Any]] = None,
         data: Union[List[float], np.ndarray] = None,
         *args,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> Union[Tuple[np.ndarray, Figure, Any], np.ndarray]:
         """cdf.
 
         cdf calculates the value of Normal distribution cdf with parameters loc and scale at x.
 
-        Parameters
-        ----------
-        parameters: Dict[str, str], optional, default is None.
-            if not provided, the parameters provided in the class initialization will be used.
-            {"loc": val, "scale": val, "shape": value}
+        Args:
+            parameters (Dict[str, str], optional):
+                if not provided, the parameters provided in the class initialization will be used. default is None.
+                - loc (numeric):
+                    location parameter of the Normal distribution.
+                - scale (numeric):
+                    scale parameter of the Normal distribution.
+                ```python
+                {"loc": val, "scale": val, "shape": value}
+                ```
+            data (np.ndarray):
+                array if you want to calculate the pdf for different data than the time series given to the constructor
+                method. default is None.
+            plot_figure (bool):
+                Default is False.
+            kwargs (Dict[str, Any]):
+                fig_size (tuple):
+                    Default is (6, 5).
+                xlabel (str):
+                    Default is "Actual data".
+                ylabel (str):
+                    Default is "cdf".
+                fontsize (int):
+                    Default is 15.
 
-            - loc: [numeric]
-                location parameter of the Normal distribution.
-            - scale: [numeric]
-                scale parameter of the Normal distribution.
-        data : np.ndarray, default is None.
-            array if you want to calculate the pdf for different data than the time series given to the constructor
-            method.
-        plot_figure: [bool]
-            Default is False.
-        kwargs:
-            fig_size: [tuple]
-                Default is (6, 5).
-            xlabel: [str]
-                Default is "Actual data".
-            ylabel: [str]
-                Default is "cdf".
-            fontsize: [int]
-                Default is 15.
-
-        Returns
-        -------
-        cdf: [array]
-            probability density function cdf.
-        fig: matplotlib.figure.Figure, if `plot_figure` is True.
-            Figure object.
-        ax: matplotlib.axes.Axes, if `plot_figure` is True.
-            Axes object.
+        Returns:
+            cdf (array):
+                probability density function cdf.
+            fig (matplotlib.figure.Figure):
+                Figure object is returned only if `plot_figure` is True.
+            ax (matplotlib.axes.Axes):
+                Axes object is returned only if `plot_figure` is True.
         """
         result = super().cdf(
             parameters=parameters,

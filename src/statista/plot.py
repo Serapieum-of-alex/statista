@@ -59,7 +59,7 @@ class Plot:
     @staticmethod
     def pdf(
         qx: np.ndarray,
-        pdf_fitted,
+        pdf_fitted: Union[np.ndarray, list],
         data_sorted: np.ndarray,
         fig_size: Tuple = (6, 5),
         xlabel: str = "Actual data",
@@ -72,15 +72,22 @@ class Plot:
         and a histogram of the actual data for visual comparison.
 
         Args:
-            qx: Array of x-values for plotting the fitted PDF curve. Typically generated
-                as a linspace between the min and max of the actual data.
-            pdf_fitted: Array of PDF values corresponding to each point in qx.
-                Usually obtained from a distribution's pdf method.
-            data_sorted: The actual data to be plotted as a histogram.
-            fig_size: Figure size as (width, height) in inches. Defaults to (6, 5).
-            xlabel: Label for the x-axis. Defaults to "Actual data".
-            ylabel: Label for the y-axis. Defaults to "pdf".
-            fontsize: Font size for labels. Defaults to 11.
+            qx (np.ndarray):
+                Array of x-values for plotting the fitted PDF curve. Typically generated as a linspace between the
+                min and max of the actual data.
+            pdf_fitted (Union[np.ndarray, list]):
+                Array of PDF values corresponding to each point in qx. Usually obtained from a distribution's pdf
+                method.
+            data_sorted (np.ndarray):
+                The actual data to be plotted as a histogram.
+            fig_size (Tuple):
+                Figure size as (width, height) in inches. Defaults to (6, 5).
+            xlabel (str):
+                Label for the x-axis. Defaults to "Actual data".
+            ylabel (str):
+                Label for the y-axis. Defaults to "pdf".
+            fontsize (int):
+                Font size for labels. Defaults to 11.
 
         Returns:
             tuple: A tuple containing:
