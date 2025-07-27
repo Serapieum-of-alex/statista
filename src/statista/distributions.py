@@ -1686,10 +1686,7 @@ class Gumbel(AbstractDistribution):
 
         if prob_non_exceed is None:
             prob_non_exceed = PlottingPosition.weibul(self.data)
-        else:
-            # if the prob_non_exceed is given, check if the length is the same as the data
-            if len(prob_non_exceed) != len(self.data):
-                raise ValueError(PROB_NON_EXCEEDENCE_ERROR)
+
 
         qth = self._inv_cdf(prob_non_exceed, parameters)
         y = [-np.log(-np.log(j)) for j in prob_non_exceed]
@@ -1699,10 +1696,14 @@ class Gumbel(AbstractDistribution):
             for j in y
         ]
         v = norm.ppf(1 - alpha / 2)
-        q_upper = np.array([qth[j] + v * std_error[j] for j in range(len(self.data))])
-        q_lower = np.array([qth[j] - v * std_error[j] for j in range(len(self.data))])
+        q_upper = np.array([qth[j] + v * std_error[j] for j in range(len(qth))])
+        q_lower = np.array([qth[j] - v * std_error[j] for j in range(len(qth))])
 
         if plot_figure:
+            # if the prob_non_exceed is given, check if the length is the same as the data
+            if len(prob_non_exceed) != len(self.data):
+                raise ValueError(PROB_NON_EXCEEDENCE_ERROR)
+
             fig, ax = Plot.confidence_level(
                 qth, self.data, q_lower, q_upper, alpha=alpha, **kwargs
             )
