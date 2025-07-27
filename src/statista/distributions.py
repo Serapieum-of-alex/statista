@@ -1363,7 +1363,7 @@ class Gumbel(AbstractDistribution):
             param = list(gumbel_r.fit(self.data, method=method))
         elif method == "lmoments":
             lm = Lmoments(self.data)
-            lmu = lm.Lmom()
+            lmu = lm.calculate()
             param = Lmoments.gumbel(lmu)
         elif method == "optimization":
             if obj_func is None or threshold is None:
@@ -2260,7 +2260,7 @@ class GEV(AbstractDistribution):
             param = list(genextreme.fit(self.data, method=method))
         elif method == "lmoments":
             lm = Lmoments(self.data)
-            lmu = lm.Lmom()
+            lmu = lm.calculate()
             param = Lmoments.gev(lmu)
         elif method == "optimization":
             if obj_func is None or threshold is None:
@@ -2973,7 +2973,7 @@ class Exponential(AbstractDistribution):
             param = list(expon.fit(self.data, method=method))
         elif method == "lmoments":
             lm = Lmoments(self.data)
-            lmu = lm.Lmom()
+            lmu = lm.calculate()
             param = Lmoments.exponential(lmu)
         elif method == "optimization":
             if obj_func is None or threshold is None:
@@ -3298,7 +3298,7 @@ class Normal(AbstractDistribution):
             param = list(norm.fit(self.data, method=method))
         elif method == "lmoments":
             lm = Lmoments(self.data)
-            lmu = lm.Lmom()
+            lmu = lm.calculate()
             param = Lmoments.normal(lmu)
         elif method == "optimization":
             if obj_func is None or threshold is None:
