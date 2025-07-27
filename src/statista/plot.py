@@ -61,7 +61,7 @@ class Plot:
         qx: np.ndarray,
         pdf_fitted,
         data_sorted: np.ndarray,
-        fig_size: Tuple[float, float] = (6, 5),
+        fig_size: Tuple = (6, 5),
         xlabel: str = "Actual data",
         ylabel: str = "pdf",
         fontsize: int = 11,

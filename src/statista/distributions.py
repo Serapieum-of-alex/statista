@@ -35,7 +35,7 @@ PROB_NON_EXCEEDENCE_ERROR = """
 Length of prob_non_exceed does not match the length of data, use the `PlottingPosition.weibul(data)`
 to the get the non-exceedance probability
 """
-
+PDF_XAXIS_LABEL = "Actual data"
 
 class PlottingPosition:
     """PlottingPosition."""
@@ -146,7 +146,7 @@ class AbstractDistribution(ABC):
             ValueError:
                 If neither data nor parameters are provided.
             TypeError:
-                If data is not a list or numpy array, or if parameters is not a dictionary.
+                If data is not a list or numpy array, or if parameters argument is not a dictionary.
         """
         if data is None and parameters is None:
             raise ValueError("Either data or parameters must be provided")
@@ -263,8 +263,8 @@ class AbstractDistribution(ABC):
         self,
         parameters: Dict[str, Union[float, Any]] = None,
         plot_figure: bool = False,
-        fig_size: tuple = (6, 5),
-        xlabel: str = "Actual data",
+        fig_size: Tuple = (6, 5),
+        xlabel: str = PDF_XAXIS_LABEL,
         ylabel: str = "pdf",
         fontsize: Union[float, int] = 15,
         data: Union[List[float], np.ndarray] = None,
@@ -595,21 +595,16 @@ class AbstractDistribution(ABC):
             parameters: Dictionary of distribution parameters.
                 Example: {"loc": 0.0, "scale": 1.0}
                 If None, uses the parameters provided during initialization.
-            **kwargs: Additional keyword arguments to pass to the plotting function.
-                - fig_size: Size of the figure as a tuple (width, height).
-                  Default is (6, 6).
-                - fontsize: Font size for plot labels.
-                  Default is 11.
 
         Returns:
             If plot_figure is False:
                 Tuple containing:
-                - Numpy array of upper bound values
-                - Numpy array of lower bound values
+                - Numpy array of upper-bound values
+                - Numpy array of lower-bound values
             If plot_figure is True:
                 Tuple containing:
-                - Numpy array of upper bound values
-                - Numpy array of lower bound values
+                - Numpy array of upper-bound values
+                - Numpy array of lower-bound values
                 - Figure object
                 - Axes object
         """
@@ -618,7 +613,7 @@ class AbstractDistribution(ABC):
     def plot(
         self,
         fig_size: tuple = (10, 5),
-        xlabel: str = "Actual data",
+        xlabel: str = PDF_XAXIS_LABEL,
         ylabel: str = "cdf",
         fontsize: int = 15,
         cdf: np.ndarray = None,
@@ -1159,8 +1154,8 @@ class Gumbel(AbstractDistribution):
         return rp
 
     @staticmethod
-    def truncated_distribution(opt_parameters: list[float], data: list[float]) -> float:
-        """Calculate negative log-likelihood for a truncated Gumbel distribution.
+    def truncated_distribution(opt_parameters: List[float], data: List[float]) -> float:
+        """Calculate a negative log-likelihood for a truncated Gumbel distribution.
 
         This function calculates the negative log-likelihood of a Gumbel distribution
         that is truncated (i.e., the data only includes values above a certain threshold).
@@ -1718,7 +1713,7 @@ class Gumbel(AbstractDistribution):
     def plot(
         self,
         fig_size: Tuple[float, float] = (10, 5),
-        xlabel: str = "Actual data",
+        xlabel: str = PDF_XAXIS_LABEL,
         ylabel: str = "cdf",
         fontsize: int = 15,
         cdf: Union[np.ndarray, list] = None,
@@ -2163,7 +2158,7 @@ class GEV(AbstractDistribution):
             float:
                 return period
         """
-        cdf = self.cdf(parameters, data=data)
+        cdf = self.cdf(parameters=parameters, data=data)
 
         rp = 1 / (1 - cdf)
 
@@ -2478,7 +2473,7 @@ class GEV(AbstractDistribution):
     def plot(
         self,
         fig_size=(10, 5),
-        xlabel="Actual data",
+        xlabel=PDF_XAXIS_LABEL,
         ylabel="cdf",
         fontsize=15,
         cdf: Union[np.ndarray, list] = None,
@@ -3273,21 +3268,19 @@ class Normal(AbstractDistribution):
         density function's values at xi, but the L2 is the probability that threshold
         value C will be exceeded (1-F(C)).
 
-        Parameters
-        ----------
-        obj_func: [function]
-            function to be used to get the distribution parameters.
-        threshold: [numeric]
-            Value you want to consider only the greater values.
-        method: [string]
-            'mle', 'mm', 'lmoments', optimization
-        test: bool
-            Default is True
+        Args:
+            obj_func (function):
+                function to be used to get the distribution parameters.
+            threshold (numeric):
+                Value you want to consider only the greater values.
+            method (str):
+                'mle', 'mm', 'lmoments', optimization
+            test (bool):
+                Default is True
 
-        Returns
-        -------
-        parameters: [list]
-            shape, loc, scale parameter of the gumbel distribution in that order.
+        Returns:
+            parameters (list):
+                shape, loc, scale parameter of the gumbel distribution in that order.
         """
         # obj_func = lambda p, x: (-np.log(Gumbel.pdf(x, p[0], p[1]))).sum()
         # #first we make a simple Gumbel fit
@@ -3334,22 +3327,20 @@ class Normal(AbstractDistribution):
 
         Theoretical Estimate method calculates the theoretical values based on a given  non exceedence probability
 
-        Parameters
-        -----------
-        parameters: Dict[str, str]
-            {"loc": val, "scale": val}
+        Args:
+            parameters (Dict[str, str]):
+                {"loc": val, "scale": val}
 
-            - loc: [numeric]
-                location parameter of the Normal distribution.
-            - scale: [numeric]
-                scale parameter of the Normal distribution.
-        cdf: [list]
-            cumulative distribution function/ Non-Exceedance probability.
+                - loc (numeric):
+                    location parameter of the Normal distribution.
+                - scale (numeric):
+                    scale parameter of the Normal distribution.
+            cdf (list):
+                cumulative distribution function/ Non-Exceedance probability.
 
-        Returns
-        -------
-        numeric:
-            Value based on the theoretical distribution
+        Returns:
+            numeric:
+                Value based on the theoretical distribution
         """
         if parameters is None:
             parameters = self.parameters
@@ -3373,12 +3364,11 @@ class Normal(AbstractDistribution):
         The smaller the D static, the more likely that the two samples are drawn from the same distribution
         IF Pvalue < significance level ------ reject
 
-        Returns
-        -------
-        Dstatic: [numeric]
-            The smaller the D static the more likely that the two samples are drawn from the same distribution
-        Pvalue: [numeric]
-            IF Pvalue < significance level ------ reject the null hypothesis
+        Returns:
+            Dstatic (numeric):
+                The smaller the D static the more likely that the two samples are drawn from the same distribution
+            Pvalue (numeric):
+                IF Pvalue < significance level ------ reject the null hypothesis
         """
         return super().ks()
 
