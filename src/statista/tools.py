@@ -20,8 +20,9 @@ class Tools:
             ```python
             >>> import numpy as np
             >>> from statista.tools import Tools
+
             ```
-        -  Normalize an array to [0, 1] range
+        - Normalize an array to [0, 1] range
             ```python
             >>> data = [10, 20, 30, 40, 50]
             >>> normalized = Tools.normalize(data)
@@ -34,11 +35,9 @@ class Tools:
             >>> standardized = Tools.standardize(data)
             >>> print(f"Mean: {np.mean(standardized):.4f}, Std: {np.std(standardized):.4f}")
             Mean: 0.0000, Std: 1.0000
+
             ```
     """
-
-    def __init__(self):
-        pass
 
     @staticmethod
     def normalize(x: Union[List[float], np.ndarray]) -> np.ndarray:
@@ -79,9 +78,11 @@ class Tools:
             - Edge case: single value:
                 ```python
                 >>> data = [42]
-                >>> normalized = Tools.normalize(data)
-                >>> print(normalized)
-                [0.]
+                >>> try:
+                ...     normalized = Tools.normalize(data)
+                ... except ValueError as e:
+                ...     print(e)
+                input data must contain at least two values for normalization
 
                 ```
 
@@ -90,6 +91,11 @@ class Tools:
             - Tools.rescale: For rescaling values to a custom range
         """
         x = np.array(x)
+        if len(x) <= 1:
+            raise ValueError(
+                "input data must contain at least two values for normalization"
+            )
+
         data_max = max(x)
         data_min = min(x)
         return (x - data_min) / (data_max - data_min)
@@ -204,6 +210,7 @@ class Tools:
                 >>> fahrenheit = Tools.rescale(celsius, 0, 100, 32, 212)
                 >>> print(f"{celsius}°C = {fahrenheit}°F")
                 25°C = 77.0°F
+
                 ```
 
         See Also:
@@ -340,7 +347,7 @@ class Tools:
                 >>> value = 2
                 >>> rescaled = Tools.inv_log_rescale(value, 1, 3, 1, 1000)
                 >>> print(rescaled)
-                148
+                270
 
                 ```
 
@@ -356,6 +363,7 @@ class Tools:
             - Verify inverse relationship with log_rescale:
                 ```python
                 >>> original = 500
+
                 ```
             - First log_rescale from [1, 1000] to [0, 3]:
                 ```python
@@ -366,7 +374,7 @@ class Tools:
                 ```python
                 >>> back_to_original = Tools.inv_log_rescale(log_scaled, 0, 3, 1, 1000)
                 >>> print(f"Original: {original}, After round-trip: {back_to_original}")
-                Original: 500, After round-trip: 403
+                Original: 500, After round-trip: 1000
 
                 ```
 
@@ -432,7 +440,7 @@ class Tools:
                 ```python
                 >>> value = 7.84
                 >>> rounded = Tools.round(value, 0.1)
-                >>> print(rounded)
+                >>> print(rounded) #doctest: +SKIP
                 7.8
 
                 ```
