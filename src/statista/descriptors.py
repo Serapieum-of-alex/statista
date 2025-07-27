@@ -34,7 +34,7 @@ def rmse(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [1.1, 2.1, 2.9, 4.2, 5.2]
             >>> rmse_value = rmse(observed, simulated)
             >>> print(f"RMSE: {rmse_value:.4f}")
-            RMSE: 0.1732
+            RMSE: 0.1483
 
             ```
         - Using numpy arrays:
@@ -43,7 +43,7 @@ def rmse(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = np.array([12, 18, 33, 43, 48])
             >>> rmse_value = rmse(observed, simulated)
             >>> print(f"RMSE: {rmse_value:.4f}")
-            RMSE: 2.9496
+            RMSE: 2.4495
 
             ```
 
@@ -97,19 +97,20 @@ def rmse_hf(
         >>> from statista.descriptors import rmse_hf
         >>> observed = [10, 20, 50, 100, 200]
         >>> simulated = [12, 18, 55, 95, 190]
+
         ```
         - Using weighting scheme 1 with n=2 and alpha=0.5:
             ```python
             >>> error = rmse_hf(observed, simulated, ws_type=1, n=2, alpha=0.5)
             >>> print(f"Weighted RMSE for high flows: {error:.4f}")
-            Weighted RMSE for high flows: 7.2111
+            Weighted RMSE for high flows: 4.6446
 
             ```
         - Using weighting scheme 3 (binary weighting) with alpha=0.7:
             ```python
             >>> error = rmse_hf(observed, simulated, ws_type=3, n=1, alpha=0.7)
             >>> print(f"Weighted RMSE for high flows: {error:.4f}")
-            Weighted RMSE for high flows: 8.3666
+            Weighted RMSE for high flows: 4.4721
 
             ```
 
@@ -209,24 +210,26 @@ def rmse_lf(
         ValueError: If ws_type is not between 1 and 4, n is negative, or alpha is not between 0 and 1.
 
     Examples:
-        ```python
-        >>> import numpy as np
-        >>> from statista.descriptors import rmse_lf
-        >>> observed = [10, 20, 50, 100, 200]
-        >>> simulated = [12, 18, 55, 95, 190]
-        ```
+        - Example with good performance on low flows:
+            ```python
+            >>> import numpy as np
+            >>> from statista.descriptors import rmse_lf
+            >>> observed = [10, 20, 50, 100, 200]
+            >>> simulated = [12, 18, 55, 95, 190]
+
+            ```
         - Using weighting scheme 1 with n=2 and alpha=0.5:
             ```python
             >>> error = rmse_lf(observed, simulated, ws_type=1, n=2, alpha=0.5)
             >>> print(f"Weighted RMSE for low flows: {error:.4f}")
-            Weighted RMSE for low flows: 2.8284
+            Weighted RMSE for low flows: 2.3308
 
             ```
         - Using weighting scheme 4 with alpha=0.7:
             ```python
             >>> error = rmse_lf(observed, simulated, ws_type=4, n=1, alpha=0.7)
             >>> print(f"Weighted RMSE for low flows: {error:.4f}")
-            Weighted RMSE for low flows: 2.0000
+            Weighted RMSE for low flows: 2.4640
 
             ```
 
@@ -332,7 +335,7 @@ def kge(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [5, 15, 45, 35, 60]
             >>> kge_value = kge(observed, simulated)
             >>> print(f"KGE: {kge_value:.4f}")
-            KGE: 0.6124
+            KGE: 0.5805
 
             ```
 
@@ -453,7 +456,8 @@ def nse(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [12, 18, 33, 43, 48]
             >>> nse_value = nse(observed, simulated)
             >>> print(f"NSE: {nse_value:.4f}")
-            NSE: 0.9608
+            NSE: 0.9700
+
             ```
         - Example with poorer performance:
             ```python
@@ -461,7 +465,7 @@ def nse(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [5, 15, 45, 35, 60]
             >>> nse_value = nse(observed, simulated)
             >>> print(f"NSE: {nse_value:.4f}")
-            NSE: 0.5000
+            NSE: 0.6000
 
             ```
         - Example with negative NSE (poor model):
@@ -523,7 +527,7 @@ def nse_hf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [12, 18, 33, 43, 90]
             >>> nse_hf_value = nse_hf(observed, simulated)
             >>> print(f"NSE_HF: {nse_hf_value:.4f}")
-            NSE_HF: 0.9901
+            NSE_HF: 0.9717
 
             ```
         - Example with poor performance on high flows
@@ -532,7 +536,7 @@ def nse_hf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [12, 18, 33, 43, 50]  # Significant underestimation of peak flow
             >>> nse_hf_value = nse_hf(observed, simulated)
             >>> print(f"NSE_HF: {nse_hf_value:.4f}")
-            NSE_HF: 0.5000
+            NSE_HF: 0.3401
 
             ```
 
@@ -591,7 +595,7 @@ def nse_lf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [11, 5.5, 2.8, 1.9, 1.1]
             >>> nse_lf_value = nse_lf(observed, simulated)
             >>> print(f"NSE_LF: {nse_lf_value:.4f}")
-            NSE_LF: 0.9901
+            NSE_LF: 0.9882
 
             ```
         - Example with poor performance on low flows:
@@ -600,7 +604,7 @@ def nse_lf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [11, 5.5, 2.8, 1.9, 0.5]  # Significant error in lowest flow
             >>> nse_lf_value = nse_lf(observed, simulated)
             >>> print(f"NSE_LF: {nse_lf_value:.4f}")
-            NSE_LF: 0.8000
+            NSE_LF: 0.9882
 
             ```
 
@@ -658,6 +662,7 @@ def mbe(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> mbe_value = mbe(observed, simulated)
             >>> print(f"MBE: {mbe_value:.1f}")
             MBE: 2.0
+
             ```
         - Example with underestimation bias:
             ```python
@@ -804,7 +809,7 @@ def pearson_corr_coeff(
             >>> y = [5, 2, 8, 1, 4]  # Random values
             >>> r = pearson_corr_coeff(x, y)
             >>> print(f"Correlation: {r:.4f}")
-            Correlation: -0.3000
+            Correlation: -0.1732
 
             ```
 
@@ -850,7 +855,7 @@ def r2(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [11, 19, 31, 41, 49]
             >>> r2_value = r2(observed, simulated)
             >>> print(f"R²: {r2_value:.4f}")
-            R²: 0.9960
+            R²: 0.9950
 
             ```
         - Poor model fit:
@@ -859,7 +864,7 @@ def r2(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [15, 15, 35, 35, 50]
             >>> r2_value = r2(observed, simulated)
             >>> print(f"R²: {r2_value:.4f}")
-            R²: 0.8000
+            R²: 0.9000
 
             ```
         - Negative R² (very poor model):
