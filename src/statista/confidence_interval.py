@@ -11,9 +11,6 @@ from numpy.random import randint
 class ConfidenceInterval:
     """ConfidenceInterval."""
 
-    def __init__(self):
-        pass
-
     @staticmethod
     def bs_indexes(data, n_samples=10000) -> np.ndarray:
         """bs_indexes.
