@@ -500,6 +500,7 @@ class Sensitivity:
                 ...     ylabel="Model Output"
                 ... )
                 >>> plt.show()
+
                 ```
                 ![one-at-a-time](./../_images/sensitivity/one-at-a-time.png)
 
