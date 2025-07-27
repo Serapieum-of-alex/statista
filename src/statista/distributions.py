@@ -31,6 +31,11 @@ __all__ = [
 SCALE_PARAMETER_ERROR = "Scale parameter is negative"
 CDF_INVALID_VALUE_ERROR = "cdf Value Invalid"
 OBJ_FUNCTION_THRESHOULD_ERROR = "obj_func and threshold should be numeric value"
+PROB_NON_EXCEEDENCE_ERROR = """
+Length of prob_non_exceed does not match the length of data, use the `PlottingPosition.weibul(data)`
+to the get the non-exceedance probability
+"""
+
 
 class PlottingPosition:
     """PlottingPosition."""
@@ -1689,10 +1694,7 @@ class Gumbel(AbstractDistribution):
         else:
             # if the prob_non_exceed is given, check if the length is the same as the data
             if len(prob_non_exceed) != len(self.data):
-                raise ValueError(
-                    "Length of prob_non_exceed does not match the length of data, use the `PlottingPosition.weibul(data)` "
-                    "to the get the non-exceedance probability"
-                )
+                raise ValueError(PROB_NON_EXCEEDENCE_ERROR)
 
         qth = self._inv_cdf(prob_non_exceed, parameters)
         y = [-np.log(-np.log(j)) for j in prob_non_exceed]
@@ -2447,10 +2449,7 @@ class GEV(AbstractDistribution):
         else:
             # if the prob_non_exceed is given, check if the length is the same as the data
             if len(prob_non_exceed) != len(self.data):
-                raise ValueError(
-                    "Length of prob_non_exceed does not match the length of data, use the `PlottingPosition.weibul(data)` "
-                    "to the get the non-exceedance probability"
-                )
+                raise ValueError(PROB_NON_EXCEEDENCE_ERROR)
         if state_function is None:
             state_function = GEV.ci_func
 
@@ -2550,10 +2549,7 @@ class GEV(AbstractDistribution):
         else:
             # if the prob_non_exceed is given, check if the length is the same as the data
             if len(cdf) != len(self.data):
-                raise ValueError(
-                    "Length of prob_non_exceed does not match the length of data, use the `PlottingPosition.weibul(data)` "
-                    "to the get the non-exceedance probability"
-                )
+                raise ValueError(PROB_NON_EXCEEDENCE_ERROR)
 
         q_x = np.linspace(
             float(self.data_sorted[0]), 1.5 * float(self.data_sorted[-1]), 10000
