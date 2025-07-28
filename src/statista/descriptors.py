@@ -123,7 +123,7 @@ def rmse_hf(
             f"Weighting scheme should be an integer number between 1 and 4 and you entered {ws_type}"
         )
 
-    if not isinstance(alpha, Number) or 0 < alpha > 1:
+    if not isinstance(alpha, Number) or not (0 < alpha <= 1):
         raise ValueError(
             f"alpha should be a number and between 0 & 1 you have entered {alpha}"
         )
