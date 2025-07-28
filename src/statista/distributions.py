@@ -2869,7 +2869,7 @@ class Exponential(AbstractDistribution):
         >>> cdf = 1 - np.exp(-Y)
         >>> for i in range(0, len(cdf)):
         ...     if cdf[i] < 0:
-        ...     cdf[i] = 0
+        ...         cdf[i] = 0
 
         ```
         """
@@ -2935,7 +2935,7 @@ class Exponential(AbstractDistribution):
             >>> data = np.loadtxt("examples/data/expo.txt")
             >>> parameters = {'loc': 0, 'scale': 2}
             >>> expo_dist = Exponential(data, parameters)
-            >>> expo_dist.cdf(plot_figure=True)
+            >>> _ = expo_dist.cdf(plot_figure=True)
 
             ```
             ![gamma-pdf](./../_images/distributions/expo-random-cdf.png)
