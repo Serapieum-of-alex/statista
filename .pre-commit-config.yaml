@@ -15,7 +15,7 @@ repos:
         args: [ --markdown-linebreak-ext=md ]
       - id: check-added-large-files
         name: "[file -  check] large file"
-        args: [ --maxkb=2000 ]
+        args: [ --maxkb=3000 ]
       - id: check-docstring-first
         name: "[py   -  check] docstring first"
         files: /examples
