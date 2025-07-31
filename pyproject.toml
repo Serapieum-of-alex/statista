@@ -1,6 +1,6 @@
 [project]
 name = "statista"
-version = "0.6.1"
+version = "0.6.2"
 description = "statistics package"
 readme = "README.md"
 requires-python = ">=3.11,<4"

@@ -1,6 +1,15 @@
 # Changelog
 
-## 0.6.1 (2025-06-**)
+## 0.6.2 (2025-07-31)
+##### Docs
+* add complete documentation for all modules.
+
+#### Dev
+* refactor all modules.
+* fix pre-commit hooks.
+
+
+## 0.6.1 (2025-06-03)
 ##### Dev
 * replace the setup.py with pyproject.toml.
 * migrate the documentation to use mkdocs-material.
