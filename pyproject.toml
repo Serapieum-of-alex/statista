@@ -87,6 +87,16 @@ max-line-length = 88
 max-complexity = 18
 select = "B,C,E,F,W,T4"
 
+[tool.black]
+profile = "flake8"
+line-length = 88
+skip-string-normalization = true
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+
 [build-system]
 requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"

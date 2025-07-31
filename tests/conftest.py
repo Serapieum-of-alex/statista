@@ -1,9 +1,9 @@
-from typing import List, Dict
+from typing import Dict, List
 
 import numpy as np
 import pandas as pd
-from pandas import DataFrame
 import pytest
+from pandas import DataFrame
 
 
 @pytest.fixture(scope="module")

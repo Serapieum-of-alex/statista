@@ -1,4 +1,4 @@
-"""Statistical descriptors. """
+"""Statistical descriptors."""
 
 from numbers import Number
 from typing import Union
@@ -34,7 +34,7 @@ def rmse(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [1.1, 2.1, 2.9, 4.2, 5.2]
             >>> rmse_value = rmse(observed, simulated)
             >>> print(f"RMSE: {rmse_value:.4f}")
-            RMSE: 0.1732
+            RMSE: 0.1483
 
             ```
         - Using numpy arrays:
@@ -43,7 +43,7 @@ def rmse(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = np.array([12, 18, 33, 43, 48])
             >>> rmse_value = rmse(observed, simulated)
             >>> print(f"RMSE: {rmse_value:.4f}")
-            RMSE: 2.9496
+            RMSE: 2.4495
 
             ```
 
@@ -97,19 +97,20 @@ def rmse_hf(
         >>> from statista.descriptors import rmse_hf
         >>> observed = [10, 20, 50, 100, 200]
         >>> simulated = [12, 18, 55, 95, 190]
+
         ```
         - Using weighting scheme 1 with n=2 and alpha=0.5:
             ```python
             >>> error = rmse_hf(observed, simulated, ws_type=1, n=2, alpha=0.5)
             >>> print(f"Weighted RMSE for high flows: {error:.4f}")
-            Weighted RMSE for high flows: 7.2111
+            Weighted RMSE for high flows: 4.6446
 
             ```
         - Using weighting scheme 3 (binary weighting) with alpha=0.7:
             ```python
             >>> error = rmse_hf(observed, simulated, ws_type=3, n=1, alpha=0.7)
             >>> print(f"Weighted RMSE for high flows: {error:.4f}")
-            Weighted RMSE for high flows: 8.3666
+            Weighted RMSE for high flows: 4.4721
 
             ```
 
@@ -122,8 +123,10 @@ def rmse_hf(
             f"Weighting scheme should be an integer number between 1 and 4 and you entered {ws_type}"
         )
 
-    if not isinstance(alpha, int) or not isinstance(alpha, float):
-        raise ValueError("alpha should be a number and between 0 & 1")
+    if not isinstance(alpha, Number) or not (0 < alpha <= 1):
+        raise ValueError(
+            f"alpha should be a number and between 0 & 1 you have entered {alpha}"
+        )
 
     if not isinstance(n, Number):
         raise TypeError("N should be a number and between 0 & 1")
@@ -207,24 +210,26 @@ def rmse_lf(
         ValueError: If ws_type is not between 1 and 4, n is negative, or alpha is not between 0 and 1.
 
     Examples:
-        ```python
-        >>> import numpy as np
-        >>> from statista.descriptors import rmse_lf
-        >>> observed = [10, 20, 50, 100, 200]
-        >>> simulated = [12, 18, 55, 95, 190]
-        ```
+        - Example with good performance on low flows:
+            ```python
+            >>> import numpy as np
+            >>> from statista.descriptors import rmse_lf
+            >>> observed = [10, 20, 50, 100, 200]
+            >>> simulated = [12, 18, 55, 95, 190]
+
+            ```
         - Using weighting scheme 1 with n=2 and alpha=0.5:
             ```python
             >>> error = rmse_lf(observed, simulated, ws_type=1, n=2, alpha=0.5)
             >>> print(f"Weighted RMSE for low flows: {error:.4f}")
-            Weighted RMSE for low flows: 2.8284
+            Weighted RMSE for low flows: 2.3308
 
             ```
         - Using weighting scheme 4 with alpha=0.7:
             ```python
             >>> error = rmse_lf(observed, simulated, ws_type=4, n=1, alpha=0.7)
             >>> print(f"Weighted RMSE for low flows: {error:.4f}")
-            Weighted RMSE for low flows: 2.0000
+            Weighted RMSE for low flows: 2.4640
 
             ```
 
@@ -263,16 +268,19 @@ def rmse_lf(
     obs = np.array(obs)
     qsim = np.array(qsim)
 
-    qmax = max(obs)  # rational Discharge power N
+    # rational Discharge power N
+    qmax = max(obs)
     qr = (qmax - obs) / qmax
 
     if ws_type == 1:
         w = qr**n
-    elif ws_type == 2:  # ------------------------------- N is not in the equation
+    elif ws_type == 2:
+        # N is not in the equation
         #  w=1-qr*((0.50 - alpha)**N)
         w = ((1 / (alpha**2)) * (1 - qr) ** 2) - ((2 / alpha) * (1 - qr)) + 1
         w[1 - qr > alpha] = 0
-    elif ws_type == 3:  # the same like WStype 2
+    elif ws_type == 3:
+        # the same as WStype 2
         # w=1-qr*((0.50 - alpha)**N)
         w = ((1 / (alpha**2)) * (1 - qr) ** 2) - ((2 / alpha) * (1 - qr)) + 1
         w[1 - qr > alpha] = 0
@@ -330,7 +338,7 @@ def kge(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [5, 15, 45, 35, 60]
             >>> kge_value = kge(observed, simulated)
             >>> print(f"KGE: {kge_value:.4f}")
-            KGE: 0.6124
+            KGE: 0.5805
 
             ```
 
@@ -360,10 +368,10 @@ def kge(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
 def wb(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
     """Water Balance Error.
 
-    Calculates the water balance error, which measures how well the model reproduces 
+    Calculates the water balance error, which measures how well the model reproduces
     the total stream flow volume.
 
-    This metric allows error compensation between time steps and is not an indication 
+    This metric allows error compensation between time steps and is not an indication
     of the temporal accuracy of the model. It only measures the overall volume balance.
     Note that the naive model of Nash-Sutcliffe (simulated flow equals the average observed
     flow) will result in a WB error of 100%.
@@ -373,7 +381,7 @@ def wb(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
         sim: Simulated flow values as a list or numpy array.
 
     Returns:
-        float: The water balance error as a percentage (0-100). 
+        float: The water balance error as a percentage (0-100).
             100% indicates perfect volume balance, while lower values indicate poorer performance.
 
     Raises:
@@ -421,10 +429,10 @@ def wb(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
 def nse(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
     """Nash-Sutcliffe Efficiency.
 
-    Calculates the Nash-Sutcliffe Efficiency (NSE), a widely used metric for assessing 
+    Calculates the Nash-Sutcliffe Efficiency (NSE), a widely used metric for assessing
     the performance of hydrological models.
 
-    NSE measures the relative magnitude of the residual variance compared to the 
+    NSE measures the relative magnitude of the residual variance compared to the
     variance of the observed data. It indicates how well the model predictions match
     the observations compared to using the mean of the observations as a predictor.
 
@@ -451,7 +459,8 @@ def nse(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [12, 18, 33, 43, 48]
             >>> nse_value = nse(observed, simulated)
             >>> print(f"NSE: {nse_value:.4f}")
-            NSE: 0.9608
+            NSE: 0.9700
+
             ```
         - Example with poorer performance:
             ```python
@@ -459,7 +468,7 @@ def nse(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [5, 15, 45, 35, 60]
             >>> nse_value = nse(observed, simulated)
             >>> print(f"NSE: {nse_value:.4f}")
-            NSE: 0.5000
+            NSE: 0.6000
 
             ```
         - Example with negative NSE (poor model):
@@ -491,8 +500,8 @@ def nse(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
 def nse_hf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
     """Modified Nash-Sutcliffe Efficiency for High Flows.
 
-    Calculates a modified version of the Nash-Sutcliffe Efficiency that gives more 
-    weight to high flow values. This is particularly useful for evaluating model 
+    Calculates a modified version of the Nash-Sutcliffe Efficiency that gives more
+    weight to high flow values. This is particularly useful for evaluating model
     performance during flood events or peak flows.
 
     This modification weights the squared errors by the observed flow values, giving
@@ -521,7 +530,7 @@ def nse_hf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [12, 18, 33, 43, 90]
             >>> nse_hf_value = nse_hf(observed, simulated)
             >>> print(f"NSE_HF: {nse_hf_value:.4f}")
-            NSE_HF: 0.9901
+            NSE_HF: 0.9717
 
             ```
         - Example with poor performance on high flows
@@ -530,7 +539,7 @@ def nse_hf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [12, 18, 33, 43, 50]  # Significant underestimation of peak flow
             >>> nse_hf_value = nse_hf(observed, simulated)
             >>> print(f"NSE_HF: {nse_hf_value:.4f}")
-            NSE_HF: 0.5000
+            NSE_HF: 0.3401
 
             ```
 
@@ -558,8 +567,8 @@ def nse_hf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
 def nse_lf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
     """Modified Nash-Sutcliffe Efficiency for Low Flows.
 
-    Calculates a modified version of the Nash-Sutcliffe Efficiency that gives more 
-    weight to low flow values. This is particularly useful for evaluating model 
+    Calculates a modified version of the Nash-Sutcliffe Efficiency that gives more
+    weight to low flow values. This is particularly useful for evaluating model
     performance during drought periods or base flow conditions.
 
     This modification applies a logarithmic transformation to the flow values before
@@ -589,7 +598,7 @@ def nse_lf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [11, 5.5, 2.8, 1.9, 1.1]
             >>> nse_lf_value = nse_lf(observed, simulated)
             >>> print(f"NSE_LF: {nse_lf_value:.4f}")
-            NSE_LF: 0.9901
+            NSE_LF: 0.9882
 
             ```
         - Example with poor performance on low flows:
@@ -598,7 +607,7 @@ def nse_lf(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [11, 5.5, 2.8, 1.9, 0.5]  # Significant error in lowest flow
             >>> nse_lf_value = nse_lf(observed, simulated)
             >>> print(f"NSE_LF: {nse_lf_value:.4f}")
-            NSE_LF: 0.8000
+            NSE_LF: 0.9882
 
             ```
 
@@ -638,7 +647,7 @@ def mbe(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
         sim: Simulated values as a list or numpy array.
 
     Returns:
-        float: The Mean Bias Error value. 
+        float: The Mean Bias Error value.
             - MBE = 0: No bias
             - MBE > 0: Overestimation bias (simulated values tend to be larger than observed)
             - MBE < 0: Underestimation bias (simulated values tend to be smaller than observed)
@@ -656,6 +665,7 @@ def mbe(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> mbe_value = mbe(observed, simulated)
             >>> print(f"MBE: {mbe_value:.1f}")
             MBE: 2.0
+
             ```
         - Example with underestimation bias:
             ```python
@@ -802,7 +812,7 @@ def pearson_corr_coeff(
             >>> y = [5, 2, 8, 1, 4]  # Random values
             >>> r = pearson_corr_coeff(x, y)
             >>> print(f"Correlation: {r:.4f}")
-            Correlation: -0.3000
+            Correlation: -0.1732
 
             ```
 
@@ -848,7 +858,7 @@ def r2(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [11, 19, 31, 41, 49]
             >>> r2_value = r2(observed, simulated)
             >>> print(f"R²: {r2_value:.4f}")
-            R²: 0.9960
+            R²: 0.9950
 
             ```
         - Poor model fit:
@@ -857,7 +867,7 @@ def r2(obs: Union[list, np.ndarray], sim: Union[list, np.ndarray]) -> float:
             >>> simulated = [15, 15, 35, 35, 50]
             >>> r2_value = r2(observed, simulated)
             >>> print(f"R²: {r2_value:.4f}")
-            R²: 0.8000
+            R²: 0.9000
 
             ```
         - Negative R² (very poor model):

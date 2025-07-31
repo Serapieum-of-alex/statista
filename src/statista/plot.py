@@ -1,12 +1,13 @@
 """Plotting functions for statista package."""
 
-from typing import Union, Tuple
 from numbers import Number
+from typing import Tuple, Union
+
 import matplotlib.pyplot as plt
-from matplotlib import gridspec
-from matplotlib.figure import Figure
-from matplotlib.axes import Axes
 import numpy as np
+from matplotlib import gridspec
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
 
 class Plot:
@@ -25,23 +26,27 @@ class Plot:
             >>> import numpy as np
             >>> from statista.plot import Plot
             >>> from statista.distributions import Normal
+            >>> np.random.seed(42)
             >>> data = np.random.normal(loc=10, scale=2, size=100)
 
             ```
         - Fit a normal distribution:
             ```python
             >>> normal_dist = Normal(data)
-            >>> normal_dist.fit_model()
+            >>> normal_dist.fit_model() # doctest: +SKIP
             -----KS Test--------
             Statistic = 0.09
             Accept Hypothesis
             P value = 0.8154147124661313
             {'loc': np.float64(9.876997051725278), 'scale': np.float64(2.010896054339655)}
+
             ```
         - Generate points for plotting:
             ```python
             >>> x = np.linspace(min(data), max(data), 10000)
-            >>> pdf_values = normal_dist.pdf(data=x)
+            >>> parameters = {'loc': 9.876997051725278, 'scale': 2.010896054339655}
+            >>> pdf_values = normal_dist.pdf(data=x, parameters=parameters)
+
             ```
         - Create a PDF plot:
             ```python
@@ -51,15 +56,12 @@ class Plot:
             ![PDF Plot Example](./../_images/plot/plot-pdf.png)
     """
 
-    def __init__(self):
-        pass
-
     @staticmethod
     def pdf(
         qx: np.ndarray,
-        pdf_fitted,
+        pdf_fitted: Union[np.ndarray, list],
         data_sorted: np.ndarray,
-        fig_size: Tuple[float, float] = (6, 5),
+        fig_size: Tuple = (6, 5),
         xlabel: str = "Actual data",
         ylabel: str = "pdf",
         fontsize: int = 11,
@@ -70,15 +72,22 @@ class Plot:
         and a histogram of the actual data for visual comparison.
 
         Args:
-            qx: Array of x-values for plotting the fitted PDF curve. Typically generated
-                as a linspace between the min and max of the actual data.
-            pdf_fitted: Array of PDF values corresponding to each point in qx.
-                Usually obtained from a distribution's pdf method.
-            data_sorted: The actual data to be plotted as a histogram.
-            fig_size: Figure size as (width, height) in inches. Defaults to (6, 5).
-            xlabel: Label for the x-axis. Defaults to "Actual data".
-            ylabel: Label for the y-axis. Defaults to "pdf".
-            fontsize: Font size for labels. Defaults to 11.
+            qx (np.ndarray):
+                Array of x-values for plotting the fitted PDF curve. Typically generated as a linspace between the
+                min and max of the actual data.
+            pdf_fitted (Union[np.ndarray, list]):
+                Array of PDF values corresponding to each point in qx. Usually obtained from a distribution's pdf
+                method.
+            data_sorted (np.ndarray):
+                The actual data to be plotted as a histogram.
+            fig_size (Tuple):
+                Figure size as (width, height) in inches. Defaults to (6, 5).
+            xlabel (str):
+                Label for the x-axis. Defaults to "Actual data".
+            ylabel (str):
+                Label for the y-axis. Defaults to "pdf".
+            fontsize (int):
+                Font size for labels. Defaults to 11.
 
         Returns:
             tuple: A tuple containing:
@@ -108,7 +117,8 @@ class Plot:
             - Generate points for plotting
                 ```python
                 >>> x = np.linspace(min(data), max(data), 1000)
-                >>> pdf_values = normal_dist.pdf(data=x)
+                >>> parameters = {'loc': 10.031759532159755, 'scale': 1.819201407871162}
+                >>> pdf_values = normal_dist.pdf(data=x, parameters=parameters)
 
                 ```
             - Create a PDF plot:
@@ -117,9 +127,10 @@ class Plot:
 
                 ```
 
-                - Further customize the plot if needed
-                >>> ax.set_title("Normal Distribution PDF")
-                >>> ax.grid(True)
+            - Further customize the plot if needed
+                ```python
+                >>> ax.set_title("Normal Distribution PDF") # doctest: +SKIP
+                >>> ax.grid(True) # doctest: +SKIP
 
                 ```
                 ![PDF Plot Example](./../_images/plot/plot-pdf-2.png)
@@ -181,6 +192,7 @@ class Plot:
                 >>> import numpy as np
                 >>> from statista.plot import Plot
                 >>> from statista.distributions import Normal
+                >>> np.random.seed(42)
                 >>> data = np.random.normal(loc=10, scale=2, size=100)
                 >>> data_sorted = np.sort(data)
 
@@ -205,7 +217,8 @@ class Plot:
             - Generate points for plotting:
                 ```python
                 >>> x = np.linspace(min(data), max(data), 1000)
-                >>> cdf_values = normal_dist.cdf(data=x)
+                >>> parameters = {'loc': 9.62108385209537, 'scale': 2.1593427284432147}
+                >>> cdf_values = normal_dist.cdf(data=x, parameters=parameters)
 
                 ```
             - Create a CDF plot
@@ -215,8 +228,8 @@ class Plot:
                 ```
             - Further customize the plot if needed
                 ```python
-                >>> ax.set_title("Normal Distribution CDF")
-                >>> ax.grid(True)
+                >>> ax.set_title("Normal Distribution CDF") # doctest: +SKIP
+                >>> ax.grid(True)   # doctest: +SKIP
 
                 ```
                 ![CDF Plot Example](./../_images/plot/plot-cdf.png)
@@ -294,6 +307,7 @@ class Plot:
                 ```
             - Generate some sample data:
                 ```python
+                >>> np.random.seed(42)
                 >>> data = np.random.normal(loc=10, scale=2, size=100)
                 >>> data_sorted = np.sort(data)
 
@@ -318,8 +332,9 @@ class Plot:
             - Generate points for plotting:
                 ```python
                 >>> x = np.linspace(min(data), max(data), 1000)
-                >>> pdf_values = normal_dist.pdf(data=x)
-                >>> cdf_values = normal_dist.cdf(data=x)
+                >>> parameters = {'loc': 10.061702421737607, 'scale': 1.857026806934038}
+                >>> pdf_values = normal_dist.pdf(data=x, parameters=parameters)
+                >>> cdf_values = normal_dist.cdf(data=x, parameters=parameters)
 
                 ```
             - Create a detailed plot with both PDF and CDF:
@@ -329,11 +344,11 @@ class Plot:
                 ```
             - Further customize the plots if needed:
                 ```python
-                >>> ax1.set_title("PDF Comparison")
-                >>> ax2.set_title("CDF Comparison")
-                >>> fig.suptitle("Normal Distribution Fit", fontsize=14)
-                >>> ax1.grid(True)
-                >>> ax2.grid(True)
+                >>> ax1.set_title("PDF Comparison") # doctest: +SKIP
+                >>> ax2.set_title("CDF Comparison") # doctest: +SKIP
+                >>> fig.suptitle("Normal Distribution Fit", fontsize=14) # doctest: +SKIP
+                >>> ax1.grid(True) # doctest: +SKIP
+                >>> ax2.grid(True) # doctest: +SKIP
 
                 ```
                 ![Details Plot Example](./../_images/plot/plot-detailed.png)
@@ -405,9 +420,11 @@ class Plot:
                 >>> import numpy as np
                 >>> from statista.plot import Plot
                 >>> from statista.distributions import Normal
+
                 ```
             - Generate some sample data:
                 ```python
+                >>> np.random.seed(42)
                 >>> data = np.random.normal(loc=10, scale=2, size=100)
 
                 ```
@@ -425,7 +442,8 @@ class Plot:
             - Generate theoretical quantiles:
                 ```python
                 >>> p = np.linspace(0.01, 0.99, 100)  # Probability points
-                >>> theoretical_quantiles = normal_dist.inverse_cdf(p)
+                >>> parameters = {'loc': 10.51674893337459, 'scale': 2.002961856532672}
+                >>> theoretical_quantiles = normal_dist.inverse_cdf(p, parameters=parameters)
 
                 ```
             - Calculate confidence intervals (simplified example):
@@ -446,8 +464,8 @@ class Plot:
                 ```
             - Further customize the plot if needed
                 ```python
-                >>> ax.set_title("Normal Distribution Quantile Plot with 95% CI")
-                >>> ax.grid(True)
+                >>> ax.set_title("Normal Distribution Quantile Plot with 95% CI") # doctest: +SKIP
+                >>> ax.grid(True) # doctest: +SKIP
 
                 ```
                 ![Confidence Level Plot Example](./../_images/plot/plot-confidence-level.png)

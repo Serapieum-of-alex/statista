@@ -1,7 +1,9 @@
 """Confidence Interval Tests"""
 
 from typing import Dict
+
 import numpy as np
+
 from statista.confidence_interval import ConfidenceInterval
 from statista.distributions import GEV
 

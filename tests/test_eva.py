@@ -1,13 +1,15 @@
-""" Tests for the eva module. """
+"""Tests for the eva module."""
 
 import matplotlib
 import pandas as pd
 
 matplotlib.use("Agg")
-from pandas import DataFrame
 import shutil
 from pathlib import Path
+
 import pytest
+from pandas import DataFrame
+
 from statista.eva import ams_analysis
 
 

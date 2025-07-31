@@ -1,13 +1,12 @@
-""" Rhine gauges example """
+"""Rhine gauges example"""
 
 import matplotlib
 
 matplotlib.use("TkAgg")
 import numpy as np
 import pandas as pd
-from statista.distributions import (
-    Distributions,
-)
+
+from statista.distributions import Distributions
 
 # %%
 ams = pd.read_csv("examples/data/rhine.csv")

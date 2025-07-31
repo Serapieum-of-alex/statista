@@ -3,17 +3,19 @@
 from __future__ import annotations
 
 from typing import Any, List, Union
+
 import numpy as np
 import scipy as sp
 import scipy.special as _spsp
 from numpy import ndarray
-
 
 ninf = 1e-5
 MAXIT = 20
 EPS = 1e-6
 # Euler's constant
 EU = 0.577215664901532861
+
+LMOMENTS_INVALID_ERROR = "L-Moments Invalid"
 
 
 class Lmoments:
@@ -31,9 +33,8 @@ class Lmoments:
 
     def __init__(self, data):
         self.data = data
-        pass
 
-    def Lmom(self, nmom=5):
+    def calculate(self, nmom=5):
         """Calculates the Lmoments."""
         if nmom <= 5:
             var = self._samlmusmall(nmom)
@@ -43,14 +44,14 @@ class Lmoments:
         return var
 
     @staticmethod
-    def _comb(N, k):
-        """sum [(N-j)/(j+1)]"""
-        if (k > N) or (N < 0) or (k < 0):
+    def _comb(n, k):
+        """sum [(n-j)/(j+1)]"""
+        if (k > n) or (n < 0) or (k < 0):
             val = 0
         else:
             val = 1
-            for j in range(min(k, N - k)):
-                val = (val * (N - j)) // (j + 1)  # // is floor division
+            for j in range(min(k, n - k)):
+                val = (val * (n - j)) // (j + 1)  # // is floor division
         return val
 
     def _samlmularge(self, nmom: int = 5) -> list[ndarray | float | int | Any]:
@@ -237,33 +238,33 @@ class Lmoments:
         -------
         List of distribution parameters
         """
-        DL2 = np.log(2)
-        DL3 = np.log(3)
+        dl2 = np.log(2)
+        dl3 = np.log(3)
         # COEFFICIENTS OF RATIONAL-FUNCTION APPROXIMATIONS FOR XI
-        A0 = 0.28377530
-        A1 = -1.21096399
-        A2 = -2.50728214
-        A3 = -1.13455566
-        A4 = -0.07138022
-        B1 = 2.06189696
-        B2 = 1.31912239
-        B3 = 0.25077104
-        C1 = 1.59921491
-        C2 = -0.48832213
-        C3 = 0.01573152
-        D1 = -0.64363929
-        D2 = 0.08985247
+        a0 = 0.28377530
+        a1 = -1.21096399
+        a2 = -2.50728214
+        a3 = -1.13455566
+        a4 = -0.07138022
+        b1 = 2.06189696
+        b2 = 1.31912239
+        b3 = 0.25077104
+        c1 = 1.59921491
+        c2 = -0.48832213
+        c3 = 0.01573152
+        d1 = -0.64363929
+        d2 = 0.08985247
 
-        T3 = lmoments[2]
+        t3 = lmoments[2]
         # if std <= 0 or third moment > 1
-        if lmoments[1] <= 0 or abs(T3) >= 1:
-            raise ValueError("L-Moments Invalid")
+        if lmoments[1] <= 0 or abs(t3) >= 1:
+            raise ValueError(LMOMENTS_INVALID_ERROR)
 
-        if T3 <= 0:
-            G = (A0 + T3 * (A1 + T3 * (A2 + T3 * (A3 + T3 * A4)))) / (
-                1 + T3 * (B1 + T3 * (B2 + T3 * B3))
+        if t3 <= 0:
+            G = (a0 + t3 * (a1 + t3 * (a2 + t3 * (a3 + t3 * a4)))) / (
+                1 + t3 * (b1 + t3 * (b2 + t3 * b3))
             )
-            if T3 >= -0.8:
+            if t3 >= -0.8:
                 shape = G
                 GAM = np.exp(sp.special.gammaln(1 + G))
                 scale = lmoments[1] * G / (GAM * (1 - 2 ** (-G)))
@@ -271,10 +272,10 @@ class Lmoments:
                 para = [shape, loc, scale]
                 return para
 
-            if T3 <= -0.97:
-                G = 1 - np.log(1 + T3) / DL2
+            if t3 <= -0.97:
+                G = 1 - np.log(1 + t3) / dl2
 
-            T0 = (T3 + 3) * 0.5
+            T0 = (t3 + 3) * 0.5
 
             for _ in range(1, MAXIT):
                 X2 = 2 ** (-G)
@@ -282,7 +283,7 @@ class Lmoments:
                 XX2 = 1 - X2
                 XX3 = 1 - X3
                 T = XX3 / XX2
-                DERIV = (XX2 * X3 * DL3 - XX3 * X2 * DL2) / (XX2**2)
+                DERIV = (XX2 * X3 * dl3 - XX3 * X2 * dl2) / (XX2**2)
                 GOLD = G
                 G = G - (T - T0) / DERIV
                 if abs(G - GOLD) <= EPS * G:
@@ -294,11 +295,11 @@ class Lmoments:
                     return para
             raise Exception("Iteration has not converged")
         else:
-            Z = 1 - T3
-            G = (-1 + Z * (C1 + Z * (C2 + Z * C3))) / (1 + Z * (D1 + Z * D2))
+            Z = 1 - t3
+            G = (-1 + Z * (c1 + Z * (c2 + Z * c3))) / (1 + Z * (d1 + Z * d2))
             if abs(G) < ninf:
                 # Gumbel
-                scale = lmoments[1] / DL2
+                scale = lmoments[1] / dl2
                 loc = lmoments[0] - EU * scale
                 para = [0, loc, scale]
             else:
@@ -327,7 +328,7 @@ class Lmoments:
         List of distribution parameters
         """
         if lmoments[1] <= 0:
-            raise ValueError("L-Moments Invalid")
+            raise ValueError(LMOMENTS_INVALID_ERROR)
         else:
             para2 = lmoments[1] / np.log(2)
             para1 = lmoments[0] - EU * para2
@@ -348,7 +349,7 @@ class Lmoments:
         List of distribution parameters
         """
         if lmoments[1] <= 0:
-            print("L-Moments Invalid")
+            print(LMOMENTS_INVALID_ERROR)
             para = None
         else:
             para = [lmoments[0] - 2 * lmoments[1], 2 * lmoments[1]]
@@ -377,7 +378,7 @@ class Lmoments:
         B4 = 1.2113
 
         if lmoments[0] <= lmoments[1] or lmoments[1] <= 0:
-            print("L-Moments Invalid")
+            print(LMOMENTS_INVALID_ERROR)
             para = None
         else:
             CV = lmoments[1] / lmoments[0]
@@ -393,7 +394,7 @@ class Lmoments:
 
     @staticmethod
     def generalized_logistic(
-        lmoments: List[Union[float, int]]
+        lmoments: List[Union[float, int]],
     ) -> List[Union[float, int]]:
         """Generalized logistic distribution.
 
@@ -408,72 +409,67 @@ class Lmoments:
         """
         SMALL = 1e-6
 
-        G = -lmoments[2]
-        if lmoments[1] <= 0 or abs(G) >= 1:
-            print("L-Moments Invalid")
+        g = -lmoments[2]
+        if lmoments[1] <= 0 or abs(g) >= 1:
+            print(LMOMENTS_INVALID_ERROR)
             para = None
         else:
-            if abs(G) <= SMALL:
+            if abs(g) <= SMALL:
                 para = [lmoments[0], lmoments[1], 0]
                 return para
 
-            GG = G * np.pi / sp.sin(G * np.pi)
-            A = lmoments[1] / GG
-            para1 = lmoments[0] - A * (1 - GG) / G
-            para = [para1, A, G]
+            gg = g * np.pi / sp.sin(g * np.pi)
+            a = lmoments[1] / gg
+            para1 = lmoments[0] - a * (1 - gg) / g
+            para = [para1, a, g]
         return para
 
     @staticmethod
     def generalized_normal(
-        lmoments: List[Union[float, int]]
-    ) -> List[Union[float, int]]:
+        lmoments: List[Union[float, int]] | None,
+    ) -> List[Union[float, int]] | None:
         """Generalized Normal distribution.
 
-        Parameters
-        ----------
-        lmoments: List
-            list of l moments
+        Args:
+            lmoments (List):
+                list of l moments
 
-        Returns
-        -------
-        List of distribution parameters
+        Returns:
+            List of distribution parameters
         """
-        A0 = 0.20466534e01
-        A1 = -0.36544371e01
-        A2 = 0.18396733e01
-        A3 = -0.20360244e00
-        B1 = -0.20182173e01
-        B2 = 0.12420401e01
-        B3 = -0.21741801e00
-        SMALL = 1e-8
+        a0 = 0.20466534e01
+        a1 = -0.36544371e01
+        a2 = 0.18396733e01
+        a3 = -0.20360244e00
+        b1 = -0.20182173e01
+        b2 = 0.12420401e01
+        b3 = -0.21741801e00
 
-        T3 = lmoments[2]
-        if lmoments[1] <= 0 or abs(T3) >= 1:
-            print("L-Moments Invalid")
-            return
-        if abs(T3) >= 0.95:
+        t3 = lmoments[2]
+        if lmoments[1] <= 0 or abs(t3) >= 1:
+            print(LMOMENTS_INVALID_ERROR)
+            return None
+
+        if abs(t3) >= 0.95:
             para = [0, -1, 0]
             return para
 
-        if abs(T3) <= SMALL:
-            para = [lmoments[0], lmoments[1] * np.sqrt(np.pi), 0]
-
-        TT = T3**2
-        G = (
-            -T3
-            * (A0 + TT * (A1 + TT * (A2 + TT * A3)))
-            / (1 + TT * (B1 + TT * (B2 + TT * B3)))
+        tt = t3**2
+        g = (
+            -t3
+            * (a0 + tt * (a1 + tt * (a2 + tt * a3)))
+            / (1 + tt * (b1 + tt * (b2 + tt * b3)))
         )
-        E = sp.exp(0.5 * G**2)
-        A = lmoments[1] * G / (E * sp.special.erf(0.5 * G))
-        U = lmoments[0] + A * (E - 1) / G
-        para = [U, A, G]
+        e = sp.exp(0.5 * g**2)
+        a = lmoments[1] * g / (e * sp.special.erf(0.5 * g))
+        u = lmoments[0] + a * (e - 1) / g
+        para = [u, a, g]
         return para
 
     @staticmethod
     def generalized_pareto(
-        lmoments: List[Union[float, int]]
-    ) -> List[Union[float, int]]:
+        lmoments: List[Union[float, int]],
+    ) -> list[float] | None:
         """Generalized Pareto distribution.
 
         Parameters
@@ -485,183 +481,25 @@ class Lmoments:
         -------
         List of distribution parameters
         """
-        T3 = lmoments[2]
+        t3 = lmoments[2]
         if lmoments[1] <= 0:
-            print("L-Moments Invalid")
-            return
-        if abs(T3) >= 1:
-            print("L-Moments Invalid")
-            return
+            print(LMOMENTS_INVALID_ERROR)
+            return None
 
-        G = (1 - 3 * T3) / (1 + T3)
+        if abs(t3) >= 1:
+            print(LMOMENTS_INVALID_ERROR)
+            return None
 
-        PARA3 = G
-        PARA2 = (1 + G) * (2 + G) * lmoments[1]
-        PARA1 = lmoments[0] - PARA2 / (1 + G)
-        para = [PARA1, PARA2, PARA3]
+        g = (1 - 3 * t3) / (1 + t3)
+
+        para3 = g
+        para2 = (1 + g) * (2 + g) * lmoments[1]
+        para1 = lmoments[0] - para2 / (1 + g)
+        para = [para1, para2, para3]
         return para
 
-    # def kappa(lmoments):
-    #
-    #     MAXSR = 10
-    #     HSTART = 1.001
-    #     BIG = 10
-    #     OFLEXP = 170
-    #     OFLGAM = 53
-    #
-    #     T3 = lmoments[2]
-    #     T4 = lmoments[3]
-    #     para = [0] * 4
-    #     if lmoments[1] <= 0:
-    #         print("L-Moments Invalid")
-    #         return
-    #     if abs(T3) >= 1 or abs(T4) >= 1:
-    #         print("L-Moments Invalid")
-    #         return
-    #
-    #     if T4 <= (5 * T3 * T3 - 1) / 4:
-    #         print("L-Moments Invalid")
-    #         return
-    #
-    #     if T4 >= (5 * T3 * T3 + 1) / 6:
-    #         print("L-Moments Invalid")
-    #         return
-    #
-    #     G = (1 - 3 * T3) / (1 + T3)
-    #     H = HSTART
-    #     Z = G + H * 0.725
-    #     Xdist = BIG
-    #
-    #     # Newton-Raphson Iteration
-    #     for it in range(1, MAXIT + 1):
-    #         for i in range(1, MAXSR + 1):
-    #             if G > OFLGAM:
-    #                 print("Failed to converge")
-    #                 return
-    #             if H > 0:
-    #                 U1 = sp.exp(_spsp.gammaln(1 / H) - _spsp.gammaln(1 / H + 1 + G))
-    #                 U2 = sp.exp(_spsp.gammaln(2 / H) - _spsp.gammaln(2 / H + 1 + G))
-    #                 U3 = sp.exp(_spsp.gammaln(3 / H) - _spsp.gammaln(3 / H + 1 + G))
-    #                 U4 = sp.exp(_spsp.gammaln(4 / H) - _spsp.gammaln(4 / H + 1 + G))
-    #             else:
-    #                 U1 = sp.exp(_spsp.gammaln(-1 / H - G) - _spsp.gammaln(-1 / H + 1))
-    #                 U2 = sp.exp(_spsp.gammaln(-2 / H - G) - _spsp.gammaln(-2 / H + 1))
-    #                 U3 = sp.exp(_spsp.gammaln(-3 / H - G) - _spsp.gammaln(-3 / H + 1))
-    #                 U4 = sp.exp(_spsp.gammaln(-4 / H - G) - _spsp.gammaln(-4 / H + 1))
-    #
-    #             ALAM2 = U1 - 2 * U2
-    #             ALAM3 = -U1 + 6 * U2 - 6 * U3
-    #             ALAM4 = U1 - 12 * U2 + 30 * U3 - 20 * U4
-    #             if ALAM2 == 0:
-    #                 print("Failed to Converge")
-    #                 return
-    #             TAU3 = ALAM3 / ALAM2
-    #             TAU4 = ALAM4 / ALAM2
-    #             E1 = TAU3 - T3
-    #             E2 = TAU4 - T4
-    #
-    #             DIST = max(abs(E1), abs(E2))
-    #             if DIST < Xdist:
-    #                 Success = 1
-    #                 break
-    #             else:
-    #                 DEL1 = 0.5 * DEL1
-    #                 DEL2 = 0.5 * DEL2
-    #                 G = XG - DEL1
-    #                 H = XH - DEL2
-    #
-    #         if Success == 0:
-    #             print("Failed to converge")
-    #             return
-    #
-    #         # Test for convergence
-    #         if DIST < EPS:
-    #             para[3] = H
-    #             para[2] = G
-    #             TEMP = _spsp.gammaln(1 + G)
-    #             if TEMP > OFLEXP:
-    #                 print("Failed to converge")
-    #                 return
-    #             GAM = sp.exp(TEMP)
-    #             TEMP = (1 + G) * sp.log(abs(H))
-    #             if TEMP > OFLEXP:
-    #                 print("Failed to converge")
-    #                 return
-    #
-    #             HH = sp.exp(TEMP)
-    #             para[1] = lmoments[1] * G * HH / (ALAM2 * GAM)
-    #             para[0] = lmoments[0] - para[1] / G * (1 - GAM * U1 / HH)
-    #             return (para)
-    #         else:
-    #             XG = G
-    #             XH = H
-    #             XZ = Z
-    #             Xdist = DIST
-    #             RHH = 1 / (H ** 2)
-    #             if H > 0:
-    #                 U1G = -U1 * _spsp.psi(1 / H + 1 + G)
-    #                 U2G = -U2 * _spsp.psi(2 / H + 1 + G)
-    #                 U3G = -U3 * _spsp.psi(3 / H + 1 + G)
-    #                 U4G = -U4 * _spsp.psi(4 / H + 1 + G)
-    #                 U1H = RHH * (-U1G - U1 * _spsp.psi(1 / H))
-    #                 U2H = 2 * RHH * (-U2G - U2 * _spsp.psi(2 / H))
-    #                 U3H = 3 * RHH * (-U3G - U3 * _spsp.psi(3 / H))
-    #                 U4H = 4 * RHH * (-U4G - U4 * _spsp.psi(4 / H))
-    #             else:
-    #                 U1G = -U1 * _spsp.psi(-1 / H - G)
-    #                 U2G = -U2 * _spsp.psi(-2 / H - G)
-    #                 U3G = -U3 * _spsp.psi(-3 / H - G)
-    #                 U4G = -U4 * _spsp.psi(-4 / H - G)
-    #                 U1H = RHH * (-U1G - U1 * _spsp.psi(-1 / H + 1))
-    #                 U2H = 2 * RHH * (-U2G - U2 * _spsp.psi(-2 / H + 1))
-    #                 U3H = 3 * RHH * (-U3G - U3 * _spsp.psi(-3 / H + 1))
-    #                 U4H = 4 * RHH * (-U4G - U4 * _spsp.psi(-4 / H + 1))
-    #
-    #             DL2G = U1G - 2 * U2G
-    #             DL2H = U1H - 2 * U2H
-    #             DL3G = -U1G + 6 * U2G - 6 * U3G
-    #             DL3H = -U1H + 6 * U2H - 6 * U3H
-    #             DL4G = U1G - 12 * U2G + 30 * U3G - 20 * U4G
-    #             DL4H = U1H - 12 * U2H + 30 * U3H - 20 * U4H
-    #             D11 = (DL3G - TAU3 * DL2G) / ALAM2
-    #             D12 = (DL3H - TAU3 * DL2H) / ALAM2
-    #             D21 = (DL4G - TAU4 * DL2G) / ALAM2
-    #             D22 = (DL4H - TAU4 * DL2H) / ALAM2
-    #             DET = D11 * D22 - D12 * D21
-    #             H11 = D22 / DET
-    #             H12 = -D12 / DET
-    #             H21 = -D21 / DET
-    #             H22 = D11 / DET
-    #             DEL1 = E1 * H11 + E2 * H12
-    #             DEL2 = E1 * H21 + E2 * H22
-    #
-    #             ##          TAKE NEXT N-R STEP
-    #             G = XG - DEL1
-    #             H = XH - DEL2
-    #             Z = G + H * 0.725
-    #
-    #             ##          REDUCE STEP IF G AND H ARE OUTSIDE THE PARAMETER _spACE
-    #             FACTOR = 1
-    #             if G <= -1:
-    #                 FACTOR = 0.8 * (XG + 1) / DEL1
-    #             if H <= -1:
-    #                 FACTOR = min(FACTOR, 0.8 * (XH + 1) / DEL2)
-    #             if Z <= -1:
-    #                 FACTOR = min(FACTOR, 0.8 * (XZ + 1) / (XZ - Z))
-    #             if H <= 0 and G * H <= -1:
-    #                 FACTOR = min(FACTOR, 0.8 * (XG * XH + 1) / (XG * XH - G * H))
-    #
-    #             if FACTOR == 1:
-    #                 pass
-    #             else:
-    #                 DEL1 = DEL1 * FACTOR
-    #                 DEL2 = DEL2 * FACTOR
-    #                 G = XG - DEL1
-    #                 H = XH - DEL2
-    #                 Z = G + H * 0.725
-
     @staticmethod
-    def normal(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
+    def normal(lmoments: List[Union[float, int]]) -> List[Union[float, int]] | None:
         """Normal distribution.
 
         Parameters
@@ -674,8 +512,8 @@ class Lmoments:
         List of distribution parameters
         """
         if lmoments[1] <= 0:
-            print("L-Moments Invalid")
-            return
+            print(LMOMENTS_INVALID_ERROR)
+            return None
         else:
             para = [lmoments[0], lmoments[1] * np.sqrt(np.pi)]
             return para
@@ -693,147 +531,124 @@ class Lmoments:
         -------
         List of distribution parameters
         """
-        Small = 1e-6
+        small = 1e-6
         # Constants used in Minimax Approx:
 
-        C1 = 0.2906
-        C2 = 0.1882
-        C3 = 0.0442
-        D1 = 0.36067
-        D2 = -0.59567
-        D3 = 0.25361
-        D4 = -2.78861
-        D5 = 2.56096
-        D6 = -0.77045
+        c1 = 0.2906
+        c2 = 0.1882
+        c3 = 0.0442
+        d1 = 0.36067
+        d2 = -0.59567
+        d3 = 0.25361
+        d4 = -2.78861
+        d5 = 2.56096
+        d6 = -0.77045
 
-        T3 = abs(lmoments[2])
-        if lmoments[1] <= 0 or T3 >= 1:
+        t3 = abs(lmoments[2])
+        if lmoments[1] <= 0 or t3 >= 1:
             para = [0] * 3
-            print("L-Moments Invalid")
+            print(LMOMENTS_INVALID_ERROR)
             return para
 
-        if T3 <= Small:
-            para = []
-            para.append(lmoments[0])
-            para.append(lmoments[1] * np.sqrt(np.pi))
-            para.append(0)
+        if t3 <= small:
+            para = [lmoments[0], lmoments[1] * np.sqrt(np.pi), 0]
             return para
 
-        if T3 >= (1.0 / 3):
-            T = 1 - T3
-            Alpha = T * (D1 + T * (D2 + T * D3)) / (1 + T * (D4 + T * (D5 + T * D6)))
+        if t3 >= (1.0 / 3):
+            t = 1 - t3
+            alpha = t * (d1 + t * (d2 + t * d3)) / (1 + t * (d4 + t * (d5 + t * d6)))
         else:
-            T = 3 * np.pi * T3 * T3
-            Alpha = (1 + C1 * T) / (T * (1 + T * (C2 + T * C3)))
+            t = 3 * np.pi * t3 * t3
+            alpha = (1 + c1 * t) / (t * (1 + t * (c2 + t * c3)))
 
-        RTALPH = np.sqrt(Alpha)
-        BETA = (
+        rtalph = np.sqrt(alpha)
+        beta = (
             np.sqrt(np.pi)
             * lmoments[1]
-            * sp.exp(_spsp.gammaln(Alpha) - _spsp.gammaln(Alpha + 0.5))
+            * sp.exp(_spsp.gammaln(alpha) - _spsp.gammaln(alpha + 0.5))
         )
-        para = []
-        para.append(lmoments[0])
-        para.append(BETA * RTALPH)
-        para.append(2 / RTALPH)
+        para = [lmoments[0], beta * rtalph, 2 / rtalph]
         if lmoments[2] < 0:
             para[2] = -para[2]
 
         return para
 
     @staticmethod
-    def wakeby(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
+    def wakeby(lmoments: List[Union[float, int]]) -> List[Union[float, int]] | None:
         """wakeby distribution.
 
-        Parameters
-        ----------
-        lmoments: List
-            list of l moments
+        Args:
+            lmoments (List):
+                list of l moments
 
-        Returns
-        -------
-        List of distribution parameters
+        Args:
+            List of distribution parameters
         """
         if lmoments[1] <= 0:
             print("Invalid L-Moments")
-            return ()
+            return None
         if abs(lmoments[2]) >= 1 or abs(lmoments[3]) >= 1 or abs(lmoments[4]) >= 1:
             print("Invalid L-Moments")
-            return ()
+            return None
 
-        ALAM1 = lmoments[0]
-        ALAM2 = lmoments[1]
-        ALAM3 = lmoments[2] * ALAM2
-        ALAM4 = lmoments[3] * ALAM2
-        ALAM5 = lmoments[4] * ALAM2
+        alam1 = lmoments[0]
+        alam2 = lmoments[1]
+        alam3 = lmoments[2] * alam2
+        alam4 = lmoments[3] * alam2
+        alam5 = lmoments[4] * alam2
 
-        XN1 = 3 * ALAM2 - 25 * ALAM3 + 32 * ALAM4
-        XN2 = -3 * ALAM2 + 5 * ALAM3 + 8 * ALAM4
-        XN3 = 3 * ALAM2 + 5 * ALAM3 + 2 * ALAM4
-        XC1 = 7 * ALAM2 - 85 * ALAM3 + 203 * ALAM4 - 125 * ALAM5
-        XC2 = -7 * ALAM2 + 25 * ALAM3 + 7 * ALAM4 - 25 * ALAM5
-        XC3 = 7 * ALAM2 + 5 * ALAM3 - 7 * ALAM4 - 5 * ALAM5
+        xn1 = 3 * alam2 - 25 * alam3 + 32 * alam4
+        xn2 = -3 * alam2 + 5 * alam3 + 8 * alam4
+        xn3 = 3 * alam2 + 5 * alam3 + 2 * alam4
+        xc1 = 7 * alam2 - 85 * alam3 + 203 * alam4 - 125 * alam5
+        xc2 = -7 * alam2 + 25 * alam3 + 7 * alam4 - 25 * alam5
+        xc3 = 7 * alam2 + 5 * alam3 - 7 * alam4 - 5 * alam5
 
-        XA = XN2 * XC3 - XC2 * XN3
-        XB = XN1 * XC3 - XC1 * XN3
-        XC = XN1 * XC2 - XC1 * XN2
-        DISC = XB * XB - 4 * XA * XC
+        xa = xn2 * xc3 - xc2 * xn3
+        xb = xn1 * xc3 - xc1 * xn3
+        xc = xn1 * xc2 - xc1 * xn2
+        disc = xb * xb - 4 * xa * xc
         skip20 = 0
-        if DISC < 0:
+        if disc < 0:
             pass
         else:
-            DISC = np.sqrt(DISC)
-            ROOT1 = 0.5 * (-XB + DISC) / XA
-            ROOT2 = 0.5 * (-XB - DISC) / XA
-            B = max(ROOT1, ROOT2)
-            D = -min(ROOT1, ROOT2)
-            if D >= 1:
+            disc = np.sqrt(disc)
+            root1 = 0.5 * (-xb + disc) / xa
+            root2 = 0.5 * (-xb - disc) / xa
+            b = max(root1, root2)
+            d = -min(root1, root2)
+            if d >= 1:
                 pass
             else:
-                A = (
-                    (1 + B)
-                    * (2 + B)
-                    * (3 + B)
-                    / (4 * (B + D))
-                    * ((1 + D) * ALAM2 - (3 - D) * ALAM3)
+                a = (
+                    (1 + b)
+                    * (2 + b)
+                    * (3 + b)
+                    / (4 * (b + d))
+                    * ((1 + d) * alam2 - (3 - d) * alam3)
                 )
-                C = (
-                    -(1 - D)
-                    * (2 - D)
-                    * (3 - D)
-                    / (4 * (B + D))
-                    * ((1 - B) * ALAM2 - (3 + B) * ALAM3)
+                c = (
+                    -(1 - d)
+                    * (2 - d)
+                    * (3 - d)
+                    / (4 * (b + d))
+                    * ((1 - b) * alam2 - (3 + b) * alam3)
                 )
-                XI = ALAM1 - A / (1 + B) - C / (1 - D)
-                if C >= 0 and A + C >= 0:
+                xi = alam1 - a / (1 + b) - c / (1 - d)
+                if c >= 0 and a + c >= 0:
                     skip20 = 1
 
         if skip20 == 0:
-            # IFAIL = 1
-            D = -(1 - 3 * lmoments[2]) / (1 + lmoments[2])
-            C = (1 - D) * (2 - D) * lmoments[1]
-            B = 0
-            A = 0
-            XI = lmoments[0] - C / (1 - D)
-            if D <= 0:
-                A = C
-                B = -D
-                C = 0
-                D = 0
+            d = -(1 - 3 * lmoments[2]) / (1 + lmoments[2])
+            c = (1 - d) * (2 - d) * lmoments[1]
+            b = 0
+            a = 0
+            xi = lmoments[0] - c / (1 - d)
+            if d <= 0:
+                a = c
+                b = -d
+                c = 0
+                d = 0
 
-        para = [XI, A, B, C, D]
+        para = [xi, a, b, c, d]
         return para
-
-    # TODO: add the function lmrgum
-    # def weibull(lmoments):
-    #     if len(lmoments) < 3:
-    #         print("Insufficient L-Moments: Need 3")
-    #         return
-    #     if lmoments[1] <= 0 or lmoments[2] >= 1 or lmoments[2] <= -lmoments.lmrgum([0, 1], 3)[2]:
-    #         print("L-Moments Invalid")
-    #         return
-    #     pg = Lmoments.GEV([-lmoments[0], lmoments[1], -lmoments[2]])
-    #     delta = 1 / pg[2]
-    #     beta = pg[1] / pg[2]
-    #     out = [-pg[0] - beta, beta, delta]
-    #     return (out)
