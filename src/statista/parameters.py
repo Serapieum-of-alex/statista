@@ -123,20 +123,9 @@ class Lmoments:
         if n < nmom:
             raise ValueError("Insufficient length of data for specified nmoments")
 
-        # coefl1 = 1.0 / self._comb(n, 1)  # coefl1 = 1/n
-        # suml1 = sum(sample)
-        # l_moment_1 = coefl1 * suml1  # l_moment_1 = mean(sample)
         l_moment_1 = np.mean(sample)
         if nmom == 1:
             return [l_moment_1]
-
-        # comb terms appear elsewhere, this will decrease calc time
-        # for nmom > 2, and shouldn't decrease time for nmom == 2
-        # comb(sample,1) = sample
-        # for i in range(1,n+1):
-        # #        comb1.append(comb(i-1,1))
-        # #        comb2.append(comb(n-i,1))
-        # Can be simplified to comb1 = range(0,n)
 
         comb1 = range(0, n)
         comb2 = range(n - 1, -1, -1)
@@ -418,7 +407,7 @@ class Lmoments:
                 para = [lmoments[0], lmoments[1], 0]
                 return para
 
-            gg = g * np.pi / sp.sin(g * np.pi)
+            gg = g * np.pi / np.sin(g * np.pi)
             a = lmoments[1] / gg
             para1 = lmoments[0] - a * (1 - gg) / g
             para = [para1, a, g]
@@ -460,7 +449,7 @@ class Lmoments:
             * (a0 + tt * (a1 + tt * (a2 + tt * a3)))
             / (1 + tt * (b1 + tt * (b2 + tt * b3)))
         )
-        e = sp.exp(0.5 * g**2)
+        e = np.exp(0.5 * g**2)
         a = lmoments[1] * g / (e * sp.special.erf(0.5 * g))
         u = lmoments[0] + a * (e - 1) / g
         para = [u, a, g]
@@ -565,7 +554,7 @@ class Lmoments:
         beta = (
             np.sqrt(np.pi)
             * lmoments[1]
-            * sp.exp(_spsp.gammaln(alpha) - _spsp.gammaln(alpha + 0.5))
+            * np.exp(_spsp.gammaln(alpha) - _spsp.gammaln(alpha + 0.5))
         )
         para = [lmoments[0], beta * rtalph, 2 / rtalph]
         if lmoments[2] < 0:
