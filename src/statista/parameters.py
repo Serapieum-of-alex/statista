@@ -33,6 +33,7 @@ from numpy import ndarray
 ninf = 1e-5
 MAXIT = 20
 EPS = 1e-6
+SMALL = 1e-6
 # Euler's constant
 EU = 0.577215664901532861
 
@@ -275,7 +276,6 @@ class Lmoments:
             This method is primarily used internally by the `calculate` method when
             nmom > 5. For most applications, use the `calculate` method instead.
         """
-
         x = self.data
         if nmom <= 0:
             raise ValueError("Invalid number of Sample L-Moments")
@@ -418,8 +418,6 @@ class Lmoments:
             return [l_moment_1, l_moment_2, l_moment_3]
 
         # Calculate Fourth order
-        # comb5 = comb(i-1,3)
-        # comb6 = comb(n-i,3)
         comb5 = []
         comb6 = []
         for i in range(0, n):
@@ -564,9 +562,9 @@ class Lmoments:
             )
             if t3 >= -0.8:
                 shape = G
-                GAM = np.exp(sp.special.gammaln(1 + G))
-                scale = lmoments[1] * G / (GAM * (1 - 2 ** (-G)))
-                loc = lmoments[0] - scale * (1 - GAM) / G
+                gam = np.exp(sp.special.gammaln(1 + G))
+                scale = lmoments[1] * G / (gam * (1 - 2 ** (-G)))
+                loc = lmoments[0] - scale * (1 - gam) / G
                 para = [shape, loc, scale]
                 return para
 
@@ -586,9 +584,9 @@ class Lmoments:
                 G = G - (T - T0) / DERIV
                 if abs(G - GOLD) <= EPS * G:
                     shape = G
-                    GAM = np.exp(sp.special.gammaln(1 + G))
-                    scale = lmoments[1] * G / (GAM * (1 - 2 ** (-G)))
-                    loc = lmoments[0] - scale * (1 - GAM) / G
+                    gam = np.exp(sp.special.gammaln(1 + G))
+                    scale = lmoments[1] * G / (gam * (1 - 2 ** (-G)))
+                    loc = lmoments[0] - scale * (1 - gam) / G
                     para = [shape, loc, scale]
                     return para
             raise Exception("Iteration has not converged")
@@ -603,9 +601,9 @@ class Lmoments:
             else:
                 # GEV
                 shape = G
-                GAM = np.exp(sp.special.gammaln(1 + G))
-                scale = lmoments[1] * G / (GAM * (1 - 2 ** (-G)))
-                loc = lmoments[0] - scale * (1 - GAM) / G
+                gam = np.exp(sp.special.gammaln(1 + G))
+                scale = lmoments[1] * G / (gam * (1 - 2 ** (-G)))
+                loc = lmoments[0] - scale * (1 - gam) / G
                 # multiply the shape by -1 to follow the + ve shape parameter equation (+ve value means heavy tail)
                 # para = [-1 * shape, loc, scale]
                 para = [shape, loc, scale]
@@ -840,27 +838,27 @@ class Lmoments:
 
             These conditions indicate invalid L-moments for the Gamma distribution.
         """
-        A1 = -0.3080
-        A2 = -0.05812
-        A3 = 0.01765
-        B1 = 0.7213
-        B2 = -0.5947
-        B3 = -2.1817
-        B4 = 1.2113
+        a1 = -0.3080
+        a2 = -0.05812
+        a3 = 0.01765
+        b1 = 0.7213
+        b2 = -0.5947
+        b3 = -2.1817
+        b4 = 1.2113
 
         if lmoments[0] <= lmoments[1] or lmoments[1] <= 0:
             print(LMOMENTS_INVALID_ERROR)
             para = None
         else:
-            CV = lmoments[1] / lmoments[0]
-            if CV >= 0.5:
-                T = 1 - CV
-                ALPHA = T * (B1 + T * B2) / (1 + T * (B3 + T * B4))
+            cv = lmoments[1] / lmoments[0]
+            if cv >= 0.5:
+                t = 1 - cv
+                alpha = t * (b1 + t * b2) / (1 + t * (b3 + t * b4))
             else:
-                T = np.pi * CV**2
-                ALPHA = (1 + A1 * T) / (T * (1 + T * (A2 + T * A3)))
+                t = np.pi * cv**2
+                alpha = (1 + a1 * t) / (t * (1 + t * (a2 + t * a3)))
 
-            para = [ALPHA, lmoments[0] / ALPHA]
+            para = [alpha, lmoments[0] / alpha]
         return para
 
     @staticmethod
@@ -945,8 +943,6 @@ class Lmoments:
             When the absolute value of g is very small (≤ 1e-6), the shape parameter is set to 0,
             resulting in the standard Logistic distribution.
         """
-        SMALL = 1e-6
-
         g = -lmoments[2]
         if lmoments[1] <= 0 or abs(g) >= 1:
             print(LMOMENTS_INVALID_ERROR)
@@ -1519,6 +1515,7 @@ class Lmoments:
             b = 0
             a = 0
             xi = lmoments[0] - c / (1 - d)
+
             if d <= 0:
                 a = c
                 b = -d
