@@ -70,23 +70,21 @@ class TestGumbel:
     def test_create_instance_with_wrong_data_type(self):
         data = {"key": "value"}
         with pytest.raises(TypeError):
-            dist = Gumbel(data=data)
+            Gumbel(data=data)
 
     def test_create_instance_with_wrong_parameter_type(self):
         parameters = [1, 2, 3]
         with pytest.raises(TypeError):
-            dist = Gumbel(parameters=parameters)
+            Gumbel(parameters=parameters)
 
     def test_random(
         self,
         dist_estimation_parameters_ks: str,
         gum_dist_parameters: Dict[str, Dict[str, float]],
     ):
-        # param = gum_dist_parameters[dist_estimation_parameters_ks]
         param = {"loc": 0, "scale": 1}
         dist = Gumbel(parameters=param)
         rv = dist.random(100)
-        # new_dist = Gumbel(rv, parameters=param)
         assert isinstance(rv, np.ndarray)
         assert rv.shape == (100,)
 
@@ -131,8 +129,8 @@ class TestGumbel:
         param = gum_dist_parameters[dist_estimation_parameters_ks]
         dist = Gumbel(time_series2, param)
         dstatic, pvalue = dist.ks()
-        assert dstatic == 0.07407407407407407
-        assert pvalue == 0.9987375782247235
+        assert dstatic == pytest.approx(0.07407407407407407)
+        assert pvalue == pytest.approx(0.9987375782247235)
 
     def test_chisquare(
         self,
@@ -142,9 +140,8 @@ class TestGumbel:
     ):
         param = gum_dist_parameters[dist_estimation_parameters_ks]
         dist = Gumbel(time_series2, param)
-        dstatic, pvalue = dist.chisquare()
-        assert dstatic == -0.2813945052127964
-        # assert pvalue == 1
+        dstatic, _ = dist.chisquare()
+        assert dstatic == pytest.approx(-0.2813945052127964)
 
     def test_pdf(
         self,
@@ -155,12 +152,12 @@ class TestGumbel:
     ):
         param = gum_dist_parameters[dist_estimation_parameters_ks]
         dist = Gumbel(time_series2, param)
-        pdf, fig, ax = dist.pdf(plot_figure=True)
+        pdf, fig, _ = dist.pdf(plot_figure=True)
         assert isinstance(pdf, np.ndarray)
         np.testing.assert_almost_equal(gum_pdf, pdf)
         assert isinstance(fig, Figure)
         # test if you provide the pdf method with the data parameter
-        pdf, fig, ax = dist.pdf(data=time_series2, plot_figure=True)
+        pdf, fig, _ = dist.pdf(data=time_series2, plot_figure=True)
         assert isinstance(pdf, np.ndarray)
         np.testing.assert_almost_equal(gum_pdf, pdf)
 
@@ -173,12 +170,12 @@ class TestGumbel:
     ):
         param = gum_dist_parameters[dist_estimation_parameters_ks]
         dist = Gumbel(time_series2, param)
-        cdf, fig, ax = dist.cdf(plot_figure=True)
+        cdf, fig, _ = dist.cdf(plot_figure=True)
         assert isinstance(cdf, np.ndarray)
         np.testing.assert_almost_equal(gum_cdf, cdf)
         assert isinstance(fig, Figure)
         # test if you provide the cdf method with the data parameter
-        cdf, fig, ax = dist.cdf(data=time_series2, plot_figure=True)
+        cdf, fig, _ = dist.cdf(data=time_series2, plot_figure=True)
         assert isinstance(cdf, np.ndarray)
 
     def test_inverse_cdf(
@@ -280,8 +277,8 @@ class TestGEV:
         param = gev_dist_parameters[dist_estimation_parameters_ks]
         dist = GEV(time_series1, param)
         dstatic, pvalue = dist.ks()
-        assert dstatic == 0.14814814814814814
-        assert pvalue == 0.9356622290518453
+        assert dstatic == pytest.approx(0.14814814814814814)
+        assert pvalue == pytest.approx(0.9356622290518453)
 
     def test_gev_chisquare(
         self,
@@ -291,9 +288,8 @@ class TestGEV:
     ):
         param = gev_dist_parameters[dist_estimation_parameters_ks]
         dist = GEV(time_series1, param)
-        dstatic, pvalue = dist.chisquare()
-        assert dstatic == -22.906818156545253
-        # assert pvalue == 1
+        dstatic, _ = dist.chisquare()
+        assert dstatic == pytest.approx(-22.906818156545253)
 
     def test_gev_pdf(
         self,
@@ -305,12 +301,12 @@ class TestGEV:
         param = gev_dist_parameters[dist_estimation_parameters_ks]
         dist = GEV(time_series1, param)
 
-        pdf, fig, ax = dist.pdf(plot_figure=True)
+        pdf, fig, _ = dist.pdf(plot_figure=True)
         assert isinstance(pdf, np.ndarray)
         np.testing.assert_almost_equal(gev_pdf, pdf)
         assert isinstance(fig, Figure)
         # test if you provide the pdf method with the data parameter
-        pdf, fig, ax = dist.pdf(data=time_series1, plot_figure=True)
+        pdf, fig, _ = dist.pdf(data=time_series1, plot_figure=True)
         assert isinstance(pdf, np.ndarray)
 
     def test_gev_cdf(
@@ -322,12 +318,12 @@ class TestGEV:
     ):
         param = gev_dist_parameters[dist_estimation_parameters_ks]
         dist = GEV(time_series1, param)
-        cdf, fig, ax = dist.cdf(plot_figure=True)
+        cdf, fig, _ = dist.cdf(plot_figure=True)
         assert isinstance(cdf, np.ndarray)
         np.testing.assert_almost_equal(gev_cdf, cdf)
         assert isinstance(fig, Figure)
         # test if you provide the cdf method with the data parameter
-        cdf, fig, ax = dist.cdf(data=time_series1, plot_figure=True)
+        cdf, fig, _ = dist.cdf(data=time_series1, plot_figure=True)
         assert isinstance(cdf, np.ndarray)
 
     def test_random(
@@ -335,11 +331,9 @@ class TestGEV:
         dist_estimation_parameters_ks: str,
         gum_dist_parameters: Dict[str, Dict[str, float]],
     ):
-        # param = gum_dist_parameters[dist_estimation_parameters_ks]
         param = {"loc": 0, "scale": 1, "shape": 0.1}
         dist = Gumbel(parameters=param)
         rv = dist.random(100)
-        # new_dist = Gumbel(rv, parameters=param)
         assert isinstance(rv, np.ndarray)
         assert rv.shape == (100,)
 
@@ -441,12 +435,12 @@ class TestExponential:
     ):
         param = exp_dist_parameters[dist_estimation_parameters_ks]
         expo_dist = Exponential(time_series2, param)
-        pdf, fig, ax = expo_dist.pdf(plot_figure=True)
+        pdf, fig, _ = expo_dist.pdf(plot_figure=True)
         assert isinstance(pdf, np.ndarray)
         np.testing.assert_almost_equal(exp_pdf, pdf)
         assert isinstance(fig, Figure)
         # test if you provide the pdf method with the data parameter
-        pdf, fig, ax = expo_dist.pdf(data=time_series2, plot_figure=True)
+        pdf, fig, _ = expo_dist.pdf(data=time_series2, plot_figure=True)
         assert isinstance(pdf, np.ndarray)
 
     def test_cdf(
@@ -458,12 +452,12 @@ class TestExponential:
     ):
         param = exp_dist_parameters[dist_estimation_parameters_ks]
         expo_dist = Exponential(time_series2, param)
-        cdf, fig, ax = expo_dist.cdf(plot_figure=True)
+        cdf, fig, _ = expo_dist.cdf(plot_figure=True)
         assert isinstance(cdf, np.ndarray)
         np.testing.assert_almost_equal(exp_cdf, cdf)
         assert isinstance(fig, Figure)
         # test if you provide the cdf method with the data parameter
-        cdf, fig, ax = expo_dist.cdf(data=time_series2, plot_figure=True)
+        cdf, fig, _ = expo_dist.cdf(data=time_series2, plot_figure=True)
         assert isinstance(cdf, np.ndarray)
 
     def test_inverse_cdf(
@@ -514,12 +508,12 @@ class TestNormal:
     ):
         param = normal_dist_parameters[dist_estimation_parameters_ks]
         norm_dist = Normal(time_series2, param)
-        pdf, fig, ax = norm_dist.pdf(plot_figure=True)
+        pdf, fig, _ = norm_dist.pdf(plot_figure=True)
         assert isinstance(pdf, np.ndarray)
         np.testing.assert_almost_equal(normal_pdf, pdf)
         assert isinstance(fig, Figure)
         # test if you provide the pdf method with the data parameter
-        pdf, fig, ax = norm_dist.pdf(data=time_series2, plot_figure=True)
+        pdf, fig, _ = norm_dist.pdf(data=time_series2, plot_figure=True)
         assert isinstance(pdf, np.ndarray)
 
     def test_cdf(
@@ -531,12 +525,12 @@ class TestNormal:
     ):
         param = normal_dist_parameters[dist_estimation_parameters_ks]
         norm_dist = Normal(time_series2, param)
-        cdf, fig, ax = norm_dist.cdf(plot_figure=True)
+        cdf, fig, _ = norm_dist.cdf(plot_figure=True)
         assert isinstance(cdf, np.ndarray)
         np.testing.assert_almost_equal(normal_cdf, cdf)
         assert isinstance(fig, Figure)
         # test if you provide the cdf method with the data parameter
-        cdf, fig, ax = norm_dist.cdf(data=time_series2, plot_figure=True)
+        cdf, fig, _ = norm_dist.cdf(data=time_series2, plot_figure=True)
         assert isinstance(cdf, np.ndarray)
 
     def test_inverse_cdf(
