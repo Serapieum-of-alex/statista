@@ -2,10 +2,10 @@ import numpy as np
 import pytest
 
 from statista.distributions import (
-    Distributions,
-    Gumbel,
     GEV,
+    Distributions,
     Exponential,
+    Gumbel,
     Normal,
 )
 
@@ -21,7 +21,10 @@ class TestDistributionsClass:
     def test_invalid_attribute(self):
         """Test that an error is raised when accessing a non-existent attribute."""
         dist = Distributions("Gumbel", data=[1, 2, 3, 4, 5])
-        with pytest.raises(AttributeError, match="'Distributions' object has no attribute 'invalid_method'"):
+        with pytest.raises(
+            AttributeError,
+            match="'Distributions' object has no attribute 'invalid_method'",
+        ):
             dist.invalid_method()
 
 
@@ -45,7 +48,7 @@ class TestGumbelClass:
         gumbel = Gumbel(parameters={"loc": 0, "scale": 1})
         result = gumbel.inverse_cdf(cdf=[0, 0.5, 2])
         assert np.isneginf(result[0])  # -inf for cdf=0
-        assert np.isnan(result[2])     # nan for cdf=2
+        assert np.isnan(result[2])  # nan for cdf=2
 
 
 class TestGEVClass:
@@ -56,12 +59,15 @@ class TestGEVClass:
         gev = GEV(parameters={"loc": 0, "scale": 1, "shape": 0.1})
         result = gev.inverse_cdf(cdf=[0, 0.5, 2])
         assert np.isneginf(result[0])  # -inf for cdf=0
-        assert np.isnan(result[2])     # nan for cdf=2
+        assert np.isnan(result[2])  # nan for cdf=2
 
     def test_invalid_method_in_fit_model(self):
         """Test that an error is raised when an invalid method is provided to fit_model."""
         gev = GEV(data=[1, 2, 3, 4, 5])
-        with pytest.raises(ValueError, match="invalid_method value should be 'mle', 'mm', 'lmoments' or 'optimization'"):
+        with pytest.raises(
+            ValueError,
+            match="invalid_method value should be 'mle', 'mm', 'lmoments' or 'optimization'",
+        ):
             gev.fit_model(method="invalid_method")
 
 
@@ -84,8 +90,8 @@ class TestExponentialClass:
         """Test that invalid CDF values result in NaN or inf values."""
         exp = Exponential(parameters={"loc": 0, "scale": 1})
         result = exp.inverse_cdf(cdf=[0, 0.5, 2])
-        assert result[0] == 0.0        # 0 for cdf=0
-        assert np.isnan(result[2])     # nan for cdf=2
+        assert result[0] == 0.0  # 0 for cdf=0
+        assert np.isnan(result[2])  # nan for cdf=2
 
 
 class TestNormalClass:
@@ -106,7 +112,9 @@ class TestNormalClass:
     def test_loc_parameter_error_in_cdf(self):
         """Test that an error is raised when loc parameter is <= 0 in cdf."""
         norm = Normal(data=[1, 2, 3, 4, 5])
-        with pytest.raises(ValueError, match="Threshold parameter should be greater than zero"):
+        with pytest.raises(
+            ValueError, match="Threshold parameter should be greater than zero"
+        ):
             norm.cdf(parameters={"loc": 0, "scale": 1})
 
     def test_cdf_invalid_values(self):
@@ -114,12 +122,15 @@ class TestNormalClass:
         norm = Normal(parameters={"loc": 1, "scale": 1})
         result = norm.inverse_cdf(cdf=[0, 0.5, 2])
         assert np.isneginf(result[0])  # -inf for cdf=0
-        assert np.isnan(result[2])     # nan for cdf=2
+        assert np.isnan(result[2])  # nan for cdf=2
 
     def test_invalid_method_in_fit_model(self):
         """Test that an error is raised when an invalid method is provided to fit_model."""
         norm = Normal(data=[1, 2, 3, 4, 5])
-        with pytest.raises(ValueError, match="invalid_method value should be 'mle', 'mm', 'lmoments' or 'optimization'"):
+        with pytest.raises(
+            ValueError,
+            match="invalid_method value should be 'mle', 'mm', 'lmoments' or 'optimization'",
+        ):
             norm.fit_model(method="invalid_method")
 
     def test_optimization_without_obj_func(self):

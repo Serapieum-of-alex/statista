@@ -97,7 +97,7 @@ class ConfidenceInterval:
             logger.debug(
                 "Some values used extreme samples; results are probably unstable."
             )
-            
+
         elif np.any(n_vals < 10) or np.any(n_vals >= n_samples - 10):
             logger.debug(
                 "Some values used the top 10 low/high samples; results may be unstable."
