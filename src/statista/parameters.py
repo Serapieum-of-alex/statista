@@ -462,6 +462,7 @@ class Lmoments:
 
         if nmom == 5:
             return [l_moment_1, l_moment_2, l_moment_3, l_moment_4, l_moment_5]
+        return None
 
     @staticmethod
     def gev(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
@@ -571,25 +572,25 @@ class Lmoments:
             if t3 <= -0.97:
                 G = 1 - np.log(1 + t3) / dl2
 
-            T0 = (t3 + 3) * 0.5
+            t0 = (t3 + 3) * 0.5
 
             for _ in range(1, MAXIT):
-                X2 = 2 ** (-G)
-                X3 = 3 ** (-G)
-                XX2 = 1 - X2
-                XX3 = 1 - X3
-                T = XX3 / XX2
-                DERIV = (XX2 * X3 * dl3 - XX3 * X2 * dl2) / (XX2**2)
-                GOLD = G
-                G = G - (T - T0) / DERIV
-                if abs(G - GOLD) <= EPS * G:
+                x2 = 2 ** (-G)
+                x3 = 3 ** (-G)
+                xx2 = 1 - x2
+                xx3 = 1 - x3
+                t = xx3 / xx2
+                deriv = (xx2 * x3 * dl3 - xx3 * x2 * dl2) / (xx2**2)
+                gold = G
+                G = G - (t - t0) / deriv
+                if abs(G - gold) <= EPS * G:
                     shape = G
                     gam = np.exp(sp.special.gammaln(1 + G))
                     scale = lmoments[1] * G / (gam * (1 - 2 ** (-G)))
                     loc = lmoments[0] - scale * (1 - gam) / G
                     para = [shape, loc, scale]
                     return para
-            raise Exception("Iteration has not converged")
+            raise ValueError("Iteration has not converged")
         else:
             Z = 1 - t3
             G = (-1 + Z * (c1 + Z * (c2 + Z * c3))) / (1 + Z * (d1 + Z * d2))
