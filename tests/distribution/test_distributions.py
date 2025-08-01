@@ -277,8 +277,8 @@ class TestGEV:
         param = gev_dist_parameters[dist_estimation_parameters_ks]
         dist = GEV(time_series1, param)
         dstatic, pvalue = dist.ks()
-        assert dstatic == 0.14814814814814814
-        assert pvalue == 0.9356622290518453
+        assert dstatic == pytest.approx(0.14814814814814814)
+        assert pvalue == pytest.approx(0.9356622290518453)
 
     def test_gev_chisquare(
         self,
@@ -289,7 +289,7 @@ class TestGEV:
         param = gev_dist_parameters[dist_estimation_parameters_ks]
         dist = GEV(time_series1, param)
         dstatic, _ = dist.chisquare()
-        assert dstatic == -22.906818156545253
+        assert dstatic == pytest.approx(-22.906818156545253)
 
     def test_gev_pdf(
         self,
