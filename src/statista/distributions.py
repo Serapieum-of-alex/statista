@@ -37,9 +37,9 @@ to the get the non-exceedance probability
 """
 PDF_XAXIS_LABEL = "Actual data"
 
+
 class PlottingPosition:
     """PlottingPosition."""
-
 
     @staticmethod
     def return_period(prob_non_exceed: Union[list, np.ndarray]) -> np.ndarray:
@@ -1737,7 +1737,6 @@ class Gumbel(AbstractDistribution):
 
         if prob_non_exceed is None:
             prob_non_exceed = PlottingPosition.weibul(self.data)
-
 
         qth = self._inv_cdf(prob_non_exceed, parameters)
         y = [-np.log(-np.log(j)) for j in prob_non_exceed]
