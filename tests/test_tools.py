@@ -521,9 +521,6 @@ class TestInvLogRescale:
         log_scaled = Tools.log_rescale(original, 1, 1000, 0, 3)
         back_to_original = Tools.inv_log_rescale(log_scaled, 0, 3, 1, 1000)
         
-        # Print values for debugging
-        print(f"Original: {original}, log_scaled: {log_scaled}, back_to_original: {back_to_original}")
-        
         # Verify the result is within a reasonable range
         # The actual implementation might not preserve the exact value due to rounding
         assert back_to_original > 0
