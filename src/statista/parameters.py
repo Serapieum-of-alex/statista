@@ -590,7 +590,7 @@ class Lmoments:
                     loc = lmoments[0] - scale * (1 - gam) / G
                     para = [shape, loc, scale]
                     return para
-            raise ValueError("Iteration has not converged")
+            raise ConvergenceError("Iteration has not converged")
         else:
             Z = 1 - t3
             G = (-1 + Z * (c1 + Z * (c2 + Z * c3))) / (1 + Z * (d1 + Z * d2))
@@ -1065,9 +1065,9 @@ class Lmoments:
             * (a0 + tt * (a1 + tt * (a2 + tt * a3)))
             / (1 + tt * (b1 + tt * (b2 + tt * b3)))
         )
-        e = np.exp(0.5 * g**2)
-        a = lmoments[1] * g / (e * sp.special.erf(0.5 * g))
-        u = lmoments[0] + a * (e - 1) / g
+        exp_val = np.exp(0.5 * g**2)
+        a = lmoments[1] * g / (exp_val * sp.special.erf(0.5 * g))
+        u = lmoments[0] + a * (exp_val - 1) / g
         para = [u, a, g]
         return para
 
@@ -1525,3 +1525,9 @@ class Lmoments:
 
         para = [xi, a, b, c, d]
         return para
+
+
+class ConvergenceError(Exception):
+    """Custom exception for convergence errors in L-moment calculations."""
+
+    pass
