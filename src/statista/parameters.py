@@ -1,6 +1,6 @@
 """Parameters estimation module for statistical distributions.
 
-This module provides functionality for estimating parameters of various statistical 
+This module provides functionality for estimating parameters of various statistical
 distributions using L-moments method. L-moments are analogous to conventional moments
 but can be estimated by linear combinations of order statistics (L-statistics).
 
@@ -41,26 +41,26 @@ LMOMENTS_INVALID_ERROR = "L-Moments Invalid"
 
 class Lmoments:
     """Class for calculating L-moments and estimating distribution parameters.
-    
+
     L-moments are statistics used to summarize the shape of a probability distribution.
     Introduced by Hosking (1990), they are analogous to conventional moments but can be
     estimated by linear combinations of order statistics (L-statistics).
-    
+
     L-moments have several advantages over conventional moments:
         - They can characterize a wider range of distributions
         - They are more robust to outliers in the data
         - They are less subject to bias in estimation
         - They approximate their asymptotic normal distribution more closely
-    
+
     The L-moments of order r are denoted by λr and defined as:
         λ1 = α0 = β0                                      (mean)
         λ2 = α0 - 2α1 = 2β1 - β0                          (L-scale)
         λ3 = α0 - 6α1 + 6α2 = 6β2 - 6β1 + β0              (L-skewness)
         λ4 = α0 - 12α1 + 30α2 - 20α3 = 20β3 - 30β2 + 12β1 - β0  (L-kurtosis)
-    
+
     Attributes:
         data: The input data for which L-moments will be calculated.
-    
+
     Examples:
         - Basic usage to calculate L-moments:
           ```python
@@ -81,10 +81,11 @@ class Lmoments:
           - Calculate the first 4 L-moments
           ```python
           >>> l_moments = lmom.calculate(nmom=4)
-          >>> print(l_moments)
+          >>> print(l_moments) #doctest: +SKIP
+          [np.float64(10.166325002460868), np.float64(1.0521820576994685), np.float64(0.0015331221093457831), np.float64(0.16527008148561118)]
 
           ```
-        
+
         - Estimating distribution parameters using L-moments:
           ```python
           >>> import numpy as np
@@ -105,18 +106,19 @@ class Lmoments:
           - Estimate parameters for normal distribution
           ```python
           >>> params = Lmoments.normal(l_moments)
-          >>> print(f"Location: {params[0]}, Scale: {params[1]}")
+          >>> print(f"Location: {params[0]}, Scale: {params[1]}") #doctest: +SKIP
+          Location: 9.531376405859064, Scale: 2.074884534193713
 
           ```
     """
 
     def __init__(self, data):
         """Initialize the Lmoments class with data.
-        
+
         Args:
             data: A sequence of numerical values for which L-moments will be calculated.
                 Can be a list, numpy array, or any iterable containing numeric values.
-        
+
         Examples:
             - Initialize with a list of values:
               ```python
@@ -125,7 +127,7 @@ class Lmoments:
               >>> lmom = Lmoments(data)
 
               ```
-            
+
             - Initialize with a numpy array:
               ```python
               >>> import numpy as np
@@ -139,22 +141,22 @@ class Lmoments:
 
     def calculate(self, nmom=5):
         """Calculate the L-moments for the data.
-        
+
         This method calculates the first `nmom` L-moments of the data. For nmom <= 5,
         it uses the more efficient `_samlmusmall` method. For nmom > 5, it uses the
         more general `_samlmularge` method.
-        
+
         Args:
             nmom: An integer specifying the number of L-moments to calculate.
                 Default is 5.
-        
+
         Returns:
             A list containing the first `nmom` L-moments if nmom > 1.
             If nmom=1, returns only the first L-moment (the mean) as a float.
-        
+
         Raises:
             ValueError: If nmom <= 0 or if the length of data is less than nmom.
-        
+
         Examples:
             - Calculate the first 4 L-moments:
               ```python
@@ -163,9 +165,10 @@ class Lmoments:
               >>> lmom = Lmoments(data)
               >>> l_moments = lmom.calculate(nmom=4)
               >>> print(l_moments)  # Output: [5.4, 1.68, 0.1, 0.05]
+              [np.float64(5.4), 2.0, -0.09999999999999988, -0.09999999999999998]
 
               ```
-            
+
             - Calculate only the first L-moment (mean):
               ```python
               >>> from statista.parameters import Lmoments
@@ -173,6 +176,7 @@ class Lmoments:
               >>> lmom = Lmoments(data)
               >>> mean = lmom.calculate(nmom=1)
               >>> print(mean)  # Output: 5.4
+              [np.float64(5.4)]
 
               ```
         """
@@ -186,42 +190,46 @@ class Lmoments:
     @staticmethod
     def _comb(n, k):
         """Calculate the binomial coefficient (n choose k).
-        
+
         This method computes the binomial coefficient, which is the number of ways
         to choose k items from a set of n items without regard to order.
-        
+
         Args:
             n: A non-negative integer representing the total number of items.
             k: A non-negative integer representing the number of items to choose.
-        
+
         Returns:
             An integer representing the binomial coefficient (n choose k).
             Returns 0 if k > n, n < 0, or k < 0.
-        
+
         Examples:
             - Calculate 5 choose 2:
               ```python
               >>> from statista.parameters import Lmoments
               >>> result = Lmoments._comb(5, 2)
               >>> print(result)  # Output: 10
+              10
 
               ```
-            
+
             - Calculate 10 choose 3:
               ```python
               >>> from statista.parameters import Lmoments
               >>> result = Lmoments._comb(10, 3)
               >>> print(result)  # Output: 120
+              120
 
               ```
-            
+
             - Invalid inputs return 0:
               ```python
               >>> from statista.parameters import Lmoments
               >>> result = Lmoments._comb(3, 5)  # k > n
-              >>> print(result)  # Output: 0
+              >>> print(result)
+              0
               >>> result = Lmoments._comb(-1, 2)  # n < 0
-              >>> print(result)  # Output: 0
+              >>> print(result)
+              0
 
               ```
         """
@@ -235,22 +243,22 @@ class Lmoments:
 
     def _samlmularge(self, nmom: int = 5) -> list[ndarray | float | int | Any]:
         """Calculate L-moments for large samples or higher order moments.
-        
+
         This method implements a general algorithm for calculating L-moments of any order.
         It is more computationally intensive than _samlmusmall but works for any number
         of moments.
-        
+
         Args:
             nmom: An integer specifying the number of L-moments to calculate.
                 Default is 5.
-        
+
         Returns:
             A list containing the first `nmom` L-moments if nmom > 1.
             If nmom=1, returns only the first L-moment (the mean) as a float.
-        
+
         Raises:
             ValueError: If nmom <= 0 or if the length of data is less than nmom.
-        
+
         Examples:
             - Calculate the first 6 L-moments:
               ```python
@@ -259,9 +267,10 @@ class Lmoments:
               >>> lmom = Lmoments(data)
               >>> l_moments = lmom._samlmularge(nmom=6)
               >>> print(l_moments)
+              [5.488888888888888, 1.722222222222222, -0.06451612903225806, -0.0645161290322581, -0.0645161290322581, -0.06451612903225817]
 
               ```
-        
+
         Note:
             This method is primarily used internally by the `calculate` method when
             nmom > 5. For most applications, use the `calculate` method instead.
@@ -322,21 +331,21 @@ class Lmoments:
 
     def _samlmusmall(self, nmom: int = 5) -> list[ndarray | float | int | Any]:
         """Calculate L-moments for small samples or lower order moments.
-        
+
         This method implements an optimized algorithm for calculating L-moments up to order 5.
         It is more efficient than _samlmularge for nmom <= 5.
-        
+
         Args:
             nmom: An integer specifying the number of L-moments to calculate.
                 Must be between 1 and 5 (inclusive). Default is 5.
-        
+
         Returns:
             A list containing the first `nmom` L-moments if nmom > 1.
             If nmom=1, returns only the first L-moment (the mean) as a float.
-        
+
         Raises:
             ValueError: If nmom <= 0 or if the length of data is less than nmom.
-        
+
         Examples:
             - Calculate the first 3 L-moments:
               ```python
@@ -345,13 +354,14 @@ class Lmoments:
               >>> lmom = Lmoments(data)
               >>> l_moments = lmom._samlmusmall(nmom=3)
               >>> print(l_moments)
+              [np.float64(5.4), 2.0, -0.09999999999999988]
 
               ```
-        
+
         Note:
             This method is primarily used internally by the `calculate` method when
             nmom <= 5. For most applications, use the `calculate` method instead.
-            
+
             The implementation uses a direct formula for each L-moment order, which
             is more efficient than the general algorithm used in _samlmularge.
         """
@@ -458,28 +468,28 @@ class Lmoments:
     @staticmethod
     def gev(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
         """Estimate parameters for the Generalized Extreme Value (GEV) distribution.
-        
+
         The Generalized Extreme Value distribution combines the Gumbel, Fréchet, and Weibull
         distributions into a single family to model extreme values. The distribution is
         characterized by three parameters: shape, location, and scale.
-        
+
         Args:
             lmoments: A list of L-moments [l1, l2, l3, ...] where:
                 - l1 is the mean (first L-moment)
                 - l2 is the L-scale (second L-moment)
                 - l3 is the L-skewness (third L-moment)
                 At least 3 L-moments must be provided.
-        
+
         Returns:
             A list of distribution parameters [shape, location, scale] where:
                 - shape: Controls the tail behavior of the distribution
                 - location: Shifts the distribution along the x-axis
                 - scale: Controls the spread of the distribution
-        
+
         Raises:
             ValueError: If the L-moments are invalid (l2 <= 0 or |l3| >= 1).
             Exception: If the parameter estimation algorithm fails to converge.
-        
+
         Examples:
             - Estimate GEV parameters from L-moments:
               ```python
@@ -497,9 +507,10 @@ class Lmoments:
               ```python
               >>> params = Lmoments.gev(l_moments)
               >>> print(f"Shape: {params[0]}, Location: {params[1]}, Scale: {params[2]}")
+              Shape: 0.3055099485469931, Location: 21.413657588990556, Scale: 11.868352699813734
 
               ```
-            
+
             - Using predefined L-moments:
               ```python
               >>> from statista.parameters import Lmoments
@@ -514,14 +525,15 @@ class Lmoments:
               ```python
               >>> params = Lmoments.gev(l_moments)
               >>> print(f"Shape: {params[0]}, Location: {params[1]}, Scale: {params[2]}")
+              Shape: 0.11189502871959642, Location: 8.490058310239982, Scale: 3.1676863588272224
 
               ```
-        
+
         Note:
             The GEV distribution has the cumulative distribution function:
             F(x) = exp(-[1 + ξ((x-μ)/σ)]^(-1/ξ)) for ξ ≠ 0
             F(x) = exp(-exp(-(x-μ)/σ)) for ξ = 0 (Gumbel case)
-            
+
             Where ξ is the shape parameter, μ is the location parameter, and σ is the scale parameter.
         """
         dl2 = np.log(2)
@@ -603,25 +615,25 @@ class Lmoments:
     @staticmethod
     def gumbel(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
         """Estimate parameters for the Gumbel distribution.
-        
+
         The Gumbel distribution (also known as the Type I Extreme Value distribution) is
         used to model the maximum or minimum of a number of samples of various distributions.
         It is characterized by two parameters: location and scale.
-        
+
         Args:
             lmoments: A list of L-moments [l1, l2, ...] where:
                 - l1 is the mean (first L-moment)
                 - l2 is the L-scale (second L-moment)
                 At least 2 L-moments must be provided.
-        
+
         Returns:
             A list of distribution parameters [location, scale] where:
                 - location: Shifts the distribution along the x-axis
                 - scale: Controls the spread of the distribution
-        
+
         Raises:
             ValueError: If the L-moments are invalid (l2 <= 0).
-        
+
         Examples:
             - Estimate Gumbel parameters from L-moments:
               ```python
@@ -639,9 +651,10 @@ class Lmoments:
               ```python
               >>> params = Lmoments.gumbel(l_moments)
               >>> print(f"Location: {params[0]}, Scale: {params[1]}")
+              Location: 19.892792078673775, Scale: 9.590487033719015
 
               ```
-            
+
             - Using predefined L-moments:
               ```python
               >>> from statista.parameters import Lmoments
@@ -656,15 +669,16 @@ class Lmoments:
               ```python
               >>> params = Lmoments.gumbel(l_moments)
               >>> print(f"Location: {params[0]}, Scale: {params[1]}")
+              Location: 8.334507645446266, Scale: 2.8853900817779268
 
               ```
-        
+
         Note:
             The Gumbel distribution has the cumulative distribution function:
             F(x) = exp(-exp(-(x-μ)/β))
-            
+
             Where μ is the location parameter and β is the scale parameter.
-            
+
             The Gumbel distribution is a special case of the GEV distribution with shape parameter = 0.
         """
         if lmoments[1] <= 0:
@@ -678,22 +692,22 @@ class Lmoments:
     @staticmethod
     def exponential(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
         """Estimate parameters for the Exponential distribution.
-        
+
         The Exponential distribution is used to model the time between events in a Poisson process.
         It is characterized by two parameters: location and scale.
-        
+
         Args:
             lmoments: A list of L-moments [l1, l2, ...] where:
                 - l1 is the mean (first L-moment)
                 - l2 is the L-scale (second L-moment)
                 At least 2 L-moments must be provided.
-        
+
         Returns:
             A list of distribution parameters [location, scale] where:
                 - location: Shifts the distribution along the x-axis (minimum value)
                 - scale: Controls the spread of the distribution (rate parameter)
             Returns None if the L-moments are invalid.
-        
+
         Examples:
             - Estimate Exponential parameters from L-moments:
               ```python
@@ -712,9 +726,10 @@ class Lmoments:
               >>> params = Lmoments.exponential(l_moments)
               >>> if params:
               ...    print(f"Location: {params[0]}, Scale: {params[1]}")
+              Location: 0.6333333333333329, Scale: 2.8380952380952382
 
               ```
-            
+
             - Using predefined L-moments:
               ```python
               >>> from statista.parameters import Lmoments
@@ -730,15 +745,16 @@ class Lmoments:
               >>> params = Lmoments.exponential(l_moments)
               >>> if params:
               ...   print(f"Location: {params[0]}, Scale: {params[1]}")
+              Location: 0.0, Scale: 5.0
 
               ```
-        
+
         Note:
             The Exponential distribution has the probability density function:
             f(x) = (1/β) * exp(-(x-μ)/β) for x ≥ μ
-            
+
             Where μ is the location parameter and β is the scale parameter.
-            
+
             The method returns None if the second L-moment (l2) is less than or equal to zero,
             as this indicates invalid L-moments for the Exponential distribution.
         """
@@ -753,30 +769,30 @@ class Lmoments:
     @staticmethod
     def gamma(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
         """Estimate parameters for the Gamma distribution.
-        
+
         The Gamma distribution is a two-parameter family of continuous probability distributions
         used to model positive-valued random variables. It is characterized by a shape parameter
         and a scale parameter.
-        
+
         Args:
             lmoments: A list of L-moments [l1, l2, ...] where:
                 - l1 is the mean (first L-moment)
                 - l2 is the L-scale (second L-moment)
                 At least 2 L-moments must be provided.
-        
+
         Returns:
             A list of distribution parameters [shape, scale] where:
                 - shape (alpha): Controls the shape of the distribution
                 - scale (beta): Controls the spread of the distribution
             Returns None if the L-moments are invalid.
-        
+
         Examples:
             - Estimate Gamma parameters from L-moments:
               ```python
               >>> from statista.parameters import Lmoments
 
               ```
-              
+
               - Calculate L-moments from data
               ```python
               >>> data = [0.8, 1.5, 2.3, 3.7, 4.1, 5.6, 6.9]
@@ -789,9 +805,10 @@ class Lmoments:
               >>> params = Lmoments.gamma(l_moments)
               >>> if params:
               ...   print(f"Shape (alpha): {params[0]}, Scale (beta): {params[1]}")
-              
+              Shape (alpha): 1.9539748509411916, Scale (beta): 1.8204650154168824
+
               ```
-            
+
             - Using predefined L-moments:
               ```python
               >>> from statista.parameters import Lmoments
@@ -807,18 +824,20 @@ class Lmoments:
               >>> params = Lmoments.gamma(l_moments)
               >>> if params:
               ...    print(f"Shape (alpha): {params[0]}, Scale (beta): {params[1]}")
+              Shape (alpha): 3.278019029280183, Scale (beta): 3.0506229252109893
+
               ```
-        
+
         Note:
             The Gamma distribution has the probability density function:
             f(x) = (x^(α-1) * e^(-x/β)) / (β^α * Γ(α)) for x > 0
-            
+
             Where α is the shape parameter, β is the scale parameter, and Γ is the gamma function.
-            
+
             The method returns None if:
             - The second L-moment (l2) is less than or equal to zero
             - The first L-moment (l1) is less than or equal to the second L-moment (l2)
-            
+
             These conditions indicate invalid L-moments for the Gamma distribution.
         """
         A1 = -0.3080
@@ -849,25 +868,25 @@ class Lmoments:
         lmoments: List[Union[float, int]],
     ) -> List[Union[float, int]]:
         """Estimate parameters for the Generalized Logistic distribution.
-        
+
         The Generalized Logistic distribution is a flexible three-parameter distribution
         that can model a variety of shapes. It is characterized by location, scale, and
         shape parameters.
-        
+
         Args:
             lmoments: A list of L-moments [l1, l2, l3, ...] where:
                 - l1 is the mean (first L-moment)
                 - l2 is the L-scale (second L-moment)
                 - l3 is the L-skewness (third L-moment)
                 At least 3 L-moments must be provided.
-        
+
         Returns:
             A list of distribution parameters [location, scale, shape] where:
                 - location: Shifts the distribution along the x-axis
                 - scale: Controls the spread of the distribution
                 - shape: Controls the shape of the distribution
             Returns None if the L-moments are invalid.
-        
+
         Examples:
             - Estimate Generalized Logistic parameters from L-moments:
               ```python
@@ -886,9 +905,10 @@ class Lmoments:
               >>> params = Lmoments.generalized_logistic(l_moments)
               >>> if params:
               ...   print(f"Location: {params[0]}, Scale: {params[1]}, Shape: {params[2]}")
+              Location: 3.346599291165189, Scale: 1.3275318522784219, Shape: -0.09540636042402825
 
               ```
-            
+
             - Using predefined L-moments:
               ```python
               >>> from statista.parameters import Lmoments
@@ -905,22 +925,23 @@ class Lmoments:
               >>> params = Lmoments.generalized_logistic(l_moments)
               >>> if params:
               ...   print(f"Location: {params[0]}, Scale: {params[1]}, Shape: {params[2]}")
+              Location: 10.327367138330683, Scale: 1.967263286166932, Shape: 0.1
 
               ```
-        
+
         Note:
             The Generalized Logistic distribution has the cumulative distribution function:
             F(x) = 1 / (1 + exp(-((x-μ)/α))^(1/k)) for k ≠ 0
             F(x) = 1 / (1 + exp(-(x-μ)/α)) for k = 0
-            
+
             Where μ is the location parameter, α is the scale parameter, and k is the shape parameter.
-            
+
             The method returns None if:
             - The second L-moment (l2) is less than or equal to zero
             - The absolute value of the negative third L-moment (g = -l3) is greater than or equal to 1
-            
+
             These conditions indicate invalid L-moments for the Generalized Logistic distribution.
-            
+
             When the absolute value of g is very small (≤ 1e-6), the shape parameter is set to 0,
             resulting in the standard Logistic distribution.
         """
@@ -946,18 +967,18 @@ class Lmoments:
         lmoments: List[Union[float, int]] | None,
     ) -> List[Union[float, int]] | None:
         """Estimate parameters for the Generalized Normal distribution.
-        
+
         The Generalized Normal distribution (also known as the Generalized Error Distribution)
         is a three-parameter family of symmetric distributions that includes the normal
         distribution as a special case. It is characterized by location, scale, and shape parameters.
-        
+
         Args:
             lmoments: A list of L-moments [l1, l2, l3, ...] where:
                 - l1 is the mean (first L-moment)
                 - l2 is the L-scale (second L-moment)
                 - l3 is the L-skewness (third L-moment)
                 At least 3 L-moments must be provided.
-        
+
         Returns:
             A list of distribution parameters [location, scale, shape] where:
                 - location: Shifts the distribution along the x-axis
@@ -965,7 +986,7 @@ class Lmoments:
                 - shape: Controls the shape of the distribution (kurtosis)
             Returns None if the L-moments are invalid.
             Returns [0, -1, 0] if the absolute value of the third L-moment is very large (≥ 0.95).
-        
+
         Examples:
             - Estimate Generalized Normal parameters from L-moments:
               ```python
@@ -984,15 +1005,16 @@ class Lmoments:
               >>> params = Lmoments.generalized_normal(l_moments)
               >>> if params:
               ...     print(f"Location: {params[0]}, Scale: {params[1]}, Shape: {params[2]}")
+              Location: 3.32492783574149, Scale: 2.3507769936100464, Shape: -0.1956793126965343
 
               ```
-            
+
             - Using predefined L-moments:
               ```python
               >>> from statista.parameters import Lmoments
 
               ```
-              
+
               - Predefined L-moments
               ```python
               >>> l_moments = [10.0, 2.0, 0.1]
@@ -1003,22 +1025,23 @@ class Lmoments:
               >>> params = Lmoments.generalized_normal(l_moments)
               >>> if params:
               ...    print(f"Location: {params[0]}, Scale: {params[1]}, Shape: {params[2]}")
+              Location: 9.638928100246755, Scale: 3.4832722896983213, Shape: -0.2051440978274827
 
               ```
-        
+
         Note:
             The Generalized Normal distribution has the probability density function:
             f(x) = (β/(2αΓ(1/β))) * exp(-(|x-μ|/α)^β)
-            
+
             Where μ is the location parameter, α is the scale parameter, β is the shape parameter,
             and Γ is the gamma function.
-            
+
             The method returns None if:
             - The second L-moment (l2) is less than or equal to zero
             - The absolute value of the third L-moment (l3) is greater than or equal to 1
-            
+
             These conditions indicate invalid L-moments for the Generalized Normal distribution.
-            
+
             When the absolute value of the third L-moment is very large (≥ 0.95), the method
             returns [0, -1, 0] as a special case.
         """
@@ -1056,25 +1079,25 @@ class Lmoments:
         lmoments: List[Union[float, int]],
     ) -> list[float] | None:
         """Estimate parameters for the Generalized Pareto distribution.
-        
+
         The Generalized Pareto distribution is a flexible three-parameter family of distributions
         used to model the tails of other distributions. It is characterized by location, scale,
         and shape parameters.
-        
+
         Args:
             lmoments: A list of L-moments [l1, l2, l3, ...] where:
                 - l1 is the mean (first L-moment)
                 - l2 is the L-scale (second L-moment)
                 - l3 is the L-skewness (third L-moment)
                 At least 3 L-moments must be provided.
-        
+
         Returns:
             A list of distribution parameters [location, scale, shape] where:
                 - location: Shifts the distribution along the x-axis (lower bound)
                 - scale: Controls the spread of the distribution
                 - shape: Controls the tail behavior of the distribution
             Returns None if the L-moments are invalid.
-        
+
         Examples:
             - Estimate Generalized Pareto parameters from L-moments:
               ```python
@@ -1093,9 +1116,10 @@ class Lmoments:
               >>> params = Lmoments.generalized_pareto(l_moments)
               >>> if params:
               ...   print(f"Location: {params[0]}, Scale: {params[1]}, Shape: {params[2]}")
+              Location: -0.016221198156681993, Scale: 5.901814181656014, Shape: 0.6516129032258066
 
               ```
-            
+
             - Using predefined L-moments:
               ```python
               >>> from statista.parameters import Lmoments
@@ -1110,23 +1134,24 @@ class Lmoments:
               ```python
               >>> params = Lmoments.generalized_pareto(l_moments)
               >>> if params:
-              ...       print(f"Location: {params[0]}, Scale: {params[1]}, Shape: {params[2]}")
+              ...     print(f"Location: {params[0]}, Scale: {params[1]}, Shape: {params[2]}")
+              Location: 4.7272727272727275, Scale: 8.628099173553718, Shape: 0.6363636363636362
 
               ```
-        
+
         Note:
             The Generalized Pareto distribution has the cumulative distribution function:
             F(x) = 1 - [1 - k(x-μ)/α]^(1/k) for k ≠ 0
             F(x) = 1 - exp(-(x-μ)/α) for k = 0
-            
+
             Where μ is the location parameter, α is the scale parameter, and k is the shape parameter.
-            
+
             The method returns None if:
             - The second L-moment (l2) is less than or equal to zero
             - The absolute value of the third L-moment (l3) is greater than or equal to 1
-            
+
             These conditions indicate invalid L-moments for the Generalized Pareto distribution.
-            
+
             The shape parameter determines the tail behavior:
             - k < 0: The distribution has an upper bound
             - k = 0: The distribution is exponential
@@ -1152,23 +1177,23 @@ class Lmoments:
     @staticmethod
     def normal(lmoments: List[Union[float, int]]) -> List[Union[float, int]] | None:
         """Estimate parameters for the Normal (Gaussian) distribution.
-        
+
         The Normal distribution is a symmetric, bell-shaped distribution that is
         completely characterized by its mean and standard deviation. It is one of the
         most widely used probability distributions in statistics.
-        
+
         Args:
             lmoments: A list of L-moments [l1, l2, ...] where:
                 - l1 is the mean (first L-moment)
                 - l2 is the L-scale (second L-moment)
                 At least 2 L-moments must be provided.
-        
+
         Returns:
             A list of distribution parameters [location, scale] where:
                 - location: The mean of the distribution
                 - scale: The standard deviation of the distribution
             Returns None if the L-moments are invalid.
-        
+
         Examples:
             - Estimate Normal parameters from L-moments:
               ```python
@@ -1187,9 +1212,10 @@ class Lmoments:
               >>> params = Lmoments.normal(l_moments)
               >>> if params:
               ...       print(f"Mean: {params[0]}, Standard Deviation: {params[1]}")
+              Mean: 3.557142857142857, Standard Deviation: 2.3885925705060047
 
               ```
-            
+
             - Using predefined L-moments:
               ```python
               >>> from statista.parameters import Lmoments
@@ -1205,18 +1231,19 @@ class Lmoments:
               >>> params = Lmoments.normal(l_moments)
               >>> if params:
               ...    print(f"Mean: {params[0]}, Standard Deviation: {params[1]}")
+              Mean: 10.0, Standard Deviation: 3.5449077018110318
 
               ```
-        
+
         Note:
             The Normal distribution has the probability density function:
             f(x) = (1/(σ√(2π))) * exp(-((x-μ)²/(2σ²)))
-            
+
             Where μ is the location parameter (mean) and σ is the scale parameter (standard deviation).
-            
+
             The method returns None if the second L-moment (l2) is less than or equal to zero,
             as this indicates invalid L-moments for the Normal distribution.
-            
+
             The relationship between the second L-moment (l2) and the standard deviation (σ) is:
             σ = l2 * √π
         """
@@ -1230,25 +1257,25 @@ class Lmoments:
     @staticmethod
     def pearson_3(lmoments: List[Union[float, int]]) -> List[Union[float, int]]:
         """Estimate parameters for the Pearson Type III (PE3) distribution.
-        
+
         The Pearson Type III distribution, also known as the three-parameter Gamma distribution,
         is a continuous probability distribution used in hydrology and other fields. It extends
         the Gamma distribution by adding a location parameter, allowing for greater flexibility.
-        
+
         Args:
             lmoments: A list of L-moments [l1, l2, l3, ...] where:
                 - l1 is the mean (first L-moment)
                 - l2 is the L-scale (second L-moment)
                 - l3 is the L-skewness (third L-moment)
                 At least 3 L-moments must be provided.
-        
+
         Returns:
             A list of distribution parameters [location, scale, shape] where:
                 - location: Shifts the distribution along the x-axis
                 - scale: Controls the spread of the distribution
                 - shape: Controls the skewness of the distribution
             Returns [0, 0, 0] if the L-moments are invalid.
-        
+
         Examples:
             - Estimate Pearson Type III parameters from L-moments:
               ```python
@@ -1266,39 +1293,44 @@ class Lmoments:
               ```python
               >>> params = Lmoments.pearson_3(l_moments)
               >>> print(f"Location: {params[0]}, Scale: {params[1]}, Shape: {params[2]}")
+              Location: 3.557142857142857, Scale: 2.4141230211542557, Shape: 0.5833688019377993
 
               ```
-            
+
             - Using predefined L-moments:
               ```python
               >>> from statista.parameters import Lmoments
+
               ```
               - Predefined L-moments
               ```python
               >>> l_moments = [10.0, 2.0, 0.2]  # Positive skewness
+
               ```
               - Estimate Pearson Type III parameters
               ```python
               >>> params = Lmoments.pearson_3(l_moments)
               >>> print(f"Location: {params[0]}, Scale: {params[1]}, Shape: {params[2]}")
+              Location: 10.0, Scale: 3.70994578417498, Shape: 1.2099737178678576
+
               ```
-        
+
         Note:
             The Pearson Type III distribution has the probability density function:
             f(x) = ((x-μ)/β)^(α-1) * exp(-(x-μ)/β) / (β * Γ(α))
-            
+
             Where μ is the location parameter, β is the scale parameter, α is the shape parameter,
             and Γ is the gamma function.
-            
+
             The method returns [0, 0, 0] if:
             - The second L-moment (l2) is less than or equal to zero
             - The absolute value of the third L-moment (l3) is greater than or equal to 1
-            
+
             These conditions indicate invalid L-moments for the Pearson Type III distribution.
-            
+
             When the absolute value of the third L-moment is very small (≤ 1e-6), the shape parameter
             is set to 0, resulting in a normal distribution.
-            
+
             The sign of the shape parameter is determined by the sign of the third L-moment (l3),
             with negative l3 resulting in negative shape (left-skewed) and positive l3 resulting in
             positive shape (right-skewed).
@@ -1348,11 +1380,11 @@ class Lmoments:
     @staticmethod
     def wakeby(lmoments: List[Union[float, int]]) -> List[Union[float, int]] | None:
         """Estimate parameters for the Wakeby distribution.
-        
+
         The Wakeby distribution is a flexible five-parameter distribution that can model
         a wide variety of shapes. It is particularly useful for modeling extreme events
         in hydrology and other fields.
-        
+
         Args:
             lmoments: A list of L-moments [l1, l2, l3, l4, l5] where:
                 - l1 is the mean (first L-moment)
@@ -1361,14 +1393,14 @@ class Lmoments:
                 - l4 is the L-kurtosis (fourth L-moment)
                 - l5 is the fifth L-moment
                 All 5 L-moments must be provided.
-        
+
         Returns:
             A list of distribution parameters [xi, a, b, c, d] where:
                 - xi: Location parameter
                 - a, b: Scale and shape parameters for the first component
                 - c, d: Scale and shape parameters for the second component
             Returns None if the L-moments are invalid.
-        
+
         Examples:
             - Estimate Wakeby parameters from L-moments:
               ```python
@@ -1387,9 +1419,10 @@ class Lmoments:
               >>> params = Lmoments.wakeby(l_moments)
               >>> if params:
               ...     print(f"xi: {params[0]}, a: {params[1]}, b: {params[2]}, c: {params[3]}, d: {params[4]}")
+              xi: -0.3090923196276183, a: 9.89505997215804, b: 0.7672614429790535, c: 0, d: 0
 
               ```
-            
+
             - Using predefined L-moments:
               ```python
               >>> from statista.parameters import Lmoments
@@ -1405,21 +1438,22 @@ class Lmoments:
               >>> params = Lmoments.wakeby(l_moments)
               >>> if params:
               ...    print(f"xi: {params[0]}, a: {params[1]}, b: {params[2]}, c: {params[3]}, d: {params[4]}")
+              xi: 4.51860465116279, a: 4.00999858552907, b: 3.296933739370589, c: 6.793895411225928, d: -0.49376393504801414
 
               ```
-        
+
         Note:
             The Wakeby distribution has the quantile function:
             x(F) = xi + (a/(1-b)) * (1-(1-F)^b) - (c/(1+d)) * (1-(1-F)^(-d))
-            
+
             Where xi, a, b, c, and d are the distribution parameters, and F is the cumulative probability.
-            
+
             The method returns None if:
             - The second L-moment (l2) is less than or equal to zero
             - The absolute value of any of the L-moments l3, l4, or l5 is greater than or equal to 1
-            
+
             These conditions indicate invalid L-moments for the Wakeby distribution.
-            
+
             The Wakeby distribution is very flexible and can approximate many other distributions.
             Special cases include:
             - When c = d = 0, it reduces to the Generalized Pareto distribution
