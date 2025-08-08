@@ -539,7 +539,7 @@ class AbstractDistribution(ABC):
         return test.statistic, test.pvalue
 
     @abstractmethod
-    def chisquare(self) -> Union[tuple, None]:
+    def chisquare(self) -> Tuple[float, float]:
         """Perform the Chi-square test for goodness of fit.
 
         - `chisquare test` refers to Pearson’s chi square goodness of fit test. It is designed for
@@ -580,11 +580,8 @@ class AbstractDistribution(ABC):
         # Pearson’s χ² test assumes each expected count is sufficiently large (at least about 5); otherwise the asymptotic χ² approximation is unreliable
         merged_obs, merged_exp = merge_small_bins(obs_counts, expected_counts)
 
-        try:
-            test = chisquare(merged_obs, f_exp=merged_exp, ddof=2)
-            return test.statistic, test.pvalue
-        except Exception as e:
-            print(e)
+        test = chisquare(merged_obs, f_exp=merged_exp, ddof=len(self.parameters))
+        return test.statistic, test.pvalue
 
     def confidence_interval(
         self,
