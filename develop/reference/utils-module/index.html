@@ -1653,7 +1653,7 @@ all expected counts are zero.</p>
 <a id="__codelineno-0-89" name="__codelineno-0-89"></a>    <span class="n">accum_exp</span>  <span class="o">=</span> <span class="mi">0</span>
 <a id="__codelineno-0-90" name="__codelineno-0-90"></a>
 <a id="__codelineno-0-91" name="__codelineno-0-91"></a>    <span class="c1"># Work from the rightmost bin backwards, accumulating bins until the combined</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a>    <span class="c1"># expected count is ≥ 5:contentReference[oaicite:0]{index=0}</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a>    <span class="c1"># expected count is ≥ 5</span>
 <a id="__codelineno-0-93" name="__codelineno-0-93"></a>    <span class="k">for</span> <span class="n">observed</span><span class="p">,</span> <span class="n">expected</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">bin_count_observed</span><span class="p">,</span> <span class="n">bin_count_fitted_data</span><span class="p">))):</span>
 <a id="__codelineno-0-94" name="__codelineno-0-94"></a>        <span class="k">if</span> <span class="n">expected</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
 <a id="__codelineno-0-95" name="__codelineno-0-95"></a>            <span class="n">accum_obs</span> <span class="o">+=</span> <span class="n">observed</span>
