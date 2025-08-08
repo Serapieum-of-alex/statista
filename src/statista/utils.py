@@ -89,7 +89,7 @@ def merge_small_bins(bin_count_observed: List[float], bin_count_fitted_data: Lis
     accum_exp  = 0
 
     # Work from the rightmost bin backwards, accumulating bins until the combined
-    # expected count is ≥ 5:contentReference[oaicite:0]{index=0}
+    # expected count is ≥ 5
     for observed, expected in reversed(list(zip(bin_count_observed, bin_count_fitted_data))):
         if expected < 5:
             accum_obs += observed
