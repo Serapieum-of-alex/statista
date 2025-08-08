@@ -6,7 +6,7 @@ name: pypi-release
 on:
   workflow_dispatch:
   release:
-    types: [released, published, created]
+    types: [published]
 
 permissions:
   contents: read
