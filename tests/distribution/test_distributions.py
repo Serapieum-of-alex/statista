@@ -140,8 +140,9 @@ class TestGumbel:
     ):
         param = gum_dist_parameters[dist_estimation_parameters_ks]
         dist = Gumbel(time_series2, param)
-        dstatic, _ = dist.chisquare()
-        assert dstatic == pytest.approx(-0.2813945052127964)
+        dstatic, p_value = dist.chisquare()
+        assert dstatic == pytest.approx(0.5768408126308443)
+        assert p_value == pytest.approx(0.7494464539783021)
 
     def test_pdf(
         self,
@@ -288,8 +289,8 @@ class TestGEV:
     ):
         param = gev_dist_parameters[dist_estimation_parameters_ks]
         dist = GEV(time_series1, param)
-        dstatic, _ = dist.chisquare()
-        assert dstatic == pytest.approx(-22.906818156545253)
+        dstatic, p_value = dist.chisquare()
+        assert dstatic == pytest.approx(1.745019092902356)
 
     def test_gev_pdf(
         self,
