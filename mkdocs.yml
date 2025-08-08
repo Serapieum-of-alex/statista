@@ -111,6 +111,7 @@ nav:
     - Plot: reference/plot-class.md
     - Sensitivity Analysis: reference/sensitivity-class.md
     - Tools: reference/tools-module.md
+    - utils: reference/utils-module.md
   - Examples:
     - sensitivity-analysis:
       - Sensitivity Analysis: notebook/sensitivity-analysis/scs-cn.ipynb

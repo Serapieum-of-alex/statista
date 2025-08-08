@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.3 (2025-08-08)
+##### Distributions
+* fix the `chisquare` method to all distributions.
+
 ## 0.6.2 (2025-07-31)
 ##### Docs
 * add complete documentation for all modules.

@@ -15,7 +15,8 @@ from scipy.stats import chisquare, expon, genextreme, gumbel_r, ks_2samp, norm
 from statista.confidence_interval import ConfidenceInterval
 from statista.parameters import Lmoments
 from statista.plot import Plot
-from statista.tools import Tools as st
+from statista.utils import merge_small_bins
+
 
 ninf = 1e-5
 
@@ -538,17 +539,25 @@ class AbstractDistribution(ABC):
         return test.statistic, test.pvalue
 
     @abstractmethod
-    def chisquare(self) -> Union[tuple, None]:
+    def chisquare(self) -> Tuple[float, float]:
         """Perform the Chi-square test for goodness of fit.
 
-        This method tests whether the data follows the fitted distribution using
-        the Chi-square test. The test compares the observed frequencies with the
+        - `chisquare test` refers to Pearson’s chi square goodness of fit test. It is designed for
+        categorical/count data: you observe how many points fall into each bin and compare those counts with the
+        frequencies expected under some hypothesis
+
+        This method tests whether the data follows the fitted distribution using the Chi-square test.
+        The test compares the observed frequencies (number of values in each category/histogram bin) with the
         expected frequencies under the fitted distribution.
 
         Returns:
             Tuple containing:
             - Chi-square statistic: The test statistic measuring the difference between
               observed and expected frequencies.
+              The χ² statistic is simply a measure of how far your observed counts deviate from the counts you would
+              expect if the fitted distribution were correct. For each bin 𝑖 we compute the squared difference
+              between the observed count 𝑂𝑖 and the expected count 𝐸𝑖, scaled by 𝐸𝑖, and then sum over all bins:
+
             - p-value: The probability of observing a Chi-square statistic as extreme as the one calculated,
               assuming the null hypothesis is true (data follows the distribution).
               If p-value < significance level (typically 0.05), reject the null hypothesis.
@@ -562,15 +571,17 @@ class AbstractDistribution(ABC):
                 "The Value of parameters is unknown. Please use 'fit_model' to estimate the distribution parameters"
             )
 
-        qth = self.inverse_cdf(self.cdf_weibul, self.parameters)
-        try:
-            test = chisquare(st.standardize(qth), st.standardize(self.data))
-            print("-----chisquare Test-----")
-            print("Statistic = " + str(test.statistic))
-            print("P value = " + str(test.pvalue))
-            return test.statistic, test.pvalue
-        except Exception as e:
-            print(e)
+        bin_edges = np.histogram_bin_edges(self.data, bins="sturges")
+        obs_counts, _ = np.histogram(self.data, bins=bin_edges)
+
+        expected_prob = np.diff(self._cdf_eq(bin_edges, self.parameters))
+        expected_counts = expected_prob * len(self.data)
+
+        # Pearson’s χ² test assumes each expected count is sufficiently large (at least about 5); otherwise the asymptotic χ² approximation is unreliable
+        merged_obs, merged_exp = merge_small_bins(obs_counts, expected_counts)
+
+        test = chisquare(merged_obs, f_exp=merged_exp, ddof=len(self.parameters))
+        return test.statistic, test.pvalue
 
     def confidence_interval(
         self,
@@ -1345,8 +1356,6 @@ class Gumbel(AbstractDistribution):
                 Statistic = 0.019
                 Accept Hypothesis
                 P value = 0.9937026761524456
-
-
                 >>> print(parameters)
                 {'loc': np.float64(0.010101355750222706), 'scale': 1.0313042643102108}
 
@@ -1419,7 +1428,7 @@ class Gumbel(AbstractDistribution):
 
         if test:
             self.ks()
-            # self.chisquare()
+            self.chisquare()
 
         return param
 
@@ -1523,8 +1532,7 @@ class Gumbel(AbstractDistribution):
         scale = parameters.get("scale")
         if scale <= 0:
             raise ValueError(SCALE_PARAMETER_ERROR)
-        # the main equation from scipy
-        # Qth = loc - scale * (np.log(-np.log(cdf)))
+
         qth = gumbel_r.ppf(cdf, loc=loc, scale=scale)
 
         return qth
@@ -2330,6 +2338,7 @@ class GEV(AbstractDistribution):
 
         if test:
             self.ks()
+            self.chisquare()
 
         return param
 
@@ -3049,6 +3058,7 @@ class Exponential(AbstractDistribution):
 
         if test:
             self.ks()
+            self.chisquare()
 
         return param
 
@@ -3370,6 +3380,7 @@ class Normal(AbstractDistribution):
 
         if test:
             self.ks()
+            self.chisquare()
 
         return param
 
