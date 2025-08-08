@@ -82,7 +82,8 @@ def merge_small_bins(bin_count_observed: List[float], bin_count_fitted_data: Lis
     """
     if len(bin_count_observed) != len(bin_count_fitted_data):
         raise ValueError("bin_count_observed and bin_count_fitted_data must have the same length.")
-    # 4. Merge tail bins whose expected counts are < 5
+
+    # Merge tail bins whose expected counts are < 5
     merged_obs = []
     merged_exp = []
     accum_obs  = 0
@@ -116,7 +117,7 @@ def merge_small_bins(bin_count_observed: List[float], bin_count_fitted_data: Lis
     merged_obs = np.array(merged_obs[::-1])
     merged_exp = np.array(merged_exp[::-1]).astype(float)
 
-    # 5. Rescale expected counts so they sum to the total number of observations
-    #    This is required for Pearson’s χ² test:contentReference[oaicite:1]{index=1}
+    # Rescale expected counts so they sum to the total number of observations
+    # This is required for Pearson’s χ² test
     merged_exp *= merged_obs.sum() / merged_exp.sum()
     return merged_obs, merged_exp
