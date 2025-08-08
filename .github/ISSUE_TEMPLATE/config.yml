@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/Serapieum-of-alex/statista
+    about: Read the documentation and examples for statista.
+  - name: Q&A / Usage questions
+    url: https://github.com/Serapieum-of-alex/statista/discussions
+    about: Ask questions or discuss how to use statista features.
