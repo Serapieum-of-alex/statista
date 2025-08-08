@@ -1356,8 +1356,6 @@ class Gumbel(AbstractDistribution):
                 Statistic = 0.019
                 Accept Hypothesis
                 P value = 0.9937026761524456
-
-
                 >>> print(parameters)
                 {'loc': np.float64(0.010101355750222706), 'scale': 1.0313042643102108}
 
@@ -1430,7 +1428,7 @@ class Gumbel(AbstractDistribution):
 
         if test:
             self.ks()
-            # self.chisquare()
+            self.chisquare()
 
         return param
 
@@ -2340,6 +2338,7 @@ class GEV(AbstractDistribution):
 
         if test:
             self.ks()
+            self.chisquare()
 
         return param
 
@@ -3059,6 +3058,7 @@ class Exponential(AbstractDistribution):
 
         if test:
             self.ks()
+            self.chisquare()
 
         return param
 
@@ -3380,6 +3380,7 @@ class Normal(AbstractDistribution):
 
         if test:
             self.ks()
+            self.chisquare()
 
         return param
 
