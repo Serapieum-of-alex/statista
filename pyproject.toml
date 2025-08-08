@@ -1,6 +1,6 @@
 [project]
 name = "statista"
-version = "0.6.2"
+version = "0.6.3"
 description = "statistics package"
 readme = "README.md"
 requires-python = ">=3.11,<4"
@@ -76,7 +76,7 @@ Repository = "https://github.com/Serapieum-of-alex/statista"
 
 
 [tool.pytest.ini_options]
-# Anything you would have put in addopts/pytest.ini
+
 addopts = [
     "--cov",
     "--cov-branch",
@@ -88,6 +88,9 @@ testpaths = ["tests"]
 markers = [
     "slow: mark test as slow.",
     "fast: mark test as fast.",
+    "e2e: marks tests as e2e (deselect with '-m \"not e2e\"')",
+    "unit: marks tests as unit (deselect with '-m \"not unit\"')",
+    "integration: marks tests as integration (deselect with '-m \"not integration\"')",
 ]
 
 [tool.flake8]
