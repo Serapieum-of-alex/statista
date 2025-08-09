@@ -76,8 +76,8 @@ jobs:
           USER_JSON=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/users/${{ github.actor }}")
           USER_NAME=$(echo "$USER_JSON" | jq -r .name)
           USER_EMAIL=$(echo "$USER_JSON" | jq -r .email)
-          echo "::set-output name=name::$USER_NAME"
-          echo "::set-output name=email::$USER_EMAIL"
+          echo "name=$USER_NAME" >> $GITHUB_OUTPUT
+          echo "email=$USER_EMAIL" >> $GITHUB_OUTPUT
 
       - name: Configure git
         run: |
