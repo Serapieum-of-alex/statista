@@ -61,7 +61,8 @@ docs = [
     "mkdocs-mermaid2-plugin  >=1.2.1",
     "jupyter-contrib-nbextensions  >=0.7.0",
     "notebook<7.0",
-    "jupyter"
+    "jupyter",
+    "commitizen (>=4.8.3,<5.0.0)",
 ]
 
 [tool.setuptools.packages.find]
@@ -108,6 +109,13 @@ skip-string-normalization = true
 profile = "black"
 line_length = 88
 multi_line_output = 3
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version_provider = "pep621"
+tag_format = "$version"
+update_changelog_on_bump = true
+changelog_file = "docs/change-log.md"
 
 [build-system]
 requires = ["setuptools>=61", "wheel"]
