@@ -114,7 +114,6 @@ multi_line_output = 3
 name = "cz_conventional_commits"
 version_provider = "pep621"
 tag_format = "$version"
-update_changelog_on_bump = true
 changelog_file = "docs/change-log.md"
 
 [build-system]
