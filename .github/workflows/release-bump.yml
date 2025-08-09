@@ -68,7 +68,7 @@ jobs:
           pip install commitizen>=4.8.3
 
       - name: Generate changelog
-        run: poetry run cz changelog --unreleased-version="${{ steps.get_version.outputs.VERSION }}" --incremental
+        run: cz changelog --unreleased-version="${{ steps.get_version.outputs.VERSION }}" --incremental
 
       - name: Get user info
         id: user_info
@@ -88,7 +88,7 @@ jobs:
         run: |
           set -e  # Exit immediately if a command exits with a non-zero status
           echo "Bumping version to ${{ steps.get_version.outputs.VERSION }}"
-          poetry run cz bump --yes --check-consistency "${{ steps.get_version.outputs.VERSION }}"
+          cz bump --yes --check-consistency "${{ steps.get_version.outputs.VERSION }}"
 
           echo "Pushing changes to repository"
           if ! git push; then
