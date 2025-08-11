@@ -1,7 +1,5 @@
 # Changelog
 
-## 0.6.4 (2025-08-11)
-
 ## 0.6.3 (2025-08-08)
 ##### Distributions
 * fix the `chisquare` method to all distributions.
