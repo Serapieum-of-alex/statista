@@ -44,7 +44,6 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.inputs.release_branch }}
-          token: ${{ secrets.GH_PAT_MAIN_PUSH }}
 
       - name: Determine release version
         id: get_version
