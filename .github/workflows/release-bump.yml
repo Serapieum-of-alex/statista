@@ -84,7 +84,7 @@ jobs:
           git config --local user.email "${{ steps.user_info.outputs.email }}"
           git config --local user.name "${{ steps.user_info.outputs.name }}"
 
-      - name: Bump version
+      - name: Bump version and create tag
         run: |
           set -e  # Exit immediately if a command exits with a non-zero status
           echo "Bumping version to ${{ steps.get_version.outputs.VERSION }}"
