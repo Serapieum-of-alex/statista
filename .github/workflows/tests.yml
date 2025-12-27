@@ -42,7 +42,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-            uv sync --frozen dev
+            uv sync --frozen --group dev
 
       - name: Run Tests
         run: |
