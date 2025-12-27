@@ -3,7 +3,6 @@ name = "statista"
 version = "0.6.3"
 description = "statistics package"
 readme = "README.md"
-requires-python = ">=3.11,<4"
 license = {text = "GPL-3.0-or-later"}
 authors = [
     {name = "Mostafa Farrag", email = "moah.farag@gmail.com"},
@@ -31,6 +30,8 @@ classifiers = [
     "Intended Audience :: Developers",
 ]
 
+requires-python = ">=3.11"
+#requires-python = ">=3.11,<4"
 dependencies = [
     "numpy>=2.0.0",
     "matplotlib>=3.9.0",
@@ -40,14 +41,20 @@ dependencies = [
     "loguru>=0.7.2",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
-    "nbval >=0.11.0",
-    "pre-commit >=3.7.1",
-    "pre-commit-hooks >=4.6.0",
-    "pytest >=8.2.2",
-    "pytest-cov >=5.0.0",
+    "pytest>=8.4.2",
+    "pytest-cov>=7.0.0",
+    "pre-commit>=4.3.0",
+    "pre-commit-hooks>=6.0.0",
+    "pytest-asyncio>=1.2.0",
+    "nest-asyncio>=1.6.0",
+    "nbval>=0.11.0",
+    "pytest-xdist>=3.8.0",
+    "mypy>=1.19.0",
+    "types-PyYAML>=6.0.12",
 ]
+
 docs = [
     "mkdocs >=1.5.3",
     "mkdocs-material >=9.5.3",
@@ -60,14 +67,11 @@ docs = [
     "mkdocs-table-reader-plugin  >=3.1.0",
     "mkdocs-mermaid2-plugin  >=1.2.1",
     "jupyter-contrib-nbextensions  >=0.7.0",
+    "mkdocs-panzoom-plugin",
     "notebook<7.0",
     "jupyter",
     "commitizen (>=4.8.3,<5.0.0)",
 ]
-
-[tool.setuptools.packages.find]
-where = ["src"]
-include = ["statista", "statista.*"]
 
 
 [project.urls]
@@ -76,29 +80,24 @@ Documentation = "https://github.com/Serapieum-of-alex/statista"
 Repository = "https://github.com/Serapieum-of-alex/statista"
 
 
-[tool.pytest.ini_options]
+[tool.hatch.build.targets.wheel]
+packages = ["src/statista"]
+#include = ["src/tsvkw/data/*"]
 
-addopts = [
-    "--cov",
-    "--cov-branch",
-    "--cov-report=term",
-    "--cov-report=html",
-    "--cov-report=xml:coverage-reports/coverage.xml"
-]
-testpaths = ["tests"]
-markers = [
-    "slow: mark test as slow.",
-    "fast: mark test as fast.",
-    "e2e: marks tests as e2e (deselect with '-m \"not e2e\"')",
-    "unit: marks tests as unit (deselect with '-m \"not unit\"')",
-    "integration: marks tests as integration (deselect with '-m \"not integration\"')",
-]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version_provider = "pep621"
+tag_format = "$version"
+changelog_file = "docs/change-log.md"
 
 [tool.flake8]
 ignore = "E203, E266, E501, W503, E741"
 max-line-length = 88
 max-complexity = 18
 select = "B,C,E,F,W,T4"
+count = true
+
 
 [tool.black]
 profile = "flake8"
@@ -110,12 +109,65 @@ profile = "black"
 line_length = 88
 multi_line_output = 3
 
-[tool.commitizen]
-name = "cz_conventional_commits"
-version_provider = "pep621"
-tag_format = "$version"
-changelog_file = "docs/change-log.md"
+[tool.pytest.ini_options]
+
+addopts = [
+    "--cov",
+    "--cov-branch",
+    "--cov-report=term",
+    "--cov-report=html",
+    "--cov-report=xml:coverage-reports/coverage.xml"
+]
+testpaths = "tests"
+norecursedirs = "docs"
+markers = [
+    "slow: mark test as slow.",
+    "fast: mark test as fast.",
+    "e2e: marks tests as e2e (deselect with '-m \"not e2e\"')",
+    "unit: marks tests as unit (deselect with '-m \"not unit\"')",
+    "integration: marks tests as integration (deselect with '-m \"not integration\"')",
+]
+
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = false
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+disallow_untyped_decorators = false
+warn_redundant_casts = true
+warn_unused_ignores = false
+warn_no_return = true
+warn_unreachable = true
+strict_optional = true
+ignore_missing_imports = true
+no_implicit_optional = false
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "setup"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "tsvkw.toetsmodel.models"
+# Complex parsing logic with dynamic types
+warn_return_any = false
+disallow_any_expr = false
+
+[[tool.mypy.overrides]]
+module = "tsvkw.config"
+# Configuration loading from YAML - unavoidable Any returns
+warn_return_any = false
+
+
+#[tool.uv]
+#managed = false
 
 [build-system]
-requires = ["setuptools>=61", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
