@@ -7,9 +7,6 @@ permissions:
 
 on:
   push:
-    branches: ['main']
-  pull_request:
-    branches: [main]
 
 jobs:
   main-package:
@@ -22,20 +19,34 @@ jobs:
       OS: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Verify lock file is up to date
+        shell: bash
+        run: |
+          uv lock --check
+
       - name: Install dependencies
         run: |
-            pip install .[dev]
+            uv sync --frozen dev
 
       - name: Run Tests
         run: |
-          pytest -vvv --cov=src/statista --cov-report=xml --junitxml=junit.xml -o junit_family=legacy
+          uv run pytest -vvv --cov=src/statista --cov-report=xml --junitxml=junit.xml -o junit_family=legacy
 
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
@@ -46,4 +57,4 @@ jobs:
 
       - name: test Jupyter notebook
         run: |
-          pytest --nbval --nbval-lax --verbose
+          uv run pytest --nbval --nbval-lax --verbose
