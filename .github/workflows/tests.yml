@@ -23,26 +23,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v6
+      - name: Set up Python
+        uses: Serapieum-of-alex/github-actions/actions/python-setup/uv@main
         with:
           python-version: ${{ matrix.python-version }}
-          architecture: x64
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v4
-        with:
-          enable-cache: true
-          cache-dependency-glob: uv.lock
-
-      - name: Verify lock file is up to date
-        shell: bash
-        run: |
-          uv lock --check
-
-      - name: Install dependencies
-        run: |
-            uv sync --frozen --group dev
+          install-groups: dev
+          verify-lock: true
 
       - name: Run Tests
         run: |
