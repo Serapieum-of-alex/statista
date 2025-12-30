@@ -46,7 +46,7 @@ from statista.distributions import Distributions
 def ams_analysis(
     time_series_df: DataFrame,
     ams: bool = False,
-    ams_start: str = "A-OCT",
+    ams_start: str = "YE-OCT",
     save_plots: bool = False,
     save_to: str = None,
     filter_out: Union[float, int] = None,
