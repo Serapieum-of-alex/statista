@@ -22,14 +22,6 @@ on:
         description: "The new patch version."
         required: false
         type: string
-      increment:
-        description: "The type of increment."
-        required: false
-        type: choice
-        options:
-          - MAJOR
-          - MINOR
-          - PATCH
       version:
         description: "Full version to release (e.g. 1.0.0 or 1.0.0-beta.1)"
         required: false
@@ -120,7 +112,7 @@ jobs:
           echo "Version bump completed successfully"
 
       - name: Create GitHub release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           name: Release ${{ steps.get_version.outputs.VERSION }}
           tag_name: "${{ steps.get_version.outputs.VERSION }}"
