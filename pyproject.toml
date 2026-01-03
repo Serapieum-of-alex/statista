@@ -153,9 +153,6 @@ module = "setup"
 ignore_errors = true
 
 
-#[tool.uv]
-#managed = false
-
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
