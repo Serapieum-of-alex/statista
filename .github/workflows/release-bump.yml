@@ -29,14 +29,6 @@ on:
           - beta
           - rc
         default: "none"
-      release_notes:
-        description: "Release notes source (auto or tag)"
-        required: false
-        type: choice
-        options:
-          - tag
-          - auto
-        default: "tag"
       draft:
         description: "Create as draft release"
         required: false
@@ -54,7 +46,6 @@ jobs:
           release-branch: ${{ github.event.inputs.release_branch }}
           increment: ${{ github.event.inputs.increment }}
           prerelease-type: ${{ github.event.inputs.prerelease_type }}
-          release-notes: ${{ github.event.inputs.release_notes }}
           draft: ${{ github.event.inputs.draft }}
           package-manager: uv
           python-version: "3.12"
