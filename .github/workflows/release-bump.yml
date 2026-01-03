@@ -10,112 +10,49 @@ on:
         description: "Branch to create release from"
         required: false
         default: "main"
-      major:
-        description: "The new major version."
+      increment:
+        description: "Version increment type"
+        required: false
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        default: "patch"
+      prerelease_type:
+        description: "Prerelease type"
+        required: false
+        type: choice
+        options:
+          - none
+          - alpha
+          - beta
+          - rc
+        default: "none"
+      release_title:
+        description: "Custom release title (defaults to version)"
         required: false
         type: string
-      minor:
-        description: "The new minor version."
+      draft:
+        description: "Create as draft release"
         required: false
-        type: string
-      patch:
-        description: "The new patch version."
-        required: false
-        type: string
-      version:
-        description: "Full version to release (e.g. 1.0.0 or 1.0.0-beta.1)"
-        required: false
-        type: string
+        type: boolean
+        default: false
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Check repository
-        uses: actions/checkout@v4
+      - name: Create GitHub Release with Commitizen
+        uses: Serapieum-of-alex/github-actions/actions/release/github@main
         with:
-          fetch-depth: 0
-          ref: ${{ github.event.inputs.release_branch }}
-
-      - name: Determine release version
-        id: get_version
-        run: |
-          if [ -n "${{ github.event.inputs.version }}" ]; then
-            echo "Using manual version input: ${{ github.event.inputs.version }}"
-            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
-          else
-            VERSION="${{ github.event.inputs.major }}.${{ github.event.inputs.minor }}.${{ github.event.inputs.patch }}"
-            echo "Using constructed version: $VERSION"
-            echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Set up python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.13
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v4
-        with:
-          enable-cache: true
-          cache-dependency-glob: uv.lock
-
-      - name: Verify lock file is up to date
-        run: |
-          uv lock --check
-
-      - name: Install Dependencies
-        run: uv sync --frozen --group dev --group docs
-
-      - name: Generate changelog
-        run: uv run cz changelog --unreleased-version="${{ steps.get_version.outputs.VERSION }}" --incremental
-
-      - name: Get user info
-        id: user_info
-        run: |
-          USER_JSON=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/users/${{ github.actor }}")
-          USER_NAME=$(echo "$USER_JSON" | jq -r .name)
-          USER_EMAIL=$(echo "$USER_JSON" | jq -r .email)
-          echo "name=$USER_NAME" >> $GITHUB_OUTPUT
-          echo "email=$USER_EMAIL" >> $GITHUB_OUTPUT
-
-      - name: Configure git
-        run: |
-          git config --local user.email "${{ steps.user_info.outputs.email }}"
-          git config --local user.name "${{ steps.user_info.outputs.name }}"
-
-      - name: Bump version and create tag
-        run: |
-          set -e  # Exit immediately if a command exits with a non-zero status
-          echo "Bumping version to ${{ steps.get_version.outputs.VERSION }}"
-          uv run cz bump --yes --check-consistency "${{ steps.get_version.outputs.VERSION }}"
-
-          echo "Updating lock file after version bump"
-          uv lock
-
-          echo "Committing lock file update"
-          git add uv.lock
-          git commit -m "chore: update lock file after version bump" || echo "No lock file changes to commit"
-
-          echo "Pushing changes to repository"
-          if ! git push; then
-            echo "::error::Failed to push changes to repository"
-            exit 1
-          fi
-
-          echo "Pushing tags to repository"
-          if ! git push --tags; then
-            echo "::error::Failed to push tags to repository"
-            exit 1
-          fi
-
-          echo "Version bump completed successfully"
-
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: Release ${{ steps.get_version.outputs.VERSION }}
-          tag_name: "${{ steps.get_version.outputs.VERSION }}"
-          generate_release_notes: true
-          prerelease: ${{ contains(steps.get_version.outputs.VERSION, 'b') }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          release-branch: ${{ github.event.inputs.release_branch }}
+          increment: ${{ github.event.inputs.increment }}
+          prerelease-type: ${{ github.event.inputs.prerelease_type }}
+          release-title: ${{ github.event.inputs.release_title }}
+          draft: ${{ github.event.inputs.draft }}
+          package-manager: uv
+          python-version: "3.13"
+          install-groups: "dev docs"
+          release-notes: "tag"
