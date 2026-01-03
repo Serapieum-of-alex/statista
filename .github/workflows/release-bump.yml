@@ -6,7 +6,7 @@ permissions:
 on:
   workflow_dispatch:
     inputs:
-      release_branch:
+      release-branch:
         description: "Branch to create release from"
         required: false
         default: "main"
@@ -43,7 +43,7 @@ jobs:
         uses: Serapieum-of-alex/github-actions/actions/release/github@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          release-branch: ${{ github.event.inputs.release_branch }}
+          release-branch: ${{ github.event.inputs.release-branch }}
           increment: ${{ github.event.inputs.increment }}
           prerelease-type: ${{ github.event.inputs.prerelease_type }}
           draft: ${{ github.event.inputs.draft }}
