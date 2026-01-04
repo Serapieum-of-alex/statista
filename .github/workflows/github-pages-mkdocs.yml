@@ -25,7 +25,7 @@ jobs:
           trigger: 'pull_request'
           package-manager: 'uv'
           python-version: '3.12'
-          install-groups: 'docs'
+          install-groups: 'groups: docs'
           deploy-token: ${{ secrets.ACTIONS_DEPLOY_TOKEN }}
 
   deploy-main:
