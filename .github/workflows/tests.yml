@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: Serapieum-of-alex/github-actions/actions/python-setup/uv@main
+        uses: Serapieum-of-alex/github-actions/actions/python-setup/uv@v1
         with:
           python-version: ${{ matrix.python-version }}
           install-groups: dev
