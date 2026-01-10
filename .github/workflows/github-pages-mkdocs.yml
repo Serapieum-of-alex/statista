@@ -20,6 +20,10 @@ jobs:
       if: github.event_name == 'pull_request'
       runs-on: ubuntu-latest
       steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
       - uses: Serapieum-of-alex/github-actions/actions/mkdocs-deploy@mkdocs/v1
         with:
           trigger: 'pull_request'
@@ -32,6 +36,9 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
     - uses: Serapieum-of-alex/github-actions/actions/mkdocs-deploy@main
       with:
         trigger: 'main'
@@ -44,6 +51,9 @@ jobs:
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
     - uses: Serapieum-of-alex/github-actions/actions/mkdocs-deploy@main
       with:
         trigger: 'release'
