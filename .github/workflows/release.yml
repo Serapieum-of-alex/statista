@@ -49,4 +49,4 @@ jobs:
           draft: ${{ github.event.inputs.draft }}
           package-manager: uv
           python-version: "3.12"
-          install-groups: "dev docs"
+          install-groups: "groups: dev docs"

@@ -81,7 +81,6 @@ Repository = "https://github.com/Serapieum-of-alex/statista"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/statista"]
-#include = ["src/tsvkw/data/*"]
 
 
 [tool.commitizen]
@@ -127,8 +126,8 @@ addopts = [
     "--cov-report=html",
     "--cov-report=xml:coverage-reports/coverage.xml"
 ]
-testpaths = "tests"
-norecursedirs = "docs"
+testpaths = ["tests"]
+norecursedirs = ["docs"]
 markers = [
     "slow: mark test as slow.",
     "fast: mark test as fast.",
