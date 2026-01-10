@@ -1,0 +1,52 @@
+name: Automated release workflow
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-branch:
+        description: "Branch to create release from"
+        required: false
+        default: "main"
+      increment:
+        description: "Version increment type"
+        required: false
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        default: "patch"
+      prerelease_type:
+        description: "Prerelease type"
+        required: false
+        type: choice
+        options:
+          - none
+          - alpha
+          - beta
+          - rc
+        default: "none"
+      draft:
+        description: "Create as draft release"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create GitHub Release with Commitizen
+        uses: Serapieum-of-alex/github-actions/actions/release/github@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          release-branch: ${{ github.event.inputs.release-branch }}
+          increment: ${{ github.event.inputs.increment }}
+          prerelease-type: ${{ github.event.inputs.prerelease_type }}
+          draft: ${{ github.event.inputs.draft }}
+          package-manager: uv
+          python-version: "3.12"
+          install-groups: "groups: dev docs"

@@ -1,6 +1,6 @@
-# descriptors module
+##### utils module
 
-::: statista.descriptors
+::: statista.utils
     options:
         show_root_heading: true
         show_source: true

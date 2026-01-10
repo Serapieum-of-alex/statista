@@ -1,12 +1,13 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 from statista.parameters import Lmoments
 
 time_series1 = pd.read_csv("examples/data/time_series1.txt", header=None)[0].tolist()
 time_series2 = pd.read_csv("examples/data/time_series2.txt", header=None)[0].tolist()
 # %%
 L = Lmoments(time_series1)
-l1, l2, l3, l4 = L.Lmom(4)
+l1, l2, l3, l4 = L.calculate(4)
 
 sample = np.array(time_series1)
 n = len(sample)

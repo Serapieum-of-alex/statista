@@ -9,7 +9,8 @@ affect model outputs, which is crucial for model calibration, uncertainty analys
 and decision-making processes.
 """
 
-from typing import List, Union
+from typing import Any, Dict, List, Union
+
 import matplotlib.pyplot as plt
 import numpy as np
 from pandas import DataFrame
@@ -212,10 +213,12 @@ class Sensitivity:
         If the style index exceeds the list length, it wraps around using modulo operation.
 
         Args:
-            style (int): Index of the marker style to retrieve.
+            style (int):
+                Index of the marker style to retrieve.
 
         Returns:
-            str: A matplotlib-compatible marker style string (e.g., "--o", ":D").
+            str:
+                A matplotlib-compatible marker style string (e.g., "--o", ":D").
 
         Examples:
             - Import necessary libraries:
@@ -249,7 +252,7 @@ class Sensitivity:
             style %= len(Sensitivity.MarkerStyleList)
         return Sensitivity.MarkerStyleList[style]
 
-    def one_at_a_time(self, *args, **kwargs):
+    def one_at_a_time(self, *args, **kwargs: Dict[str, Any]):
         """Perform One-At-a-Time (OAT) sensitivity analysis.
 
         This method performs OAT sensitivity analysis by varying each parameter one at a time
@@ -266,14 +269,14 @@ class Sensitivity:
 
         Args:
             *args: Variable length argument list passed to the model function.
-            **kwargs: Arbitrary keyword arguments passed to the model function.
+            **kwargs (Dict[str, Any]): Arbitrary keyword arguments passed to the model function.
 
         Raises:
             ValueError: If the function returns more than one value when return_values=1,
                 or doesn't return the expected format when return_values=2.
 
         Examples:
-            - Import necessary libraries:
+            - Import libraries:
                 ```python
                 >>> import pandas as pd
                 >>> import numpy as np
@@ -362,8 +365,7 @@ class Sensitivity:
             random_param = self.parameter["value"].tolist()
             for j in range(len(rand_value)):
                 random_param[k] = rand_value[j]
-                # args = list(args)
-                # args.insert(Position, random_param)
+
                 if self.return_values == 1:
                     metric = self.function(random_param, *args, **kwargs)
                 else:
@@ -499,6 +501,7 @@ class Sensitivity:
                 ...     ylabel="Model Output"
                 ... )
                 >>> plt.show()
+
                 ```
                 ![one-at-a-time](./../_images/sensitivity/one-at-a-time.png)
 

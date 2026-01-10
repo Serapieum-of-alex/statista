@@ -1,10 +1,8 @@
 # Statista - Advanced Statistical Analysis Package
 
 [![Python Versions](https://img.shields.io/pypi/pyversions/statista.svg)](https://pypi.org/project/statista/)
-[![PyPI version](https://badge.fury.io/py/statista.svg)](https://badge.fury.io/py/statista)
-[![Conda Version](https://img.shields.io/conda/vn/conda-forge/statista.svg)](https://anaconda.org/conda-forge/statista)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![GitHub Pages](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://serapieum-of-alex.github.io/statista)
+[![Docs](https://img.shields.io/badge/docs-latest-blue)](https://serapieum-of-alex.github.io/statista/latest/)
 [![codecov](https://codecov.io/gh/Serapieum-of-alex/statista/branch/main/graph/badge.svg?token=GQKhcj2pFK)](https://codecov.io/gh/Serapieum-of-alex/statista)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![GitHub last commit](https://img.shields.io/github/last-commit/Serapieum-of-alex/statista)](https://github.com/Serapieum-of-alex/statista/commits/main)
@@ -26,8 +24,6 @@ Documentation: [GitHub Pages](https://serapieum-of-alex.github.io/statista)
 | Name | Downloads                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Version | Platforms |
 | --- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| --- | --- |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-statista-green.svg)](https://anaconda.org/conda-forge/statista) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/statista.svg)](https://anaconda.org/conda-forge/statista) [![Downloads](https://pepy.tech/badge/statista)](https://pepy.tech/project/statista) [![Downloads](https://pepy.tech/badge/statista/month)](https://pepy.tech/project/statista)  [![Downloads](https://pepy.tech/badge/statista/week)](https://pepy.tech/project/statista)  ![PyPI - Downloads](https://img.shields.io/pypi/dd/statista?color=blue&style=flat-square) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/statista.svg)](https://anaconda.org/conda-forge/statista) [![PyPI version](https://badge.fury.io/py/statista.svg)](https://badge.fury.io/py/statista) [![Anaconda-Server Badge](https://anaconda.org/conda-forge/statista/badges/version.svg)](https://anaconda.org/conda-forge/statista) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/statista.svg)](https://anaconda.org/conda-forge/statista) [![Join the chat at https://gitter.im/Hapi-Nile/Hapi](https://badges.gitter.im/Hapi-Nile/Hapi.svg)](https://gitter.im/Hapi-Nile/Hapi?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) |
-
-conda-forge feedstock: [![Repo: statista-feedstock](https://img.shields.io/badge/repo‑statista--feedstock-blue)](https://github.com/conda-forge/statista-feedstock)
 
 ## Installation
 

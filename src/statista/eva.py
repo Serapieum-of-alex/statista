@@ -31,8 +31,9 @@ Common Applications:
     - Temperature Extremes: AMS can be used to evaluate the risk of extremely high or low temperatures.
 """
 
-from typing import Union, Tuple
 from pathlib import Path
+from typing import Tuple, Union
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -45,7 +46,7 @@ from statista.distributions import Distributions
 def ams_analysis(
     time_series_df: DataFrame,
     ams: bool = False,
-    ams_start: str = "A-OCT",
+    ams_start: str = "YE-OCT",
     save_plots: bool = False,
     save_to: str = None,
     filter_out: Union[float, int] = None,

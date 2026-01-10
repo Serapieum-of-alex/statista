@@ -3,7 +3,7 @@ import matplotlib
 matplotlib.use("TkAgg")
 import pandas as pd
 
-from statista.distributions import Gumbel, PlottingPosition, Distributions
+from statista.distributions import Distributions, Gumbel, PlottingPosition
 
 time_series1 = pd.read_csv("examples/data/time_series1.txt", header=None)[0].tolist()
 time_series2 = pd.read_csv("examples/data/time_series2.txt", header=None)[0].tolist()
