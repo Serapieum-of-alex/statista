@@ -7,9 +7,6 @@ permissions:
 
 on:
   push:
-    branches: ['main']
-  pull_request:
-    branches: [main]
 
 jobs:
   main-package:
@@ -22,28 +19,24 @@ jobs:
       OS: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: Serapieum-of-alex/github-actions/actions/python-setup/uv@uv/v1
         with:
           python-version: ${{ matrix.python-version }}
-          architecture: x64
-
-      - name: Install dependencies
-        run: |
-            pip install .[dev]
+          install-groups: "groups: dev"
+          verify-lock: true
 
       - name: Run Tests
         run: |
-          pytest -vvv --cov=src/statista --cov-report=xml --junitxml=junit.xml -o junit_family=legacy
-
-      - name: Upload test results to Codecov
-        if: ${{ !cancelled() }}
-        uses: codecov/test-results-action@v1
+          uv run pytest -vvv --cov=src/statista --cov-report=xml --junitxml=junit.xml -o junit_family=legacy
 
       - name: Upload coverage reports to Codecov with GitHub Action
         uses: codecov/codecov-action@v5
 
       - name: test Jupyter notebook
         run: |
-          pytest --nbval --nbval-lax --verbose
+          uv run pytest --nbval --nbval-lax --verbose
