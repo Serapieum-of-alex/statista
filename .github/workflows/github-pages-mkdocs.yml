@@ -20,7 +20,7 @@ jobs:
       if: github.event_name == 'pull_request'
       runs-on: ubuntu-latest
       steps:
-      - uses: Serapieum-of-alex/github-actions/actions/mkdocs-deploy@main
+      - uses: Serapieum-of-alex/github-actions/actions/mkdocs-deploy@mkdocs/v1
         with:
           trigger: 'pull_request'
           package-manager: 'uv'
