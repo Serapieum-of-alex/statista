@@ -1,6 +1,47 @@
 # Changelog
 
 
+## 0.7.0 (2026-01-18)
+
+
+- build: migrate from poetry to uv package manager (#128)
+- build: migrate from poetry to uv package manager
+-   - Replace Poetry with uv as the primary package manager
+  - Convert project.optional-dependencies to dependency-groups (PEP 735)
+  - Update all CI/CD workflows to use uv with composite actions
+  - Consolidate release workflows (remove release-bump.yml and github-release.yml)
+  - Update actions to latest versions (checkout@v5, composite actions v1)
+  - Add comprehensive mypy configuration with module-specific overrides
+  - Fix deprecated pandas offset alias "A-OCT" to "YE-OCT" in eva.py
+  - Simplify mkdocs deployment workflow with reusable composite actions
+  - Update PyPI release workflow to use uv build
+- ci(release-bump): update step name to clarify version bump and tagging process
+- ci(release-bump): remove GitHub token from release-bump workflow
+- ci(release-bump): add GitHub token for release bump in main
+- chore(pyproject): remove update_changelog_on_bump configuration
+- chore(release): add Commitizen and GitHub release workflow (#126)
+- chore(release): add Commitizen and GitHub release workflow
+- - Added Commitizen for conventional commit management and versioning
+- Created GitHub Actions workflow to publish releases using Commitizen
+- Updated Commitizen to v4.8.3 and replaced deprecated commands
+- Removed `dependabot.yml` and Poetry configuration
+- ref: #127
+- chore(templates): refine issue templates and add performance and documentation categories (#124)
+- - Updated bug report template with clearer sections and reproducibility requirements
+- Enhanced feature request template with detailed prompts for API changes and performance considerations
+- Added new templates for performance issues and documentation improvements
+- Configured default behavior to disable blank issues and added links for Q&A and documentation access
+- ref: #125
+- ci: update workflow triggers and improve Codecov reporting (#122)
+- ci: update workflow triggers and improve Codecov reporting
+- - Trigger PyPI publish workflow only on release published event
+- Adjust tests.yml trigger to fix Codecov reporting for main branch
+- Added step to upload detailed Codecov test report
+- Removed Codecov token and restricted trigger to pushes on main
+- ref: #123
+- ci(pypi): trigger publish workflow only on release published event (#120)
+- ref: #121
+
 ## 0.6.3 (2025-08-08)
 ##### Distributions
 * fix the `chisquare` method to all distributions.
