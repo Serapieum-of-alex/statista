@@ -1,6 +1,6 @@
 [project]
 name = "statista"
-version = "0.6.3"
+version = "1.0.0"
 description = "statistics package"
 readme = "README.md"
 license = {text = "GPL-3.0-or-later"}
