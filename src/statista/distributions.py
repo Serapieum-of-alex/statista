@@ -2752,9 +2752,9 @@ class Exponential(AbstractDistribution):
         Args:
             parameters (Dict[str, float], optional):
                 if not provided, the parameters provided in the class initialization will be used.
-                - loc: [numeric]
+                - loc (numeric):
                     location parameter of the gumbel distribution.
-                - scale: [numeric]
+                - scale (numeric):
                     scale parameter of the gumbel distribution.
                 ```python
                 {"loc": val, "scale": val}. default is None.
